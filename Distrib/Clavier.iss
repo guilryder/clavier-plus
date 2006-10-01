@@ -1,0 +1,78 @@
+#define RootDir "."
+#define BinDir "."
+
+#define AppName "Clavier+"
+#define AppExeName "Clavier.exe"
+#define InstallerFileName Copy(AppExeName, 1, RPos(".", AppExeName) - 1) + "Setup"
+#define VersionFile AddBackslash(RootDir) + AddBackslash(BinDir) + AppExeName
+
+#define AppVersion GetFileProductVersion(VersionFile)
+#define AppVerName AppName + " " + AppVersion
+#define AppPublisher "Guillaume Ryder"
+#define AppURL "http://utilfr42.free.fr"
+
+[Setup]
+OutputDir=.
+SourceDir={#RootDir}
+ShowLanguageDialog=auto
+OutputBaseFilename={#InstallerFileName}
+AppName={#AppName}
+AppVerName={#AppVerName}
+AppVersion={#AppVersion}
+AppPublisher={#AppPublisher}
+AppPublisherURL={#AppURL}
+AppSupportURL={#AppURL}
+AppUpdatesURL={#AppURL}
+DefaultDirName={pf}\{#AppName}
+DefaultGroupName={#AppName}
+VersionInfoVersion={#AppVersion}
+VersionInfoCompany={#GetFileCompany(VersionFile)}
+VersionInfoCopyright={#GetFileCopyright(VersionFile)}
+Compression=lzma/ultra
+SolidCompression=true
+InternalCompressLevel=ultra
+
+[Languages]
+Name: english; MessagesFile: compiler:Default.isl
+Name: french; MessagesFile: compiler:Languages\French.isl
+Name: german; MessagesFile: compiler:Languages\German.isl
+
+[Files]
+Source: {#BinDir}\Clavier.exe; DestDir: {app}; Flags: ignoreversion
+Source: {#BinDir}\Clavier.ini; DestDir: {app}; Flags: ignoreversion
+Source: {#BinDir}\ReadMe.htm; DestDir: {app}; Flags: ignoreversion; Languages: english
+Source: {#BinDir}\LisezMoi.htm; DestDir: {app}; Flags: ignoreversion; Languages: french
+Source: {#BinDir}\LiesMich.htm; DestDir: {app}; Flags: ignoreversion; Languages: german
+
+[Icons]
+Name: {group}\{#AppName}; Filename: {app}\{#AppExeName}
+Name: {group}\Documentation; Filename: {app}\ReadMe.htm; Languages: english
+Name: {group}\Documentation; Filename: {app}\LisezMoi.htm; Languages: french
+Name: {group}\Documentation; Filename: {app}\LiesMich.htm; Languages: german
+Name: {group}\{cm:ProgramOnTheWeb,{#AppName}}; Filename: {#AppURL}
+Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}
+
+[Registry]
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: {#AppName}; ValueData: {app}\{#AppExeName}; Flags: uninsdeletevalue
+
+[Run]
+Filename: {app}\{#AppExeName}; Description: {cm:LaunchProgram,{#AppName}}; Flags: nowait postinstall skipifsilent
+
+[_ISTool]
+UseAbsolutePaths=false
+
+[Code]
+
+// Close Clavier+ just before install
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+	if CurStep = ssInstall then
+		SendBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0);
+end;
+
+// Close Clavier+ just before uninstall
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+	if CurUninstallStep = usUninstall then
+		SendBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0);
+end;

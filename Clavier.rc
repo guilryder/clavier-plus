@@ -1,0 +1,633 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "Resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxRes.h"
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_APP                 ICON                    "App.ico"
+IDI_ADD                 ICON                    "Add.ico"
+IDI_DELETE              ICON                    "Delete.ico"
+IDI_EDIT                ICON                    "Edit.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 9,5,0,0
+ PRODUCTVERSION 9,5,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "CompanyName", "Guillaume Ryder (http://utilfr42.free.fr)"
+            VALUE "FileDescription", "Clavier+"
+            VALUE "FileVersion", "9.5"
+            VALUE "InternalName", "Clavier.exe"
+            VALUE "LegalCopyright", "Copyright © 2000-2006 Guillaume Ryder"
+            VALUE "OriginalFilename", "Clavier.exe"
+            VALUE "ProductName", "Clavier+"
+            VALUE "ProductVersion", "9.5"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_LANGUAGE DIALOGEX 0, 0, 114, 73
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTERMOUSE | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Language"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,32,54,50,14
+    LISTBOX         IDCLST_LANGUAGE,6,6,102,41,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_LANGUAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 107
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 66
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Neutral resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// German (Germany) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 164, 191
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "Über Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    CONTROL         "Clavier+ 9.5",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
+    LTEXT           "Copyright © 2000-2006\nGuillaume Ryder\nSoftwarelizenz nach GNU GPL",IDC_STATIC,42,20,114,28,SS_NOPREFIX
+    GROUPBOX        "Autor",IDC_STATIC,8,54,148,50
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,14,78,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,14,90,69,8,SS_NOPREFIX
+    GROUPBOX        "Deutsche Übersetzung",IDC_STATIC,8,108,148,50
+    CONTROL         "Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,120,45,8
+    LTEXT           "info@verdrahtet.net",IDCLBL_GERMAN_EMAIL,14,132,68,8,SS_NOPREFIX
+    LTEXT           "http://www.verdrahtet.net",IDCLBL_GERMAN_WEBSITE,14,144,89,8,SS_NOPREFIX
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,168,53,19
+    DEFPUSHBUTTON   "OK",IDOK,107,172,50,14,WS_GROUP
+END
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 190, 162
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Verknüpfung"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Verknüpfung:",IDC_STATIC,7,8,44,8
+    EDITTEXT        IDCTXT,60,6,124,12,ES_AUTOHSCROLL
+    LTEXT           "Hinweis:\n- Windows Taste ist benutzbar\n- einige besondere Verknüpfungen sind nicht verfügbar",IDC_STATIC,6,24,176,39,SS_NOPREFIX
+    PUSHBUTTON      "Abbrechen",IDCANCEL,65,142,56,14
+    DEFPUSHBUTTON   "OK",IDOK,127,142,57,14
+    GROUPBOX        "Aktivierungsbedingung",IDC_STATIC,6,66,178,66
+    LTEXT           "&Feststelltaste Status:",IDC_STATIC,12,80,54,8
+    COMBOBOX        IDCCBO_CAPSLOCK,94,78,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Num-Feststelltaste Status:",IDC_STATIC,12,98,53,8
+    COMBOBOX        IDCCBO_NUMLOCK,94,96,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Rollen-Feststelltaste Status:",IDC_STATIC,12,116,56,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,94,114,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Clavier+"
+FONT 8, "Tahoma", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "Verknüpfungen sind deaktiviert solange dieser Dialog angezeigt wird",IDCLBL_HELP,94,115,123,17
+    CONTROL         "Beim Starten von &Windows Clavier+ ausführen",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,118,165,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,196,66,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,66,WS_GROUP
+    CONTROL         "&Schreiben und/oder Ausführen von Verknüpfungen",IDCOPT_TEXT,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,179,10
+    CONTROL         "In der &Kommandozeile ausführen",IDCOPT_COMMAND,"Button",BS_AUTORADIOBUTTON,216,138,121,10
+    EDITTEXT        IDCTXT_TEXT,12,150,184,48,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_GROUP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_BROWSE,383,150,18,12
+    LTEXT           "&Ordner:",IDCLBL_DIRECTORY,216,169,31,8
+    EDITTEXT        IDCTXT_DIRECTORY,260,167,120,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_BROWSEDIR,383,166,18,12
+    LTEXT           "&Ausführen:",IDCLBL_SHOW,216,185,33,8
+    COMBOBOX        IDCCBO_SHOW,260,184,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    ICON            "",IDCLBL_ICON,381,180,21,20,SS_REALSIZEIMAGE
+    LTEXT           "&Beschreibung:",IDCLBL_DESCRIPTION,6,210,38,8
+    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,4,225,48,18
+    PUSHBUTTON      "&Lies mich",IDCCMD_README,94,227,48,14
+    PUSHBUTTON      "L&iste kopieren",IDCCMD_COPYLIST,147,227,48,14
+    PUSHBUTTON      "S&prache...",IDCCMD_LANGUAGE,200,227,48,14
+    PUSHBUTTON      "&Über...",IDCCMD_ABOUT,253,227,48,14
+    PUSHBUTTON      "B&eenden",IDCCMD_QUIT,306,227,48,14
+    DEFPUSHBUTTON   "OK",IDCANCEL,359,227,48,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 167
+    END
+
+    IDD_KEYSTROKE, DIALOG
+    BEGIN
+        RIGHTMARGIN, 189
+        BOTTOMMARGIN, 86
+    END
+
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 407
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 239
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_DONATE              BITMAP                  "DonateDE.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ERR_INVALID_SHORTCUT    "Gültige Verknüpfung wird benötigt."
+    ERR_SHORTCUT_ALREADY_EXISTS "Dies Verknüpfung ist bereits vorhanden."
+    ERR_SAVING_INI          "Einstellungen konnten nicht gespeichert werden."
+END
+
+STRINGTABLE 
+BEGIN
+    ERR_LOADING_INI         "Einstellungen konnten nicht geladen werden."
+    ASK_QUIT                "Soll Clavier+ wirklich beendet werden?\nAlle Verknüpfungen werden deaktiviert."
+    ASK_DELETE              "Soll diese Verknüpfung wirklich gelöscht werden?"
+    IDS_TOKENS              "Verknüpfung;Code;Beschreibung;Befehl;Text;Ordner;Fenster;Kein;Sprache;Grösse;Spalte;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Feststell;Num;Rollen;Ja;Nein;"
+    IDS_COLUMNS             "Verknüpfung;Bedingung;Typ;Inhalt;Beschreibung;"
+    IDS_README              "LiesMich.htm"
+    IDS_LANGUAGE            "Deutsch"
+    IDS_CONDITIONS          "ohne Bedingung;eingeschaltet;ausgeschaltet;"
+    IDS_CONDITION_KEYS      "FNR"
+    IDS_SETTINGS            "&Einstellungen..."
+    IDS_QUIT                "&Beenden"
+    IDS_COPYLIST            "Liste &kopieren"
+    IDS_BROWSEDIR           "Startordner zum Ausführen des Befehls auswählen."
+END
+
+#endif    // German (Germany) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 190, 162
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Shortcut"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Shortcut:",IDC_STATIC,7,8,30,8
+    EDITTEXT        IDCTXT,54,6,130,12,ES_AUTOHSCROLL
+    LTEXT           "Notes:\n- you can use the Windows key\n- some special shortcuts are not available",IDC_STATIC,6,24,168,29,SS_NOPREFIX
+    PUSHBUTTON      "Cancel",IDCANCEL,65,142,56,14
+    DEFPUSHBUTTON   "OK",IDOK,127,142,57,14
+    GROUPBOX        "Activation condition",IDC_STATIC,6,66,178,66
+    LTEXT           "&Caps Lock state:",IDC_STATIC,12,80,54,8
+    COMBOBOX        IDCCBO_CAPSLOCK,94,78,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Num Lock state:",IDC_STATIC,12,98,53,8
+    COMBOBOX        IDCCBO_NUMLOCK,94,96,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Scroll Lock state:",IDC_STATIC,12,116,56,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,94,114,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Clavier+"
+FONT 8, "Tahoma", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "Shortcuts are disabled while this dialog box is visible",IDCLBL_HELP,94,115,123,17
+    CONTROL         "&Launch Clavier+ at Windows startup",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,118,130,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,196,66,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,66,WS_GROUP
+    CONTROL         "&Write and/or execute shortcuts (between brackets)",IDCOPT_TEXT,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,182,10
+    CONTROL         "&Execute a command line",IDCOPT_COMMAND,"Button",BS_AUTORADIOBUTTON,216,138,93,10
+    EDITTEXT        IDCTXT_TEXT,12,150,184,48,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_GROUP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_BROWSE,383,150,18,12
+    LTEXT           "Director&y:",IDCLBL_DIRECTORY,216,169,31,8
+    EDITTEXT        IDCTXT_DIRECTORY,260,167,120,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_BROWSEDIR,383,166,18,12
+    LTEXT           "E&xecute:",IDCLBL_SHOW,216,185,33,8
+    COMBOBOX        IDCCBO_SHOW,260,184,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    ICON            "",IDCLBL_ICON,381,180,21,20,SS_REALSIZEIMAGE
+    LTEXT           "&Description:",IDCLBL_DESCRIPTION,6,210,38,8
+    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,4,225,53,19
+    PUSHBUTTON      "&Read-me",IDCCMD_README,94,227,48,14
+    PUSHBUTTON      "C&opy list",IDCCMD_COPYLIST,147,227,48,14
+    PUSHBUTTON      "Lan&guage...",IDCCMD_LANGUAGE,200,227,48,14
+    PUSHBUTTON      "A&bout...",IDCCMD_ABOUT,253,227,48,14
+    PUSHBUTTON      "&Quit",IDCCMD_QUIT,306,227,48,14
+    DEFPUSHBUTTON   "OK",IDCANCEL,359,227,48,14
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 164, 191
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "About Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,-1,6,6,20,20
+    CONTROL         "Clavier+ 9.5",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
+    LTEXT           "Copyright © 2000-2006\nGuillaume Ryder\nSoftware under GPL license",-1,42,20,114,28,SS_NOPREFIX
+    GROUPBOX        "Author",-1,8,54,148,50
+    CONTROL         "Guillaume Ryder",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,14,78,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,14,90,69,8,SS_NOPREFIX
+    GROUPBOX        "German translation",-1,8,108,148,50
+    CONTROL         "Dietmar Vogel",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,120,45,8
+    LTEXT           "info@verdrahtet.net",IDCLBL_GERMAN_EMAIL,14,132,68,8,SS_NOPREFIX
+    LTEXT           "http://www.verdrahtet.net",IDCLBL_GERMAN_WEBSITE,14,144,89,8,SS_NOPREFIX
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,168,53,19
+    DEFPUSHBUTTON   "OK",IDOK,107,172,50,14,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_KEYSTROKE, DIALOG
+    BEGIN
+        RIGHTMARGIN, 189
+        BOTTOMMARGIN, 86
+    END
+
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 407
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 239
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 167
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_DONATE              BITMAP                  "DonateEN.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ERR_INVALID_SHORTCUT    "Valid shortcut required."
+    ERR_SHORTCUT_ALREADY_EXISTS "This shortcut already exists."
+    ERR_SAVING_INI          "Unable to save the settings."
+END
+
+STRINGTABLE 
+BEGIN
+    ERR_LOADING_INI         "Unable to load the settings."
+    ASK_QUIT                "Do you really want to exit Clavier+?\nThis will disable all your shortcuts."
+    ASK_DELETE              "Do you really want to delete this shortcut?"
+    IDS_TOKENS              "Shortcut;Code;Description;Command;Text;Directory;Window;None;Language;Size;Columns;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;CapsLock;NumLock;ScrollLock;Yes;No;"
+    IDS_COLUMNS             "Shortcut;Cond.;Type;Contents;Description;"
+    IDS_README              "ReadMe.htm"
+    IDS_LANGUAGE            "English"
+    IDS_CONDITIONS          "no condition;must be on;must be off;"
+    IDS_CONDITION_KEYS      "CNS"
+    IDS_SETTINGS            "&Settings..."
+    IDS_QUIT                "&Quit"
+    IDS_COPYLIST            "&Copy List"
+    IDS_BROWSEDIR           "Choose the startup directory of the command."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// French (France) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Clavier+"
+FONT 8, "Tahoma", 400, 0, 0x0
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "Les raccourcis sont désactivés lorsque cette boîte de dialogue est affichée",IDCLBL_HELP,93,115,128,17
+    CONTROL         "&Lancer Clavier+ au démarrage de Windows",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,118,152,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,196,66,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,66,WS_GROUP
+    CONTROL         "É&crire et/ou exécuter des raccourcis (entre crochets)",IDCOPT_TEXT,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,182,10
+    CONTROL         "&Exécuter une ligne de commande",IDCOPT_COMMAND,"Button",BS_AUTORADIOBUTTON,216,138,121,10
+    EDITTEXT        IDCTXT_TEXT,12,150,184,48,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_GROUP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_BROWSE,383,150,18,12
+    LTEXT           "&Répertoire :",IDCLBL_DIRECTORY,216,169,38,8
+    EDITTEXT        IDCTXT_DIRECTORY,260,167,120,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_BROWSEDIR,383,166,18,12
+    LTEXT           "E&xécuter :",IDCLBL_SHOW,216,185,33,8
+    COMBOBOX        IDCCBO_SHOW,260,184,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    ICON            "",IDCLBL_ICON,381,180,21,20,SS_REALSIZEIMAGE
+    LTEXT           "&Description :",IDCLBL_DESCRIPTION,6,210,40,8
+    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,4,225,48,18
+    PUSHBUTTON      "Lise&z-moi",IDCCMD_README,94,227,48,14
+    PUSHBUTTON      "C&opier liste",IDCCMD_COPYLIST,147,227,48,14
+    PUSHBUTTON      "Lan&gue...",IDCCMD_LANGUAGE,200,227,48,14
+    PUSHBUTTON      "À &propos...",IDCCMD_ABOUT,253,227,48,14
+    PUSHBUTTON      "&Quitter",IDCCMD_QUIT,306,227,48,14
+    DEFPUSHBUTTON   "OK",IDCANCEL,359,227,48,14
+END
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 190, 162
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Raccourci clavier"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Raccourci :",IDC_STATIC,7,8,38,8
+    EDITTEXT        IDCTXT,54,6,130,12,ES_AUTOHSCROLL
+    LTEXT           "Notes :\n- vous pouvez utiliser la touche Windows\n- les touches Ctrl + Alt et Alt Gr sont équivalentes\n- certains raccourcis spéciaux sont indisponibles",IDC_STATIC,6,24,168,38,SS_NOPREFIX
+    GROUPBOX        "Conditions d'activation :",IDC_STATIC,6,66,178,66
+    LTEXT           "État de Verr. &Maj. :",IDC_STATIC,12,80,60,8
+    COMBOBOX        IDCCBO_CAPSLOCK,94,78,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "État de Verr. &Num. :",IDC_STATIC,12,98,63,8
+    COMBOBOX        IDCCBO_NUMLOCK,94,96,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "État d'Arrêt &Défil. :",IDC_STATIC,12,116,58,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,94,114,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Annuler",IDCANCEL,65,142,56,14
+    DEFPUSHBUTTON   "OK",IDOK,127,142,57,14
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 164, 191
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "À propos de Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,-1,6,6,20,20
+    CONTROL         "Clavier+ 9.5",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
+    CONTROL         "Copyright © 2000-2006\nGuillaume Ryder\nLogiciel sous licence GPL",-1,
+                    "Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | WS_GROUP,42,20,114,28
+    GROUPBOX        "Auteur",-1,8,54,148,50
+    CONTROL         "Guillaume Ryder",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,14,78,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,14,90,69,8,SS_NOPREFIX
+    GROUPBOX        "Traduction allemande",-1,8,108,148,50
+    CONTROL         "Dietmar Vogel",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,120,45,8
+    LTEXT           "info@verdrahtet.net",IDCLBL_GERMAN_EMAIL,14,132,68,8,SS_NOPREFIX
+    LTEXT           "http://www.verdrahtet.net",IDCLBL_GERMAN_WEBSITE,14,144,89,8,SS_NOPREFIX
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,168,53,19
+    DEFPUSHBUTTON   "OK",IDOK,107,172,50,14,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 407
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 239
+    END
+
+    IDD_KEYSTROKE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 183
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 155
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 167
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_DONATE              BITMAP                  "DonateFR.bmp"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "Resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxRes.h""\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ERR_INVALID_SHORTCUT    "Vous devez entrer un raccourci clavier valide."
+    ERR_SHORTCUT_ALREADY_EXISTS "Ce raccourci existe déjà."
+    ERR_SAVING_INI          "Impossible d'enregistrer les paramètres."
+END
+
+STRINGTABLE 
+BEGIN
+    ERR_LOADING_INI         "Impossible de lire les paramètres."
+    ASK_QUIT                "Voulez-vous vraiment quitter Clavier+ ?\nCela rendra les raccourcis inopérants."
+    ASK_DELETE              "Voulez-vous vraiment supprimer ce raccourci ?"
+    IDS_TOKENS              "Raccourci;Code;Description;Commande;Texte;Répertoire;Fenêtre;Aucun;Langue;Taille;Colonnes;Normale;Réduite;Agrandie;Win;Ctrl;Maj;Alt;VerrMaj;VerrNum;ArrêtDéfil;Oui;Non;"
+    IDS_COLUMNS             "Raccourci;Cond.;Type;Contenu;Description;"
+    IDS_README              "LisezMoi.htm"
+    IDS_LANGUAGE            "Français"
+    IDS_CONDITIONS          "pas de condition;doit être activé;doit être désactivé;"
+    IDS_CONDITION_KEYS      "MND"
+    IDS_SETTINGS            "&Paramètres..."
+    IDS_QUIT                "&Quitter"
+    IDS_COPYLIST            "&Copier la liste"
+    IDS_BROWSEDIR           "Choisissez le répertoire de démarrage de la commande."
+END
+
+#endif    // French (France) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
