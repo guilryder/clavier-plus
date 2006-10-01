@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Clavier+ help</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<style type="text/css">
+body {
+font-family: verdana, arial, sans-serif;
+}
+
+dt kbd {
+font-weight: bold;
+}
+
+dt {
+margin-top: 1em;
+}
+
+.toc {
+float: left;
+}
+
+.toc a {
+color: blue;
+text-decoration: none;
+display: block;
+padding: 2px 0px;
+}
+.toc a:hover {
+color: red;
+text-decoration: underline;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Clavier+ help</h1>
+
+<p class="toc">
+<a href="#name">Why such a strange name?</a>
+<a href="#author">Author</a>
+<a href="#license">License</a>
+<a href="#setup">Setup</a>
+<a href="#utility">What can Clavier+ do</a>
+<a href="#add">Create a keyboard shortcut</a>
+<a href="#conditions">Conditions applied to the shortcuts</a>
+<a href="#text">Text written by the shortcuts</a>
+<a href="#print">Print the shortcuts list</a>
+<a href="#conffile">Configuration file</a>
+<a href="#limits">Known issues</a>
+</p>
+
+
+<h2 style="clear: both"><a href="http://utilfr42.free.fr/util/Clavier.php">Clavier+ website</a></h2>
+
+
+<h2 id="name">Why such a strange name?</h2>
+
+<p><i>Clavier</i> simply is the French word for <i>keyboard</i>. Note the incredible originality of this name, and the creativity deployed to find it!</p>
+
+
+<h2 id="author">Author</h2>
+
+<p>
+Guillaume Ryder<br />
+Website: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br />
+E-mail: <a href="mailto:gryder@club-internet.fr"><kbd>gryder@club-internet.fr</kbd></a><br />
+</p>
+
+<p><b>German translation</b><br />
+Dietmar Vogel<br />
+Website: <a href="http://www.verdrahtet.net/"><kbd>http://www.verdrahtet.net</kbd></a><br />
+E-mail: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a><br />
+</p>
+
+
+<h2 id="license">License</h2>
+
+<p>Clavier+ is under the <a href="http://www.gnu.org/copyleft/gpl.html">GPL license</a>. This gives you the right to use, copy, distribute the software, for any use (personal or commercial), all that without paying anything.</p>
+
+<p>There is no warranty for this program, I’m not responsible of any damage due to its use.</p>
+
+<p>The full source code of Clavier+ is available here:<br />
+<a href="http://utilfr42.free.fr/dn/ClavierSrc.zip"><kbd>http://utilfr42.free.fr/dn/ClavierSrc.zip</kbd></a></p>
+
+
+<h2 id="setup">Setup</h2>
+
+<p>Clavier+ is distributed in two packages:</p>
+<ul>
+<li><b>With</b> setup program: <a href="http://utilfr42.free.fr/dn/ClavierSetup.exe"><kbd>http://utilfr42.free.fr/dn/ClavierSetup.exe</kbd></a></li>
+<li><b>Without</b> setup program: <a href="http://utilfr42.free.fr/dn/Clavier.zip"><kbd>http://utilfr42.free.fr/dn/Clavier.zip</kbd></a></li>
+</ul>
+
+<p>To install Clavier+ without setup program:</p>
+<ol>
+<li>Download the <a href="http://utilfr42.free.fr/dn/Clavier.zip">Zip archive</a> and unzip it.</li>
+<li>Launch <kbd>Clavier.exe</kbd>.</li>
+<li>If you want the shortcuts to be always active, launch <kbd>Clavier.exe</kbd> again to display the configuration dialog box, then check the <kbd>Launch Clavier+ at Windows startup</kbd> checkbox.</li>
+</ol>
+
+<p>To uninstall Clavier+ without setup program:</p>
+<ol>
+<li>In Clavier+ configuration, uncheck the <kbd>Launch Clavier+ at Windows startup</kbd> checkbox, if necessary.</li>
+<li>Quit Clavier+ by clicking the button having this name.</li>
+<li>Delete all Clavier+ files.</li>
+</ol>
+
+
+<h2 id="utility">What can Clavier+ do</h2>
+
+<p>Clavier allows to associate an action to any keyboard shortcut. Those actions can be:</p>
+<ul>
+<li>launch a program: Word, calculator, Internet browser, etc.</li>
+<li>display a website</li>
+<li>open a folder: <i>My documents</i>, <kbd>C:</kbd>, CD-Rom drive, etc.</li>
+<li>write special characters: ® and © symbols, currency symbols like € or ¥, etc.</li>
+<li>write text: E-mail address, company name, etc. in any program (Word, Internet browser, notepad)</li>
+<li>simulate keystrokes, for example to execute a command in the menus of a program</li>
+</ul>
+
+<p>The keyboard shortcuts can use (almost) any key of the keyboard. The Windows key (around the <kbd>Space</kbd> key) can be used along with Ctrl, Alt and Shift. As software rarely use this key, many simple keyboard shortcuts are available: Win + A, Win + B, Win + C, etc.</p>
+
+<p>Clavier+ can modify the behavior of special keys like <kbd>`</kbd> or <kbd>F11</kbd>. Thus a keyboard shortcut of one single key can be associated to a frequently used action.</p>
+
+<p>If necessary, the action of a keyboard shortcut can depend of the active program. This allows to add shortcuts to a specific program.</p>
+
+<p>In the same way, the action of a keyboard shortcut can depend of the state of the toggle keys, i.e. the keys having small lights in the keyboard: Caps Lock, Num Lock, Scroll Lock. For example, this allows to write special characters instead of digits when the caps lock mode is set.</p>
+
+<p>Clavier+ website proposes <a href="http://utilfr42.free.fr/util/Clavier.php#examples">some examples of shortcuts</a>.</p>
+
+
+<h2 id="add">Create a keyboard shortcut</h2>
+
+<p>Launch Clavier+. A small keyboard icon appears in the traybar, near the system clock. It indicates that Clavier+ is running, thus keyboard shortcuts are active. Click the icon to display the configuration window. You can resize the window if you find it too small. The upper area contains some example shortcuts.</p>
+
+<p>To create a new keyboard shortcut, click the <kbd>Add</kbd> button (having a + shape), and choose the keyboard shortcut action:</p>
+<ul>
+<li><b>Program:</b> execute a program of the Start menu</li>
+<li><b>Internet Favorite:</b> display a website contained in the favorites of Internet Explorer (if you use another Web browser, for example Firefox, chose <i>Display a Website</i> below)</li>
+<li><b>Special Character:</b> write a special character</li>
+<li><b>Folder:</b> open a folder with Windows Explorer</li>
+<li><b>Write text:</b> simulate text writing, and eventually simulate keystrokes (for example the <kbd>Tab</kbd> key to fill all fields of a form at once)</li>
+<li><b>Launch a Program</b>: launch a program missing in the Start menu, or execute any command line</li>
+<li><b>Display a Website</b>: display a website missing in Internet Explorer favorites</li>
+</ul>
+
+<p>A dialog box appears for you to specify the keyboard shortcut. Type it in the dedicated area: its text name should be written in the textbox. Then, click the <i>OK</i> button.</p>
+
+<p>If necessary, modify the shortcut action in the lower part of the configuration window. If the shortcut should write text, for example an E-mail address, check that the <kbd>Write</kbd> option is checked, then enter your text in the big text area. Each time you will type the keyboard shortcut, the specified text will be written. You can use the arrow shaped button to insert special characters or simulate a keystroke.</p>
+
+<p>If the shortcut should launch a program or display a website, check the matching option. Write the path of your program or the address of your website in the area below. You can use the small button on the right to look for the program to launch. You can check the action of your shortcut by clicking the <i>Test</i> button. If necessary, click the <i>Advanced settings</i> button to specify the initial directory or the initial window size of the program (maximized, windowed, minimized).</p>
+
+<p><b>Important:</b> you should close Clavier+ configuration window <i>before</i> testing your shortcuts. While the window is visible, the keyboard shortcuts are disabled.</p>
+
+
+<h2 id="conditions">Conditions applied to the shortcuts</h2>
+
+<p>You can restrict the effect of a shortcut to some conditions. If all conditions fulfill, the action of the shortcut is executed. If one or more conditions do not fulfill, Clavier+ ignores the shortcut, and the original action of the shortcut is executed (the one defined by Windows or the active program). This allows to associate different actions to the same shortcut.</p>
+
+<p><b>Warning!</b> If you associate several actions to the same shortcut, beware to give them mutually exclusive conditions. Otherwise, an error message will appear when you close the window.</p>
+
+
+<h3>Active program</h3>
+
+<p>You can restrict a shortcut to some programs. This allows to give different meanings to the same shortcut, depending of the active program.</p>
+
+<p>To define the list of programs for which the shortcut is active, click the shortcut in the list. Then, click the small sight on the right (white background), and keep the left mouse button down. Move the sight to the window of the program you want to select (for example, the window of Word or Windows Explorer). The name of the program is written in the text box at the left of the sight. Repeat this operation for each program to add to the list.</p>
+
+<p>When the programs list is empty, the shortcut is active for all programs. If it is not empty, the shortcut is active only for the specified programs.</p>
+
+
+<h3>Toggle keys</h3>
+
+<p>You can modify the action of a keyboard shortcut depending of the toggle keys state: Caps Lock, Num Lock, Scroll Lock. For example, you can create a keyboard shortcut active only in caps lock mode.</p>
+
+<p>To specify the conditions, double-click the shortcut in the list. In the <i>Activation condition</i> area, set a condition for each toggle key. You can want the key to be enabled, or disabled, or not setting any condition.</p>
+
+
+<h2 id="text">Text format</h2>
+
+<p>In the <kbd>Write</kbd> textbox, you can specify Clavier+ to execute some other shortcuts. To do this, you only have to write the shortcut name between brackets. For example:<br />
+<kbd>[Ctrl + O]</kbd></p>
+
+<p>To know the name of a special shortcut, you must use the name indicated in the shortcut adding dialog box. For example, to know the name of the <i>numpad star</i> key, click the + button then type the star key: its name appears. Write it exactly, between brackets, in the <kbd>Write</kbd> textbox. Take care to keep the special symbols like dots and parenthesis in the shortcut name.</p>
+
+<p>If you need to write the <kbd>[</kbd> symbol, you need to escape it with a backslash. For example: <br />
+<kbd>This is a bracket: \[</kbd></p>
+
+<p>Similarly, to write a backslash character, you need to write it twice: <kbd>Here is one backslash: \\</kbd></p>
+
+<p>Clavier+ sends all shortcuts to the same window. If a shortcut opens a new window (for example <kbd>[Ctrl + O]</kbd>), you need to ask Clavier+ to send the shortcuts to the new active window. To do this, insert an empty shortcut name: <kbd>[]</kbd>. Clavier+ will wait for 100 milliseconds and focus to the new active window. Example:<br />
+<kbd>[Ctrl + O][][][]MyFile.txt</kbd></p>
+
+<p>To execute a program in the middle of a text typing, write command line between double brackets:<br />
+<kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd><br />
+This shortcut copies to the clipboard the text currently selected, launches notepad, then pastes the copied text in it. The <kbd>[]</kbd> tag is crucial; it orders Clavier+ to paste to the <em>new</em> active window, i.e. notepad.</p>
+
+
+<h2 id="print">Print the shortcuts list</h2>
+
+<p>In the main window of Clavier+, click on <kbd>Copy list</kbd> button. This puts the list of all keyboard shortcuts in the clipboard: you can past it in the word processor of your choice to print it. If you use Word, you can present it as an array: launch Word, copy the list with <kbd>Ctrl+V</kbd>, select it with <kbd>Ctrl+A</kbd>, and click the <kbd>Insert array</kbd> button.</p>
+
+
+<h2 id="conffile">Configuration file</h2>
+
+<p>The <kbd>Clavier.ini</kbd> file contains all settings. Clavier+ doesn’t put anything in the registry, except if you use the <kbd>Launch Clavier+ at Windows startup</kbd> option.</p>
+
+<p>If you need to add many shortcuts at once, here is the configuration file format</p>
+
+<pre>
+Global settings
+First shortcut settings
+-       (line almost empty: contains only a single dash)
+Second shortcut settings
+-
+...
+</pre>
+
+
+<h3>Global settings</h3>
+
+<pre>
+Language=Français <i>or</i> English <i>or</i> Deutsch
+Size=<i>width</i>,<i>height</i>,<i>maximized</i>,<i>hide icon</i>
+Columns=<i>width 1</i>,<i>width 2</i>,<i>width 3</i>
+</pre>
+
+<dl>
+<dt><kbd>Size</kbd></dt>
+<dd><kbd>width,height</kbd>&nbsp;: size of the configuration window, in pixels.<br />
+<kbd>maximized</kbd>&nbsp;: 1 if the window is maximized, 0 otherwise.<br />
+<kbd>hide icon</kbd>&nbsp;: 1 to hide Clavier+ icon in the tray bar, near the system clock, 0 to keep it visible.
+</dd>
+
+<dt><kbd>Columns</kbd></dt>
+<dd>Specifies the width of the first three columns in the configuration window. Each width is a percentage relative to the list width. The last column takes the remaining space.</dd>
+</dl>
+
+
+<h3>Shortcuts settings</h3>
+
+<pre>
+Shortcut=<i>keystroke</i>
+Code=<i>keystroke code</i> (internally used by Clavier+)
+Description=<i>description text</i>
+Text=<i>text to type when the shortcut is done</i>
+&gt;<i>Other line to type</i>
+&gt;<i>Another line</i>
+...
+Command=<i>program to launch when the shortcut is done</i>
+Directory=<i>startup directory</i>
+Window=<i>window mode of the program to launch</i>
+Programs=<i>programs list</i>
+CapsLock=<i>condition</i>
+NumLock=<i>condition</i>
+ScrollLock=<i>condition</i>
+</pre>
+
+<p>Note the necessity to type a <kbd>&gt;</kbd> character at the beginning of additional lines for the <kbd>Text=</kbd> field.</p>
+
+<p><kbd>Text</kbd> on a side, and <kbd>Command</kbd>, <kbd>Directory</kbd> and <kbd>Window</kbd> on the other side are mutually exclusive: a shortcut can’t write a text and execute a command line at the same time.</p>
+
+<dl>
+<dt><kbd>Shortcut</kbd></dt>
+<dd>Textual form of the keystroke, in the same format than in the configuration window.</dd>
+
+<dt><kbd>Code</kbd></dt>
+<dd>Numerical representation of the keystroke, generated and used by Clavier+. This code is used only if the <kbd>Shortcut</kbd> field is erroneous.</dd>
+
+<dt><kbd>Directory</kbd> (command mode only)</dt>
+<dd>Startup directory of the command. If none is given, Clavier+ uses the directory of the executable itself.</dd>
+
+<dt><kbd>Window</kbd> (command mode only)</dt>
+<dd>Initial size of the main window of the launched program, among: <kbd>Normal</kbd>, <kbd>Minimized</kbd>, <kbd>Maximized</kbd>.</dd>
+
+<dt><kbd>Programs</kbd></dt>
+<dd>Activation condition: list of the only programs for which the shortcut is activated. If the list is empty, the shortcut is active in all programs. The programs are semi-colon-separated. They don’t have a full path: file name only, with extension.</dd>
+
+<dt><kbd>CapsLock</kbd>, <kbd>NumLock</kbd>, <kbd>ScrollLock</kbd></dt>
+<dd>If specified, specify an activation condition to the shortcut. Accepted values: <kbd>None</kbd> (default value), <kbd>Yes</kbd> and <kbd>No</kbd>.</dd>
+</dl>
+
+
+<h2 id="limits">Known issues</h2>
+
+<p>Some special keys can’t be used:</p>
+<pre>
+Print Screen
+Pause
+</pre>
+
+<p>The special keys refresh browser, increase volume, etc. are partially supported. Shortcuts using them can be created, and it is possible to modify their original behavior. However the action of these keys is executed when they are pressed in the <kbd>Add</kbd> dialog box. Moreover, as Windows does not provide a generic method to get the name of theses special keys, they are named by a number (for example: <kbd>#183</kbd>).</p>
+
+<p>Windows standard shortcuts cannot be modified. Here are some of them:</p>
+
+<table><colgroup><col width="30%"/><col/></colgroup>
+<tr><td><kbd>Ctrl + Alt + DEL</kbd></td><td>display task manager</td></tr>
+<tr><td><kbd>F12</kbd></td><td>reserved to the debugger</td></tr>
+<tr><td><kbd>Alt + TAB</kbd></td><td>activate the next task</td></tr>
+<tr><td><kbd>Alt + Shift + TAB</kbd></td><td>activate the previous task</td></tr>
+<tr><td><kbd>Win + B</kbd></td><td>activate the focus in the traybar</td></tr>
+<tr><td><kbd>Win + D</kbd></td><td>reduce all windows; do it twice to restore the previous state</td></tr>
+<tr><td><kbd>Win + E</kbd></td><td>launch the explorer</td></tr>
+<tr><td><kbd>Win + F</kbd></td><td>show the <i>Find files</i> window</td></tr>
+<tr><td><kbd>Win + Ctrl + F</kbd></td><td>show the <i>Find computers</i></td></tr>
+<tr><td><kbd>Win + L</kbd></td><td>fast user switching (Windows XP)</td></tr>
+<tr><td><kbd>Win + M</kbd></td><td>reduce all windows</td></tr>
+<tr><td><kbd>Win + Shift + M</kbd></td><td>cancel the effect of Win + M</td></tr>
+<tr><td><kbd>Win + R</kbd></td><td>show Start/Execute window</td></tr>
+<tr><td><kbd>Win + U</kbd></td><td>launch the utilities manager</td></tr>
+<tr><td><kbd>Win + F1</kbd></td><td>launch Windows help</td></tr>
+<tr><td><kbd>Win + Tab</kbd></td><td>activate the next taskbar button</td></tr>
+<tr><td><kbd>Win + Shift + Tab</kbd></td><td>activate the previous taskbar </td></tr>
+<tr><td><kbd>Win + Pause</kbd></td><td>show the <i>System</i> applet of the configuration panel</td></tr>
+</table>
+
+</body>
+</html>

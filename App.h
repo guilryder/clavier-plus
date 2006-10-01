@@ -18,28 +18,50 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
-extern "C" void* memset(void* dest, int value, size_t size);
+#pragma once
 
-#pragma function(memset)
+#include "Global.h"
+#include "Keyboard.h"
 
-typedef unsigned char BYTE;
+#define WM_KEYSTROKE     (WM_USER + 100)
+#define WM_GETFILEICON   (WM_USER + 101)
 
-void* memset(void* dst, int value, size_t size)
+
+enum
 {
-	BYTE *pdst = (BYTE*)dst;
-	while (size > 0) {
-		size--;
-		*pdst++ = (BYTE)value;
-	}
+	tokLanguageName,
 	
-	return dst;
-}
+	tokShortcut,
+	tokCode,
+	tokDescription,
+	tokCommand,
+	tokText,
+	tokDirectory,
+	tokWindow,
+	tokPrograms,
+	tokNone,
+	tokLanguage,
+	tokSize,
+	tokColumns,
+	
+	tokShowNormal,
+	tokShowMinimize,
+	tokShowMaximize,
+	
+	tokWin,
+	tokCtrl,
+	tokShift,
+	tokAlt,
+	
+	tokConditionCapsLock,
+	tokConditionNumLock,
+	tokConditionScrollLock,
+	tokConditionYes,
+	tokConditionNo,
+	
+	tokNotFound
+};
 
-#ifndef _DEBUG
 
-extern "C" int atexit(void (__cdecl*)())
-{
-	return 0;
-}
-
-#endif
+// Shortcut list, NULL if the dialog box is not displayed
+extern HWND e_hlst;

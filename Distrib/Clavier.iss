@@ -11,10 +11,12 @@
 #define AppPublisher "Guillaume Ryder"
 #define AppURL "http://utilfr42.free.fr"
 
+#define IniFile "Clavier.ini"
+
 [Setup]
 OutputDir=.
 SourceDir={#RootDir}
-ShowLanguageDialog=auto
+ShowLanguageDialog=yes
 OutputBaseFilename={#InstallerFileName}
 AppName={#AppName}
 AppVerName={#AppVerName}
@@ -39,16 +41,18 @@ Name: german; MessagesFile: compiler:Languages\German.isl
 
 [Files]
 Source: {#BinDir}\Clavier.exe; DestDir: {app}; Flags: ignoreversion
-Source: {#BinDir}\Clavier.ini; DestDir: {app}; Flags: ignoreversion
-Source: {#BinDir}\ReadMe.htm; DestDir: {app}; Flags: ignoreversion; Languages: english
-Source: {#BinDir}\LisezMoi.htm; DestDir: {app}; Flags: ignoreversion; Languages: french
-Source: {#BinDir}\LiesMich.htm; DestDir: {app}; Flags: ignoreversion; Languages: german
+Source: {#BinDir}\ClavierEnglish.ini; DestDir: {app}; Flags: ignoreversion; DestName: {#IniFile}; Languages: english
+Source: {#BinDir}\ClavierFrench.ini; DestDir: {app}; Flags: ignoreversion; DestName: {#IniFile}; Languages: french
+Source: {#BinDir}\ClavierGerman.ini; DestDir: {app}; Flags: ignoreversion; DestName: {#IniFile}; Languages: german
+Source: {#BinDir}\Help.htm; DestDir: {app}; Flags: ignoreversion; Languages: english
+Source: {#BinDir}\Aide.htm; DestDir: {app}; Flags: ignoreversion; Languages: french
+Source: {#BinDir}\Hilfe.htm; DestDir: {app}; Flags: ignoreversion; Languages: german
 
 [Icons]
 Name: {group}\{#AppName}; Filename: {app}\{#AppExeName}
-Name: {group}\Documentation; Filename: {app}\ReadMe.htm; Languages: english
-Name: {group}\Documentation; Filename: {app}\LisezMoi.htm; Languages: french
-Name: {group}\Documentation; Filename: {app}\LiesMich.htm; Languages: german
+Name: {group}\Help; Filename: {app}\Help.htm; Languages: english
+Name: {group}\Aide; Filename: {app}\Aide.htm; Languages: french
+Name: {group}\Hilfe; Filename: {app}\Hilfe.htm; Languages: german
 Name: {group}\{cm:ProgramOnTheWeb,{#AppName}}; Filename: {#AppURL}
 Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}
 
@@ -56,6 +60,7 @@ Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: {#AppName}; ValueData: {app}\{#AppExeName}; Flags: uninsdeletevalue
 
 [Run]
+Filename: {app}\{#AppExeName}; Description: {cm:LaunchProgram,{#AppName}}; Flags: nowait postinstall skipifsilent
 Filename: {app}\{#AppExeName}; Description: {cm:LaunchProgram,{#AppName}}; Flags: nowait postinstall skipifsilent
 
 [_ISTool]

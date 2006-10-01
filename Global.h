@@ -29,28 +29,7 @@ typedef WCHAR UTCHAR;
 typedef unsigned char UTCHAR;
 #endif
 
-
-const LPCTSTR pszApp = _T("Clavier+");
-
-
-extern HANDLE e_hHeap;
-extern HINSTANCE e_hInst;
-extern HWND e_hwndInvisible;    // Invisible background window
-
-
-int messageBox(HWND hWnd, UINT idString, UINT uType = MB_ICONERROR);
-
-void getWindowSize(HWND hWnd, SIZE& size);
-
-void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink);
-
-bool BrowseForFolder(HWND hwndParent, LPTSTR pszDirectory);
-
-void writeFile(HANDLE hf, LPCTSTR psz);
-
-LPCTSTR getToken(int tok);
-int findToken(LPCTSTR pszToken);
-
+class String;
 
 
 const size_t bufString = 128;
@@ -58,23 +37,73 @@ const size_t bufHotKey = 128;
 const size_t bufCode   =  32;
 
 
-enum
-{
-	langFR,
-	langUS,
-	langDE,
-	langCount
-};
+const LPCTSTR pszApp = _T("Clavier+");
 
-extern int e_lang;
-void setResourceLanguage(int lang);
 
+extern HANDLE e_hHeap;
+extern HINSTANCE e_hInst;
+extern HWND e_hwndInvisible;    // Invisible background window
+extern bool e_bIconVisible;
+
+
+int messageBox(HWND hWnd, UINT idString, UINT uType = MB_ICONERROR, LPCTSTR pszArg = NULL);
+
+void centerParent(HWND hDlg);
+
+void getDlgItemText(HWND hDlg, UINT id, String& rs);
+
+void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink);
+
+// Wrapper for CreateThread()
+void startThread(LPTHREAD_START_ROUTINE pfn, void* pParams);
+
+#define myGetProcAddress(hDLL, functionName) \
+	((PFN_##functionName)GetProcAddress(hDLL, (#functionName ANSI_UNICODE("A", "W"))))
+
+bool getWindowExecutable(HWND hWnd, LPTSTR pszPath);
+
+bool getFileInfo(LPCTSTR pszFile, DWORD dwAttributes, SHFILEINFO& shfi, UINT uFlags);
+
+//------------------------------------------------------------------------
+// SHBrowseForFolder wrapper:
+// - use custom title
+// - set initial directory
+// - return directory path instead of LPITEMIDLIST
+//------------------------------------------------------------------------
+
+bool browseForFolder(HWND hwndParent, LPCTSTR pszTitle, LPTSTR pszDirectory);
+
+
+//------------------------------------------------------------------------
+// Shell API tools
+//------------------------------------------------------------------------
+
+// Use IMalloc to free a memory block
+void shellFree(void* p);
+
+bool getSpecialFolderPath(int index, LPTSTR pszPath);
+bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath);
+
+void writeFile(HANDLE hf, LPCTSTR psz);
+
+LPCTSTR getToken(int tok);
+int findToken(LPCTSTR pszToken);
+
+
+//------------------------------------------------------------------------
+// Strings translation
+//------------------------------------------------------------------------
+
+#include "Lang.h"
 
 class TranslatedString
 {
 public:
 	
-	void load(UINT id);
+	void load(UINT id)
+	{
+		loadStringAuto(id, m_apsz[e_lang]);
+	}
 	
 	void set(LPCTSTR psz)
 	{
@@ -95,6 +124,10 @@ private:
 
 
 
+//------------------------------------------------------------------------
+// Command line parsing and executing
+//------------------------------------------------------------------------
+
 void findFullPath(LPTSTR pszPath, LPTSTR pszFullPath);
 
 void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow);
@@ -110,4 +143,28 @@ struct THREAD_SHELLEXECUTE
 	int    nShow;
 };
 
-DWORD WINAPI threadShellExecute(void* pParam);
+DWORD WINAPI threadShellExecute(void* pParams);
+
+
+//------------------------------------------------------------------------
+// Settings loading and saving
+//------------------------------------------------------------------------
+
+enum
+{
+	colContents,
+	colShortcut,
+	colCond,
+	colDescription,
+	colCount
+};
+
+const int nbColSize = colCount - 1;
+
+extern int e_acxCol[colCount];
+
+extern SIZE e_sizeMainDialog;
+extern bool e_bMaximizeMainDialog;
+
+void iniGetPath(LPTSTR pszIniFile);
+HKEY openAutoStartKey(LPTSTR pszPath);

@@ -67,12 +67,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="comdlg32.lib shlwapi.lib shell32.lib advapi32.lib"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib"
 				Version=""
 				LinkIncremental="2"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/Clavier.pdb"
 				SubSystem="2"
 			/>
 			<Tool
@@ -140,6 +139,7 @@
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -154,11 +154,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="comdlg32.lib shlwapi.lib shell32.lib advapi32.lib"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
-				ProgramDatabaseFile=".\Release/Clavier.pdb"
+				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -214,10 +214,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\donate.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\DonateDE.bmp"
 				>
 			</File>
@@ -237,31 +233,64 @@
 				RelativePath=".\Resource.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Target.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\Target.cur"
+				>
+			</File>
+			<File
+				RelativePath=".\TargetOn.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\Text.ico"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Distrib"
 			>
 			<File
-				RelativePath="Distrib\Clavier.ini"
-				>
-			</File>
-			<File
-				RelativePath="Distrib\Lisezmoi.htm"
+				RelativePath=".\Distrib\Aide.htm"
 				DeploymentContent="true"
 				>
 			</File>
 			<File
-				RelativePath="Distrib\Readme.htm"
+				RelativePath=".\Distrib\Clavier.iss"
+				>
+			</File>
+			<File
+				RelativePath=".\Distrib\ClavierEnglish.ini"
+				>
+			</File>
+			<File
+				RelativePath=".\Distrib\ClavierFrench.ini"
+				>
+			</File>
+			<File
+				RelativePath=".\Distrib\ClavierGerman.ini"
+				>
+			</File>
+			<File
+				RelativePath=".\Distrib\Help.htm"
+				DeploymentContent="true"
+				>
+			</File>
+			<File
+				RelativePath=".\Distrib\Hilfe.htm"
 				DeploymentContent="true"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\Clavier.cpp"
+			RelativePath=".\App.cpp"
 			>
 		</File>
 		<File
-			RelativePath=".\Clavier.h"
+			RelativePath=".\App.h"
 			>
 		</File>
 		<File
@@ -295,6 +324,18 @@
 		</File>
 		<File
 			RelativePath=".\Keyboard.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Keyboard.h"
+			>
+		</File>
+		<File
+			RelativePath=".\Lang.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Lang.h"
 			>
 		</File>
 		<File

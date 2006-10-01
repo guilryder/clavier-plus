@@ -23,6 +23,8 @@
 #pragma warning (disable: 4710 4711)
 
 #define _WIN32_IE 0x0400
+#define _WIN32_WINDOWS 0x0500
+#define WINVER 0x0500
 #define STRICT 1
 
 #define __STDC_WANT_SECURE_LIB__ 0
@@ -60,8 +62,30 @@
 #include <tchar.h>
 
 
+// Memory leaks detection
+// #define USE_TRACING 1
+// #include <Debug.h>
+#ifdef _DEBUG
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DEBUG_NEW      new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#else
+#define DEBUG_NEW      new
+#endif
+
+#define new DEBUG_NEW
+
+
+#ifdef UNICODE
+#define ANSI_UNICODE(ansi, unicode)   unicode
+#else
+#define ANSI_UNICODE(ansi, unicode)   ansi
+#endif
+
+
 #define ToBool(f)        ((f) != 0)
 #define nbArray(a)       (sizeof(a)/sizeof(a[0]))
+#define MYUNUSED(param)
 
 #define VERIFP(f,value)  { if (!(f))  return (value); }
 #define VERIF(f)         VERIFP(f,false)

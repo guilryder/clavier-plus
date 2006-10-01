@@ -21,12 +21,9 @@
 #pragma once
 
 #include <stdarg.h>
+#include "Lang.h"
 
 extern HANDLE e_hHeap;
-extern HINSTANCE e_hInst;
-inline int loadString(UINT id, LPTSTR psz, int buf) { return LoadString(e_hInst, id, psz, buf); }
-#define loadStringAuto(id, pszBuffer)   loadString(id, pszBuffer, nbArray(pszBuffer))
-#define loadStringAutoRet(id, pszBuffer)   (loadStringAuto(id, pszBuffer), pszBuffer)
 
 
 inline bool strIsEmpty(LPCTSTR src) { return !src || !*src; }
@@ -40,8 +37,8 @@ inline void strMove(LPTSTR dest, LPCTSTR src, int len)
 }
 
 
-inline LPTSTR strFind(LPCSTR psz, LPCSTR pszSearch) { return StrStr(psz, pszSearch); }
-inline LPTSTR strFind(LPCSTR psz, TCHAR c)
+inline LPTSTR strFind(LPCTSTR psz, LPCTSTR pszSearch) { return StrStr(psz, pszSearch); }
+inline LPTSTR strFind(LPCTSTR psz, TCHAR c)
 {
 	for (;;) {
 		if (!*psz)
@@ -299,15 +296,14 @@ public:
 	
 	bool loadString(UINT id)
 	{
-		for (int buf = 128;; buf *= 2) {
-			const int len = ::loadString(id, getBuffer(buf), buf);
-			if (!len) {
-				*m_psz = 0;
-				return false;
-			}
-			if (len < buf - 1)
-				return true;
+		const STRING_RESOURCE *const pResource = ::loadStringResource(id);
+		if (!pResource) {
+			*m_psz = 0;
+			return false;
 		}
+		
+		pResource->copy(getBuffer(pResource->len), pResource->len);
+		return true;
 	}
 	
 	
@@ -501,6 +497,8 @@ protected:
 		if (buf > m_buf) {
 			buf *= 2;
 			m_psz = bufferRealloc(m_psz, buf);
+			if (!m_buf)
+				*m_psz = _T('\0');
 			m_buf = buf;
 		}
 	}
