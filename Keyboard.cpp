@@ -43,7 +43,7 @@ static LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 
 
 // Shortcut keystroke and conditions dialog box
-BOOL CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
+INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 {
 	switch (uMsg) {
 		
@@ -105,7 +105,7 @@ BOOL CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 			break;
 	}
 	
-	return FALSE;
+	return 0;
 }
 
 
@@ -148,7 +148,7 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 				for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
 					if (wParam == e_aSpecialKey[i].vk)
 						bIsSpecial = true;
-					if (GetKeyState(e_aSpecialKey[i].vk) & 0x80)
+					if (IsKeyDown(e_aSpecialKey[i].vk))
 						s_ks.m_vkFlags |= e_aSpecialKey[i].vkFlags;
 					else if (!s_ks.m_vk)
 						s_ks.m_vkFlags &= ~e_aSpecialKey[i].vkFlags;
@@ -158,7 +158,7 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 				if (uMsg == WM_KEYDOWN || uMsg == WM_SYSKEYDOWN) {
 					s_ksReset = false;
 					if (!bIsSpecial)
-						s_ks.m_vk = (BYTE)wParam;
+						s_ks.m_vk = Keystroke::filterVK((BYTE)wParam);
 				}else
 					s_ksReset |= !bIsSpecial;
 			}
@@ -233,7 +233,7 @@ bool Keystroke::isKeyExtended(UINT vk)
 // Get a key name and add it to pszHotKey
 void Keystroke::getKeyName(UINT vk, LPTSTR pszHotKey)
 {
-	long lScan = (::MapVirtualKey(vk, 0)<<16) | (1L<<25);
+	long lScan = (::MapVirtualKey(LOBYTE(vk), 0)<<16) | (1L<<25);
 	if (isKeyExtended(vk))
 		lScan |= 1L<<24;
 	
@@ -257,15 +257,19 @@ bool Keystroke::match(BYTE vk, WORD vkFlags, const int aiCondState[]) const
 // Register the hotkey
 void Keystroke::registerHotKey()
 {
-	TCHAR pszHotKey[bufHotKey];
-	RegisterHotKey(NULL, getKeyName(pszHotKey, true), m_vkFlags, m_vk);
+	if (m_vk == VK_NUMPAD5)
+		RegisterHotKey(NULL, MAKEWORD(VK_CLEAR, m_vkFlags), m_vkFlags, VK_CLEAR);
+	
+	RegisterHotKey(NULL, MAKEWORD(m_vk, m_vkFlags), m_vkFlags, m_vk);
 }
 
 // Unregister the hotkey
 bool Keystroke::unregisterHotKey()
 {
-	TCHAR pszHotKey[bufHotKey];
-	return ToBool(UnregisterHotKey(NULL, getKeyName(pszHotKey, true)));
+	if (m_vk == VK_NUMPAD5)
+		UnregisterHotKey(NULL, MAKEWORD(VK_CLEAR, m_vkFlags));
+	
+	return ToBool(UnregisterHotKey(NULL, MAKEWORD(m_vk, m_vkFlags)));
 }
 
 
@@ -310,13 +314,24 @@ void Keystroke::serialize(LPTSTR psz)
 			
 			*pcNext = cOldNext;
 			
-			for (int vk = VK_BACK; vk < 256; vk++) {
-				TCHAR pszHotKey[bufHotKey] = _T("");
-				getKeyName(vk, pszHotKey);
-				
-				if (!lstrcmpi(psz, pszHotKey)) {
-					m_vk = (BYTE)vk;
-					break;
+			for (int vk = 0x07; vk < 0xFF; vk++) {
+				if (vk == 0x0A)
+					vk = 0x0B;
+				else if (vk == 0x5E || vk == 0xE0)
+					continue;
+				else if (vk == 0xB8)
+					vk = 0xB9;
+				else if (vk == 0xC1)
+					vk = 0xD7;
+				else if (vk == 0xA0)
+					vk = 0xA5;
+				else{
+					TCHAR pszHotKey[bufHotKey] = _T("");
+					getKeyName(vk, pszHotKey);
+					if (!lstrcmpi(psz, pszHotKey)) {
+						m_vk = filterVK((BYTE)vk);
+						break;
+					}
 				}
 			}
 			
@@ -331,47 +346,60 @@ void Keystroke::serialize(LPTSTR psz)
 }
 
 
-// Simulate the typing of the keystroke
-void Keystroke::simulateTyping() const
+void Keystroke::keybdEvent(UINT vk, bool bUp)
 {
-	BYTE abKeys[256];
-	ZeroMemory(abKeys, sizeof(abKeys));
-	
-	int i;
-	
-	// Reset the keyboard
-	SetKeyboardState(abKeys);
-	
-	// Press the special keys
-	for (i = 0; i < nbArray(e_aSpecialKey); i++)
-		if (m_vkFlags & e_aSpecialKey[i].vkFlags)
-			keybd_event(e_aSpecialKey[i].vk, 0, 0, 0);
-		else
-			keybd_event(e_aSpecialKey[i].vk, 0, KEYEVENTF_KEYUP, 0);
-	
-	// Press and release the main key
-	const DWORD dwFlags = (isKeyExtended(m_vk)) ? KEYEVENTF_EXTENDEDKEY : 0;
-	keybd_event(m_vk, 0, dwFlags, 0);
-	keybd_event(m_vk, 0, dwFlags | KEYEVENTF_KEYUP, 0);
-	
-	// Release the special keys
-	for (i = 0; i < nbArray(e_aSpecialKey); i++)
-		if (m_vkFlags & e_aSpecialKey[i].vkFlags)
-			keybd_event(e_aSpecialKey[i].vk, 0, KEYEVENTF_KEYUP, 0);
-	
-	// Reset the keyboard again
-	SetKeyboardState(abKeys);
+	DWORD dwFlags = (bUp) ? KEYEVENTF_KEYUP : 0;
+	if (isKeyExtended(vk))
+		dwFlags |= KEYEVENTF_EXTENDEDKEY;
+	keybd_event((BYTE)vk, (BYTE)MapVirtualKey(vk, 0), dwFlags, 0);
 }
 
 
-// Get the keyboard focus and the focus window
-void Keystroke::catchKeyboardFocus(HWND& rhwndFocus)
+// Simulate the typing of the keystroke
+void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bAltCode) const
 {
-	const DWORD idThreadTo = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
-	const DWORD idThread   = GetCurrentThreadId();
-	AttachThreadInput(idThread, idThreadTo, TRUE);
-	rhwndFocus = GetFocus();
-	AttachThreadInput(idThread, idThreadTo, FALSE);
+	// Press the special keys
+	if (!bAltCode)
+		for (int i = 0; i < nbArray(e_aSpecialKey); i++)
+			if (m_vkFlags & e_aSpecialKey[i].vkFlags)
+				keybdEvent(e_aSpecialKey[i].vk, false);
+	
+	// Press and release the main key
+	keybdEvent(m_vk, false);
+	sleepBackground(0);
+	keybdEvent(m_vk, true);
+	
+	// Release the special keys
+	if (!bAltCode)
+		for (int i = 0; i < nbArray(e_aSpecialKey); i++)
+			if (m_vkFlags & e_aSpecialKey[i].vkFlags)
+				keybdEvent(e_aSpecialKey[i].vk, true);
+}
+
+
+// Get the keyboard focus window
+HWND Keystroke::getKeyboardFocus()
+{
+	HWND hwndFocus;
+	DWORD idThread;
+	catchKeyboardFocus(hwndFocus, idThread);
+	detachKeyboardFocus(idThread);
+	return hwndFocus;
+}
+
+// Get the keyboard focus and the focus window
+void Keystroke::catchKeyboardFocus(HWND& rhwndFocus, DWORD& ridThread)
+{
+	const HWND hwndForeground = GetForegroundWindow();
+	ridThread = GetWindowThreadProcessId(hwndForeground, NULL);
+	AttachThreadInput(GetCurrentThreadId(), ridThread, TRUE);
+	const HWND hwndFocus = GetFocus();
+	rhwndFocus = (hwndFocus) ? hwndFocus : hwndForeground;
+}
+
+void Keystroke::detachKeyboardFocus(DWORD idThread)
+{
+	AttachThreadInput(GetCurrentThreadId(), idThread, FALSE);
 }
 
 
@@ -416,8 +444,7 @@ void iniLoad()
 {
 	e_bIconVisible = true;
 	
-	for (int i = 0; i < colCount; i++)
-		e_acxCol[i] = s_acxColOrig[i];
+	memcpy(e_acxCol, s_acxColOrig, sizeof(s_acxColOrig));
 	
 	TCHAR pszIniFile[MAX_PATH];
 	iniGetPath(pszIniFile);
@@ -509,7 +536,10 @@ void iniSave()
 		wsprintf(psz, (i == 0) ? _T("=%d") : _T(",%d"), e_acxCol[i]);
 		writeFile(hf, psz);
 	}
-	writeFile(hf, _T("\r\n"));
+	
+	wsprintf(psz, _T("\r\n%s=%d\r\n\r\n"),
+		getToken(tokSorting), Shortcut::s_iSortColumn);
+	writeFile(hf, psz);
 	
 	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
 		psh->save(hf);
@@ -542,8 +572,9 @@ bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[]) const
 	for (int i = 0; i < condTypeCount; i++)
 		VERIF(m_aCond[i] == condIgnore || ks.m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
 	
-	if (!asProgram || m_sPrograms.isEmpty())
-		return true;
+	const bool bIsEmpty = m_sPrograms.isEmpty();
+	if (bIsEmpty || !asProgram)
+		return bIsEmpty && !asProgram;
 	
 	for (int i = 0; asProgram[i].isSome(); i++)
 		if (containsProgram(asProgram[i]))
@@ -659,7 +690,7 @@ bool Keystroke::askSendKeys(HWND hwndParent, Keystroke& rks)
 }
 
 
-BOOL CALLBACK Keystroke::prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
+INT_PTR CALLBACK Keystroke::prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 {
 	switch (uMsg) {
 		
@@ -685,5 +716,5 @@ BOOL CALLBACK Keystroke::prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
 			break;
 	}
 	
-	return FALSE;
+	return 0;
 }

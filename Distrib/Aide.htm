@@ -26,9 +26,14 @@ text-decoration: none;
 display: block;
 padding: 2px 0px;
 }
-.toc a:hover {
+a:hover {
 color: red;
 text-decoration: underline;
+}
+
+.ipt {
+font-weight: bold;
+color: red;
 }
 
 .faq-question {
@@ -131,13 +136,14 @@ E-mail&nbsp;: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd
 <ul>
 <li>lancer un programme&nbsp;: Word, calculatrice, navigateur Internet, etc.</li>
 <li>afficher un site Internet</li>
-<li>ouvrir un dossier&nbsp;: <i>Mes documents</i>, <kbd>C:</kbd>, lecteur de CD-Rom, etc.</li>
+<li>ouvrir un dossier&nbsp;: <i>Mes documents</i>, disque <kbd>C:</kbd>, lecteur de CD-Rom, etc.</li>
 <li>écrire des caractères spéciaux&nbsp;: majuscules accentuées, symboles ® et ©, etc.</li>
 <li>écrire du texte&nbsp;: adresse e-mail, formule de politesse, etc. dans n’importe quel programme (Word, navigateur Internet, bloc-notes)</li>
 <li>simuler des frappes de touches, notamment pour exécuter une commande située dans le menu d’un programme</li>
+<li>simuler des clics de souris ou des actions sur la molette</li>
 </ul>
 
-<p>Les raccourcis clavier peuvent utiliser (presque) toutes les touches du clavier. La touche Windows (à gauche et à droite de la touche <kbd>Espace</kbd>) peut être employée en complément de Ctrl, Alt et Maj. Comme les logiciels utilisent rarement cette touche, de nombreux raccourcis clavier simples sont disponibles&nbsp;: Win + A, Win + B, Win + C, etc.</p>
+<p>Les raccourcis clavier peuvent utiliser (presque) toutes les touches du clavier. La touche Windows, située à côté de la barre d’espace, peut être employée en complément de <kbd>Ctrl</kbd>, <kbd>Alt</kbd> et <kbd>Maj</kbd>. Comme les logiciels utilisent rarement cette touche, de nombreux raccourcis clavier simples sont disponibles&nbsp;: <kbd>Win + A</kbd>, <kbd>Win + é</kbd>, <kbd>Win + =</kbd>, etc.</p>
 
 <p>Clavier+ peut également modifier le comportement des touches spéciales comme <kbd>²</kbd> ou <kbd>F11</kbd>. On peut ainsi associer à une action fréquence un raccourci clavier à une seule touche.</p>
 
@@ -152,40 +158,42 @@ E-mail&nbsp;: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd
 
 <p>Lancez Clavier+. Une icône en forme de clavier apparaît à côté de l’horloge&nbsp;: elle indique que Clavier+ est lancé, donc que les raccourcis clavier sont actifs. Cliquez sur l’icône pour afficher la fenêtre de configuration. Vous pouvez redimensionner la fenêtre si vous la trouvez trop petite. La zone supérieure contient la liste des raccourcis créés. Plusieurs sont créés initialement, à titre d’exemple.</p>
 
-<p>Pour créer un nouveau raccourci, cliquez sur le bouton <kbd>Ajouter</kbd> (en forme de +), et choisissez l’action du raccourci clavier&nbsp;:</p>
+<p>Pour créer un nouveau raccourci, cliquez sur le bouton <i>Ajouter</i> (en forme de +), et choisissez l’action du raccourci clavier&nbsp;:</p>
 <ul>
 <li><b>Programme&nbsp;:</b> exécuter un programme du menu Démarrer</li>
 <li><b>Favori Internet&nbsp;:</b> afficher un site Internet référencé dans les favoris d’Internet Explorer (si vous utilisez un autre navigateur, par exemple Firefox, choisissez <i>Afficher un site Internet</i> plus bas dans le menu)</li>
 <li><b>Caractère spécial&nbsp;:</b> écrire un caractère spécial</li>
-<li><b>Dossier&nbsp;:</b> ouvrir un dossier dans l’explorateur</li>
-<li><b>Écrire du texte&nbsp;:</b> simuler la frappe d’un texte, avec éventuellement l’exécution de raccourcis clavier intermédiaires (par exemple la touche <kbd>Tab</kbd> pour remplir d’un seul coup tous les champs d’un formulaire)</li>
+<li><b>Ouvrir un dossier&nbsp;:</b> afficher le contenu d’un dossier dans l’explorateur</li>
+<li><b>Écrire du texte&nbsp;:</b> simuler la frappe d’un texte, avec éventuellement l’exécution de raccourcis clavier intermédiaires (par exemple la touche <kbd>Tab</kbd> pour passer au champ suivant dans un formulaire) ou le lancement de commandes spéciales (clics de souris, modification du presse-papiers, …).</li>
 <li><b>Lancer un programme</b>&nbsp;: lancer un programme absent du menu Démarrer, ou exécuter une ligne de commande quelconque</li>
 <li><b>Afficher un site Internet</b>&nbsp;: afficher un site Internet absent des favoris d’Internet Explorer</li>
 </ul>
 
 <p>Ensuite, une boîte de dialogue apparaît pour saisir le raccourci clavier. Effectuez votre raccourci clavier dans la zone prévue à cet effet&nbsp;: son nom devrait s’écrire dans la zone. Cliquez enfin sur <i>OK</i>.</p>
 
-<p>Si nécessaire, modifiez l’action du raccourci dans la moitié inférieure de la boîte de dialogue. Si le raccourci doit écrire du texte, par exemple une formule de politesse, vérifiez que l’option <kbd>Écrire</kbd> est cochée puis entrez le texte voulu dans la zone située juste en bas. À chaque fois que le raccourci sera effectué, le texte spécifié sera écrit. Vous pouvez utiliser le bouton en forme de flèche pour insérer des caractères spéciaux ou simuler un raccourci clavier.</p>
+<p>Si nécessaire, modifiez l’action du raccourci dans la moitié inférieure de la boîte de dialogue. Si le raccourci doit écrire du texte, par exemple une formule de politesse, vérifiez que l’option <i>Écrire du texte</i> est cochée puis entrez le texte voulu dans la zone située en-dessous. À chaque fois que le raccourci sera effectué, le texte spécifié sera écrit. Vous pouvez utiliser le bouton en forme de flèche pour insérer des caractères spéciaux ou simuler une frappe de touches.</p>
 
 <p>Si le raccourci doit lancer un programme ou afficher un site Internet, cochez l’option correspondante. Entrez le chemin d’accès du programme ou l’adresse du site Web dans la zone. Vous pouvez cliquer sur le petit bouton situé à droite pour chercher le programme à lancer. Vous pouvez vérifier que le programme ou le site Internet est correct avec le bouton <i>Tester</i>. Si nécessaire, cliquez sur le bouton <i>Paramètres avancés</i> pour régler le répertoire de démarrage du programme ou son mode d’affichage (plein écran, fenêtré, réduit).</p>
 
-<p><b>Important&nbsp;:</b> vous devez fermer la fenêtre de Clavier+ <i>avant</i> de tester vos raccourcis clavier. Tant que la fenêtre est visible, les raccourcis clavier sont désactivés.</p>
+<p><span class="ipt">Important&nbsp;:</span> vous devez fermer la fenêtre de Clavier+ <i>avant</i> de tester vos raccourcis clavier. Tant que la fenêtre est visible, les raccourcis clavier sont désactivés.</p>
 
 
 <h2 id="conditions">Conditions sur les raccourcis</h2>
 
-<p>Vous pouvez limiter la reconnaissance du raccourci à certaines conditions. Si toutes les conditions sont vérifiées, l’action associée au raccourci est exécutée. Si une ou plusieurs conditions ne sont pas remplies, Clavier+ ignore le raccourci, et l’action originale du raccourci est effectuée (celle de Windows ou du programme actif). Cela permet de donner des significations différentes au même raccourci clavier.</p>
+<p>Vous pouvez limiter la reconnaissance du raccourci à certaines conditions. Si toutes les conditions sont vérifiées, l’action associée au raccourci est exécutée. Si une ou plusieurs conditions ne sont pas remplies, Clavier+ ignore le raccourci, et l’action originale du raccourci est effectuée (celle de Windows ou du programme actif). Cela permet de donner des effets différents au même raccourci clavier.</p>
 
-<p><b>Attention&nbsp;!</b> Si vous créez plusieurs entrées pour le même raccourci, veillez à leur affecter des conditions mutuellement exclusives. Dans le cas contraire, un message d’erreur s’affichera avant la validation.</p>
+<p><span class="ipt">Attention&nbsp;!</span> Si vous créez plusieurs entrées pour le même raccourci, veillez à leur affecter des conditions mutuellement exclusives. Dans le cas contraire, un message d’erreur s’affichera avant la validation.</p>
 
 
 <h3>Programme actif</h3>
 
-<p>Vous pouvez restreindre un raccourci à certains programmes. Cela permet de donner des significations différentes au même raccourci clavier, selon le programme courant.</p>
+<p>Vous pouvez restreindre un raccourci à certains programmes. Cela permet de donner des effets différents au même raccourci clavier, selon le programme courant.</p>
 
 <p>Pour définir la liste des programmes pour lesquels le raccourci clavier est activé, sélectionnez le raccourci dans la liste. Ensuite, cliquez sur le viseur noir sur fond blanc situé en bas à droite, et laissez le bouton de la souris enfoncé. Déplacez le viseur sur la fenêtre du programme voulu (par exemple, une fenêtre de Word ou de l’explorateur). Le nom du programme s’inscrit dans la zone située à gauche du viseur. Répétez l’opération pour chaque programme à ajouter.</p>
 
 <p>Quand liste de programmes est vide, le raccourci est actif quel que soit le programme courant. Quand la zone n’est pas vide, le raccourci clavier n’est actif que pour les programmes spécifiés. Il est possible d’ajouter plusieurs programmes à la liste, séparés par des points-virgules.</p>
+
+<p>Si vous créez un raccourci sans condition pour les programmes, et une copie avec une condition sur les programmes, le premier sera utilisé pour tous les programmes sauf ceux que vous avez spécifiés pour le second raccourci.</p>
 
 
 <h3>État des touches bascule</h3>
@@ -197,32 +205,87 @@ E-mail&nbsp;: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd
 
 <h2 id="text">Format du texte écrit par les raccourcis</h2>
 
-<p>Dans la zone de texte <kbd>Écrire</kbd>, vous pouvez ordonner l’exécution d’autres raccourcis clavier. Pour cela il suffit d’écrire le raccourci clavier entre crochets, à l’endroit où il doit être effectué. Par exemple&nbsp;:<br />
-<kbd>[Ctrl + O]</kbd></p>
+<p>Dans la zone de texte <i>Écrire du texte</i>, vous pouvez ordonner l’exécution de plusieurs actions&nbsp;:</p>
 
-<p>Pour connaître le nom des touches spéciales, vous devez recopier le nom du raccourci tel qu’indiqué lors de l’ajout d’un raccourci. Par exemple, pour connaître le nom de la touche <i>étoile du pavé numérique</i>, cliquez sur le bouton en forme de + puis appuyez sur la touche étoile. Son nom s’affiche alors: <kbd>* (PAVE NUM.)</kbd>. Il faudra donc écrire <kbd>[* (PAVE NUM.)]</kbd> pour simuler l’appui de cette touche. Veillez bien à conserver les symboles spéciaux du nom de la touche: points, parenthèses, accents, etc.</p>
 
-<p>Si vous avez besoin d’insérer le caractère <kbd>[</kbd> sans marquer le début d’un raccourci, vous devez le faire précéder d’un antislash. Par exemple&nbsp;:<br />
-<kbd>Ceci est un crochet ouvrant: \[</kbd></p>
+<h3>Écrire du texte</h3>
 
-<p>De même, pour entrer le caractère antislash, vous devez le mettre en double&nbsp;: <kbd>Voici un seul antislash: \\</kbd></p>
+<p>Il suffit d’écrire votre texte tel quel. La commande <i>Écrire un caractère</i> du menu en forme de flèche permet d’écrire les caractères inaccessibles au clavier.</p>
 
-<p>Clavier+ envoie les raccourcis à la fenêtre active au début. Si vous demandez l’exécution d’un raccourci qui change la fenêtre active (par exemple <kbd>[Ctrl + O]</kbd>, vous devez ordonner à Clavier+ de se focaliser sur la nouvelle fenêtre active. Pour cela, insérez le raccourci vide&nbsp;: <kbd>[]</kbd>. Clavier+ fera une pause de 100 millisecondes et recherchera la nouvelle fenêtre active. Exemple&nbsp;:<br />
-<kbd>[Ctrl + O][][][]MonFichier.txt</kbd></p>
 
-<p>Pour exécuter un programme au milieu d’une saisie de texte, écrivez le chemin d’accès du programme entre doubles crochets&nbsp;:<br />
+<h3>Simuler des frappes de touches</h3>
+
+<p>Utilisez la commande <i>Simuler une frappe de touches</i> du menu en forme de flèche pour écrire le code correspondant à la frappe de touches souhaitée. Typiquement, ce code est le nom de la combinaison de touches entre crochets, par exemple <kbd>[Ctrl+O]</kbd>.</p>
+
+<p>Notez que simuler une frappe de touches permet d’effectuer de nombreuses actions, notamment manipuler le presse-papiers (avec <kbd>Ctrl+C</kbd> et <kbd>Ctrl+V</kbd>) ou exécuter une commande dans un menu (avec <kbd>Alt+<i>lettre</i></kbd>).</p>
+
+
+<h3>Lancer un programme</h3>
+
+<p>Utilisez la commande <i>Lancer un programme</i> du menu en forme de flèches, ou bien écrivez la ligne de commande à exécuter entre double crochets. Par exemple, pour ouvrir un fichier texte et aller à la fin&nbsp;:<br />
+<kbd>[[notepad.exe C:\\urgent.txt]][][Ctrl+Fin]</kbd></p>
+
+<p>Cette syntaxe permet de lancer plusieurs programmes à la fois avec le même raccourci. Par exemple, pour lancer le bloc-notes et la calculatrice&nbsp;:<br />
+<kbd>[[notepad.exe]][[calc.exe]]</kbd></p>
+
+<p>La ligne de commande peut contenir des variables d’environnement entre <kbd>%</kbd>, par exemple <kbd>explorer.exe %WINDIR%</kbd> pour ouvrir l’explorateur au répertoire d’installation de Windows. La variable d’environnement <kbd>%CLIPBOARD%</kbd> contiendra le texte actuellement présent dans le presse-papiers.</p>
+
+
+<h3>Faire une pause</h3>
+
+<p>Si vous enchaînez plusieurs actions, il peut être utile de leur laisser le temps de s’exécuter. Pour cela écrivez une paire de crochets&nbsp;: <kbd>[]</kbd>. Cela attendra 100 millisecondes et détectera la nouvelle fenêtre active.</p>
+
+<p>Ce dernier point est très important. Si vous simulez une frappe de touches qui affiche une nouvelle fenêtre (par exemple <kbd>Ctrl+O</kbd> qui affiche la fenêtre <i>Ouvrir</i>) et qu’ensuite vous simulez de la frappe de texte (par exemple le nom d’un fichier), il faut indiquer à Clavier+ de taper le texte dans la <em>nouvelle</em> fenêtre affichée&nbsp;:<br />
+<kbd>[Ctrl+O][]MonFichier.txt[ENTREE]</kbd></p>
+
+<p>Même remarque si vous lancez un programme. Il faut demander à Clavier+ de se repositionner sur la nouvelle fenêtre active, en général celle du programme lancé&nbsp;:<br />
 <kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd><br />
-Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, lance le bloc-notes, puis y colle le texte copié. Le <kbd>[]</kbd> est très important, il indique à Clavier+ de coller dans la <em>nouvelle</em> fenêtre active, c’est-à-dire celle du bloc-notes.</p>
+Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, lance le bloc-notes, puis y colle le texte copié. Le <kbd>[]</kbd> est très important, il indique à Clavier+ de coller dans la <em>nouvelle</em> fenêtre active, c’est-à-dire celle du bloc-notes qui vient de s’ouvrir.</p>
+
+
+<h3>Exécuter des commandes spéciales</h3>
+
+<p>Le menu en forme de flèche rappelle la liste des commandes gérées.</p>
+
+<dl>
+<dt><kbd>[{Wait,<i>durée</i>}]</kbd></dt>
+<dd>Faire une pause de la durée spécifiée, en millisecondes.</dd>
+
+<dt><kbd>[{Focus}]</kbd></dt>
+<dd>Détecter la nouvelle fenêtre active. Utile si une frappe de touches affiche une nouvelle fenêtre dans laquelle il faut écrire. La commande <kbd>[]</kbd> est souvent préférable car elle effectue également une petite pause.</dd>
+
+<dt><kbd>[{Copy,<i>texte</i>}]</kbd></dt>
+<dd>Copier le texte spécifié dans le presse-papiers. Attention&nbsp;! Cette commande n’a aucun rapport avec le raccourci clavier <kbd>Ctrl+C</kbd> qui elle copie la <i>sélection</i> dans le presse-papiers. Si vous utilisez la séquence de touches <kbd>[Ctrl+V]</kbd> par la suite, cela permet d’écrire rapidement de très longs textes, ou d’écrire plusieurs fois le même texte. L’exemple suivant écrit cinq fois le même texte&nbsp;:<br />
+<kbd>[{Copy,Une longue suite de mots. }][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd></dd>
+
+<dt><kbd>[{MouseButton,<i>code</i>}]</kbd></dt>
+<dd>Simuler une action sur les boutons de la souris. <i>code</i> spécifie l’action à effectuer. Il est constitué d’une ou deux lettres. La première, obligatoire, indiquant le bouton concerné&nbsp;: <kbd>L</kbd> = bouton gauche, <kbd>M</kbd> = bouton du milieu, <kbd>R</kbd> = bouton droit. La seconde, facultative, indique l’action à effectuer&nbsp;: <kbd>D</kbd> = enfoncer le bouton, <kbd>U</kbd> = le relâcher. Si la seconde lettre est absente, le bouton est enfoncé puis relâché&nbsp;: cela simule un clic. Par exemple, pour effectuer un double-clic avec le bouton gauche&nbsp;:<br />
+<kbd>[{MouseButton,L}][{MouseButton,L}]</kbd></dd>
+
+<dt><kbd>[{MouseWheel,<i>ticks</i>}]</kbd></dt>
+<dd>Simuler une action sur la molette de la souris. <i>ticks</i> indique le nombre de roulements de molette à simuler. Spécifier une valeur positive pour défiler vers le bas, négative pour défiler vers le haut. Par exemple, pour défiler d’un cran vers le haut&nbsp;:<br />
+<kbd>[{MouseWheel,-1}]</kbd></dd>
+</dl>
+
+
+<h3>Caractères spéciaux</h3>
+
+<p>Si vous avez besoin d’insérer les caractères <kbd>[</kbd>, <kbd>]</kbd>, <kbd>{</kbd>, <kbd>}</kbd> ou <kbd>|</kbd>, vous devez le faire précéder d’un antislash. Par exemple&nbsp;:<br />
+<kbd>Ceci est un crochet ouvrant: \[, ceci est un seul antislash: \\</kbd><br />
+Le menu en forme de flèche rappelle la liste des caractères spéciaux.</p>
+
+<p>Vous devez écrire un antislash devant les caractères spéciaux partout dans le texte du raccourci, y compris dans les balises spéciales de frappe de touches ou d’exécution de programmes&nbsp;:<br />
+<kbd>[[notepad.exe document\[1\].txt]]</kbd> pour ouvrir le fichier nommé <kbd>document[1].txt</kbd> avec le bloc-notes</p>
 
 
 <h2 id="print">Imprimer la liste des raccourcis clavier</h2>
 
-<p>Dans la fenêtre de Clavier+, cliquez sur le bouton <kbd>Copier la liste</kbd>. Cela place la liste des raccourcis clavier dans le presse-papiers&nbsp;: vous pouvez ensuite la coller dans le logiciel de votre choix pour l’imprimer. Si vous utilisez Word, vous pouvez la mettre sous forme de tableaux&nbsp;: lancez Word, collez la liste avec <kbd>Ctrl+V</kbd>, sélectionnez-là avec <kbd>Ctrl+A</kbd>, puis cliquez sur le bouton <kbd>Insérer un tableau</kbd>.</p>
+<p>Dans la fenêtre de Clavier+, cliquez sur le bouton <i>Copier la liste</i>. Cela place la liste des raccourcis clavier dans le presse-papiers&nbsp;: vous pouvez ensuite la coller dans le logiciel de votre choix pour l’imprimer. Si vous utilisez Word, vous pouvez la mettre sous forme de tableaux&nbsp;: lancez Word, collez la liste avec <kbd>Ctrl+V</kbd>, sélectionnez-là avec <kbd>Ctrl+A</kbd>, puis cliquez sur le bouton <i>Insérer un tableau</i>.</p>
 
 
 <h2 id="conffile">Fichier de configuration</h2>
 
-<p>Le fichier <kbd>Clavier.ini</kbd> contient tous les paramètres. Le programme ne met rien dans la base de registre, à l’exception de l’option <kbd>Lancer Clavier+ au démarrage de Windows</kbd>.</p>
+<p>Le fichier <kbd>Clavier.ini</kbd> contient tous les paramètres. Le programme ne met rien dans la base de registre, à l’exception de l’option <i>Lancer Clavier+ au démarrage de Windows</i>.</p>
 
 <p>Si vous voulez ajouter d’un seul coup de nombreux raccourcis, voici le format du fichier de configuration&nbsp;:</p>
 
@@ -242,6 +305,7 @@ Paramètres du second raccourci
 Langue=Français <i>ou</i> English <i>ou</i> Deutsch
 Taille=<i>largeur</i>,<i>hauteur</i>,<i>agrandie</i>,<i>masquer icône</i>
 Colonnes=<i>largeur 1</i>,<i>largeur 2</i>,<i>largeur 3</i>
+Tri=<i>numéro colonne</i>
 </pre>
 
 <dl>
@@ -253,6 +317,9 @@ Colonnes=<i>largeur 1</i>,<i>largeur 2</i>,<i>largeur 3</i>
 
 <dt><kbd>Colonnes</kbd></dt>
 <dd>Indique la largeur des trois premières colonnes dans la fenêtre de configuration. Chaque largeur est un pourcentage relatif à la largeur totale de la liste. Elles sont séparées par des virgules. La dernière colonne occupe l’espace restant.</dd>
+
+<dt><kbd>Tri</kbd></dt>
+<dd>Indique le numéro de la colonne utilisée pour trier la liste. 0 pour la première colonne, 1 pour la seconde, et ainsi de suite.</dd>
 </dl>
 
 
@@ -294,7 +361,7 @@ pour le champ <kbd>Texte=</kbd>.</p>
 <dd>Taille initiale de la fenêtre du programme lancé, parmi&nbsp;: <kbd>Normale</kbd>, <kbd>Réduite</kbd>, <kbd>Agrandie</kbd>.</dd>
 
 <dt><kbd>Programmes</kbd></dt>
-<dd>Condition d’activation du raccourci&nbsp;: liste des seuls programmes pour lesquels le raccourci est activé. Si la liste est vide, le raccourci est actif dans tous les programmes. Les programmes sont séparés par des points-virgules, et n’ont pas de chemin d’accès&nbsp;: nom seul, avec extension.</dd>
+<dd>Condition d’activation du raccourci&nbsp;: liste des seuls programmes pour lesquels le raccourci est activé. Si la liste est vide, le raccourci est actif dans tous les programmes, sauf ceux faisant l’objet d’une condition spécifique dans un autre raccourci. Les programmes sont séparés par des points-virgules, et n’ont pas de chemin d’accès&nbsp;: nom seul, avec extension.</dd>
 
 <dt><kbd>VerrMaj</kbd>, <kbd>VerrNum</kbd>, <kbd>ArrêtDéfil</kbd></dt>
 <dd>Si présents, définissent une condition d’activation du raccourci. Valeurs possibles&nbsp;: <kbd>Aucune</kbd> (valeur par défaut), <kbd>Oui</kbd> et <kbd>Non</kbd>.</dd>
@@ -303,21 +370,24 @@ pour le champ <kbd>Texte=</kbd>.</p>
 
 <h2 id="limits">Limitations</h2>
 
+
+<h3>Raccourcis indisponibles</h3>
+
 <p>Certaines touches spéciales ne peuvent être utilisées&nbsp;:</p>
 <pre>
 Impr écran
 Pause
 </pre>
 
-<p>Les touches spéciales rafraîchir le navigateur, augmenter le volume, etc. sont partiellement supportées. On peut créer des raccourcis les utilisant, et même modifier leur comportement d’origine. Cependant, ceci peut surprendre, l’action de ces touches s’exécute lorsqu’on les enfonce dans la boîte de dialogue <kbd>Ajouter</kbd>. De plus, comme Windows ne propose pas de méthode générique pour récupérer le nom de ces touches spéciales, elles s’affichent sous la forme d’un numéro (par exemple&nbsp;: <kbd>#183</kbd>).</p>
+<p>Les touches spéciales rafraîchir le navigateur, augmenter le volume, etc. sont partiellement supportées. On peut créer des raccourcis les utilisant, et même modifier leur comportement d’origine. Cependant, ceci peut surprendre, l’action de ces touches s’exécute lorsqu’on les enfonce dans la boîte de dialogue <i>Ajouter</i>. De plus, comme Windows ne propose pas de méthode générique pour récupérer le nom de ces touches spéciales, elles s’affichent sous la forme d’un numéro (par exemple&nbsp;: <kbd>#183</kbd>).</p>
 
 <p>Les raccourcis standards de Windows ne peuvent être modifiés. En voici une liste non exhaustive&nbsp;:</p>
 
 <table><colgroup><col width="30%"/><col/></colgroup>
 <tr><td><kbd>Ctrl + Alt + SUPPR</kbd></td><td>permet de fermer un programme</td></tr>
 <tr><td><kbd>F12</kbd></td><td>réservé au débogueur</td></tr>
-<tr><td><kbd>Alt + TAB</kbd></td><td>active le programme suivant</td></tr>
-<tr><td><kbd>Alt + Maj + TAB</kbd></td><td>active le programme précédent</td></tr>
+<tr><td><kbd>Alt + Tab</kbd></td><td>active le programme suivant</td></tr>
+<tr><td><kbd>Alt + Maj + Tab</kbd></td><td>active le programme précédent</td></tr>
 <tr><td><kbd>Win + B</kbd></td><td>active le focus dans la barre d’icônes à côté de l’horloge</td></tr>
 <tr><td><kbd>Win + D</kbd></td><td>réduit toutes les fenêtres; un autre appui retourne à l’état antérieur</td></tr>
 <tr><td><kbd>Win + E</kbd></td><td>lance l’explorateur</td></tr>
@@ -335,43 +405,32 @@ Pause
 </table>
 
 
+<h3>Raccourcis déconseillés</h3>
+
+<p>Par défaut dans Windows, le raccourcis clavier <kbd>Alt+Maj gauche</kbd> sert à changer la langue du clavier. Il est vivement recommandé de ne pas utiliser de raccourci clavier de type <kbd>Alt+Maj+<i>touche</i></kbd>, car vous risqueriez de changer la langue du clavier sans le vouloir.</p>
+
+
+<h3>Programmes partiellement incompatibles</h3>
+
+<p>Clavier+ peut rencontrer des difficultés avec certaines programmes, notamment en ce qui concerne la frappe de texte et la simulation de frappe de touche&nbsp;:</p>
+<ul>
+<li>Certains programmes multi-plateforme, qui ne respectent pas les standards de Windows en matière de gestion du clavier. On peut citer les programmes <b>Java</b> comme <b>OpenOffice</b>, les logiciels Mozilla (<b>Firefox</b>, <b>Thunderbird</b>), <b>Opera</b>, etc. En cas de souci, utilisez la syntaxe <kbd>[|<i>texte</i>|]</kbd> pour forcer Clavier+ à écrire le texte en bas niveau (meilleure compatibilité mais plus lent et plus limité).</li>
+<li>Les <b>jeux</b>, car ils gèrent le clavier sans se soucier de Windows, et donc de Clavier+.</li>
+<li>Les programmes système, car là aussi ils gèrent le clavier de manière spéciale. On peut citer par exemple <kbd>command.com</kbd>, les émulateurs et machines virtuelles (Cygwin, VirtualPC), les logiciels de virtualisation (VNC).</li>
+</ul>
+
+
 <h2 id="faq">FAQ</h2>
 
 <p>Retrouvez la dernière version de la FAQ sur la <a href="http://utilfr42.free.fr/util/Clavier.php#faq">page de Clavier+</a>.</p>
 
-<div class="faq-question">Clavier+ ne fonctionne pas avec OpenOffice&nbsp;!</div>
-<div class="faq-answer"><p>OpenOffice est un programme Java qui gère le clavier de manière non-standard. Pour tout de même créer des raccourcis fonctionnant sous OpenOffice, vous pouvez&nbsp;:</p><ul><li>Mettre le nom des touches entre crochets, par exemple <kbd>[T][O][T][O]</kbd> pour <kbd>toto</kbd>, ou <kbd>[Maj+T][Maj+O][Maj+T][Maj+O]</kbd> pour <kbd>TOTO</kbd>. Notez qu’il faut écrire <kbd>Maj+<i>Lettre</i></kbd> pour les lettres majuscules.</li><li>Utiliser les fonctionnalités d’OpenOffice pour créer des raccourcis clavier. Le <a href="http://www.framasoft.net/article4178.html">tutoriel de Framasoft</a> vous y aidera.</li></ul></div>
-<div class="faq-question">Comment écrire de majuscules accentuées dans OpenOffice&nbsp;?</div>
-<div class="faq-answer"><p>La technique des crochets, <kbd>[É]</kbd>, ne fonctionne pas, car les crochets décrivent une touche physique (ici, la touche é/2/~ du clavier français), or cette touche ne permet pas d’écrire un É. Si l’on utilise <kbd>[Maj+é]</kbd> ou <kbd>[Maj+É]</kbd>, cela écrira un 2.</p><p>La seule solution simple consiste à créer un raccourci clavier dans OpenOffice lui-même. Le <a href="http://www.framasoft.net/article4178.html">tutoriel de Framasoft</a> vous y aidera.</p></div>
-<div class="faq-question">Clavier+ fonctionne-t-il avec les jeux&nbsp;?</div>
-<div class="faq-answer"><p>La plupart du temps, non. Les jeux ont un accès bas niveau sur le clavier, pour diverses raisons (rapidité, anti-triche, …).</p></div>
-<div class="faq-question">Comment faire écrire un retour à la ligne par un raccourci&nbsp;?</div>
-<div class="faq-answer"><p>Deux solutions&nbsp;:</p><ul><li>insérer un retour à la ligne dans la zone de texte, en appuyant sur la touche <kbd>Entrée</kbd>&nbsp;;</li><li>écrire le code <kbd>[ENTREE]</kbd> (sans accent&nbsp;!).</li></ul></div>
-<div class="faq-question">Comment simuler la touche <i>Machin</i>&nbsp;?</div>
-<div class="faq-answer"><p>Cliquez sur le bouton en forme de flèche, commande <i>Simuler un raccourci clavier</i>.</p></div>
-<div class="faq-question">Comment simuler un clic droit&nbsp;?</div>
-<div class="faq-answer"><p>Parfois, simuler la touche <i>Menu Contextuel</i> fonctionne. Avec la commande <i>Simuler un raccourci clavier</i> du bouton en forme de flèche, on constate que le code de cette touche est <kbd>#93</kbd>. Il suffit alors d’écrire <kbd>[#93]</kbd> pour simuler un clic-droit.</p></div>
-<div class="faq-question">Comment changer le volume&nbsp;?</div>
-<div class="faq-answer"><p>Il existe trois touches relatives au son&nbsp;:</p><ul><li>muet&nbsp;: code <kbd>[#173]</kbd></li><li>baisser le volume&nbsp;: code <kbd>[#174]</kbd></li><li>monter le volume&nbsp;: code <kbd>[#175]</kbd></li></ul><p>Vous pouvez également utiliser le programme <a href="http://utilfr42.free.fr/dn/VolumeManager.exe">VolumeManager</a> pour régler plus finement le volume.</p></div>
-<div class="faq-question">La case <i>Lancer Clavier+ au démarrage de Windows</i> ne fonctionne pas&nbsp;!</div>
-<div class="faq-answer"><p>Créez un raccourci vers <kbd>Clavier.exe</kbd> dans <i>Menu démarrer/Programmes/Démarrage</i>. Pour cela, cliquez avec le bouton droit sur <kbd>Clavier.exe</kbd>, laissez le bouton enfoncé et faites glisser la souris successivement sur le menu démarrer, puis <i>Programmes</i>, puis <i>Démarrage</i>, et relâchez le bouton une fois dans le menu. Choisissez <i>Créer un raccourci ici</i>.</p></div>
-<div class="faq-question">Comment masquer l’icône de Clavier+ à côté de l’horloge&nbsp;?</div>
-<div class="faq-answer"><p>Lancez Clavier+ puis quittez-le. Double-cliquez sur le fichier <kbd>Clavier.ini</kbd> situé dans le même répertoire que Clavier+. À la deuxième ligne, qui commence par <kbd>Taille=</kbd> remplacez le <i>dernier</i> zéro en un. Par exemple&nbsp;: <kbd>Taille=923,501,0,0</kbd> doit devenir <kbd>Taille=923,501,0,1</kbd>.</p><p>Comme l’icône de Clavier+ ne sera plus visible, vous devrez relancer Clavier+ pour afficher la fenêtre de configuration.</p></div>
-<div class="faq-question">Comment lancer deux programmes à la fois&nbsp;?</div>
-<div class="faq-answer"><p>La solution est de mettre le chemin d’accès des deux programmes entre double-crochets, dans la zone <kbd>Écrire</kbd>. Par exemple, pour lancer le bloc-notes et la calculatrice&nbsp;:</p><pre>[[notepad.exe]][[calc.exe]]</pre></div>
-<div class="faq-question">Comment faire des choses plus compliquées&nbsp;: écrire la date du jour, activer une application…&nbsp;?</div>
-<div class="faq-answer"><p>Vous pouvez créer un script VBScript et demander à Clavier+ de l’exécuter. La procédure générique est la suivante&nbsp;: lancez le bloc-notes, écrivez le texte de votre script, et enregistrez-le avec l’extension <kbd>.VBS</kbd>, puis associez-lui un raccourci-clavier avec Clavier+.</p><p>Quelques exemples de scripts&nbsp;:</p><ul><li>Écrire la date du jour dans le programme actif&nbsp;:<pre>set shell = WScript.CreateObject("WScript.Shell")
+<div class="faq-question">Clavier+ n’arrive pas à écrire de texte dans <i>MonProgrammePréféré</i>&nbsp;!</div><div class="faq-answer"><p>Certains programmes gèrent le clavier de manière non-standard. Il se peut que Clavier+ ne parvienne pas à écrire du texte normalement. Pour résoudre le problème, encadrez votre texte par <kbd>[|</kbd> à gauche et par <kbd>|]</kbd> à droite&nbsp;:</p><p><kbd>[|Mon texte|]</kbd></p></div><div class="faq-question">Clavier+ fonctionne-t-il avec les jeux&nbsp;?</div><div class="faq-answer"><p>La plupart du temps, non. Les jeux ont un accès bas niveau sur le clavier, pour diverses raisons (rapidité, anti-triche, …).</p></div><div class="faq-question">Comment faire écrire un retour à la ligne par un raccourci&nbsp;?</div><div class="faq-answer"><p>Deux solutions&nbsp;:</p><ul><li>insérer un retour à la ligne dans la zone de texte, en appuyant sur la touche <kbd>Entrée</kbd>&nbsp;;</li><li>si la solution précédente ne fonctionne pas, écrire le code <kbd>[ENTREE]</kbd> (sans accent&nbsp;!).</li></ul></div><div class="faq-question">Comment simuler la touche <i>Machin</i>&nbsp;?</div><div class="faq-answer"><p>Cliquez sur le bouton en forme de flèche, commande <i>Simuler une frappe de touches</i>.</p></div><div class="faq-question">Comment afficher le menu contextuel&nbsp;?</div><div class="faq-answer"><p>Simuler la touche <i>Menu Contextuel</i> permet d’afficher ce menu. Avec la commande <i>Simuler une frappe de touches</i> du bouton en forme de flèche, on constate que le code de cette touche est <kbd>#93</kbd>. Il suffit alors d’écrire <kbd>[#93]</kbd> pour afficher le menu contextuel. Pour afficher le menu contextuel à la position du curseur de la souris, simulez un clic-droit avec&nbsp;: <kbd>[{MouseButton,R}]</kbd></p></div><div class="faq-question">Comment changer le volume&nbsp;?</div><div class="faq-answer"><p>Il existe trois touches relatives au son&nbsp;:</p><ul><li>muet&nbsp;: code <kbd>[#173]</kbd></li><li>baisser le volume&nbsp;: code <kbd>[#174]</kbd></li><li>monter le volume&nbsp;: code <kbd>[#175]</kbd></li></ul><p>Vous pouvez également utiliser le programme <a href="http://utilfr42.free.fr/dn/VolumeManager.exe">VolumeManager</a> pour régler plus finement le volume.</p></div><div class="faq-question">La case <i>Lancer Clavier+ au démarrage de Windows</i> ne fonctionne pas&nbsp;!</div><div class="faq-answer"><p>Créez un raccourci vers <kbd>Clavier.exe</kbd> dans <i>Menu démarrer/Programmes/Démarrage</i>. Pour cela, cliquez avec le bouton droit sur <kbd>Clavier.exe</kbd>, laissez le bouton enfoncé et faites glisser la souris successivement sur le menu démarrer, puis <i>Programmes</i>, puis <i>Démarrage</i>, et relâchez le bouton une fois dans le menu. Choisissez <i>Créer un raccourci ici</i>.</p></div><div class="faq-question">Comment masquer l’icône de Clavier+ à côté de l’horloge&nbsp;?</div><div class="faq-answer"><p>Lancez Clavier+ puis quittez-le. Double-cliquez sur le fichier <kbd>Clavier.ini</kbd> situé dans le même répertoire que Clavier+. À la deuxième ligne, qui commence par <kbd>Taille=</kbd> remplacez le <i>dernier</i> zéro en un. Par exemple&nbsp;: <kbd>Taille=923,501,0,0</kbd> doit devenir <kbd>Taille=923,501,0,1</kbd>.</p><p>Comme l’icône de Clavier+ ne sera plus visible, vous devrez relancer Clavier+ pour afficher la fenêtre de configuration.</p></div><div class="faq-question">Comment lancer deux programmes à la fois&nbsp;?</div><div class="faq-answer"><p>La solution est de mettre le chemin d’accès des deux programmes entre double-crochets, dans la zone <kbd>Écrire du texte</kbd>. Par exemple, pour lancer le bloc-notes et la calculatrice&nbsp;:</p><pre>[[notepad.exe]][[calc.exe]]</pre></div><div class="faq-question">Comment simuler un clic, un double-clic, un clic droit&nbsp;?</div><div class="faq-answer"><p>Il faut créer un raccourci de type <i>Écrire du texte</i> et utiliser la commande spéciale <kbd>[{MouseButton,<i>code</i>}]</kbd>. Concrètement, pour simuler un clic gauche&nbsp;: <kbd>[{MouseButton,L}]</kbd>. Pour un double-clic, il suffit d’effectuer deux clics à la suite&nbsp;: <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>. Pour un clic droit, il faut utiliser le code <kbd>R</kbd>&nbsp;: <kbd>[{MouseButton,R}]</kbd>.</p></div><div class="faq-question">Comment faire des choses plus compliquées&nbsp;: écrire la date du jour, activer une application…&nbsp;?</div><div class="faq-answer"><p>Vous pouvez créer un script VBScript et demander à Clavier+ de l’exécuter. La procédure générique est la suivante&nbsp;: lancez le bloc-notes, écrivez le texte de votre script, et enregistrez-le avec l’extension <kbd>.VBS</kbd>, puis associez-lui un raccourci-clavier avec Clavier+.</p><p>Quelques exemples de scripts&nbsp;:</p><ul><li>Écrire la date du jour dans le programme actif&nbsp;:<pre>set shell = WScript.CreateObject("WScript.Shell")
 shell.SendKeys Date()</pre></li><li>Activer une application et lui envoyer des touches, par exemple calculer 2+7 avec la calculatrice (qui doit être déjà lancée)&nbsp;:<pre>set shell = WScript.CreateObject("WScript.Shell")
 shell.AppActivate "Calculatrice"
 WScript.Sleep(100)  ' Attendre 100 millisecondes
 shell.SendKeys "2{+}"
 WScript.Sleep(100)
 shell.SendKeys "7{=}"</pre><p>Consultez la <a href="http://msdn.microsoft.com/archive/default.asp?url=/archive/en-us/wsh/htm/wsMthSendKeys.asp">documentation Microsoft</a> pour savoir comment envoyer toutes les combinaisons de touches, y compris des raccourcis clavier compliqués.</p></li></ul></div>
-<div class="faq-question">Comment réellement simuler un clic gauche ou un clic droit&nbsp;?</div>
-<div class="faq-answer"><p>Là, il faut sortir l’artillerie lourde&nbsp;: appeler les fonctions bas niveau de Windows. On pourrait certes programmer un programme spécifique, mais le plus simple est d’utiliser un VBScript.</p><p>Il faut commencer par enregistrer une DLL qui permettra d’appeler les fonctions de Windows à partir d’un VBScript&nbsp;: <a href="http://utilfr42.free.fr/dn/dynwrap.dll">téléchargez la DLL</a>, copiez-la dans <kbd>C:\Windows\System32</kbd> puis faites&nbsp;: Démarrer/Exécuter, <kbd>regsvr32 dynwrap.dll</kbd> puis validez. Un message devrait s’afficher indiquant que la DLL a été correctement enregistrée.</p><p>Écrivez ensuite le VBScript suivant, par exemple sous le nom <kbd>click.vbs</kbd>&nbsp;:</p><pre>Set UserWrap = CreateObject("DynamicWrapper")
-UserWrap.Register "user32.dll", "mouse_event", "i=lllll", "f=s", "r=l"
-UserWrap.mouse_event 2, 0, 0, 0, 0
-UserWrap.mouse_event 4, 0, 0, 0, 0</pre><p>Ce script simule l’enfoncement puis le relâchement du clic gauche de la souris. Écrivez les nombres 8 et 16 au lieu de 2 et 4 dans les deux lignes commençant par <kbd>UserWrap.mouse_event</kbd> pour simuler un clic droit. Vous pouvez appeler le script avec Clavier+, ou bien insérer ce code dans un autre VBScript. Voyez la <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/mouseinput/mouseinputreference/mouseinputfunctions/mouse_event.asp">documentation officielle de Microsoft</a> pour la référence complète de la fonction <kbd>mouse_event</kbd>, ou bien <a href="http://docvb.free.fr/apidetail.php?idapi=55">ce site</a> qui a l’avantage de donner la valeur numérique des constantes, en hexadécimal.</p></div>
 
 </body>
 </html>

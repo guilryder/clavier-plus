@@ -60,24 +60,29 @@ Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueName: {#AppName}; ValueData: {app}\{#AppExeName}; Flags: uninsdeletevalue
 
 [Run]
-Filename: {app}\{#AppExeName}; Description: {cm:LaunchProgram,{#AppName}}; Flags: nowait postinstall skipifsilent
-Filename: {app}\{#AppExeName}; Description: {cm:LaunchProgram,{#AppName}}; Flags: nowait postinstall skipifsilent
+Filename: {app}\{#AppExeName}; Description: {cm:LaunchProgram,{#AppName}}; Flags: postinstall skipifsilent nowait
 
 [_ISTool]
 UseAbsolutePaths=false
 
 [Code]
-
 // Close Clavier+ just before install
+// Display Clavier+ settings just after install
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
 	if CurStep = ssInstall then
-		SendBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0);
+		SendBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0)
+	else if CurStep = ssDone then
+	begin
+		Sleep(200);
+		PostBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 0, $201)
+	end
 end;
 
 // Close Clavier+ just before uninstall
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
 	if CurUninstallStep = usUninstall then
-		SendBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0);
+		SendBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0)
 end;
+

@@ -22,6 +22,10 @@
 
 #include "App.h"
 
+#define IsKeyDown(vk)   (GetKeyState(vk) & 0x8000)
+const BYTE bKeyDown = 0x80;
+
+
 enum
 {
 	condTypeShiftLock,
@@ -71,7 +75,7 @@ public:
 	ATOM getKeyName(LPTSTR pszHotKey, bool bGetAtom = false) const;
 	
 	void serialize(LPTSTR psz);
-	void simulateTyping() const;
+	void simulateTyping(HWND hwndFocus, bool bAltCode = false) const;
 	
 	void registerHotKey();
 	bool unregisterHotKey();
@@ -81,13 +85,17 @@ public:
 	static bool askSendKeys(HWND hwndParent, Keystroke& rks);
 	
 	
+	static void keybdEvent(UINT vk, bool bUp);
+	static BYTE filterVK(BYTE vk) { return (vk == VK_CLEAR) ? VK_NUMPAD5 : vk; }
 	static bool isKeyExtended(UINT vk);
 	static void getKeyName(UINT vk, LPTSTR pszHotKey);
-	static void catchKeyboardFocus(HWND& rhwndFocus);
+	static HWND getKeyboardFocus();
+	static void catchKeyboardFocus(HWND& rhwndFocus, DWORD& ridThread);
+	static void detachKeyboardFocus(DWORD idThread);
 	
 private:
 	
-	static BOOL CALLBACK prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	static INT_PTR CALLBACK prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
 
 

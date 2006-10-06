@@ -188,6 +188,17 @@ bool getWindowExecutable(HWND hWnd, LPTSTR pszPath)
 }
 
 
+// Sleep the given time in idle priority
+void sleepBackground(DWORD dwDurationMS)
+{
+	const HANDLE hProcess = GetCurrentProcess();
+	const DWORD dwOldPriority = GetPriorityClass(hProcess);
+	SetPriorityClass(hProcess, IDLE_PRIORITY_CLASS);
+	Sleep(dwDurationMS);
+	SetPriorityClass(hProcess, dwOldPriority);
+}
+
+
 bool pathIsSlow(LPCTSTR pszFile)
 {
 	const int iDrive = PathGetDriveNumber(pszFile);
@@ -234,6 +245,30 @@ bool getFileInfo(LPCTSTR pszFile, DWORD dwAttributes, SHFILEINFO& shfi, UINT uFl
 			return bOK;
 		uFlags |= SHGFI_USEFILEATTRIBUTES;
 	}
+}
+
+
+void clipboardToEnvironment()
+{
+	bool bOK = false;
+	
+	if (IsClipboardFormatAvailable(CF_TEXT) && OpenClipboard(NULL)) {
+		const HGLOBAL hMem = (HGLOBAL)GetClipboardData(CF_TEXT);
+		if (hMem) {
+			const LPSTR pszClipboard = (LPSTR)GlobalLock(hMem);
+			if (pszClipboard) {
+				if (lstrlen(pszClipboard) < bufClipboardString) {
+					bOK = true;
+					SetEnvironmentVariableA(_T("CLIPBOARD"), pszClipboard);
+				}
+				GlobalUnlock(hMem);
+			}
+			CloseClipboard();
+		}
+	}
+	
+	if (!bOK)
+		SetEnvironmentVariableA(_T("CLIPBOARD"), _T(""));
 }
 
 
@@ -407,11 +442,16 @@ void findFullPath(LPTSTR pszPath, LPTSTR pszFullPath)
 
 void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow)
 {
+	// Expand the environment variables before splitting
+	TCHAR pszCommandExp[MAX_PATH + bufClipboardString];
+	ExpandEnvironmentStrings(pszCommand, pszCommandExp, nbArray(pszCommandExp));
+	
 	// Split the command line: get the file and the arguments
 	TCHAR pszPath[MAX_PATH];
-	lstrcpyn(pszPath, pszCommand, nbArray(pszPath));
+	lstrcpyn(pszPath, pszCommandExp, nbArray(pszPath));
 	PathRemoveArgs(pszPath);
 	
+	// Get the directory
 	TCHAR pszDirectoryBuf[MAX_PATH];
 	if (!pszDirectory || !*pszDirectory) {
 		findFullPath(pszPath, pszDirectoryBuf);
@@ -421,8 +461,16 @@ void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow)
 	}
 	
 	// Run the command line
-	ShellExecute(e_hwndInvisible, NULL, pszPath,
-		PathGetArgs(pszCommand), pszDirectory, nShow);
+	SHELLEXECUTEINFO sei;
+	sei.cbSize       = sizeof(sei);
+	sei.fMask        = SEE_MASK_FLAG_DDEWAIT;
+	sei.hwnd         = e_hwndInvisible;
+	sei.lpFile       = pszPath;
+	sei.lpVerb       = NULL;
+	sei.lpParameters = PathGetArgs(pszCommandExp);
+	sei.lpDirectory  = pszDirectory;
+	sei.nShow        = nShow;
+	ShellExecuteEx(&sei);
 }
 
 

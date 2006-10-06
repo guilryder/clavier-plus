@@ -71,7 +71,6 @@
 #define IDCCMD_COMMAND                  1049
 #define IDCIMG_PROGRAMS                 1050
 #define IDCCMD_TEST                     1051
-#define IDCCMD_SENDKEYS                 1053
 #define IDCCMD_TEXT_MENU                1054
 #define ID_ADD_SPECIALCHAR_FIRST        10000
 #define ID_ADD_PROGRAM_FIRST            11000
@@ -81,10 +80,21 @@
 #define ID_ADD_COMMAND                  40019
 #define ID_ADD_WEBSITE                  40020
 #define ID_TEXT_SENDKEYS                40023
-#define ID_TEXT_BACKSLASH               40024
-#define ID_TEXT_BRACKET                 40025
-#define ID_TEXT_WAIT                    40029
 #define ID_TEXT_COMMAND                 40030
+#define ID_TEXT_LOWLEVEL                40031
+#define ID_TEXT_WAIT                    40032
+#define ID_TEXT_BACKSLASH               40033
+#define ID_TEXT_BRACKET_OPEN            40034
+#define ID_TEXT_BRACKET_CLOSE           40035
+#define ID_TEXT_BRACE_OPEN              40036
+#define ID_TEXT_BRACE_CLOSE             40037
+#define ID_TEXT_PIPE                    40038
+#define ID_TEXT_CMD_WAIT                40039
+#define ID_TEXT_CMD_FOCUS               40040
+#define ID_TEXT_CMD_ALLOWREPEAT         40040
+#define ID_TEXT_CMD_COPY                40041
+#define ID_TEXT_CMD_MOUSE               40042
+#define ID_TEXT_CMD_WHEEL               40043
 
 // Next default values for new objects
 // 
@@ -92,7 +102,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        133
-#define _APS_NEXT_COMMAND_VALUE         40032
+#define _APS_NEXT_COMMAND_VALUE         40055
 #define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

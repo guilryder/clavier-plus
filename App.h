@@ -43,6 +43,7 @@ enum
 	tokLanguage,
 	tokSize,
 	tokColumns,
+	tokSorting,
 	
 	tokShowNormal,
 	tokShowMinimize,

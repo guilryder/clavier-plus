@@ -19,8 +19,10 @@
 
 
 extern "C" void* memset(void* dest, int value, size_t size);
+extern "C" void* memcpy(void* dest, const void* src, size_t size);
 
 #pragma function(memset)
+#pragma function(memcpy)
 
 typedef unsigned char BYTE;
 
@@ -30,6 +32,18 @@ void* memset(void* dst, int value, size_t size)
 	while (size > 0) {
 		size--;
 		*pdst++ = (BYTE)value;
+	}
+	
+	return dst;
+}
+
+void* memcpy(void* dst, const void* src, size_t size)
+{
+	      BYTE *pdst =       (BYTE*)dst;
+	const BYTE *psrc = (const BYTE*)src;
+	while (size > 0) {
+		size--;
+		*pdst++ = *psrc++;
 	}
 	
 	return dst;

@@ -7,6 +7,34 @@
 body {
 font-family: verdana, arial, sans-serif;
 }
+
+dt kbd {
+font-weight: bold;
+}
+
+dt {
+margin-top: 1em;
+}
+
+.toc {
+float: left;
+}
+
+.toc a {
+color: blue;
+text-decoration: none;
+display: block;
+padding: 2px 0px;
+}
+a:hover {
+color: red;
+text-decoration: underline;
+}
+
+.ipt {
+font-weight: bold;
+color: red;
+}
 </style>
 </head>
 
@@ -14,21 +42,21 @@ font-family: verdana, arial, sans-serif;
 
 <h1>Clavier+</h1>
 
-<p>
-<a href="#name">Warum so ein seltsamer Name?</a><br />
-<a href="#author">Autor</a><br />
-<a href="#license">Lizenz</a><br />
-<a href="#setup">Manualles Einrichten</a><br />
-<a href="#uninstall">Manualles Entfernen</a><br />
-<a href="#use">Bedienung</a><br />
-<a href="#text">Text-Format</a><br />
-<a href="#print">Liste aller Verknüpfungen ausdrucken</a><br />
-<a href="#conffile">Konfigurationsdatei</a><br />
-<a href="#limits">Bekannte Probleme</a><br />
+<p class="toc">
+<a href="#name">Warum so ein seltsamer Name?</a>
+<a href="#author">Autor</a>
+<a href="#license">Lizenz</a>
+<a href="#setup">Manualles Einrichten</a>
+<a href="#uninstall">Manualles Entfernen</a>
+<a href="#use">Bedienung</a>
+<a href="#text">Text-Format</a>
+<a href="#print">Liste aller Verknüpfungen ausdrucken</a>
+<a href="#conffile">Konfigurationsdatei</a>
+<a href="#limits">Bekannte Probleme</a>
 </p>
 
 
-<h2><a href="http://utilfr42.free.fr/util/Clavier.php">Clavier+ Webseite</a></h2>
+<h2 style="clear: both"><a href="http://utilfr42.free.fr/util/Clavier.php">Clavier+ Webseite</a></h2>
 
 
 <h2 id="name">Warum so ein seltsamer Name?</h2>
@@ -204,8 +232,8 @@ angesprochen (z.B.: <kbd>#183</kbd>).</p>
 <table><colgroup><col width="30%"/><col/></colgroup>
 <tr><td><kbd>Strg + Alt + Entf</kbd></td><td>"Task Manager" anzeigen</td></tr>
 <tr><td><kbd>F12</kbd></td><td>Reserviert für den Debugger</td></tr>
-<tr><td><kbd>Alt + TAB</kbd></td><td>Nächste Anwendung aktivieren</td></tr>
-<tr><td><kbd>Alt + Umschalt + TAB</kbd></td><td>Vorherige Anwendung aktivieren</td></tr>
+<tr><td><kbd>Alt + Tab</kbd></td><td>Nächste Anwendung aktivieren</td></tr>
+<tr><td><kbd>Alt + Umschalt + Tab</kbd></td><td>Vorherige Anwendung aktivieren</td></tr>
 <tr><td><kbd>Win + B</kbd></td><td>Setzt den Fokus im Systray</td></tr>
 <tr><td><kbd>Win + D</kbd></td><td>Umschalten Fenster minimieren/maximieren</td></tr>
 <tr><td><kbd>Win + E</kbd></td><td>"Windows Explorer" starten</td></tr>

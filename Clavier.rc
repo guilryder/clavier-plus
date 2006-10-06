@@ -39,8 +39,8 @@ IDI_TEXT                ICON                    "Text.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 10,2,0,0
- PRODUCTVERSION 10,2,0,0
+ FILEVERSION 10,3,0,0
+ PRODUCTVERSION 10,3,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -57,12 +57,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Guillaume Ryder (http://utilfr42.free.fr)"
             VALUE "FileDescription", "Clavier+"
-            VALUE "FileVersion", "10.2"
+            VALUE "FileVersion", "10.3"
             VALUE "InternalName", "Clavier.exe"
             VALUE "LegalCopyright", "Copyright © 2000-2006 Guillaume Ryder"
             VALUE "OriginalFilename", "Clavier.exe"
             VALUE "ProductName", "Clavier+"
-            VALUE "ProductVersion", "10.2"
+            VALUE "ProductVersion", "10.3"
         END
     END
     BLOCK "VarFileInfo"
@@ -137,18 +137,14 @@ LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 // Dialog
 //
 
-#if defined(APSTUDIO_INVOKED)
 IDD_ABOUT DIALOGEX 0, 0, 157, 157
-#else
-IDD_ABOUT DIALOGEX 0, 0, 157, 157
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_NOPARENTNOTIFY
 CAPTION "Über Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
-    CONTROL         "Clavier+ 10.2",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
+    CONTROL         "Clavier+ 10.3",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
     LTEXT           "Copyright © 2000-2006\nGuillaume Ryder\nSoftwarelizenz nach GNU GPL",IDC_STATIC,42,20,102,28,SS_NOPREFIX
     GROUPBOX        "Autor",IDC_STATIC,8,54,142,50
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
@@ -159,11 +155,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,137,50,14,WS_GROUP
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_KEYSTROKE DIALOGEX 0, 0, 190, 162
-#else
-IDD_KEYSTROKE DIALOGEX 0, 0, 190, 162
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Verknüpfung"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -182,11 +174,7 @@ BEGIN
     COMBOBOX        IDCCBO_SCROLLLOCK,94,114,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_MAIN DIALOGEX 0, 0, 414, 246
-#else
-IDD_MAIN DIALOGEX 0, 0, 414, 246
-#endif
 STYLE DS_SETFONT | DS_SETFOREGROUND | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Clavier+"
@@ -225,11 +213,7 @@ BEGIN
     PUSHBUTTON      "&Test",IDCCMD_TEST,354,168,48,14
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 93
-#else
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 93
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Programm starten"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -246,11 +230,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,140,72,57,14
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
-#else
-IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Verknüpfung simulieren"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -267,22 +247,14 @@ END
 // Bitmap
 //
 
-#if defined(APSTUDIO_INVOKED)
-IDB_DONATE BITMAP                  "DonateDE.bmp"
-#else
 IDB_DONATE              BITMAP                  "DonateDE.bmp"
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-#if defined(APSTUDIO_INVOKED)
 IDM_CONTEXT MENU 
-#else
-IDM_CONTEXT MENU 
-#endif
 BEGIN
     POPUP " "
     BEGIN
@@ -301,21 +273,37 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Ordner öffnen...",           ID_ADD_FOLDER
         MENUITEM "&Text schreiben...",          ID_ADD_TEXT
-        MENUITEM "Programm &starten...",        ID_ADD_COMMAND
+        MENUITEM "P&rogramm starten...",        ID_ADD_COMMAND
         MENUITEM "&Website anzeigen...",        ID_ADD_WEBSITE
     END
     POPUP " "
     BEGIN
-        MENUITEM "&Verknüpfung simulieren: : [...]", ID_TEXT_SENDKEYS
-        MENUITEM "Programm &starten: [[...]]",  ID_TEXT_COMMAND
+        MENUITEM "&Verknüpfung simulieren: [...]", ID_TEXT_SENDKEYS
+        MENUITEM "&Programm starten: [[...]]",  ID_TEXT_COMMAND
         MENUITEM "100 Millisekunden &warten: []", ID_TEXT_WAIT
+        MENUITEM "Low-level &Textschreibung",   ID_TEXT_LOWLEVEL
         MENUITEM SEPARATOR
-        POPUP "S&onderzeichen schreiben"
+        POPUP "&Zeichen schreiben"
         BEGIN
             MENUITEM SEPARATOR
         END
-        MENUITEM "&Gegenschrägstrich schreiben: \\\\", ID_TEXT_BACKSLASH
-        MENUITEM "&Haltewinkel schreiben: \\[", ID_TEXT_BRACKET
+        POPUP "&Sonderzeichen schreiben"
+        BEGIN
+            MENUITEM "Gegenschrägstrich schreiben: \\\\", ID_TEXT_BACKSLASH
+            MENUITEM "Linke Haltewinkel schreiben: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Rechte Haltewinkel schreiben: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Linke Klammer schreiben: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Rechte Klammer schreiben: \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Vertikale Linie Schreiben: \\|", ID_TEXT_PIPE
+        END
+        POPUP "&Befehl durchführen"
+        BEGIN
+            MENUITEM "&Warten: [{Wait,<Dauer>}]",   ID_TEXT_CMD_WAIT
+            MENUITEM "&Detect focused window: [{Focus}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Copy zum Klemmbrett: [{Copy,<Text>}]", ID_TEXT_CMD_COPY
+            MENUITEM "&Maustaste: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE
+            MENUITEM "Mä&userad: [{MouseWheel,<+/- Zähl>}]", ID_TEXT_CMD_WHEEL
+        END
     END
 END
 
@@ -343,7 +331,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Deutsch;Verknüpfung;Code;Beschreibung;Befehl;Text;Ordner;Fenster;Programme;Kein;Sprache;Grösse;Spalte;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Feststell;Num;Rollen;Ja;Nein;"
+    IDS_TOKENS              "Deutsch;Verknüpfung;Code;Beschreibung;Befehl;Text;Ordner;Fenster;Programme;Kein;Sprache;Grösse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Feststell;Num;Rollen;Ja;Nein;"
     IDS_COLUMNS             "Inhalt;Verknüpfung;Bedingung;Beschreibung;"
     IDS_HELP                "Hilfe.htm"
     IDS_CONDITIONS          "ohne Bedingung;eingeschaltet;ausgeschaltet;"
@@ -372,11 +360,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-#if defined(APSTUDIO_INVOKED)
 IDD_KEYSTROKE DIALOGEX 0, 0, 190, 162
-#else
-IDD_KEYSTROKE DIALOGEX 0, 0, 190, 162
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Shortcut"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -395,11 +379,7 @@ BEGIN
     COMBOBOX        IDCCBO_SCROLLLOCK,94,114,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_MAIN DIALOGEX 0, 0, 414, 246
-#else
-IDD_MAIN DIALOGEX 0, 0, 414, 246
-#endif
 STYLE DS_SETFONT | DS_SETFOREGROUND | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Clavier+"
@@ -438,18 +418,14 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDCANCEL,359,227,48,14
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_ABOUT DIALOGEX 0, 0, 157, 157
-#else
-IDD_ABOUT DIALOGEX 0, 0, 157, 157
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_NOPARENTNOTIFY
 CAPTION "About Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,-1,6,6,20,20
-    CONTROL         "Clavier+ 10.2",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    CONTROL         "Clavier+ 10.3",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
     LTEXT           "Copyright © 2000-2006\nGuillaume Ryder\nSoftware under GPL license",-1,42,20,108,28,SS_NOPREFIX
     GROUPBOX        "Author",-1,8,54,142,50
     CONTROL         "Guillaume Ryder",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
@@ -460,11 +436,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,137,50,14,WS_GROUP
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 93
-#else
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 93
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Program to execute"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -481,11 +453,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,140,72,57,14
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
-#else
-IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Simulate a keystroke"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -502,24 +470,14 @@ END
 // Bitmap
 //
 
-
-#if defined(APSTUDIO_INVOKED)
-IDB_DONATE BITMAP                  "DonateEN.bmp"
-#else
 IDB_DONATE              BITMAP                  "DonateEN.bmp"
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-
-#if defined(APSTUDIO_INVOKED)
 IDM_CONTEXT MENU 
-#else
-IDM_CONTEXT MENU 
-#endif
 BEGIN
     POPUP " "
     BEGIN
@@ -543,16 +501,32 @@ BEGIN
     END
     POPUP " "
     BEGIN
-        MENUITEM "&Simulate a Keystroke: : [...]", ID_TEXT_SENDKEYS
+        MENUITEM "&Simulate a Keystroke: [...]", ID_TEXT_SENDKEYS
         MENUITEM "Launch a &Program: [[...]]",  ID_TEXT_COMMAND
         MENUITEM "&Wait 100 milliseconds: []",  ID_TEXT_WAIT
+        MENUITEM "Write Text in &Low-level Mode: [|...|]", ID_TEXT_LOWLEVEL
         MENUITEM SEPARATOR
-        POPUP "Write a Special &Character"
+        POPUP "Write a &Character"
         BEGIN
             MENUITEM SEPARATOR
         END
-        MENUITEM "Write a &Backslash: \\\\",    ID_TEXT_BACKSLASH
-        MENUITEM "Write a Brac&ket: \\[",       ID_TEXT_BRACKET
+        POPUP "Write a Sp&ecial Character"
+        BEGIN
+            MENUITEM "Write a &Backslash: \\\\",    ID_TEXT_BACKSLASH
+            MENUITEM "Write an Opening Bracket: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Write a Closing Bracket: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Write an Opening Brace: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Write a Closing Brace: \\}",  ID_TEXT_BRACE_CLOSE
+            MENUITEM "Write a Pipe: \\|",           ID_TEXT_PIPE
+        END
+        POPUP "Execute a C&ommand"
+        BEGIN
+            MENUITEM "&Wait: [{Wait,<duration>}]",  ID_TEXT_CMD_WAIT
+            MENUITEM "&Detect focused window: [{Focus}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Copy to clipboard: [{Copy,<text>}]", ID_TEXT_CMD_COPY
+            MENUITEM "&Mouse button: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE
+            MENUITEM "Mouse w&heel: [{MouseWheel,<+/- ticks count>}]", ID_TEXT_CMD_WHEEL
+        END
     END
 END
 
@@ -580,7 +554,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "English;Shortcut;Code;Description;Command;Text;Directory;Window;Programs;None;Language;Size;Columns;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;CapsLock;NumLock;ScrollLock;Yes;No;"
+    IDS_TOKENS              "English;Shortcut;Code;Description;Command;Text;Directory;Window;Programs;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;CapsLock;NumLock;ScrollLock;Yes;No;"
     IDS_COLUMNS             "Contents;Shortcut;Conditions;Description;"
     IDS_HELP                "Help.htm"
     IDS_CONDITIONS          "no condition;must be on;must be off;"
@@ -609,11 +583,7 @@ LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
 // Dialog
 //
 
-#if defined(APSTUDIO_INVOKED)
 IDD_MAIN DIALOGEX 0, 0, 414, 246
-#else
-IDD_MAIN DIALOGEX 0, 0, 414, 246
-#endif
 STYLE DS_SETFONT | DS_SETFOREGROUND | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Clavier+"
@@ -652,11 +622,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDCANCEL,359,227,48,14
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_KEYSTROKE DIALOGEX 0, 0, 190, 162
-#else
-IDD_KEYSTROKE DIALOGEX 0, 0, 190, 162
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Raccourci clavier"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -675,18 +641,14 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,127,142,57,14
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_ABOUT DIALOGEX 0, 0, 157, 157
-#else
-IDD_ABOUT DIALOGEX 0, 0, 157, 157
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_NOPARENTNOTIFY
 CAPTION "À propos de Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,-1,6,6,20,20
-    CONTROL         "Clavier+ 10.2",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    CONTROL         "Clavier+ 10.3",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
     CONTROL         "Copyright © 2000-2006\nGuillaume Ryder\nLogiciel sous licence GPL",-1,
                     "Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | WS_GROUP,42,20,108,28
     GROUPBOX        "Auteur",-1,8,54,142,50
@@ -698,11 +660,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,137,50,14,WS_GROUP
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 93
-#else
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 93
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Programme à exécuter"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -719,13 +677,9 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,140,72,57,14
 END
 
-#if defined(APSTUDIO_INVOKED)
 IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
-#else
-IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Simuler un raccourci clavier"
+CAPTION "Simuler une frappe de touches"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "&Raccourci :",-1,7,8,38,8
@@ -737,74 +691,17 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    "IDD_MAIN", DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 407
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 239
-    END
-
-    "IDD_KEYSTROKE", DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 183
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 155
-    END
-
-    "IDD_ABOUT", DIALOG
-    BEGIN
-        RIGHTMARGIN, 145
-        BOTTOMMARGIN, 133
-    END
-
-    "IDD_CMDSETTINGS", DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 261
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 86
-    END
-
-    "IDD_SENDKEYS", DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 172
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 43
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Bitmap
 //
 
-#if defined(APSTUDIO_INVOKED)
-IDB_DONATE BITMAP                  "DonateFR.bmp"
-#else
 IDB_DONATE              BITMAP                  "DonateFR.bmp"
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-#if defined(APSTUDIO_INVOKED)
 IDM_CONTEXT MENU 
-#else
-IDM_CONTEXT MENU 
-#endif
 BEGIN
     POPUP " "
     BEGIN
@@ -823,21 +720,37 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Ouvrir un &dossier...",       ID_ADD_FOLDER
         MENUITEM "Écrire du &texte...",         ID_ADD_TEXT
-        MENUITEM "Lancer un &programme...",     ID_ADD_COMMAND
+        MENUITEM "&Lancer un programme...",     ID_ADD_COMMAND
         MENUITEM "&Afficher un site Internet...", ID_ADD_WEBSITE
     END
     POPUP " "
     BEGIN
-        MENUITEM "&Simuler un raccourci clavier : [...]", ID_TEXT_SENDKEYS
-        MENUITEM "Lancer un programme : [[...]]", ID_TEXT_COMMAND
-        MENUITEM "Attendre 100 millisecondes : []", ID_TEXT_WAIT
+        MENUITEM "&Simuler une frappe de touches : [...]", ID_TEXT_SENDKEYS
+        MENUITEM "&Lancer un programme : [[...]]", ID_TEXT_COMMAND
+        MENUITEM "&Attendre 100 millisecondes : []", ID_TEXT_WAIT
+        MENUITEM "Écrire du texte en mode &bas niveau : [|...|]", ID_TEXT_LOWLEVEL
         MENUITEM SEPARATOR
-        POPUP "Écrire un caractère spécial"
+        POPUP "Écrire un &caractère"
         BEGIN
             MENUITEM SEPARATOR
         END
-        MENUITEM "Écrire un &anti-slash : \\\\", ID_TEXT_BACKSLASH
-        MENUITEM "Écrire un &crochet ouvrant : \\[", ID_TEXT_BRACKET
+        POPUP "Écrire un caractère s&pécial"
+        BEGIN
+            MENUITEM "Écrire un anti-slash : \\\\", ID_TEXT_BACKSLASH
+            MENUITEM "Écrire un crochet ouvrant : \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Écrire un crochet fermant : \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Écrire une accolade ouvrante : \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Écrire une accolade fermante : \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Écrire un pipe : \\|",        ID_TEXT_PIPE
+        END
+        POPUP "Exécuter une c&ommande"
+        BEGIN
+            MENUITEM "&Attendre : [{Wait,<durée>}]", ID_TEXT_CMD_WAIT
+            MENUITEM "&Détecter fenêtre active : [{Focus}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Copier texte : [{Copy,<texte>}]", ID_TEXT_CMD_COPY
+            MENUITEM "Bouton &souris : [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE
+            MENUITEM "&Molette souris : [{MouseWheel,<+/- nb. crans>}]", ID_TEXT_CMD_WHEEL
+        END
     END
 END
 
@@ -889,7 +802,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Français;Raccourci;Code;Description;Commande;Texte;Répertoire;Fenêtre;Programmes;Aucun;Langue;Taille;Colonnes;Normale;Réduite;Agrandie;Win;Ctrl;Maj;Alt;VerrMaj;VerrNum;ArrêtDéfil;Oui;Non;"
+    IDS_TOKENS              "Français;Raccourci;Code;Description;Commande;Texte;Répertoire;Fenêtre;Programmes;Aucun;Langue;Taille;Colonnes;Tri;Normale;Réduite;Agrandie;Win;Ctrl;Maj;Alt;VerrMaj;VerrNum;ArrêtDéfil;Oui;Non;"
     IDS_COLUMNS             "Contenu;Raccourci;Conditions;Description;"
     IDS_HELP                "Aide.htm"
     IDS_CONDITIONS          "pas de condition;doit être activé;doit être désactivé;"

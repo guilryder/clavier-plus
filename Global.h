@@ -36,6 +36,8 @@ const size_t bufString = 128;
 const size_t bufHotKey = 128;
 const size_t bufCode   =  32;
 
+const int bufClipboardString = MAX_PATH * 10;
+
 
 const LPCTSTR pszApp = _T("Clavier+");
 
@@ -61,8 +63,11 @@ void startThread(LPTHREAD_START_ROUTINE pfn, void* pParams);
 	((PFN_##functionName)GetProcAddress(hDLL, (#functionName ANSI_UNICODE("A", "W"))))
 
 bool getWindowExecutable(HWND hWnd, LPTSTR pszPath);
+void sleepBackground(DWORD dwDurationMS);
 
 bool getFileInfo(LPCTSTR pszFile, DWORD dwAttributes, SHFILEINFO& shfi, UINT uFlags);
+
+void clipboardToEnvironment();
 
 //------------------------------------------------------------------------
 // SHBrowseForFolder wrapper:

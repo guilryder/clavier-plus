@@ -22,9 +22,10 @@
 
 #pragma warning (disable: 4710 4711)
 
-#define _WIN32_IE 0x0400
+#define _WIN32_IE      0x0400
+#define _WIN32_WINNT   0x0400
 #define _WIN32_WINDOWS 0x0500
-#define WINVER 0x0500
+#define WINVER         0x0500
 #define STRICT 1
 
 #define __STDC_WANT_SECURE_LIB__ 0
@@ -63,8 +64,6 @@
 
 
 // Memory leaks detection
-// #define USE_TRACING 1
-// #include <Debug.h>
 #ifdef _DEBUG
 #include <stdlib.h>
 #include <crtdbg.h>
@@ -78,8 +77,10 @@
 
 #ifdef UNICODE
 #define ANSI_UNICODE(ansi, unicode)   unicode
+typedef WORD UCHAR;
 #else
 #define ANSI_UNICODE(ansi, unicode)   ansi
+typedef unsigned char UCHAR;
 #endif
 
 

@@ -21,6 +21,10 @@
 #include "StdAfx.h"
 #include "App.h"
 
+#ifdef _DEBUG
+// #define SHOW_SETTINGS_AT_LAUNCHING
+#endif
+
 
 const LPCTSTR pszValueAutoStart = pszApp;
 
@@ -166,12 +170,12 @@ void WinMainCRTStartup()
 	// Create the invisible window
 	e_hwndInvisible = CreateWindow(_T("STATIC"), NULL, 0,
 		0,0,0,0, NULL, NULL, e_hInst, NULL);
-	SetWindowLong(e_hwndInvisible, GWL_WNDPROC, (LONG)prcInvisible);
+	SubclassWindow(e_hwndInvisible, prcInvisible);
 	
 	// Create the traybar icon
 	trayIconAction(NIM_ADD);
 	
-#ifdef _DEBUG
+#ifdef SHOW_SETTINGS_AT_LAUNCHING
 	PostMessage(e_hwndInvisible, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
 #endif
 	
@@ -180,18 +184,19 @@ void WinMainCRTStartup()
 	DWORD timeLast = GetTickCount();
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0)) {
-		const DWORD timeCurrent = GetMessageTime();
 		if (msg.message == WM_HOTKEY) {
-			// Shortcut!
+			// Shortcut
 			
-			if (timeCurrent < timeLast)
+			if (msg.time < timeLast)
 				timeMinimum = 0;
-			if (timeCurrent < timeMinimum)
+			if (msg.time < timeMinimum)
 				goto Next;
 			
-			HWND hwndFocus;
-			Keystroke::catchKeyboardFocus(hwndFocus);
+			const BYTE vk = (BYTE)HIWORD(msg.lParam);
+			const WORD vkFlags = LOWORD(msg.lParam);
+			const HWND hwndFocus = Keystroke::getKeyboardFocus();
 			
+			// Get the toggle keys state, for conditions checking
 			static const int avkCond[] =
 			{
 				VK_CAPITAL, VK_NUMLOCK, VK_SCROLL,
@@ -200,23 +205,26 @@ void WinMainCRTStartup()
 			for (int i = 0; i < condTypeCount; i++)
 				aCondState[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
 			
+			// Get the current program, for conditions checking
 			TCHAR pszProcess[MAX_PATH];
 			if (!getWindowExecutable(hwndFocus, pszProcess))
 				*pszProcess = _T('\0');
 			
 			Shortcut *const psh = findShortcut(
-				(BYTE)HIWORD(msg.lParam), LOWORD(msg.lParam), aCondState,
+				vk, vkFlags, aCondState,
 				(*pszProcess) ? pszProcess : NULL);
 			
 			if (psh) {
 				if (psh->execute())
 					timeMinimum = GetTickCount();
 			}else{
+				// No matching shortcut found: simulate the keystroke
+				// without catching it with an hotkey, to perform default processing
 				Keystroke ks;
-				ks.m_vk      = (BYTE)HIWORD(msg.lParam);
-				ks.m_vkFlags = LOWORD(msg.lParam);
+				ks.m_vk      = Keystroke::filterVK(vk);
+				ks.m_vkFlags = vkFlags;
 				ks.unregisterHotKey();
-				ks.simulateTyping();
+				ks.simulateTyping(hwndFocus);
 				ks.registerHotKey();
 			}
 			
@@ -228,7 +236,7 @@ void WinMainCRTStartup()
 		}
 		
 Next:
-		timeLast = timeCurrent;
+		timeLast = msg.time;
 	}
 	
 	// Delete traybar icon
@@ -249,7 +257,9 @@ Next:
 }
 
 
-// Invisible window for the traybar icon
+// Invisible window:
+// - quit when destroyed
+// - handle traybar icon notifications
 LRESULT CALLBACK prcInvisible(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (uMsg == WM_DESTROY) {
@@ -260,6 +270,10 @@ Destroy:
 		if (wParam != 0)
 			goto Destroy;
 		
+		// Memoize the last foreground window:
+		// used to restore the active window before executing shortcut
+		// Needs to be done before the traybar window becomes active,
+		// i.e. before WM_L/RBUTTONDOWN notification
 		const HWND hwndForeground = GetForegroundWindow();
 		TCHAR pszClass[128];
 		GetClassName(hwndForeground, pszClass, nbArray(pszClass));
@@ -290,7 +304,8 @@ Destroy:
 						return 0;
 				}
 			}
-		}else if (lParam == WM_RBUTTONDOWN) {
+			
+		}else /* (lParam == WM_RBUTTONDOWN)*/ {
 			// Right click: display shortcuts menu
 			
 			const HMENU hMenu = CreatePopupMenu();
@@ -318,25 +333,32 @@ Destroy:
 				ptCursor.x, ptCursor.y, 0, hWnd, NULL);
 			PostMessage(hWnd, WM_NULL, 0, 0);
 			
-			if (id >= idFirstShortcut) {
-				// Shortcut
+			switch (id) {
+				case idSettings:
+					PostMessage(hWnd, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
+					break;
 				
-				id -= idFirstShortcut;
-				for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
-					if (id-- == 0) {
-						SetForegroundWindow(s_hwndLastForeground);
-						psh->execute();
-						break;
+				case idCopyList:
+					copyShortcutsListToClipboard();
+					break;
+			
+				case idQuit:
+					goto Destroy;
+				
+				default:
+					if (id >= idFirstShortcut) {
+						// Shortcut
+						
+						id -= idFirstShortcut;
+						for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
+							if (id-- == 0) {
+								SetForegroundWindow(s_hwndLastForeground);
+								psh->execute();
+								break;
+							}
 					}
-				
-			}else if (id == idSettings)
-				PostMessage(hWnd, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
-			
-			else if (id == idCopyList)
-				copyShortcutsListToClipboard();
-			
-			else if (id == idQuit)
-				goto Destroy;
+					break;
+			}
 		}
 		
 	}else if (uMsg == msgTaskbarCreated)
@@ -756,12 +778,31 @@ bool browseForCommandLine(HWND hDlg)
 static bool s_bCapturingProgram = false;
 static String s_sOldPrograms;
 
+static const LPCTSTR apszWrite[] =
+{
+	_T("[|...|]"),
+	_T("[]"),
+	_T("\\\\"),
+	_T("\\["),
+	_T("\\]"),
+	_T("\\{"),
+	_T("\\}"),
+	_T("\\|"),
+	_T("[{Wait,<duration>}]"),
+	_T("[{Focus}]"),
+	_T("[{Copy,<text>}]"),
+	_T("[{MouseButton,L/M/R(U/D)}]"),
+	_T("[{MouseWheel,<+/- ticks>}]"),
+};
+
+
 void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 {
 	switch (id) {
 		
 		case IDCCMD_QUIT:
 		case IDCANCEL:
+		case IDCCMD_LANGUAGE:
 			{
 				// Get all shortcuts, check unicity
 				const int nbItem = ListView_GetItemCount(e_hlst);
@@ -784,7 +825,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 					delete [] asProgram;
 				}
 				
-				if (id == IDCCMD_QUIT && !(GetKeyState(VK_SHIFT) & 0x8000) &&
+				if (id == IDCCMD_QUIT && !IsKeyDown(VK_SHIFT) &&
 				    IDNO == messageBox(s_hdlgMain, ASK_QUIT, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION))
 					break;
 				
@@ -895,7 +936,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 		
 		case IDCCMD_DELETE:
 			{
-				if (!(GetKeyState(VK_SHIFT) & 0x8000) && IDNO == messageBox(
+				if (!IsKeyDown(VK_SHIFT) && IDNO == messageBox(
 				    s_hdlgMain, ASK_DELETE, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION))
 					break;
 				
@@ -970,11 +1011,6 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 					ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT);
 				}
 			}
-			break;
-		
-		
-		case IDCCMD_LANGUAGE:
-			EndDialog(s_hdlgMain, IDCCMD_LANGUAGE);
 			break;
 		
 		
@@ -1060,7 +1096,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				const HMENU hAllMenus = loadMenu(IDM_CONTEXT);
 				const HMENU hMenu = GetSubMenu(hAllMenus, 1);
 				
-				fillSpecialCharsMenu(hMenu, 4, ID_TEXT_SPECIALCHAR_FIRST);
+				fillSpecialCharsMenu(hMenu, 5, ID_TEXT_SPECIALCHAR_FIRST);
 				
 				RECT rc;
 				GetWindowRect(hWnd, &rc);
@@ -1070,18 +1106,6 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				
 				DestroyMenu(hAllMenus);
 			}
-			break;
-		
-		case ID_TEXT_BACKSLASH:
-			appendText(_T("\\\\"));
-			break;
-		
-		case ID_TEXT_BRACKET:
-			appendText(_T("\\["));
-			break;
-		
-		case ID_TEXT_WAIT:
-			appendText(_T("[]"));
 			break;
 		
 		case ID_TEXT_COMMAND:
@@ -1110,14 +1134,15 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				String s;
 				escapeString(pszText, s);
 				appendText(s);
-			}
+			}else if (ID_TEXT_LOWLEVEL <= id && id < ID_TEXT_LOWLEVEL + nbArray(apszWrite))
+				appendText(apszWrite[id - ID_TEXT_LOWLEVEL]);
 			break;
 	}
 }
 
 
 // Main dialog box
-BOOL CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	static RECT rcClientOrig;
 	static SIZE sizeMinimum;
@@ -1262,6 +1287,7 @@ BOOL CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		
 		
+		// Draw the bottom-right gripper
 		case WM_PAINT:
 			{
 				RECT rc;
@@ -1277,6 +1303,24 @@ BOOL CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					
 					DrawFrameControl(hdc, &rc, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
 					EndPaint(hDlg, &ps);
+				}
+			}
+			break;
+		
+		// Behavior of the bottom-right gripper:
+		// same as the bottom-right corner of the dialog box
+		case WM_NCHITTEST:
+			{
+				RECT rc;
+				GetClientRect(hDlg, &rc);
+				ClientToScreen(hDlg, (POINT*)&rc + 1);
+				rc.left = rc.right  - GetSystemMetrics(SM_CXHSCROLL);
+				rc.top  = rc.bottom - GetSystemMetrics(SM_CYVSCROLL);
+				
+				const POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+				if (PtInRect(&rc, pt)) {
+					SetWindowLong(hDlg, DWL_MSGRESULT, HTBOTTOMRIGHT);
+					return TRUE;
 				}
 			}
 			break;
@@ -1325,7 +1369,7 @@ BOOL CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				GetClientRect(e_hlst, &rcList);
 				for (lvc.iSubItem = 0; lvc.iSubItem < nbColSize; lvc.iSubItem++) {
 					ListView_GetColumn(e_hlst, lvc.iSubItem, &lvc);
-					e_acxCol[lvc.iSubItem] = lvc.cx * 100 / rcList.right;
+					e_acxCol[lvc.iSubItem] = MulDiv(lvc.cx, 100, rcList.right);
 				}
 			}
 			break;
@@ -1353,7 +1397,7 @@ BOOL CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				int cxRemain = rcList.right;
 				for (lvc.iSubItem = 0; lvc.iSubItem < colCount; lvc.iSubItem++) {
 					lvc.cx = (lvc.iSubItem < nbColSize)
-						? e_acxCol[lvc.iSubItem] * rcList.right / 100
+						? MulDiv(e_acxCol[lvc.iSubItem], rcList.right, 100)
 						: cxRemain;
 					cxRemain -= lvc.cx;
 					ListView_SetColumn(e_hlst, lvc.iSubItem, &lvc);
@@ -1431,7 +1475,7 @@ BOOL CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 	}
 	
-	return FALSE;
+	return 0;
 }
 
 
@@ -1501,7 +1545,7 @@ LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 
 // Command line shortcut settings
-BOOL CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUNUSED(lParam))
+INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUNUSED(lParam))
 {
 	switch (uMsg) {
 		
@@ -1566,12 +1610,12 @@ BOOL CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUNUSE
 			break;
 	}
 	
-	return FALSE;
+	return 0;
 }
 
 
 // Language selection dialog box
-BOOL CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
+INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 {
 	const HWND hlst = GetDlgItem(hDlg, IDCLST_LANGUAGE);
 	
@@ -1602,13 +1646,13 @@ BOOL CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 			break;
 	}
 	
-	return FALSE;
+	return 0;
 }
 
 
 
 // "About" dialog box
-BOOL CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg) {
 		
@@ -1637,7 +1681,7 @@ BOOL CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					SelectFont((HDC)wParam, hFont);
 					SetTextColor((HDC)wParam, RGB(0,0,255));
 					SetBkMode((HDC)wParam, TRANSPARENT);
-					return (BOOL)GetSysColorBrush(COLOR_BTNFACE);
+					return (INT_PTR)GetSysColorBrush(COLOR_BTNFACE);
 				}
 			}
 			break;
@@ -1648,7 +1692,7 @@ BOOL CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 	}
 	
-	return FALSE;
+	return 0;
 }
 
 
@@ -1794,11 +1838,16 @@ int findToken(LPCTSTR pszToken)
 // Should not be called while the main dialog box is displayed
 Shortcut* findShortcut(BYTE vk, WORD vkFlags, const int aiCondState[], LPCTSTR pszProgram)
 {
+	if (vk == VK_CLEAR)
+		vk = VK_NUMPAD5;
+	
+	Shortcut *pshBest = NULL;
 	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
 		if (psh->match(vk, vkFlags, aiCondState, pszProgram))
-			return psh;
+			if (!pshBest || pshBest->m_sCommand.isEmpty())
+				pshBest = psh;
 	
-	return NULL;
+	return pshBest;
 }
 
 // Get the selected shortcut
@@ -2037,6 +2086,13 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 				}
 				break;
 			
+			// Sorting column
+			case tokSorting:
+				s_iSortColumn = StrToInt(pcSep);
+				if (s_iSortColumn < 0 || s_iSortColumn >= colCount)
+					s_iSortColumn = colContents;
+				break;
+			
 			// Shortcut
 			case tokShortcut:
 				Keystroke::serialize(pcSep);
@@ -2047,8 +2103,8 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 				if (!m_vk) {
 					const DWORD dwCode = (DWORD)StrToInt(pcSep);
 					if (dwCode) {
-						m_vk = (BYTE)(dwCode & 0xFF);
-						m_vkFlags = (WORD)(dwCode >> 8);
+						m_vk      = filterVK(LOBYTE(dwCode));
+						m_vkFlags = HIBYTE(dwCode);
 					}
 				}
 				break;
@@ -2101,11 +2157,13 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 	// Valid shortcut
 	VERIF(m_vk);
 	
-	// Not twice the same shortcut
+	// No conflict between shortcuts, except concerning programs:
+	// there can be one programs-conditions-less shortcut
+	// and any count of shortcuts having different programs conditions
 	String *const asProgram = getPrograms();
 	bool bOK = true;
 	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
-		if (testConflict(*psh, asProgram)) {
+		if (psh->testConflict(*this, asProgram)) {
 			bOK = false;
 			break;
 		}
@@ -2252,6 +2310,11 @@ void Shortcut::appendItemToString(String& rs) const
 	rs += (m_bCommand) ? m_sCommand : m_sText;
 	rs += _T('\t');
 	
+	String sCond;
+	getColumnText(colCond, sCond);
+	rs += sCond;
+	rs += _T('\t');
+	
 	rs += m_sDescription;
 	rs += _T("\r\n");
 }
@@ -2342,25 +2405,59 @@ void Shortcut::appendMenuItem(HMENU hMenu, UINT id) const
 }
 
 
-
 // Return true if we should reset the delay,
 // false otherwise.
 bool Shortcut::execute() const
 {
+	// Typing simulation requires the application has the keyboard focus
+	HWND hwndFocus;
+	DWORD idThread;
+	Keystroke::catchKeyboardFocus(hwndFocus, idThread);
+	
+	BYTE abKeyboard[256], abKeyboardNew[256];
+	GetKeyboardState(abKeyboard);
+	
+	memcpy(abKeyboardNew, abKeyboard, sizeof(abKeyboard));
+	
+	// Simulate special keys release, to avoid side effects
+	// Avoid to leave Alt and Shift down, alone, at the same time
+	// because it is one of Windows keyboard layout shortcut:
+	// simulate Ctrl down, release Alt and Shift, then release Ctrl
+	bool bReleaseControl = false;
+	if ((abKeyboard[VK_MENU] & bKeyDown) &&
+	    (abKeyboard[VK_SHIFT] & bKeyDown) &&
+	   !(abKeyboard[VK_CONTROL] & bKeyDown)) {
+		bReleaseControl = true;
+		keybdEvent(VK_CONTROL, false);
+		abKeyboardNew[VK_CONTROL] = bKeyDown;
+	}
+	
+	for (int i = 0; i < nbArray(e_aSpecialKey); i++)
+		abKeyboardNew[e_aSpecialKey[i].vk] = 0;
+	abKeyboardNew[m_vk] = 0;
+	SetKeyboardState(abKeyboardNew);
+	
+	if (bReleaseControl)
+		keybdEvent(VK_CONTROL, true);
+	
 	if (m_bCommand) {
 		// Execute a command line
 		
+		clipboardToEnvironment();
 		THREAD_SHELLEXECUTE *const pParams = new THREAD_SHELLEXECUTE(
 			m_sCommand, m_sDirectory, m_nShow);
 		startThread(threadShellExecute, pParams);
-		return false;
 		
 	}else{
 		// Text
 		
-		// Typing simulation requires the application has the keyboard focus
-		HWND hwndFocus;
-		Keystroke::catchKeyboardFocus(hwndFocus);
+		enum KIND
+		{
+			kindNone,
+			kindText,
+			kindKeystroke,
+		};
+		KIND lastKind = kindNone;
 		
 		// Send the text to the window
 		bool bBackslash = false;
@@ -2376,8 +2473,15 @@ bool Shortcut::execute() const
 			}
 			
 			if (bBackslash || c != _T('[')) {
+				if (lastKind != kindText)
+					sleepBackground(0);
+				lastKind = kindText;
+				
 				bBackslash = false;
-				PostMessage(hwndFocus, WM_CHAR, c, 0);
+				const WORD vkMask = VkKeyScan(c);
+				PostMessage(hwndFocus, WM_CHAR, c, MAKELPARAM(1,
+					MapVirtualKey(LOBYTE(vkMask), 0)));
+				
 			}else{
 				// Inline shortcut, or inline command line execution
 				
@@ -2386,36 +2490,192 @@ bool Shortcut::execute() const
 				const TCHAR *pcEnd = pcStart;
 				while (*pcEnd && (pcEnd[-1] == _T('\\') || pcEnd[0] != _T(']')))
 					pcEnd++;
-				String sInside(pcStart, pcEnd - pcStart);
+				String sInside;
+				bool bBackslash2 = false;
+				for (const TCHAR *pc = pcStart; pc < pcEnd; pc++)
+					if (bBackslash2) {
+						bBackslash2 = false;
+						sInside += *pc;
+					}else if (*pc == _T('\\'))
+						bBackslash2 = true;
+					else
+						sInside += *pc;
 				
 				if (sInside.isEmpty()) {
 					// Nothing: catch the focus
 					
-					Keystroke::catchKeyboardFocus(hwndFocus);
-					Sleep(100);
+					lastKind = kindNone;
+					sleepBackground(100);
+					Keystroke::detachKeyboardFocus(idThread);
+					Keystroke::catchKeyboardFocus(hwndFocus, idThread);
 					
 				}else if (*pcStart == _T('[') && *pcEnd == _T(']')) {
 					// Double brackets: [[command line]]
 					
 					pcEnd++;
+					clipboardToEnvironment();
 					shellExecuteCmdLine((LPCTSTR)sInside + 1, NULL, SW_SHOWDEFAULT);
 					
+				}else if (*pcStart == _T('{') && pcEnd[-1] == _T('}')) {
+					// Braces: [{command}]
+					
+					sInside[sInside.getLength() - 1] = _T('\0');
+					const LPCTSTR pszCommand = sInside + 1;
+					
+					LPTSTR pszArg;
+					for (pszArg = (LPTSTR)pszCommand; *pszArg && *pszArg != _T(','); pszArg++)
+						;
+					*pszArg++ = _T('\0');
+					
+					if (!lstrcmpi(pszCommand, _T("Wait"))) {
+						// [{Wait,duration}]
+						
+						sleepBackground(StrToInt(pszArg));
+					
+					}else if (!lstrcmpi(pszCommand, _T("Focus"))) {
+						// [{Focus}]
+						
+						Keystroke::detachKeyboardFocus(idThread);
+						Keystroke::catchKeyboardFocus(hwndFocus, idThread);
+					
+					}else if (!lstrcmpi(pszCommand, _T("Copy"))) {
+						// [{Copy,text}]
+						
+						const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE,
+							(lstrlen(pszArg) + 1) * sizeof(*pszArg));
+						if (hMem) {
+							const LPTSTR pszMem = (LPTSTR)GlobalLock(hMem);
+							if (pszMem)
+								lstrcpy(pszMem, pszArg);
+							GlobalUnlock(hMem);
+							
+							OpenClipboard(NULL);
+							EmptyClipboard();
+							SetClipboardData(CF_TEXT, hMem);
+							CloseClipboard();
+						}
+						
+					}else if (!lstrcmpi(pszCommand, _T("MouseButton"))) {
+						// [{Mouse,state}] where state is 2 letters:
+						// 1 letter for button: L (left), M (middle), R (right)
+						// 1 letter for state: U (up), D (down)
+						
+						DWORD dwFlags = 0;
+						CharUpper(pszArg);
+						switch (lstrlen(pszArg)) {
+							case 2:
+								switch (*(const WORD*)pszArg) {
+									case 'DL':  dwFlags = MOUSEEVENTF_LEFTDOWN;    break;
+									case 'UL':  dwFlags = MOUSEEVENTF_LEFTUP;      break;
+									case 'DM':  dwFlags = MOUSEEVENTF_MIDDLEDOWN;  break;
+									case 'UM':  dwFlags = MOUSEEVENTF_MIDDLEUP;    break;
+									case 'DR':  dwFlags = MOUSEEVENTF_RIGHTDOWN;   break;
+									case 'UR':  dwFlags = MOUSEEVENTF_RIGHTUP;     break;
+								}
+								if (dwFlags) {
+									mouse_event(dwFlags, 0, 0, 0, 0);
+									sleepBackground(0);
+								}
+								break;
+							
+							case 1:
+								switch (*pszArg) {
+									case 'L':  dwFlags = MOUSEEVENTF_LEFTDOWN;    break;
+									case 'M':  dwFlags = MOUSEEVENTF_MIDDLEDOWN;  break;
+									case 'R':  dwFlags = MOUSEEVENTF_RIGHTDOWN;   break;
+								}
+								if (dwFlags) {
+									mouse_event(dwFlags, 0, 0, 0, 0);
+									sleepBackground(0);
+									mouse_event(dwFlags * 2, 0, 0, 0, 0);
+									sleepBackground(0);
+								}
+								break;
+						}
+						
+					}else if (!lstrcmpi(pszCommand, _T("MouseWheel"))) {
+						// [{MouseWheel,offset}]
+						
+						const int offset = -StrToInt(pszArg) * WHEEL_DELTA;
+						if (offset) {
+							mouse_event(MOUSEEVENTF_WHEEL, 0, 0, (DWORD)offset, 0);
+							sleepBackground(0);
+						}
+					}
+					
 				}else{
-					// Simple brackets: [keystroke]
+					
+					// Release special keys
+					for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+						const BYTE vk = e_aSpecialKey[i].vk;
+						if (abKeyboard[vk] & bKeyDown) {
+							abKeyboard[vk] = 0;
+							keybdEvent(vk, true);
+						}
+					}
+					
+					lastKind = kindKeystroke;
 					Keystroke ks;
-					ks.serialize(sInside.get());
-					const bool bWasRegistered = ks.unregisterHotKey();
-					ks.simulateTyping();
-					if (bWasRegistered)
-						ks.registerHotKey();
+					
+					if (*pcStart == _T('|') && pcEnd[-1] == _T('|')) {
+						// Brackets and pipe: [|characters as keystroke|]
+						
+						sInside[sInside.getLength() - 1] = _T('\0');
+						for (LPCTSTR psz = (LPCTSTR)sInside; *++psz;) {
+							const WORD wKey = VkKeyScan(*psz);
+							if (wKey == (WORD)-1) {
+								TCHAR pszCode[5];
+								wsprintf(pszCode, _T("0%u"), (UCHAR)*psz);
+								
+								ks.m_vk      = VK_MENU;
+								ks.m_vkFlags = 0;
+								const bool bAltIsHotKey = ks.unregisterHotKey();
+								const BYTE scanCodeAlt = (BYTE)MapVirtualKey(VK_MENU, 0);
+								keybd_event(VK_MENU, scanCodeAlt, 0, 0);
+								
+								Keystroke ksDigit;
+								ks.m_vkFlags = MOD_ALT;
+								for (size_t i = 0; pszCode[i]; i++) {
+									ks.m_vk = VK_NUMPAD0 + (pszCode[i] - _T('0'));
+									ks.simulateTyping(hwndFocus, true);
+								}
+								
+								keybd_event(VK_MENU, scanCodeAlt, KEYEVENTF_KEYUP, 0);
+								if (bAltIsHotKey)
+									ks.registerHotKey();
+								
+							}else{
+								const BYTE bFlags = HIBYTE(wKey);
+								ks.m_vk      = LOBYTE(wKey);
+								ks.m_vkFlags = 0;
+								if (bFlags & (1 << 0))   ks.m_vkFlags |= MOD_SHIFT;
+								if (bFlags & (1 << 1))   ks.m_vkFlags |= MOD_CONTROL;
+								if (bFlags & (1 << 2))   ks.m_vkFlags |= MOD_ALT;
+								
+								const bool bWasRegistered = ks.unregisterHotKey();
+								ks.simulateTyping(hwndFocus);
+								if (bWasRegistered)
+									ks.registerHotKey();
+							}
+						}
+						
+					}else{
+						// Simple brackets: [keystroke]
+						
+						ks.serialize(sInside.get());
+						const bool bWasRegistered = ks.unregisterHotKey();
+						ks.simulateTyping(hwndFocus);
+						if (bWasRegistered)
+							ks.registerHotKey();
+					}
 				}
 				
 				i = pcEnd - pszText;
 			}
 		}
-		
-		return true;
 	}
+	
+	return !m_bCommand;
 }
 
 
@@ -2443,6 +2703,9 @@ void escapeString(LPCTSTR psz, String& rs)
 			case '\\':
 			case '[':
 			case ']':
+			case '{':
+			case '}':
+			case '|':
 				rs += _T('\\');
 			default:
 				rs += *psz++;
@@ -2453,13 +2716,7 @@ void escapeString(LPCTSTR psz, String& rs)
 
 void appendText(LPCTSTR pszText)
 {
-	VERIFV(s_psh);
-	String &rsText = s_psh->m_sText;
-	rsText += pszText;
-	
 	const HWND hctl = GetDlgItem(s_hdlgMain, IDCTXT_TEXT);
-	const int len = rsText.getLength();
-	Edit_SetText(hctl, rsText);
-	Edit_SetSel(hctl, len, len);
+	Edit_ReplaceSel(hctl, pszText);
 	SetFocus(hctl);
 }
