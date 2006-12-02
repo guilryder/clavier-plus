@@ -176,6 +176,8 @@ E-mail&nbsp;: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd
 
 <p>Si le raccourci doit lancer un programme ou afficher un site Internet, cochez l’option correspondante. Entrez le chemin d’accès du programme ou l’adresse du site Web dans la zone. Vous pouvez cliquer sur le petit bouton situé à droite pour chercher le programme à lancer. Vous pouvez vérifier que le programme ou le site Internet est correct avec le bouton <i>Tester</i>. Si nécessaire, cliquez sur le bouton <i>Paramètres avancés</i> pour régler le répertoire de démarrage du programme ou son mode d’affichage (plein écran, fenêtré, réduit).</p>
 
+<p>Si le raccourci ouvre un répertoire, vous pouvez également lui permettre de changer le répertoire courant dans les boîtes de dialogue de type <i>Fichier/Ouvrir</i>. Pour cela, cliquez sur le bouton <i>Paramètres avancés</i> puis cochez la case <i>Changer de répertoire dans les boîtes de dialogue Fichier/Ouvrir</i>. Quand vous effectuez le raccourci, Clavier+ détecte si vous êtes ou non dans une boîte de dialogue Fichier/Ouvrir. Si oui, le répertoire courant de la boîte de dialogue est modifié, et le répertoire n’est pas ouvert dans l’explorateur. Clavier+ gère plusieurs boîtes de dialogue&nbsp;: Fichier/Ouvrir, Fichier/Enregistrer sous, et choix de répertoire.</p>
+
 <p><span class="ipt">Important&nbsp;:</span> vous devez fermer la fenêtre de Clavier+ <i>avant</i> de tester vos raccourcis clavier. Tant que la fenêtre est visible, les raccourcis clavier sont désactivés.</p>
 
 
@@ -340,6 +342,7 @@ Texte=<i>texte à taper quand le raccourci est effectué</i>
 Commande=<i>programme à lancer quand le raccourci est effectué</i>
 Répertoire=<i>répertoire de démarrage</i>
 Fenêtre=<i>mode de fenêtre du programme à lancer</i>
+GérerFichierOuvrir=<i>0 ou 1</i>
 Programmes=<i>liste des programmes</i>
 TousProgrammesSauf=<i>liste des programmes</i>
 VerrMaj=<i>condition</i>
@@ -364,6 +367,9 @@ pour le champ <kbd>Texte=</kbd>.</p>
 
 <dt><kbd>Fenêtre</kbd> (mode commande uniquement)</dt>
 <dd>Taille initiale de la fenêtre du programme lancé, parmi&nbsp;: <kbd>Normale</kbd>, <kbd>Réduite</kbd>, <kbd>Agrandie</kbd>.</dd>
+
+<dt><kbd>GérerFichierOuvrir</kbd> (mode commande uniquement)</dt>
+<dd>Si la commande est le chemin d’accès d’un répertoire, indique si Clavier+ doit détecter les boîtes de dialogue Fichier/Ouvrir pour changer leur répertoire (valeur 1). En cas d’échec ou si ce paramètre vaut 0 (valeur par défaut), le répertoire sera ouvert dans l’explorateur.</dd>
 
 <dt><kbd>Programmes</kbd>, <kbd>TousProgrammesSauf</kbd></dt>
 <dd>Condition d’activation du raccourci&nbsp;: liste des seuls programmes pour lesquels le raccourci est activé (<kbd>Programmes</kbd>) ou désactivé (<kbd>TousProgrammesSauf</kbd>). Les programmes sont séparés par des points-virgules, et n’ont pas de chemin d’accès&nbsp;: nom seul, avec extension.</dd>
