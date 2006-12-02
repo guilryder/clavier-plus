@@ -31,7 +31,6 @@ IDI_APP                 ICON                    "App.ico"
 IDI_ADD                 ICON                    "Add.ico"
 IDI_DELETE              ICON                    "Delete.ico"
 IDI_EDIT                ICON                    "Edit.ico"
-IDI_TEXT                ICON                    "Text.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -39,8 +38,8 @@ IDI_TEXT                ICON                    "Text.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 10,3,0,0
- PRODUCTVERSION 10,3,0,0
+ FILEVERSION 10,4,0,0
+ PRODUCTVERSION 10,4,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -57,12 +56,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Guillaume Ryder (http://utilfr42.free.fr)"
             VALUE "FileDescription", "Clavier+"
-            VALUE "FileVersion", "10.3"
+            VALUE "FileVersion", "10.4"
             VALUE "InternalName", "Clavier.exe"
             VALUE "LegalCopyright", "Copyright © 2000-2006 Guillaume Ryder"
             VALUE "OriginalFilename", "Clavier.exe"
             VALUE "ProductName", "Clavier+"
-            VALUE "ProductVersion", "10.3"
+            VALUE "ProductVersion", "10.4"
         END
     END
     BLOCK "VarFileInfo"
@@ -144,7 +143,7 @@ CAPTION "Über Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
-    CONTROL         "Clavier+ 10.3",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
+    CONTROL         "Clavier+ 10.4",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
     LTEXT           "Copyright © 2000-2006\nGuillaume Ryder\nSoftwarelizenz nach GNU GPL",IDC_STATIC,42,20,102,28,SS_NOPREFIX
     GROUPBOX        "Autor",IDC_STATIC,8,54,142,50
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
@@ -197,12 +196,13 @@ BEGIN
     EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
     ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
-    PUSHBUTTON      "V&orgerückte Einstellungen...",IDCCMD_CMDSETTINGS,246,168,102,14
-    LTEXT           "Für nur jene Programme ermöglichen (leeren = alle):",IDCLBL_PROGRAMS,6,194,168,8
-    EDITTEXT        IDCTXT_PROGRAMS,180,192,210,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "E&rweiterte Einstellungen...",IDCCMD_CMDSETTINGS,246,168,102,14
+    LTEXT           "Er&möglichen für:",IDCLBL_PROGRAMS,6,194,53,8
+    COMBOBOX        IDCCBO_PROGRAMS,62,192,94,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,158,192,232,12,ES_AUTOHSCROLL
     CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Beschreibung:",IDCLBL_DESCRIPTION,6,210,46,8
-    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
+    EDITTEXT        IDCTXT_DESCRIPTION,62,208,346,12,ES_AUTOHSCROLL
     CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,4,225,53,19
     PUSHBUTTON      "&Hilfe",IDCCMD_HELP,94,227,48,14
     PUSHBUTTON      "L&iste kopieren",IDCCMD_COPYLIST,147,227,48,14
@@ -213,7 +213,7 @@ BEGIN
     PUSHBUTTON      "&Test",IDCCMD_TEST,354,168,48,14
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 93
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Programm starten"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -226,8 +226,10 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Ausführen:",IDC_STATIC,6,44,37,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,78,72,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,72,57,14
+    CONTROL         "&Verzeichnis in den Datei/Öffnen Dialogfeld ändern (Kommandozeile sollte ein Ordner sein)",IDCCHK_SUPPORTFILEOPEN,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,174,18
+    PUSHBUTTON      "Abbrechen",IDCANCEL,78,93,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
 
 IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
@@ -240,6 +242,22 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,54,30,56,14
     DEFPUSHBUTTON   "OK",IDOK,116,30,57,14
 END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_CMDSETTINGS, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 93
+    END
+END
+#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -320,10 +338,6 @@ BEGIN
     ERR_SAVING_INI          "Einstellungen konnten nicht gespeichert werden."
     ERR_LOADING_INI         "Einstellungen konnten nicht geladen werden."
     ERR_TARGET              "Kein Programm gewählt."
-END
-
-STRINGTABLE 
-BEGIN
     ASK_QUIT                "Soll Clavier+ wirklich beendet werden?\nAlle Verknüpfungen werden deaktiviert."
     ASK_DELETE              "Soll diese Verknüpfung wirklich gelöscht werden?"
     MSG_COPYLIST            "Die Verknüpfungliste ist zum Klemmbrett kopiert worden."
@@ -331,7 +345,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Deutsch;Verknüpfung;Code;Beschreibung;Befehl;Text;Ordner;Fenster;Programme;Kein;Sprache;Grösse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Feststell;Num;Rollen;Ja;Nein;"
+    IDS_TOKENS              "Deutsch;Verknüpfung;Code;Beschreibung;Befehl;Text;Ordner;Fenster;DateiÖffnenStützen;Programme;AlleProgrammeAber;Kein;Sprache;Grösse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Feststell;Num;Rollen;Ja;Nein;"
     IDS_COLUMNS             "Inhalt;Verknüpfung;Bedingung;Beschreibung;"
     IDS_HELP                "Hilfe.htm"
     IDS_CONDITIONS          "ohne Bedingung;eingeschaltet;ausgeschaltet;"
@@ -340,6 +354,8 @@ BEGIN
     IDS_QUIT                "&Beenden"
     IDS_COPYLIST            "Liste &kopieren"
     IDS_BROWSEDIR           "Startordner zum Ausführen des Befehls auswählen."
+    IDS_PROGRAMS            "alle Programme aber;nur diese Programme;"
+    IDS_TOOLTIPS            "Hinzufügen;Löschen;Ändern;Programm wählen;"
 END
 
 #endif    // German (Germany) resources
@@ -404,8 +420,9 @@ BEGIN
     ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
     PUSHBUTTON      "Ad&vanced settings...",IDCCMD_CMDSETTINGS,246,168,102,14
     PUSHBUTTON      "&Test",IDCCMD_TEST,354,168,48,14
-    LTEXT           "&Enable for those programs only (empty = all programs):",IDCLBL_PROGRAMS,6,194,179,8
-    EDITTEXT        IDCTXT_PROGRAMS,192,192,198,12,ES_AUTOHSCROLL
+    LTEXT           "&Enable for:",IDCLBL_PROGRAMS,6,194,36,8
+    COMBOBOX        IDCCBO_PROGRAMS,54,192,90,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,146,192,244,12,ES_AUTOHSCROLL
     CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Description:",IDCLBL_DESCRIPTION,6,210,38,8
     EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
@@ -425,7 +442,7 @@ CAPTION "About Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,-1,6,6,20,20
-    CONTROL         "Clavier+ 10.3",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    CONTROL         "Clavier+ 10.4",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
     LTEXT           "Copyright © 2000-2006\nGuillaume Ryder\nSoftware under GPL license",-1,42,20,108,28,SS_NOPREFIX
     GROUPBOX        "Author",-1,8,54,142,50
     CONTROL         "Guillaume Ryder",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
@@ -436,7 +453,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,137,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 93
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Program to execute"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -449,8 +466,10 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Window:",IDC_STATIC,6,44,43,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Cancel",IDCANCEL,78,72,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,72,57,14
+    CONTROL         "C&hange directory in File/Open dialog boxes (the command line should be a folder)",IDCCHK_SUPPORTFILEOPEN,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,156,18
+    PUSHBUTTON      "Cancel",IDCANCEL,78,93,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
 
 IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
@@ -463,6 +482,22 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,54,30,56,14
     DEFPUSHBUTTON   "OK",IDOK,116,30,57,14
 END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_CMDSETTINGS, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 93
+    END
+END
+#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -543,10 +578,6 @@ BEGIN
     ERR_SAVING_INI          "Unable to save the settings."
     ERR_LOADING_INI         "Unable to load the settings."
     ERR_TARGET              "No program has been chosen.\nPlease keep the mouse button down and drag the cursor\nto a window of the program to choose."
-END
-
-STRINGTABLE 
-BEGIN
     ASK_QUIT                "Do you really want to exit Clavier+?\nThis will disable all your shortcuts.\n\n(Press the Shift key while clicking the button\nto skip this message.)"
     ASK_DELETE              "Do you really want to delete this shortcut?\n\n(Press the Shift key while clicking the button\nto skip this message.)"
     MSG_COPYLIST            "The shortcuts list has been copied to the clipboard.\n\nYou can paste it with Ctrl+V to a word processor or a spreadsheet."
@@ -554,7 +585,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "English;Shortcut;Code;Description;Command;Text;Directory;Window;Programs;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;CapsLock;NumLock;ScrollLock;Yes;No;"
+    IDS_TOKENS              "English;Shortcut;Code;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;CapsLock;NumLock;ScrollLock;Yes;No;"
     IDS_COLUMNS             "Contents;Shortcut;Conditions;Description;"
     IDS_HELP                "Help.htm"
     IDS_CONDITIONS          "no condition;must be on;must be off;"
@@ -563,6 +594,8 @@ BEGIN
     IDS_QUIT                "&Quit"
     IDS_COPYLIST            "&Copy List"
     IDS_BROWSEDIR           "Choose the startup directory of the command."
+    IDS_PROGRAMS            "all programs but;only those programs;"
+    IDS_TOOLTIPS            "Add a new shortcut;Delete the selected shortcut;Edit the selected shortcut;Click and drag-drop to select the window of a program;"
 END
 
 #endif    // English (U.S.) resources
@@ -608,8 +641,9 @@ BEGIN
     ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
     PUSHBUTTON      "Paramètres a&vancés...",IDCCMD_CMDSETTINGS,246,168,102,14
     PUSHBUTTON      "&Tester",IDCCMD_TEST,354,168,48,14
-    LTEXT           "Activer pour ces programmes &uniquement (vide = tous) :",IDCLBL_PROGRAMS,6,194,182,8
-    EDITTEXT        IDCTXT_PROGRAMS,198,192,192,12,ES_AUTOHSCROLL
+    LTEXT           "Activer po&ur :",IDCLBL_PROGRAMS,6,194,45,8
+    COMBOBOX        IDCCBO_PROGRAMS,54,192,114,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,170,192,220,12,ES_AUTOHSCROLL
     CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Description :",IDCLBL_DESCRIPTION,6,210,40,8
     EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
@@ -648,7 +682,7 @@ CAPTION "À propos de Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,-1,6,6,20,20
-    CONTROL         "Clavier+ 10.3",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    CONTROL         "Clavier+ 10.4",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
     CONTROL         "Copyright © 2000-2006\nGuillaume Ryder\nLogiciel sous licence GPL",-1,
                     "Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | WS_GROUP,42,20,108,28
     GROUPBOX        "Auteur",-1,8,54,142,50
@@ -660,7 +694,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,137,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 93
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Programme à exécuter"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -673,8 +707,10 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Fenêtre :",IDC_STATIC,6,44,33,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Annuler",IDCANCEL,78,72,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,72,57,14
+    CONTROL         "&Changer de répertoire dans les boîtes de dialogue Fichier/Ouvrir (la ligne de commande est un dossier)",IDCCHK_SUPPORTFILEOPEN,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,180,18
+    PUSHBUTTON      "Annuler",IDCANCEL,78,93,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
 
 IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
@@ -687,6 +723,22 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,54,30,56,14
     DEFPUSHBUTTON   "OK",IDOK,116,30,57,14
 END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_CMDSETTINGS, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 100
+    END
+END
+#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -791,10 +843,6 @@ BEGIN
     ERR_SAVING_INI          "Impossible d'enregistrer les paramètres."
     ERR_LOADING_INI         "Impossible de lire les paramètres."
     ERR_TARGET              "Aucun programme n'a été choisi.\nVeuillez laisser le bouton de la souris enfoncé et faire glisser le curseur\npour choisir la fenêtre du programme voulu."
-END
-
-STRINGTABLE 
-BEGIN
     ASK_QUIT                "Voulez-vous vraiment quitter Clavier+ ?\nCela désactivera les raccourcis clavier.\n\n(Appuyez sur la touche Majuscule en cliquant sur le bouton\npour ne pas afficher ce message.)"
     ASK_DELETE              "Voulez-vous vraiment supprimer ce raccourci ?\n\n(Appuyez sur la touche Majuscule en cliquant sur le bouton\npour ne pas afficher ce message.)"
     MSG_COPYLIST            "La liste des raccourcis a été copiée dans le presse-papiers.\n\nVous pouvez la coller avec Ctrl+V dans un logiciel de traitement de texte ou un tableur."
@@ -802,7 +850,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Français;Raccourci;Code;Description;Commande;Texte;Répertoire;Fenêtre;Programmes;Aucun;Langue;Taille;Colonnes;Tri;Normale;Réduite;Agrandie;Win;Ctrl;Maj;Alt;VerrMaj;VerrNum;ArrêtDéfil;Oui;Non;"
+    IDS_TOKENS              "Français;Raccourci;Code;Description;Commande;Texte;Répertoire;Fenêtre;GérerFichierOuvrir;Programmes;TousProgrammesSauf;Aucun;Langue;Taille;Colonnes;Tri;Normale;Réduite;Agrandie;Win;Ctrl;Maj;Alt;VerrMaj;VerrNum;ArrêtDéfil;Oui;Non;"
     IDS_COLUMNS             "Contenu;Raccourci;Conditions;Description;"
     IDS_HELP                "Aide.htm"
     IDS_CONDITIONS          "pas de condition;doit être activé;doit être désactivé;"
@@ -811,6 +859,8 @@ BEGIN
     IDS_QUIT                "&Quitter"
     IDS_COPYLIST            "&Copier la liste"
     IDS_BROWSEDIR           "Choisissez le répertoire de démarrage de la commande."
+    IDS_PROGRAMS            "tous les programmes sauf;seulement ces programmes;"
+    IDS_TOOLTIPS            "Ajouter un nouveau raccourci;Supprimer le raccourci sélectionné;Éditer le raccourci sélectionné;Cliquer et faire glisser le curseur pour sélectionner la fenêtre d'un programme;"
 END
 
 #endif    // French (France) resources

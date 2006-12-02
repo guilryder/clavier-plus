@@ -35,6 +35,28 @@ text-decoration: underline;
 font-weight: bold;
 color: red;
 }
+
+.faq-question {
+margin-top: 18pt;
+border-top: 2px solid #808080;
+padding-top: 2px;
+padding-left: 5px;
+font-weight: bold;
+}
+
+.faq-answer {
+margin-left: 2em;
+}
+
+.faq-answer ul {
+margin-top: 0;
+margin-bottom: 0;
+}
+
+.faq-answer p {
+margin-top: 6pt;
+margin-bottom: 6pt;
+}
 </style>
 </head>
 
@@ -54,6 +76,8 @@ color: red;
 <a href="#print">Printing the shortcuts list</a>
 <a href="#conffile">Configuration file</a>
 <a href="#limits">Known issues</a>
+<a href="#faq">FAQ</a>
+<a href="#examples">Shortcuts examples</a>
 </p>
 
 
@@ -170,13 +194,17 @@ E-mail: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a><
 
 <h3>Active program</h3>
 
-<p>You can restrict a shortcut to some programs. This allows to give different meanings to the same shortcut, depending of the active program.</p>
+<p>You can restrict a shortcut to some programs. This allows to give different meanings to the same shortcut, depending of the active program. By defaults, shortcuts are enabled for “all programs but: <i>none</i>”, i.e. for all programs.</p>
 
-<p>To define the list of programs for which the shortcut is active, click the shortcut in the list. Then, click the small sight on the right (white background), and keep the left mouse button down. Move the sight to the window of the program you want to select (for example, the window of Word or Windows Explorer). The name of the program is written in the text box at the left of the sight. Repeat this operation for each program to add to the list.</p>
+<p>You can define two kinds of condition on the active program. The shortcut can be enabled for all programs, except specific ones (exclusive criteria), or only for specific programs (inclusive criteria). Choose the condition type in the <i>Activate for</i> combo box, after having selected your shortcut in the list.</p>
+
+<p>To define the list of programs concerned by the condition, click the small sight on the right (white background). Then keep the left mouse button down, and move the sight to the window of the program you want to select (for example, the window of Word or Windows Explorer). The name of the program is written in the text box at the left of the sight. Repeat this operation for each program to add to the list.</p>
 
 <p>When the programs list is empty, the shortcut is active for all programs. If it is not empty, the shortcut is active only for the specified programs.</p>
 
-<p>If you create a shortcut without programs conditions, then a copy of this shortcut with programs conditions, the first shortcut will be used for all programs except the ones you specified as condition in the second shortcut.</p>
+<p>For a given keystroke, you can define any count of shortcuts having a <i>only those programs</i> condition, if they refer to different programs. In all cases, you can only define one shortcut having an <i>all programs but</i> condition.</p>
+
+<p>Shortcuts of type <i>only those programs</i> have the priority on <i>all programs but</i> shortcuts. If you associate the condition “only those programs&nbsp;: <kbd>notepad.exe</kbd>” to a first shortcut, and “all programs but: <i>none</i>” to a second shortcut, if both shortcuts have the same keystroke, and if you execute this keystroke in Notepad, the first shortcut will be executed, the second will be ignored.</p>
 
 
 <h3>Toggle keys</h3>
@@ -210,6 +238,9 @@ E-mail: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a><
 
 <p>This syntax allows to launch several programs with the same shortcut. For example, to launch Notepad and the calculator:<br />
 <kbd>[[notepad.exe]][[calc.exe]]</kbd></p>
+
+<p>The command line can contain <kbd>%</kbd> enclosed environment variables, like in <kbd>explorer.exe %WINDIR%</kbd> to open the explorer at Windows directory. The <kbd>%CLIPBOARD%</kbd> environment variable will contain the text currently stored in the clipboard. For example, to open the selected URL with Internet Explorer&nbsp;:<br />
+<kbd>[Ctrl+C][][[iexplore.exe %CLIPBOARD%]]</kbd></p>
 
 
 <h3>Making a pause</h3>
@@ -318,6 +349,7 @@ Command=<i>program to launch when the shortcut is done</i>
 Directory=<i>startup directory</i>
 Window=<i>window mode of the program to launch</i>
 Programs=<i>programs list</i>
+AllProgramsBut=<i>programs list</i>
 CapsLock=<i>condition</i>
 NumLock=<i>condition</i>
 ScrollLock=<i>condition</i>
@@ -340,8 +372,8 @@ ScrollLock=<i>condition</i>
 <dt><kbd>Window</kbd> (command mode only)</dt>
 <dd>Initial size of the main window of the launched program, among: <kbd>Normal</kbd>, <kbd>Minimized</kbd>, <kbd>Maximized</kbd>.</dd>
 
-<dt><kbd>Programs</kbd></dt>
-<dd>Activation condition: list of the only programs for which the shortcut is activated. If the list is empty, the shortcut is active in all programs, except those being specifically targeted by another shortcut. The programs are semi-colon-separated. They don’t have a full path: file name only, with extension.</dd>
+<dt><kbd>Programs</kbd>, <kbd>AllProgramsBut</kbd></dt>
+<dd>Activation condition: list of the only programs for which the shortcut is activated (<kbd>Programs</kbd>) or disabled (<kbd>AllProgramsBut</kbd>). The programs are semi-colon-separated. They don’t have a full path: file name only, with extension.</dd>
 
 <dt><kbd>CapsLock</kbd>, <kbd>NumLock</kbd>, <kbd>ScrollLock</kbd></dt>
 <dd>If specified, specify an activation condition to the shortcut. Accepted values: <kbd>None</kbd> (default value), <kbd>Yes</kbd> and <kbd>No</kbd>.</dd>
@@ -386,7 +418,7 @@ Pause
 
 <h3>Shortcuts having side effects</h3>
 
-<p>By default under Windows, the <kbd>Alt+Shift</kbd> shortcut changes the keyboard layout. You are strongly encouraged not to use shortcuts like <kbd>Alt+Maj+<i>key</i></kbd>, because you could change the keyboard layout by mistake.</p>
+<p>By default under Windows, the <kbd>Alt+Shift</kbd> shortcut changes the keyboard layout. You are strongly encouraged not to use shortcuts like <kbd>Alt+Shift+<i>key</i></kbd>, because you could change the keyboard layout by mistake.</p>
 
 
 <h3>Partially incompatible programs</h3>
@@ -397,6 +429,24 @@ Pause
 <li><b>Games</b>, because they bypass Windows, thus Clavier+, when handling the keyboard.</li>
 <li>System programs, because they bypass Windows too. For example: <kbd>command.com</kbd>, emulators and virtual machines (Cygwin, VirtualPC), virtualizers (VNC).</li>
 </ul>
+
+
+<h2 id="faq">FAQ</h2>
+
+<p>You can access the last version of this FAQ in <a href="http://utilfr42.free.fr/util/Clavier.php#faq">Clavier+ page</a>.</p>
+
+<div class="faq-question">Clavier+ can’t write text in <i>MyFavoriteProgram</i>!</div><div class="faq-answer"><p>Some programs handle the keyboard in a non-standard way, disallowing Clavier+ to write text. To solve this problem, surround your text by <kbd>[|</kbd> and <kbd>|]</kbd>, as below:<p><kbd>[|My text|]</kbd></p></p></div><div class="faq-question">Does Clavier+ works in games?</div><div class="faq-answer"><p>Most of the time, no. Games access the keyboard in low-level, for various raisons (rapidity, cheat protection, …).</p></div><div class="faq-question">How to write a line return with a shortcut?</div><div class="faq-answer"><p>Two solutions:</p><ul><li>insert a line return in the edit box, by pressing the <kbd>Return</kbd> key,</li><li>if the previous solution doesn’t work, write the code <kbd>[RETURN]</kbd></li></ul></div><div class="faq-question">How to simulate the key <i>Dummy</i></div><div class="faq-answer"><p>Click the arrow-shape button, choose the command <i>Simulate a Keystroke</i>.</p></div><div class="faq-question">How to display the context menu?</div><div class="faq-answer"><p>Simulating the key <i>Context Menu</i> allows to display this menu. With the command <i>Simulate a Keystroke</i> in the arrow-shaped button, we can learn that the code of this key is <kbd>#93</kbd>. Thus, writing <kbd>[#93]</kbd> allows to display the context menu. To display the context menu at the position of the mouse cursor, simulate a right-click with: <kbd>[{MouseButton,R}]</kbd></p></div><div class="faq-question">How to change the sound volume?</div><div class="faq-answer"><p>There is three keys related to sound volume:</p><ul><li>mute: code <kbd>[#173]</kbd></li><li>higher volume: code <kbd>[#175]</kbd></li><li>lower volume: code <kbd>[#174]</kbd></li></ul><p>You can use the program <a href="http://localhost/utilfr/dn/VolumeManager.exe">VolumeManager</a> to adjust the volume finely.</p></div><div class="faq-question">The checkbox <i>Launch Clavier+ at Windows startup</i> doesn’t work!</div><div class="faq-answer"><p>Create a shortcut to <kbd>Clavier.exe</kbd> in <i>Start Menu/Programs/Startup</i>. To do this, click with the right button on <kbd>Clavier.exe</kbd>, keep the button down and drag the mouse to the Start menu, then <i>Programs</i>, then <i>Startup</i>, and release the mouse button. Choose <i>Create a shortcut here</i>.</p></div><div class="faq-question">How to remove Clavier+ icon from the traybar?</div><div class="faq-answer"><p>Launch Clavier+ then quit it. Double-click on the <kbd>Clavier.ini</kbd> file located in the same directory than Clavier+. In the second line, that begins with <kbd>Size=</kbd>, replace the <i>last</i> zero by the digit one. For example: <kbd>Size=923,501,0,0</kbd> should become <kbd>Size=923,501,0,1</kbd>.</p><p>As Clavier+ icon will no more be visible, you will have to launch Clavier+ twice to display its configuration window (once to launch it, once to display the window).</p></div><div class="faq-question">How to launch two programs at once?</div><div class="faq-answer"><p>The solution is to enclose the path of the two programs in double brackets, in the <kbd>Write text</kbd> area. For example, to launch notepad and the calculator:</p><pre>[[notepad.exe]][[calc.exe]]</pre></div><div class="faq-question">How to simulate a mouse click, a double-click, a right click?</div><div class="faq-answer"><p>You need to create a shortcut of type <i>Write text</i> and use the <kbd>[{MouseButton,<i>code</i>}]</kbd> special command. For example, to simulate a left click: <kbd>[{MouseButton,L}]</kbd>. For a double-click, execute two left clicks: <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>. For a right click, use the <kbd>R</kbd> code: <kbd>[{MouseButton,R}]</kbd>.</p></div><div class="faq-question">How to do more complicated things: write the current date, activate an application, …?</div><div class="faq-answer"><p>You can create a VBScript program and ask Clavier+ to execute it. The generic procedure is the following: launch Notepad, write the text of your script, save it with the <kbd>.VBS</kbd> file extension, then associate a shortcut to it with Clavier+.</p><p>Some examples of scripts:</p><ul><li>Write the current date in the active program:<pre>set shell = WScript.CreateObject("WScript.Shell")
+shell.SendKeys Date()</pre></li><li>Activate an application and send keystrokes to it, for example compute 2+7 with the calculator (which should be already launched):<pre>set shell = WScript.CreateObject("WScript.Shell")
+shell.AppActivate "Calculatrice"
+WScript.Sleep(100)
+shell.SendKeys "2{+}"
+WScript.Sleep(100)
+shell.SendKeys "7{=}"</pre><p>Please read the <a href="http://msdn.microsoft.com/archive/default.asp?url=/archive/en-us/wsh/htm/wsMthSendKeys.asp">Microsoft documentation</a> for more information about the available keystrokes in VBScript.</p></li></ul></div>
+
+
+<h2 id="examples">Shortcuts examples</h2>
+
+<ul><li>Create a new folder in Windows Explorer<br />text <kbd>[#93][N][RETURN]</kbd> with the program condition <kbd>explorer.exe</kbd></li><li>Execute the <i>File</i>/<i>Quit</i> menu command<br />text <kbd>[Alt+F4]</kbd> or text <kbd>[Alt+F][Q]</kbd></li><li>Translate to French the selected word with an online dictionnary<br />text <kbd>[Ctrl+C][Ctrl+C][[http://www.wordreference.com/enfr/%CLIPBOARD%]]</kbd></li><li>Write an e-mail<br />command <kbd>mailto:</kbd> or <kbd>mailto:somebody@domain.com&subject=Subject</kbd></li><li>Scroll the active program 3 lines downward<br />text <kbd>[{MouseWheel,3}]</kbd></li><li>Display the control panel<br />command <kbd>control.exe</kbd></li><li>Higher or lower the volume<br />text <kbd>[#175]</kbd> or text <kbd>[#174]</kbd></li><li>Coller la sélection dans le bloc-notes<br />text <kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd></li><li>Remplir un formulaire<br />text <kbd>first field[TAB]second field[TAB]third field[ENTER]</kbd></li></ul>
 
 </body>
 </html>

@@ -112,6 +112,8 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 // Edit text of keystroke dialog box
 LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	bool bIsDown = false;
+	
 	switch (uMsg) {
 		
 		case WM_LBUTTONDOWN:
@@ -136,31 +138,44 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		case WM_SYSKEYDOWN:
 			if (s_ksReset)
 				s_ks.reset();
+			bIsDown = true;
 			// Fall-through
 		
 		case WM_KEYUP:
 		case WM_SYSKEYUP:
 			{
+				if (wParam == VK_RWIN)
+					wParam = VK_LWIN;
+				
 				// Flags
-				bool bIsSpecial =
-					(wParam >= VK_LSHIFT && wParam <= VK_RMENU) ||
-					(wParam >= VK_LWIN   && wParam <= VK_RWIN);
+				WORD vkFlags = s_ks.m_vkFlags;
+				bool bIsSpecial = false;
 				for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
-					if (wParam == e_aSpecialKey[i].vk)
+					const BYTE vk = e_aSpecialKey[i].vk;
+					if (wParam == vk)
 						bIsSpecial = true;
-					if (IsKeyDown(e_aSpecialKey[i].vk))
-						s_ks.m_vkFlags |= e_aSpecialKey[i].vkFlags;
-					else if (!s_ks.m_vk)
-						s_ks.m_vkFlags &= ~e_aSpecialKey[i].vkFlags;
+					
+					const int vkKeyFlags = e_aSpecialKey[i].vkFlags;
+					if (IsKeyDown(vk) || (vk == VK_LWIN && IsKeyDown(VK_RWIN)))
+						vkFlags |= vkKeyFlags;
+					else
+						vkFlags &= ~vkKeyFlags;
 				}
 				
 				// Key
-				if (uMsg == WM_KEYDOWN || uMsg == WM_SYSKEYDOWN) {
+				// If key is pressed, update the flags
+				// If key is released, update the flags only if no key has been set
+				bool bUpdateFlags = true;
+				if (bIsDown) {
 					s_ksReset = false;
 					if (!bIsSpecial)
 						s_ks.m_vk = Keystroke::filterVK((BYTE)wParam);
-				}else
+				}else{
 					s_ksReset |= !bIsSpecial;
+					bUpdateFlags &= !s_ks.m_vk;
+				}
+				if (bUpdateFlags)
+					s_ks.m_vkFlags = vkFlags;
 			}
 			// Fall-through
 		
@@ -356,10 +371,10 @@ void Keystroke::keybdEvent(UINT vk, bool bUp)
 
 
 // Simulate the typing of the keystroke
-void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bAltCode) const
+void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bSpecialKeys) const
 {
 	// Press the special keys
-	if (!bAltCode)
+	if (bSpecialKeys)
 		for (int i = 0; i < nbArray(e_aSpecialKey); i++)
 			if (m_vkFlags & e_aSpecialKey[i].vkFlags)
 				keybdEvent(e_aSpecialKey[i].vk, false);
@@ -370,7 +385,7 @@ void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bAltCode) const
 	keybdEvent(m_vk, true);
 	
 	// Release the special keys
-	if (!bAltCode)
+	if (bSpecialKeys)
 		for (int i = 0; i < nbArray(e_aSpecialKey); i++)
 			if (m_vkFlags & e_aSpecialKey[i].vkFlags)
 				keybdEvent(e_aSpecialKey[i].vk, true);
@@ -400,6 +415,17 @@ void Keystroke::catchKeyboardFocus(HWND& rhwndFocus, DWORD& ridThread)
 void Keystroke::detachKeyboardFocus(DWORD idThread)
 {
 	AttachThreadInput(GetCurrentThreadId(), idThread, FALSE);
+}
+
+void Keystroke::releaseSpecialKeys(BYTE abKeyboard[])
+{
+	for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+		const BYTE vk = e_aSpecialKey[i].vk;
+		if (abKeyboard[vk] & bKeyDown) {
+			abKeyboard[vk] = 0;
+			keybdEvent(vk, true);
+		}
+	}
 }
 
 
@@ -557,25 +583,25 @@ void iniSave()
 bool Shortcut::match(BYTE vk, WORD vkFlags, const int aiCondState[], LPCTSTR pszProgram) const
 {
 	VERIF(Keystroke::match(vk, vkFlags, aiCondState));
-	if (m_sPrograms.isEmpty())
-		return true;
 	
-	return pszProgram && containsProgram(pszProgram);
+	return (pszProgram && m_sPrograms.isSome() && containsProgram(pszProgram)) ^ (!m_bProgramsOnly);
 }
 
 
 
 // Test for intersection
-bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[]) const
+bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[], bool bProgramsOnly) const
 {
+	VERIF(bProgramsOnly == m_bProgramsOnly);
+	
 	VERIF(m_vk == ks.m_vk && m_vkFlags == ks.m_vkFlags);
 	for (int i = 0; i < condTypeCount; i++)
 		VERIF(m_aCond[i] == condIgnore || ks.m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
 	
-	const bool bIsEmpty = m_sPrograms.isEmpty();
-	if (bIsEmpty || !asProgram)
-		return bIsEmpty && !asProgram;
+	if (!m_bProgramsOnly || !bProgramsOnly)
+		return true;
 	
+	VERIF(asProgram && m_sPrograms.isSome());
 	for (int i = 0; asProgram[i].isSome(); i++)
 		if (containsProgram(asProgram[i]))
 			return true;
@@ -636,22 +662,22 @@ void Shortcut::cleanPrograms()
 bool Shortcut::containsProgram(LPCTSTR pszProgram) const
 {
 	LPCTSTR pszPrograms = m_sPrograms;
-	const int lenCompare        = lstrlen(pszProgram);
-	const int lenProgramsBrowse = lstrlen(pszPrograms) - lenCompare;
+	VERIF(*pszPrograms);
 	
-	bool bCompare = true;
-	for (int i = 0; i <= lenProgramsBrowse; i++) {
-		if (pszPrograms[i] == _T(';'))
-			bCompare = true;
-		else if (bCompare) {
-			if (CSTR_EQUAL == CompareString(LOCALE_USER_DEFAULT, NORM_IGNORECASE,
-			    pszPrograms + i, lenCompare, pszProgram, lenCompare))
-				return true;
-			bCompare = false;
-		}
+	const TCHAR *pcStart = pszPrograms;
+	for (;;) {
+		const TCHAR *pc = pcStart;
+		while (*pc && *pc != _T(';'))
+			pc++;
+		
+		if (CSTR_EQUAL == CompareString(LOCALE_USER_DEFAULT, NORM_IGNORECASE,
+		    pcStart, pc - pcStart, pszProgram, -1))
+			return true;
+		
+		if (!*pc)
+			return false;
+		pcStart = pc + 1;
 	}
-	
-	return false;
 }
 
 

@@ -272,6 +272,26 @@ void clipboardToEnvironment()
 }
 
 
+HWND findVisibleChildWindow(HWND hwndParent, LPCTSTR pszClass, bool bPrefix)
+{
+	HWND hwndChild = NULL;
+	while (ToBool(hwndChild = FindWindowEx(hwndParent, hwndChild, NULL, NULL)))
+		if ((GetWindowStyle(hwndChild) & WS_VISIBLE) &&
+		    checkWindowClass(hwndChild, pszClass, bPrefix))
+			return hwndChild;
+	return NULL;
+}
+
+bool checkWindowClass(HWND hWnd, LPCTSTR pszClass, bool bPrefix)
+{
+	TCHAR pszWindowClass[200];
+	VERIF(GetClassName(hWnd, pszWindowClass, nbArray(pszWindowClass)));
+	if (bPrefix)
+		pszWindowClass[lstrlen(pszClass)] = _T('\0');
+	return !StrCmp(pszWindowClass, pszClass);
+}
+
+
 
 //------------------------------------------------------------------------
 // SHBrowseForFolder wrapper:
@@ -295,7 +315,7 @@ bool browseForFolder(HWND hwndParent, LPCTSTR pszTitle, LPTSTR pszDirectory)
 	if (!pidl || !SHGetPathFromIDList(pidl, pszDirectory))
 		return false;
 	
-	shellFree(pidl);
+	CoTaskMemFree(pidl);
 	return true;
 }
 
@@ -310,17 +330,6 @@ int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM lpD
 //------------------------------------------------------------------------
 // Shell API tools
 //------------------------------------------------------------------------
-
-// Use IMalloc to free a memory block
-void shellFree(void* p)
-{
-	LPMALLOC pMalloc;
-	if (SUCCEEDED(SHGetMalloc(&pMalloc))) {
-		pMalloc->Free(p);
-		pMalloc->Release();
-	}
-}
-
 
 // Wrapper for SHGetSpecialFolderPath
 bool getSpecialFolderPath(int index, LPTSTR pszPath)
@@ -367,11 +376,7 @@ bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath)
 			return true;
 	}
 	
-#ifndef UNICODE
-	WCHAR wsz[MAX_PATH];
-	MultiByteToWideChar(CP_ACP, 0, pszLinkFile, -1, wsz, nbArray(wsz));
-#endif
-	const LPWSTR wszLinkFile = ANSI_UNICODE(wsz, pszLinkFile);
+	strToW(MAX_PATH, wszLinkFile, pszLinkFile);
 	
 	// Resolve the shortcut using the IUniformResourceLocator and IPersistFile interfaces
 	IUniformResourceLocator *purl;
@@ -384,7 +389,7 @@ bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath)
 			if (SUCCEEDED(hr1 = ppf->Load(wszLinkFile, STGM_READ)) &&
 			    SUCCEEDED(hr2 = purl->GetURL(&pszURL))) {
 				lstrcpyn(pszTargetPath, pszURL, MAX_PATH);
-				shellFree(pszURL);
+				CoTaskMemFree(pszURL);
 			}
 			ppf->Release();
 		}

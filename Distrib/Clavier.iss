@@ -41,9 +41,9 @@ Name: german; MessagesFile: compiler:Languages\German.isl
 
 [Files]
 Source: {#BinDir}\Clavier.exe; DestDir: {app}; Flags: ignoreversion
-Source: {#BinDir}\ClavierEnglish.ini; DestDir: {app}; Flags: ignoreversion; DestName: {#IniFile}; Languages: english
-Source: {#BinDir}\ClavierFrench.ini; DestDir: {app}; Flags: ignoreversion; DestName: {#IniFile}; Languages: french
-Source: {#BinDir}\ClavierGerman.ini; DestDir: {app}; Flags: ignoreversion; DestName: {#IniFile}; Languages: german
+Source: {#BinDir}\ClavierEnglish.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: english
+Source: {#BinDir}\ClavierFrench.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: french
+Source: {#BinDir}\ClavierGerman.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: german
 Source: {#BinDir}\Help.htm; DestDir: {app}; Flags: ignoreversion; Languages: english
 Source: {#BinDir}\Aide.htm; DestDir: {app}; Flags: ignoreversion; Languages: french
 Source: {#BinDir}\Hilfe.htm; DestDir: {app}; Flags: ignoreversion; Languages: german

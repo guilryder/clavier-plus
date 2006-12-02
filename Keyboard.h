@@ -75,12 +75,17 @@ public:
 	ATOM getKeyName(LPTSTR pszHotKey, bool bGetAtom = false) const;
 	
 	void serialize(LPTSTR psz);
-	void simulateTyping(HWND hwndFocus, bool bAltCode = false) const;
+	void simulateTyping(HWND hwndFocus, bool bSpecialKeys = true) const;
 	
 	void registerHotKey();
 	bool unregisterHotKey();
 	
 	bool match(BYTE vk, WORD vkFlags, const int aiCondState[]) const;
+	
+	bool canReleaseSpecialKeys() const
+	{
+		return (0xA6 > m_vk || m_vk > 0xB7);
+	}
 	
 	static bool askSendKeys(HWND hwndParent, Keystroke& rks);
 	
@@ -92,6 +97,7 @@ public:
 	static HWND getKeyboardFocus();
 	static void catchKeyboardFocus(HWND& rhwndFocus, DWORD& ridThread);
 	static void detachKeyboardFocus(DWORD idThread);
+	static void releaseSpecialKeys(BYTE abKeyboard[]);
 	
 private:
 	
@@ -121,6 +127,8 @@ public:
 	
 	bool m_bCommand;
 	int  m_nShow;
+	bool m_bProgramsOnly;
+	bool m_bSupportFileOpen;
 	
 	String m_sDescription;
 	String m_sText;
@@ -181,10 +189,12 @@ public:
 	bool execute() const;
 	
 	bool match(BYTE vk, WORD vkFlags, const int aiCondState[], LPCTSTR pszProgram) const;
-	bool testConflict(const Keystroke& ks, const String asProgram[]) const;
+	bool testConflict(const Keystroke& ks, const String asProgram[], bool bProgramsOnly) const;
 	
 	String* getPrograms() const;
 	void cleanPrograms();
+	
+	static bool tryChangeDirectory(HWND hdlg, LPCTSTR pszDirectory);
 };
 
 

@@ -48,6 +48,26 @@ extern HWND e_hwndInvisible;    // Invisible background window
 extern bool e_bIconVisible;
 
 
+#ifdef UNICODE
+#define strToW(buf, to, from) \
+	const LPCWSTR to = from;
+#else
+#define strToW(buf, to, from) \
+	WCHAR to[buf]; \
+	MultiByteToWideChar(CP_ACP, 0, from, -1, to, nbArray(to));
+#endif
+
+#ifdef UNICODE
+#define strToA(buf, to, from) \
+	char to[buf]; \
+	WideCharToMultiByte(CP_ACP, 0, from, -1, to, nbArray(to), NULL, NULL);
+#else
+#define strToA(buf, to, from) \
+	const LPCSTR to = from;
+#endif
+
+
+
 int messageBox(HWND hWnd, UINT idString, UINT uType = MB_ICONERROR, LPCTSTR pszArg = NULL);
 
 void centerParent(HWND hDlg);
@@ -69,6 +89,10 @@ bool getFileInfo(LPCTSTR pszFile, DWORD dwAttributes, SHFILEINFO& shfi, UINT uFl
 
 void clipboardToEnvironment();
 
+HWND findVisibleChildWindow(HWND hwndParent, LPCTSTR pszClass, bool bPrefix);
+bool checkWindowClass(HWND hWnd, LPCTSTR pszClass, bool bPrefix);
+
+
 //------------------------------------------------------------------------
 // SHBrowseForFolder wrapper:
 // - use custom title
@@ -82,9 +106,6 @@ bool browseForFolder(HWND hwndParent, LPCTSTR pszTitle, LPTSTR pszDirectory);
 //------------------------------------------------------------------------
 // Shell API tools
 //------------------------------------------------------------------------
-
-// Use IMalloc to free a memory block
-void shellFree(void* p);
 
 bool getSpecialFolderPath(int index, LPTSTR pszPath);
 bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath);

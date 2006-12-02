@@ -21,6 +21,11 @@
 #include "StdAfx.h"
 #include "App.h"
 
+#include <dlgs.h>
+#undef psh1
+#undef psh2
+
+
 #ifdef _DEBUG
 // #define SHOW_SETTINGS_AT_LAUNCHING
 #endif
@@ -152,7 +157,7 @@ void WinMainCRTStartup()
 			TCHAR *pc = pcStart;
 			while (*pc != _T(';'))
 				pc++;
-			*pc = 0;
+			*pc = _T('\0');
 			s_asToken[iToken].set(pcStart);
 			pcStart = pc + 1;
 		}
@@ -224,7 +229,7 @@ void WinMainCRTStartup()
 				ks.m_vk      = Keystroke::filterVK(vk);
 				ks.m_vkFlags = vkFlags;
 				ks.unregisterHotKey();
-				ks.simulateTyping(hwndFocus);
+				ks.simulateTyping(hwndFocus, false);
 				ks.registerHotKey();
 			}
 			
@@ -295,7 +300,6 @@ Destroy:
 				HeapCompact(e_hHeap, 0);
 				switch (dialogBox(IDD_MAIN, NULL, prcMain)) {
 					case IDCCMD_LANGUAGE:
-						dialogBox(IDD_LANGUAGE, NULL, prcLanguage);
 						break;
 					case IDCCMD_QUIT:
 						goto Destroy;
@@ -437,6 +441,7 @@ static SIZEPOS aSizePos[] =
 	{ IDCCMD_TEST,        sizeposTop | sizeposLeftHalf },
 	
 	{ IDCLBL_PROGRAMS, sizeposTop },
+	{ IDCCBO_PROGRAMS, sizeposTop },
 	{ IDCTXT_PROGRAMS, sizeposTop | sizeposWidth },
 	{ IDCIMG_PROGRAMS, sizeposTop | sizeposLeft },
 	
@@ -814,7 +819,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 					Shortcut *const psh = ash[lvi.iItem] = (Shortcut*)lvi.lParam;
 					String *const asProgram = psh->getPrograms();
 					for (int i = 0; i < lvi.iItem; i++)
-						if (ash[i]->testConflict(*psh, asProgram)) {
+						if (ash[i]->testConflict(*psh, asProgram, psh->m_bProgramsOnly)) {
 							TCHAR pszHotKey[bufHotKey];
 							psh->getKeyName(pszHotKey);
 							messageBox(s_hdlgMain, ERR_SHORTCUT_DUPLICATE, MB_ICONERROR, pszHotKey);
@@ -856,6 +861,11 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 			}
 			
 			iniSave();
+			
+			if (id == IDCCMD_LANGUAGE &&
+			    dialogBox(IDD_LANGUAGE, s_hdlgModal, prcLanguage) == IDCANCEL)
+				break;
+			
 			s_hdlgModal = NULL;
 			EndDialog(s_hdlgMain, id);
 			break;
@@ -1070,6 +1080,12 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 			}
 			break;
 		
+		case IDCCBO_PROGRAMS:
+			if (wNotify == CBN_SELCHANGE)
+				s_psh->m_bProgramsOnly = ToBool(SendDlgItemMessage(s_hdlgMain,
+					IDCCBO_PROGRAMS, CB_GETCURSEL, 0, 0));
+			break;
+		
 		// Browse for command line
 		case IDCCMD_COMMAND:
 			if (browseForCommandLine(s_hdlgMain)) {
@@ -1192,17 +1208,18 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					SHGFI_USEFILEATTRIBUTES | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_SYSICONINDEX);
 				ListView_SetImageList(e_hlst, s_hSysImageList, LVSIL_SMALL);
 				
+				TCHAR pszText[512];
+				
 				// Add columns to the list
-				TCHAR pszColumns[512];
-				loadStringAuto(IDS_COLUMNS, pszColumns);
-				TCHAR *pcColumn = pszColumns;
+				loadStringAuto(IDS_COLUMNS, pszText);
+				TCHAR *pcText = pszText;
 				LVCOLUMN lvc;
 				lvc.mask = LVCF_TEXT | LVCF_SUBITEM;
 				for (lvc.iSubItem = 0; lvc.iSubItem < colCount; lvc.iSubItem++) {
-					lvc.pszText = pcColumn;
-					while (*pcColumn != _T(';'))
-						pcColumn++;
-					*pcColumn++ = 0;
+					lvc.pszText = pcText;
+					while (*pcText != _T(';'))
+						pcText++;
+					*pcText++ = _T('\0');
 					ListView_InsertColumn(e_hlst, lvc.iSubItem, &lvc);
 				}
 				
@@ -1224,12 +1241,55 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						psh->fillGetFileIcon(apgfi[--nbShortcut] = new GETFILEICON, true);
 				startThread(threadGetSmallIcons, apgfi);
 				
+				// Programs combo box
+				const HWND hcboPrograms = GetDlgItem(hDlg, IDCCBO_PROGRAMS);
+				TCHAR pszPrograms[bufString];
+				loadStringAuto(IDS_PROGRAMS, pszPrograms);
+				TCHAR *pcStart = pszPrograms;
+				for (int i = 0; i < 2; i++) {
+					TCHAR *pc = pcStart;
+					while (*pc != _T(';'))
+						pc++;
+					*pc = _T('\0');
+					SendMessage(hcboPrograms, CB_ADDSTRING, 0, (LPARAM)pcStart);
+					pcStart = pc + 1;
+				}
+				
 				updateList();
 				
-				// Button icons
-				for (int i = 0; i < 3; i++)
-					SendDlgItemMessage(hDlg, IDCCMD_ADD + i, BM_SETIMAGE, IMAGE_ICON,
-						(LPARAM)(HICON)LoadImage(e_hInst, MAKEINTRESOURCE(IDI_ADD + i), IMAGE_ICON, 15,15, 0));
+				// Button icons and tooltips
+				const HWND hwndTT = CreateWindowEx(WS_EX_TOPMOST,
+					TOOLTIPS_CLASS, NULL,
+					WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
+					CW_USEDEFAULT, CW_USEDEFAULT,
+					CW_USEDEFAULT, CW_USEDEFAULT,
+					hDlg, NULL, e_hInst, NULL);
+				SetWindowPos(hwndTT,
+					HWND_TOPMOST, 0, 0, 0, 0,
+					SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+				
+				loadStringAuto(IDS_TOOLTIPS, pszText);
+				pcText = pszText;
+				TOOLINFO ti;
+				ti.cbSize   = sizeof(ti);
+				ti.uFlags   = TTF_SUBCLASS | TTF_IDISHWND;
+				ti.hinst    = e_hInst;
+				for (int i = 0; i < 4; i++) {
+					const UINT id = (i < 3) ? IDCCMD_ADD + i : IDCIMG_PROGRAMS;
+					
+					const HWND hctl = GetDlgItem(hDlg, id);
+					if (i < 3)
+						SendMessage(hctl, BM_SETIMAGE, IMAGE_ICON,
+							(LPARAM)(HICON)LoadImage(e_hInst, MAKEINTRESOURCE(IDI_ADD + i), IMAGE_ICON, 15,15, 0));
+					
+					ti.hwnd     = hctl;
+					ti.uId      = (UINT)hctl;
+					ti.lpszText = pcText;
+					while (*pcText != _T(';'))
+						pcText++;
+					*pcText++ = _T('\0');
+					SendMessage(hwndTT, TTM_ADDTOOL, 0, (LPARAM)&ti);
+				}
 				
 				// Auto start
 				TCHAR pszAutoStartPath[MAX_PATH];
@@ -1565,6 +1625,8 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUN
 					if (s_aiShow[iShow] == s_psh->m_nShow)
 						break;
 				SendDlgItemMessage(hDlg, IDCCBO_SHOW, CB_SETCURSEL, (WPARAM)iShow, 0);
+				
+				CheckDlgButton(hDlg, IDCCHK_SUPPORTFILEOPEN, s_psh->m_bSupportFileOpen);
 			}
 			return TRUE;
 		
@@ -1581,7 +1643,7 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUN
 					{
 						// Get the command line file (without arguments)
 						TCHAR pszDir[MAX_PATH];
-						GetDlgItemText(s_hdlgMain, IDCTXT_DIRECTORY, pszDir, nbArray(pszDir));
+						GetDlgItemText(hDlg, IDCTXT_DIRECTORY, pszDir, nbArray(pszDir));
 						
 						TCHAR pszTitle[MAX_PATH];
 						loadStringAuto(IDS_BROWSEDIR, pszTitle);
@@ -1600,6 +1662,7 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUN
 					getDlgItemText(hDlg, IDCTXT_DIRECTORY, s_psh->m_sDirectory);
 					s_psh->m_nShow = s_aiShow[
 						SendDlgItemMessage(hDlg, IDCCBO_SHOW, CB_GETCURSEL, 0,0)];
+					s_psh->m_bSupportFileOpen = ToBool(IsDlgButtonChecked(hDlg, IDCCHK_SUPPORTFILEOPEN));
 					s_psh->resetIcons();
 					
 				case IDCANCEL:
@@ -1623,7 +1686,6 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 		
 		case WM_INITDIALOG:
 			{
-				s_hdlgModal = hDlg;
 				for (int lang = 0; lang < langCount; lang++)
 					ListBox_AddString(hlst, s_asToken[tokLanguageName].get(lang));
 				ListBox_SetCurSel(hlst, e_lang);
@@ -1637,7 +1699,13 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 						break;
 				// Fall-through
 				case IDOK:
-					setLanguage(ListBox_GetCurSel(hlst));
+					{
+						const int iLang = ListBox_GetCurSel(hlst);
+						if (e_lang != iLang)
+							setLanguage(iLang);
+						else
+							wParam = IDCANCEL;
+					}
 				case IDCANCEL:
 					s_hdlgModal = NULL;
 					EndDialog(hDlg, LOWORD(wParam));
@@ -1726,6 +1794,8 @@ void updateList()
 		SetDlgItemText(s_hdlgMain, IDCTXT_COMMAND,     s_psh->m_sCommand);
 		SetDlgItemText(s_hdlgMain, IDCTXT_PROGRAMS,    s_psh->m_sPrograms);
 		SetDlgItemText(s_hdlgMain, IDCTXT_DESCRIPTION, s_psh->m_sDescription);
+		SendDlgItemMessage(s_hdlgMain, IDCCBO_PROGRAMS, CB_SETCURSEL,
+			s_psh->m_bProgramsOnly, 0);
 		
 		hIcon = s_psh->getIcon();
 	}
@@ -1739,7 +1809,7 @@ void updateList()
 		IDCCMD_DELETE, IDCCMD_EDIT, IDCFRA_TEXT, IDCFRA_COMMAND,
 		IDCOPT_TEXT, IDCOPT_COMMAND,
 		IDCLBL_DESCRIPTION, IDCTXT_DESCRIPTION,
-		IDCLBL_PROGRAMS, IDCTXT_PROGRAMS, IDCIMG_PROGRAMS,
+		IDCLBL_PROGRAMS, IDCCBO_PROGRAMS, IDCTXT_PROGRAMS, IDCIMG_PROGRAMS,
 		IDCTXT_TEXT, IDCCMD_TEXT_MENU,
 		IDCTXT_COMMAND, IDCCMD_COMMAND, IDCCMD_CMDSETTINGS, IDCCMD_TEST,
 	};
@@ -1748,7 +1818,7 @@ void updateList()
 		true, true, true, true,
 		true, true,
 		true, true,
-		true, true, true,
+		true, true, true, true,
 		!bCommand, !bCommand,
 		bCommand, bCommand, bCommand, bCommand,
 	};
@@ -1844,7 +1914,7 @@ Shortcut* findShortcut(BYTE vk, WORD vkFlags, const int aiCondState[], LPCTSTR p
 	Shortcut *pshBest = NULL;
 	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
 		if (psh->match(vk, vkFlags, aiCondState, pszProgram))
-			if (!pshBest || pshBest->m_sCommand.isEmpty())
+			if (!pshBest || !pshBest->m_bProgramsOnly)
 				pshBest = psh;
 	
 	return pshBest;
@@ -1875,12 +1945,13 @@ const LPCTSTR pszSeparator  = _T("-\r\n");
 
 Shortcut::Shortcut(const Keystroke& ks) : Keystroke(ks)
 {
-	m_pNext      = NULL;
-	m_bCommand   = false;
-	m_nShow      = SW_NORMAL;
-	
-	m_iSmallIcon = iconNeeded;
-	m_hIcon      = NULL;
+	m_pNext            = NULL;
+	m_bCommand         = false;
+	m_nShow            = SW_NORMAL;
+	m_bSupportFileOpen = false;
+	m_bProgramsOnly    = false;
+	m_iSmallIcon       = iconNeeded;
+	m_hIcon            = NULL;
 }
 
 void Shortcut::save(HANDLE hf)
@@ -1896,7 +1967,7 @@ void Shortcut::save(HANDLE hf)
 		int     tokKey;
 		LPCTSTR pszValue;
 	};
-	LINE aLine[7 + condTypeCount];
+	LINE aLine[2 + 4 + 2 + condTypeCount];
 	aLine[0].tokKey   = tokShortcut;
 	aLine[0].pszValue = pszHotKey;
 	aLine[1].tokKey   = tokCode;
@@ -1934,6 +2005,12 @@ void Shortcut::save(HANDLE hf)
 		}
 		nbLine++;
 		
+		if (m_bSupportFileOpen) {
+			aLine[nbLine].tokKey = tokSupportFileOpen;
+			aLine[nbLine].pszValue = _T("1");
+			nbLine++;
+		}
+		
 	}else{
 		// Text
 		
@@ -1953,7 +2030,7 @@ void Shortcut::save(HANDLE hf)
 	}
 	
 	if (m_sPrograms.isSome()) {
-		aLine[nbLine].tokKey   = tokPrograms;
+		aLine[nbLine].tokKey   = (m_bProgramsOnly) ? tokPrograms : tokAllProgramsBut;
 		aLine[nbLine].pszValue = m_sPrograms;
 		nbLine++;
 	}
@@ -2128,7 +2205,9 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 			
 			// Programs
 			case tokPrograms:
+			case tokAllProgramsBut:
 				m_sPrograms = pcSep;
+				m_bProgramsOnly = (tokKey == tokPrograms);
 				cleanPrograms();
 				break;
 			
@@ -2139,6 +2218,11 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 					if (0 <= iShow && iShow <= nbArray(s_aiShow))
 						m_nShow = s_aiShow[iShow];
 				}
+				break;
+			
+			// Folder
+			case tokSupportFileOpen:
+				m_bSupportFileOpen = ToBool(StrToInt(pcSep));
 				break;
 			
 			// Condition
@@ -2163,7 +2247,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 	String *const asProgram = getPrograms();
 	bool bOK = true;
 	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
-		if (psh->testConflict(*this, asProgram)) {
+		if (psh->testConflict(*this, asProgram, m_bProgramsOnly)) {
 			bOK = false;
 			break;
 		}
@@ -2405,6 +2489,108 @@ void Shortcut::appendMenuItem(HMENU hMenu, UINT id) const
 }
 
 
+bool Shortcut::tryChangeDirectory(HWND hdlg, LPCTSTR pszDirectory)
+{
+	// Get the active dialog box
+	while (hdlg && (GetWindowStyle(hdlg) & WS_CHILD))
+		hdlg = GetParent(hdlg);
+	
+	VERIF(hdlg);
+	
+	bool bDone = false;
+	
+	TCHAR pszDirectoryNoQuotes[MAX_PATH];
+	lstrcpyn(pszDirectoryNoQuotes, pszDirectory, nbArray(pszDirectoryNoQuotes));
+	PathUnquoteSpaces(pszDirectoryNoQuotes);
+	
+	LockWindowUpdate(hdlg);
+	
+	// Check for SHBrowseForFolder dialog box:
+	// - Must contain a control having a class name containing "SHBrowseForFolder"
+	if (findVisibleChildWindow(hdlg, _T("SHBrowseForFolder"), true)) {
+		
+		// Send a BFFM_SETSELECTION message to the dialog box
+		// to change the current directory. The messages requires
+		// the directory string to be a valid string in the dialog box process:
+		// we need to use VirtualAllocEx() and WriteProcessMemory().
+		DWORD idProcess;
+		GetWindowThreadProcessId(hdlg, &idProcess);
+		const HANDLE hProcess = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE,
+			FALSE, idProcess);
+		if (hProcess) {
+			const DWORD size = (lstrlen(pszDirectoryNoQuotes) + 1) * sizeof(TCHAR);
+			void *const pvRemote = VirtualAllocEx(hProcess, NULL, size, MEM_COMMIT, PAGE_READWRITE);
+			if (pvRemote) {
+				WriteProcessMemory(hProcess, pvRemote, pszDirectoryNoQuotes, size, NULL);
+				SendMessage(hdlg, BFFM_SETSELECTION, TRUE, (LPARAM)pvRemote);
+				VirtualFreeEx(hProcess, pvRemote, 0, MEM_RELEASE);
+			}
+			CloseHandle(hProcess);
+			bDone = true;
+		}
+		
+		goto Done;
+	}
+	
+	// Check for MS Office File/Open dialog box
+	// - Check that the dialog box class contains "bosa_sdm_"
+	// - Find the first visible edit box (Edit or RichEdit)
+	if (checkWindowClass(hdlg, _T("bosa_sdm_"), true)) {
+		
+		const DWORD dwStyle = GetWindowStyle(hdlg);
+		UINT id = 0;
+		if (dwStyle == 0x96CC0000)
+			id = 0x36;
+		else if (dwStyle == 0x94C80000)
+			id = 0x30;
+		
+		const HWND hctl = GetDlgItem(hdlg, id);
+		if (id && hctl &&
+		   (checkWindowClass(hctl, _T("Edit"), false) ||
+		    checkWindowClass(hctl, _T("RichEdit20W"), false))) {
+			TCHAR pszPathSave[MAX_PATH];
+			SendMessage(hctl, WM_GETTEXT, nbArray(pszPathSave), (LPARAM)pszPathSave);
+			if (SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszDirectoryNoQuotes)) {
+				PostMessage(hctl, WM_KEYDOWN, VK_RETURN, 0);
+				PostMessage(hctl, WM_KEYUP,   VK_RETURN, 0);
+				sleepBackground(100);
+				SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszPathSave);
+				bDone = true;
+			}
+		}
+		
+		goto Done;
+	}
+	
+	// Check for standard Get(Open|Save)FileName dialog box
+	// - Must answer to CDM_GETSPEC message
+	if (SendMessage(hdlg, CDM_GETSPEC, 0, NULL) > 0) {
+		static const UINT aid[] = { cmb13, edt1 };
+		for (size_t control = 0; control < nbArray(aid); control++) {
+			const HWND hctl = GetDlgItem(hdlg, aid[control]);
+			if (!hctl)
+				continue;
+			
+			TCHAR pszPathSave[MAX_PATH];
+			SendMessage(hctl, WM_GETTEXT, nbArray(pszPathSave), (LPARAM)pszPathSave);
+			if (SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszDirectoryNoQuotes)) {
+				sleepBackground(0);
+				SendMessage(hdlg, WM_COMMAND, IDOK, 0);
+				sleepBackground(0);
+				SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszPathSave);
+				bDone = true;
+				goto Done;
+			}
+		}
+	}
+	
+Done:
+	LockWindowUpdate(NULL);
+	
+	return bDone;
+}
+
+
 // Return true if we should reset the delay,
 // false otherwise.
 bool Shortcut::execute() const
@@ -2419,34 +2605,44 @@ bool Shortcut::execute() const
 	
 	memcpy(abKeyboardNew, abKeyboard, sizeof(abKeyboard));
 	
-	// Simulate special keys release, to avoid side effects
-	// Avoid to leave Alt and Shift down, alone, at the same time
-	// because it is one of Windows keyboard layout shortcut:
-	// simulate Ctrl down, release Alt and Shift, then release Ctrl
-	bool bReleaseControl = false;
-	if ((abKeyboard[VK_MENU] & bKeyDown) &&
-	    (abKeyboard[VK_SHIFT] & bKeyDown) &&
-	   !(abKeyboard[VK_CONTROL] & bKeyDown)) {
-		bReleaseControl = true;
-		keybdEvent(VK_CONTROL, false);
-		abKeyboardNew[VK_CONTROL] = bKeyDown;
+	if (canReleaseSpecialKeys()) {
+		
+		// Simulate special keys release, to avoid side effects
+		// Avoid to leave Alt and Shift down, alone, at the same time
+		// because it is one of Windows keyboard layout shortcut:
+		// simulate Ctrl down, release Alt and Shift, then release Ctrl
+		bool bReleaseControl = false;
+		if ((abKeyboard[VK_MENU]    & bKeyDown) &&
+		    (abKeyboard[VK_SHIFT]   & bKeyDown) &&
+		   !(abKeyboard[VK_CONTROL] & bKeyDown)) {
+			bReleaseControl = true;
+			keybdEvent(VK_CONTROL, false);
+			abKeyboardNew[VK_CONTROL] = bKeyDown;
+		}
+		
+		for (int i = 0; i < nbArray(e_aSpecialKey); i++)
+			abKeyboardNew[e_aSpecialKey[i].vk] = 0;
+		abKeyboardNew[m_vk] = 0;
+		SetKeyboardState(abKeyboardNew);
+		
+		if (bReleaseControl)
+			keybdEvent(VK_CONTROL, true);
 	}
-	
-	for (int i = 0; i < nbArray(e_aSpecialKey); i++)
-		abKeyboardNew[e_aSpecialKey[i].vk] = 0;
-	abKeyboardNew[m_vk] = 0;
-	SetKeyboardState(abKeyboardNew);
-	
-	if (bReleaseControl)
-		keybdEvent(VK_CONTROL, true);
 	
 	if (m_bCommand) {
 		// Execute a command line
 		
-		clipboardToEnvironment();
-		THREAD_SHELLEXECUTE *const pParams = new THREAD_SHELLEXECUTE(
-			m_sCommand, m_sDirectory, m_nShow);
-		startThread(threadShellExecute, pParams);
+		// Required because the launched program
+		// can be a script that simulates keystrokes
+		if (canReleaseSpecialKeys())
+			releaseSpecialKeys(abKeyboard);
+		
+		if (!m_bSupportFileOpen || !tryChangeDirectory(hwndFocus, m_sCommand)) {
+			clipboardToEnvironment();
+			THREAD_SHELLEXECUTE *const pParams = new THREAD_SHELLEXECUTE(
+				m_sCommand, m_sDirectory, m_nShow);
+			startThread(threadShellExecute, pParams);
+		}
 		
 	}else{
 		// Text
@@ -2513,6 +2709,11 @@ bool Shortcut::execute() const
 					// Double brackets: [[command line]]
 					
 					pcEnd++;
+					
+					// Required because the launched program
+					// can be a script that simulates keystrokes
+					releaseSpecialKeys(abKeyboard);
+					
 					clipboardToEnvironment();
 					shellExecuteCmdLine((LPCTSTR)sInside + 1, NULL, SW_SHOWDEFAULT);
 					
@@ -2605,14 +2806,7 @@ bool Shortcut::execute() const
 					
 				}else{
 					
-					// Release special keys
-					for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
-						const BYTE vk = e_aSpecialKey[i].vk;
-						if (abKeyboard[vk] & bKeyDown) {
-							abKeyboard[vk] = 0;
-							keybdEvent(vk, true);
-						}
-					}
+					releaseSpecialKeys(abKeyboard);
 					
 					lastKind = kindKeystroke;
 					Keystroke ks;
@@ -2637,7 +2831,7 @@ bool Shortcut::execute() const
 								ks.m_vkFlags = MOD_ALT;
 								for (size_t i = 0; pszCode[i]; i++) {
 									ks.m_vk = VK_NUMPAD0 + (pszCode[i] - _T('0'));
-									ks.simulateTyping(hwndFocus, true);
+									ks.simulateTyping(hwndFocus, false);
 								}
 								
 								keybd_event(VK_MENU, scanCodeAlt, KEYEVENTF_KEYUP, 0);
