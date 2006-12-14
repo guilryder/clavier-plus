@@ -24,7 +24,7 @@
 
 
 #ifdef UNICODE
-typedef WCHAR UTCHAR;
+typedef WORD UTCHAR;
 #else
 typedef unsigned char UTCHAR;
 #endif

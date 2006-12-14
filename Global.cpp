@@ -257,9 +257,9 @@ void clipboardToEnvironment()
 		if (hMem) {
 			const LPSTR pszClipboard = (LPSTR)GlobalLock(hMem);
 			if (pszClipboard) {
-				if (lstrlen(pszClipboard) < bufClipboardString) {
+				if (lstrlenA(pszClipboard) < bufClipboardString) {
 					bOK = true;
-					SetEnvironmentVariableA(_T("CLIPBOARD"), pszClipboard);
+					SetEnvironmentVariableA("CLIPBOARD", pszClipboard);
 				}
 				GlobalUnlock(hMem);
 			}
@@ -268,7 +268,7 @@ void clipboardToEnvironment()
 	}
 	
 	if (!bOK)
-		SetEnvironmentVariableA(_T("CLIPBOARD"), _T(""));
+		SetEnvironmentVariableA("CLIPBOARD", "");
 }
 
 

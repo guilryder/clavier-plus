@@ -89,6 +89,8 @@ const STRING_RESOURCE* loadStringResource(UINT id)
 void loadString(UINT id, LPTSTR psz, int buf)
 {
 	const STRING_RESOURCE *const pResource = loadStringResource(id);
+	if (buf > pResource->len)
+		buf = pResource->len + 1;
 	
 	if (pResource)
 		pResource->copy(psz, buf);
