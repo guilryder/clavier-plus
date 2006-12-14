@@ -77,10 +77,8 @@
 
 #ifdef UNICODE
 #define ANSI_UNICODE(ansi, unicode)   unicode
-typedef WORD UCHAR;
 #else
 #define ANSI_UNICODE(ansi, unicode)   ansi
-typedef unsigned char UCHAR;
 #endif
 
 

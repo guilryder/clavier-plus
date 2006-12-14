@@ -511,10 +511,10 @@ Error:
 #endif
 	}else{
 #ifdef UNICODE
-		LPSTR wsz = (LPSTR)pbBuffer;
-		const int buf = lstrlenA(psz) + 1;
+		LPSTR asz = (LPSTR)pbBuffer;
+		const int buf = lstrlenA(asz) + 1;
 		pszCurrent = new TCHAR[buf];
-		MultiByteToWideChar(CP_ACP, 0, wsz, -1, pszCurrent, buf);
+		MultiByteToWideChar(CP_ACP, 0, asz, -1, pszCurrent, buf);
 #else
 		pszCurrent = (LPTSTR)pbBuffer;
 #endif

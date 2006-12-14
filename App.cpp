@@ -716,7 +716,7 @@ void FileMenuItem::drawItem(DRAWITEMSTRUCT& dis)
 	COLORREF clTextOld = SetTextColor(dis.hDC, GetSysColor(sysColorText));
 	COLORREF clBackOld = SetBkColor  (dis.hDC, GetSysColor(sysColorBack));
 	ExtTextOut(dis.hDC, dis.rcItem.left, dis.rcItem.top,
-		ETO_CLIPPED | ETO_OPAQUE, &dis.rcItem, "", 0, NULL);
+		ETO_CLIPPED | ETO_OPAQUE, &dis.rcItem, _T(""), 0, NULL);
 	
 	ImageList_Draw(s_hSysImageList, m_iconIndex, dis.hDC,
 		dis.rcItem.left + cxLeft,
@@ -2819,7 +2819,7 @@ bool Shortcut::execute() const
 							const WORD wKey = VkKeyScan(*psz);
 							if (wKey == (WORD)-1) {
 								TCHAR pszCode[5];
-								wsprintf(pszCode, _T("0%u"), (UCHAR)*psz);
+								wsprintf(pszCode, _T("0%u"), (UTCHAR)*psz);
 								
 								ks.m_vk      = VK_MENU;
 								ks.m_vkFlags = 0;
@@ -2830,7 +2830,7 @@ bool Shortcut::execute() const
 								Keystroke ksDigit;
 								ks.m_vkFlags = MOD_ALT;
 								for (size_t i = 0; pszCode[i]; i++) {
-									ks.m_vk = VK_NUMPAD0 + (pszCode[i] - _T('0'));
+									ks.m_vk = VK_NUMPAD0 + (BYTE)(pszCode[i] - _T('0'));
 									ks.simulateTyping(hwndFocus, false);
 								}
 								
