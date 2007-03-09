@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2006 Guillaume Ryder
+// Copyright (C) 2000-2007 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -186,7 +186,7 @@ public:
 	static int CALLBACK compare(const Shortcut* psh1, const Shortcut* psh2, LPARAM lParamSort);
 	
 	void appendMenuItem(HMENU hMenu, UINT id) const;
-	bool execute() const;
+	bool execute(bool bFromHotkey) const;
 	
 	bool match(BYTE vk, WORD vkFlags, const int aiCondState[], LPCTSTR pszProgram) const;
 	bool testConflict(const Keystroke& ks, const String asProgram[], bool bProgramsOnly) const;
@@ -213,11 +213,10 @@ extern const SPECIALKEY e_aSpecialKey[nbSpecialKey];
 bool AskKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult);
 
 
-extern Shortcut *e_pshFirst;    // Shortcut linked list
+extern Shortcut *e_pshFirst;   // Shortcuts linked list
 
 
-void iniLoad();
-void iniSave();
-
-
-void copyShortcutsListToClipboard();
+void shortcutsLoad();
+void shortcutsSave();
+void shortcutsClear();
+void shortcutsCopyToClipboard();

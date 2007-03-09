@@ -38,8 +38,8 @@ IDI_EDIT                ICON                    "Edit.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 10,4,0,0
- PRODUCTVERSION 10,4,0,0
+ FILEVERSION 10,5,0,0
+ PRODUCTVERSION 10,5,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -56,12 +56,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Guillaume Ryder (http://utilfr42.free.fr)"
             VALUE "FileDescription", "Clavier+"
-            VALUE "FileVersion", "10.4"
+            VALUE "FileVersion", "10.5"
             VALUE "InternalName", "Clavier.exe"
-            VALUE "LegalCopyright", "Copyright © 2000-2006 Guillaume Ryder"
+            VALUE "LegalCopyright", "Copyright © 2000-2007 Guillaume Ryder"
             VALUE "OriginalFilename", "Clavier.exe"
             VALUE "ProductName", "Clavier+"
-            VALUE "ProductVersion", "10.4"
+            VALUE "ProductVersion", "10.5"
         END
     END
     BLOCK "VarFileInfo"
@@ -143,8 +143,8 @@ CAPTION "Über Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
-    CONTROL         "Clavier+ 10.4",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
-    LTEXT           "Copyright © 2000-2006\nGuillaume Ryder\nSoftwarelizenz nach GNU GPL",IDC_STATIC,42,20,102,28,SS_NOPREFIX
+    CONTROL         "Clavier+ 10.5",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
+    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nSoftwarelizenz nach GNU GPL",IDC_STATIC,42,20,102,28,SS_NOPREFIX
     GROUPBOX        "Autor",IDC_STATIC,8,54,142,50
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,14,78,62,8,SS_NOPREFIX
@@ -352,7 +352,10 @@ BEGIN
     IDS_CONDITION_KEYS      "FNR"
     IDS_SETTINGS            "&Einstellungen..."
     IDS_QUIT                "&Beenden"
-    IDS_COPYLIST            "Liste &kopieren"
+    IDS_LIST_COPY           "Liste &kopieren"
+    IDS_INI_LOAD            "Konfiguration &aufladen..."
+    IDS_INI_SAVE            "Konfiguration &speichern..."
+    IDS_INI_FILTER          "INI Dateien|*.ini|"
     IDS_BROWSEDIR           "Startordner zum Ausführen des Befehls auswählen."
     IDS_PROGRAMS            "alle Programme aber;nur diese Programme;"
     IDS_TOOLTIPS            "Hinzufügen;Löschen;Ändern;Programm wählen;"
@@ -442,8 +445,8 @@ CAPTION "About Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,-1,6,6,20,20
-    CONTROL         "Clavier+ 10.4",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
-    LTEXT           "Copyright © 2000-2006\nGuillaume Ryder\nSoftware under GPL license",-1,42,20,108,28,SS_NOPREFIX
+    CONTROL         "Clavier+ 10.5",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nSoftware under GPL license",-1,42,20,108,28,SS_NOPREFIX
     GROUPBOX        "Author",-1,8,54,142,50
     CONTROL         "Guillaume Ryder",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,14,78,62,8,SS_NOPREFIX
@@ -592,7 +595,10 @@ BEGIN
     IDS_CONDITION_KEYS      "CNS"
     IDS_SETTINGS            "&Settings..."
     IDS_QUIT                "&Quit"
-    IDS_COPYLIST            "&Copy List"
+    IDS_LIST_COPY           "&Copy List"
+    IDS_INI_LOAD            "&Load Configuration..."
+    IDS_INI_SAVE            "Sa&ve Configuration..."
+    IDS_INI_FILTER          "INI files|*.ini|"
     IDS_BROWSEDIR           "Choose the startup directory of the command."
     IDS_PROGRAMS            "all programs but;only those programs;"
     IDS_TOOLTIPS            "Add a new shortcut;Delete the selected shortcut;Edit the selected shortcut;Click and drag-drop to select the window of a program;"
@@ -682,8 +688,8 @@ CAPTION "À propos de Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,-1,6,6,20,20
-    CONTROL         "Clavier+ 10.4",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
-    CONTROL         "Copyright © 2000-2006\nGuillaume Ryder\nLogiciel sous licence GPL",-1,
+    CONTROL         "Clavier+ 10.5",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    CONTROL         "Copyright © 2000-2007\nGuillaume Ryder\nLogiciel sous licence GPL",-1,
                     "Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | WS_GROUP,42,20,108,28
     GROUPBOX        "Auteur",-1,8,54,142,50
     CONTROL         "Guillaume Ryder",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
@@ -857,7 +863,10 @@ BEGIN
     IDS_CONDITION_KEYS      "MND"
     IDS_SETTINGS            "&Paramètres..."
     IDS_QUIT                "&Quitter"
-    IDS_COPYLIST            "&Copier la liste"
+    IDS_LIST_COPY           "&Copier list"
+    IDS_INI_LOAD            "C&harger configuration..."
+    IDS_INI_SAVE            "&Enregistrer configuration..."
+    IDS_INI_FILTER          "Fichiers INI|*.ini|"
     IDS_BROWSEDIR           "Choisissez le répertoire de démarrage de la commande."
     IDS_PROGRAMS            "tous les programmes sauf;seulement ces programmes;"
     IDS_TOOLTIPS            "Ajouter un nouveau raccourci;Supprimer le raccourci sélectionné;Éditer le raccourci sélectionné;Cliquer et faire glisser le curseur pour sélectionner la fenêtre d'un programme;"
@@ -866,14 +875,4 @@ END
 #endif    // French (France) resources
 /////////////////////////////////////////////////////////////////////////////
 
-
-
-#ifndef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 3 resource.
-//
-
-/////////////////////////////////////////////////////////////////////////////
-#endif    // not APSTUDIO_INVOKED
 

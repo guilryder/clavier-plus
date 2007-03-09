@@ -74,7 +74,8 @@ margin-bottom: 6pt;
 <a href="#conditions">Conditions applied to the shortcuts</a>
 <a href="#text">Text written by the shortcuts</a>
 <a href="#print">Printing the shortcuts list</a>
-<a href="#conffile">Configuration file</a>
+<a href="#conffile">Configuration files</a>
+<a href="#cmdline">Command line options</a>
 <a href="#limits">Known issues</a>
 <a href="#faq">FAQ</a>
 <a href="#examples">Shortcuts examples</a>
@@ -297,9 +298,22 @@ The arrow menu recalls the special characters list.</p>
 <p>In the main window of Clavier+, click on <i>Copy list</i> button. This puts the list of all keyboard shortcuts in the clipboard: you can past it in the word processor of your choice to print it. If you use Word, you can present it as an array: launch Word, copy the list with <kbd>Ctrl+V</kbd>, select it with <kbd>Ctrl+A</kbd>, and click the <i>Insert array</i> button.</p>
 
 
-<h2 id="conffile">Configuration file</h2>
+<h2 id="conffile">Configuration files</h2>
 
-<p>The <kbd>Clavier.ini</kbd> file contains all settings. Clavier+ doesn’t put anything in the registry, except if you use the <i>Launch Clavier+ at Windows startup</i> option.</p>
+<p>By default, Clavier+ uses a single configuration file to store its settings: <kbd>Clavier.ini</kbd>, located in the same directory than Clavier+ main executable. Clavier+ doesn’t put anything in the registry, except if you use the <i>Launch Clavier+ at Windows startup</i> option.</p>
+
+<p>Clavier+ menu, displayed by right clicking Clavier+ icon near the system clock, proposes several commands to manage configuration files:</p>
+<ul>
+<li>Available configuration files: <kbd>*.ini</kbd> files located in Clavier+ directory. Choose a file to load it.</li>
+<li>Load Configuration&nbsp;: load a configuration file, if it is not in the list. Make sure not to load the configuration file of another program, it would be overwritten and lost.</li>
+<li>Save Configuration&nbsp;: save the current shortcuts to a new configuration file.</li>
+</ul>
+
+<p>Another way to load a configuration file is to run Clavier+ with the <kbd>/load</kbd> <a href="#cmdline">command line</a> option. This allows to load a configuration file with a keystroke, by associating a keyboard shortcut to the command line&nbsp;:</p>
+<pre>clavier.exe /load <i>configuration_file.ini</i></pre>
+
+
+<h3>Configuration files syntax</h3>
 
 <p>If you need to add many shortcuts at once, here is the configuration file format</p>
 
@@ -313,7 +327,7 @@ Second shortcut settings
 </pre>
 
 
-<h3>Global settings</h3>
+<h4>Global settings</h4>
 
 <pre>
 Language=Français <i>or</i> English <i>or</i> Deutsch
@@ -337,7 +351,7 @@ Sorting=<i>column index</i>
 </dl>
 
 
-<h3>Shortcuts settings</h3>
+<h4>Shortcuts settings</h4>
 
 <pre>
 Shortcut=<i>keystroke</i>
@@ -386,6 +400,21 @@ ScrollLock=<i>condition</i>
 </dl>
 
 
+<h2 id="cmdline">Command line options</h2>
+
+<p>Clavier+ accepts the following command line options:</p>
+
+<dl>
+<dt><kbd>/load <i>configuration_file.ini</i></kbd></dt>
+<dd>If Clavier+ is not already launched, launch it and load the given configuration file. If Clavier+ is already launched, do not launch it again but change the configuration file of the current instance of Clavier+. Enclose the filename in quotes if it contains spaces, for example: <kbd>clavier.exe /load "Internet shortcuts.ini"</kbd></dd>
+
+<dt><kbd>/sendkeys "<i>text</i>"</kbd></dt>
+<dd>Simulate text typing. The text follows the <a href="#text">syntax specified above</a>. This options allows, for example, to type text when double-clicking on a Windows shortcut, or at Windows startup, or when choosing a command in Explorer context menu. Quotes and backslashes must be escaped by a backslash, for example: <kbd>clavier.exe /sendkeys "Write a \"quoted\" word and a single \\ backslash"</kbd></dd>
+</dl>
+
+<p>If Clavier+ is launched without any argument, the behavior depends of whether Clavier+ is already launched. If no, launch Clavier+ silentely. If yes, do not launch Clavier+ again but display the configuration window. This allows to access Clavier+ options even if Clavier+ icon is hidden.</p>
+
+
 <h2 id="limits">Known issues</h2>
 
 <h3>Unavailable shortcuts</h3>
@@ -396,7 +425,7 @@ Print Screen
 Pause
 </pre>
 
-<p>The special keys refresh browser, increase volume, etc. are partially supported. Shortcuts using them can be created, and it is possible to modify their original behavior. However the action of these keys is executed when they are pressed in the <i>Add</i> dialog box. Moreover, as Windows does not provide a generic method to get the name of theses special keys, they are named by a number (for example: <kbd>#183</kbd>).</p>
+<p>The special keys “Refresh browser”, “increase volume”, etc. are partially supported. Shortcuts using them can be created, and it is possible to modify their original behavior. However the action of these keys is executed when they are pressed in the <i>Add</i> dialog box. Moreover, as Windows does not provide a generic method to get the name of theses special keys, they are named by a number (for example: <kbd>#183</kbd>).</p>
 
 <p>Windows standard shortcuts cannot be modified. Here are some of them:</p>
 
@@ -441,7 +470,7 @@ Pause
 
 <p>You can access the last version of this FAQ in <a href="http://utilfr42.free.fr/util/Clavier.php#faq">Clavier+ page</a>.</p>
 
-<div class="faq-question">Clavier+ can’t write text in <i>MyFavoriteProgram</i>!</div><div class="faq-answer"><p>Some programs handle the keyboard in a non-standard way, disallowing Clavier+ to write text. To solve this problem, surround your text by <kbd>[|</kbd> and <kbd>|]</kbd>, as below:<p><kbd>[|My text|]</kbd></p></p></div><div class="faq-question">Does Clavier+ works in games?</div><div class="faq-answer"><p>Most of the time, no. Games access the keyboard in low-level, for various raisons (rapidity, cheat protection, …).</p></div><div class="faq-question">I use Clavier+ to write my passwords. How to protect Clavier+ with a password?</div><div class="faq-answer"><p>Clavier+ is not designed to store passwords. At most, under Windows XP Professional, you can encrypt the <kbd>Clavier.ini</kbd> file and hide Clavier+ icon (see below). However I strongly recommand using a program dedicated to passwords storing, like <a href="http://keepass.sourceforge.net/">KeePass</a> or <a href="http://passwordsafe.sourceforge.net/">Password Safe</a>.</p></div><div class="faq-question">How to remove Clavier+ icon from the traybar?</div><div class="faq-answer"><p>Launch Clavier+ then quit it. Double-click on the <kbd>Clavier.ini</kbd> file located in the same directory than Clavier+. In the second line, that begins with <kbd>Size=</kbd>, replace the <i>last</i> zero by the digit one. For example: <kbd>Size=923,501,0,0</kbd> should become <kbd>Size=923,501,0,1</kbd>.</p><p>As Clavier+ icon will no more be visible, you will have to launch Clavier+ twice to display its configuration window (once to launch it, once to display the window).</p></div><div class="faq-question">How to write a line return with a shortcut?</div><div class="faq-answer"><p>Two solutions:</p><ul><li>insert a line return in the edit box, by pressing the <kbd>Return</kbd> key,</li><li>if the previous solution doesn’t work, write the code <kbd>[RETURN]</kbd></li></ul></div><div class="faq-question">How to simulate the key <i>Dummy</i></div><div class="faq-answer"><p>Click the arrow-shape button, choose the command <i>Simulate a Keystroke</i>.</p></div><div class="faq-question">How to display the context menu?</div><div class="faq-answer"><p>Simulating the key <i>Context Menu</i> allows to display this menu. With the command <i>Simulate a Keystroke</i> in the arrow-shaped button, we can learn that the code of this key is <kbd>#93</kbd>. Thus, writing <kbd>[#93]</kbd> allows to display the context menu. To display the context menu at the position of the mouse cursor, simulate a right-click with: <kbd>[{MouseButton,R}]</kbd></p></div><div class="faq-question">How to change the sound volume?</div><div class="faq-answer"><p>There is three keys related to sound volume:</p><ul><li>mute: code <kbd>[#173]</kbd></li><li>higher volume: code <kbd>[#175]</kbd></li><li>lower volume: code <kbd>[#174]</kbd></li></ul><p>You can use the program <a href="http://localhost/utilfr/dn/VolumeManager.exe">VolumeManager</a> to adjust the volume finely.</p></div><div class="faq-question">The checkbox <i>Launch Clavier+ at Windows startup</i> doesn’t work!</div><div class="faq-answer"><p>Create a shortcut to <kbd>Clavier.exe</kbd> in <i>Start Menu/Programs/Startup</i>. To do this, click with the right button on <kbd>Clavier.exe</kbd>, keep the button down and drag the mouse to the Start menu, then <i>Programs</i>, then <i>Startup</i>, and release the mouse button. Choose <i>Create a shortcut here</i>.</p></div><div class="faq-question">How to launch two programs at once?</div><div class="faq-answer"><p>The solution is to enclose the path of the two programs in double brackets, in the <kbd>Write text</kbd> area. For example, to launch notepad and the calculator:</p><pre>[[notepad.exe]][[calc.exe]]</pre></div><div class="faq-question">How to simulate a mouse click, a double-click, a right click?</div><div class="faq-answer"><p>You need to create a shortcut of type <i>Write text</i> and use the <kbd>[{MouseButton,<i>code</i>}]</kbd> special command. For example, to simulate a left click: <kbd>[{MouseButton,L}]</kbd>. For a double-click, execute two left clicks: <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>. For a right click, use the <kbd>R</kbd> code: <kbd>[{MouseButton,R}]</kbd>.</p></div><div class="faq-question">How to do more complicated things: write the current date, activate an application, …?</div><div class="faq-answer"><p>You can create a VBScript program and ask Clavier+ to execute it. The generic procedure is the following: launch Notepad, write the text of your script, save it with the <kbd>.VBS</kbd> file extension, then associate a shortcut to it with Clavier+.</p><p>Some examples of scripts:</p><ul><li>Write the current date in the active program:<pre>set shell = WScript.CreateObject("WScript.Shell")
+<div class="faq-question">Clavier+ can’t write text in <i>MyFavoriteProgram</i>!</div><div class="faq-answer"><p>Some programs handle the keyboard in a non-standard way, disallowing Clavier+ to write text. To solve this problem, surround your text by <kbd>[|</kbd> and <kbd>|]</kbd>, as below:</p><p><kbd>[|My text|]</kbd></p></div><div class="faq-question">Does Clavier+ works in games?</div><div class="faq-answer"><p>Most of the time, no. Games access the keyboard in low-level, for various raisons (rapidity, cheat protection, …).</p></div><div class="faq-question">I use Clavier+ to write my passwords. How to protect Clavier+ with a password?</div><div class="faq-answer"><p>Clavier+ is not designed to store passwords. At most, under Windows XP Professional, you can encrypt the <kbd>Clavier.ini</kbd> file and hide Clavier+ icon (see below). However I strongly recommand using a program dedicated to passwords storing, like <a href="http://keepass.sourceforge.net/">KeePass</a> or <a href="http://passwordsafe.sourceforge.net/">Password Safe</a>.</p></div><div class="faq-question">How to make the numpad dot key write a comma?</div><div class="faq-answer"><p>Click the plus shaped button, choose <i>Write Text</i>, press the numpad dot key, then click the <i>OK</i> button. Write a comma in the <i>Write text</i> area.</p></div><div class="faq-question">How to create a shortcut to a special folder: My computer, Control panel, …?</div><div class="faq-answer"><p>In Windows Explorer, create a Windows shortcut to the special folder: press the right mouse button on the special folder, drag the mouse to another folder (for example <kbd>C:\</kbd>), release the buton and choose <i>Create shortcut here</i> in the popup menu.</p><p>Then, in Clavier+, create a <i>Launch a program</i> keyboard shortcut that executes the Windows shortcut you have just created. You have to write the full path manually, and to append the <kbd>.lnk</kbd> extension. For example: <kbd>C:\My computer.lnk</kbd> if you have created a shortcut named <kbd>My computer</kbd> in the folder <kbd>C:\</kbd>.</p></div><div class="faq-question">How to remove Clavier+ icon from the traybar?</div><div class="faq-answer"><p>Launch Clavier+ then quit it. Double-click on the <kbd>Clavier.ini</kbd> file located in the same directory than Clavier+. In the second line, that begins with <kbd>Size=</kbd>, replace the <i>last</i> zero by the digit one. For example: <kbd>Size=923,501,0,0</kbd> should become <kbd>Size=923,501,0,1</kbd>.</p><p>As Clavier+ icon will no more be visible, you will have to launch Clavier+ twice to display its configuration window (once to launch it, once to display the window).</p></div><div class="faq-question">How to write a line return with a shortcut?</div><div class="faq-answer"><p>Two solutions:</p><ul><li>insert a line return in the edit box, by pressing the <kbd>Return</kbd> key,</li><li>if the previous solution doesn’t work, write the code <kbd>[RETURN]</kbd></li></ul></div><div class="faq-question">How to simulate the key <i>Dummy</i></div><div class="faq-answer"><p>Click the arrow-shape button, choose the command <i>Simulate a Keystroke</i>.</p></div><div class="faq-question">How to display the context menu?</div><div class="faq-answer"><p>Simulating the key <i>Context Menu</i> allows to display this menu. With the command <i>Simulate a Keystroke</i> in the arrow-shaped button, we can learn that the code of this key is <kbd>#93</kbd>. Thus, writing <kbd>[#93]</kbd> allows to display the context menu. To display the context menu at the position of the mouse cursor, simulate a right-click with: <kbd>[{MouseButton,R}]</kbd></p></div><div class="faq-question">How to change the sound volume?</div><div class="faq-answer"><p>There is three keys related to sound volume:</p><ul><li>mute: code <kbd>[#173]</kbd></li><li>higher volume: code <kbd>[#175]</kbd></li><li>lower volume: code <kbd>[#174]</kbd></li></ul><p>You can use the program <a href="http://localhost/utilfr/dn/VolumeManager.exe">VolumeManager</a> to adjust the volume finely.</p></div><div class="faq-question">The checkbox <i>Launch Clavier+ at Windows startup</i> doesn’t work!</div><div class="faq-answer"><p>Create a shortcut to <kbd>Clavier.exe</kbd> in <i>Start Menu/Programs/Startup</i>. To do this, click with the right button on <kbd>Clavier.exe</kbd>, keep the button down and drag the mouse to the Start menu, then <i>Programs</i>, then <i>Startup</i>, and release the mouse button. Choose <i>Create a shortcut here</i>.</p></div><div class="faq-question">How to launch two programs at once?</div><div class="faq-answer"><p>The solution is to enclose the path of the two programs in double brackets, in the <kbd>Write text</kbd> area. For example, to launch notepad and the calculator:</p><pre>[[notepad.exe]][[calc.exe]]</pre></div><div class="faq-question">How to simulate a mouse click, a double-click, a right click?</div><div class="faq-answer"><p>You need to create a shortcut of type <i>Write text</i> and use the <kbd>[{MouseButton,<i>code</i>}]</kbd> special command. For example, to simulate a left click: <kbd>[{MouseButton,L}]</kbd>. For a double-click, execute two left clicks: <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>. For a right click, use the <kbd>R</kbd> code: <kbd>[{MouseButton,R}]</kbd>.</p></div><div class="faq-question">How to do more complicated things: write the current date, activate an application, …?</div><div class="faq-answer"><p>You can create a VBScript program and ask Clavier+ to execute it. The generic procedure is the following: launch Notepad, write the text of your script, save it with the <kbd>.VBS</kbd> file extension, then associate a shortcut to it with Clavier+.</p><p>Some examples of scripts:</p><ul><li>Write the current date in the active program:<pre>set shell = WScript.CreateObject("WScript.Shell")
 shell.SendKeys Date()</pre></li><li>Activate an application and send keystrokes to it, for example compute 2+7 with the calculator (which should be already launched):<pre>set shell = WScript.CreateObject("WScript.Shell")
 shell.AppActivate "Calculatrice"
 WScript.Sleep(100)

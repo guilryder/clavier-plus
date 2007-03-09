@@ -34,10 +34,13 @@
 #define IDS_CONDITION_KEYS              260
 #define IDS_SETTINGS                    261
 #define IDS_QUIT                        262
-#define IDS_COPYLIST                    263
-#define IDS_BROWSEDIR                   264
-#define IDS_PROGRAMS                    265
-#define IDS_TOOLTIPS                    266
+#define IDS_LIST_COPY                   263
+#define IDS_INI_LOAD                    264
+#define IDS_INI_SAVE                    265
+#define IDS_INI_FILTER                  266
+#define IDS_BROWSEDIR                   267
+#define IDS_PROGRAMS                    268
+#define IDS_TOOLTIPS                    269
 #define IDCLST                          1001
 #define IDCOPT_TEXT                     1006
 #define IDCOPT_COMMAND                  1007
@@ -94,7 +97,6 @@
 #define ID_TEXT_PIPE                    40038
 #define ID_TEXT_CMD_WAIT                40039
 #define ID_TEXT_CMD_FOCUS               40040
-#define ID_TEXT_CMD_ALLOWREPEAT         40040
 #define ID_TEXT_CMD_COPY                40041
 #define ID_TEXT_CMD_MOUSE               40042
 #define ID_TEXT_CMD_WHEEL               40043

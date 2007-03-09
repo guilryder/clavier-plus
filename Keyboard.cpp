@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2006 Guillaume Ryder
+// Copyright (C) 2000-2007 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -440,15 +440,7 @@ static const int s_acxColOrig[] = { 40, 20, 20 };
 SIZE e_sizeMainDialog = { 0, 0 };
 bool e_bMaximizeMainDialog = false;
 
-
-// Get the INI file path
-// pszIniFile should be a MAX_PATH length buffer
-void iniGetPath(LPTSTR pszIniFile)
-{
-	GetModuleFileName(e_hInst, pszIniFile, MAX_PATH);
-	CharLower(pszIniFile);
-	PathRenameExtension(pszIniFile, _T(".ini"));
-}
+TCHAR e_pszIniFile[MAX_PATH];
 
 
 // Open the key for Clavier+ launching at Windows startup
@@ -466,15 +458,13 @@ HKEY openAutoStartKey(LPTSTR pszPath)
 }
 
 
-void iniLoad()
+void shortcutsLoad()
 {
 	e_bIconVisible = true;
 	
 	memcpy(e_acxCol, s_acxColOrig, sizeof(s_acxColOrig));
 	
-	TCHAR pszIniFile[MAX_PATH];
-	iniGetPath(pszIniFile);
-	const HANDLE hf = CreateFile(pszIniFile,
+	const HANDLE hf = CreateFile(e_pszIniFile,
 		GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 	if (hf == INVALID_HANDLE_VALUE) {
 		if (GetLastError() != ERROR_FILE_NOT_FOUND) {
@@ -532,14 +522,13 @@ Error:
 	}while (pszCurrent);
 	
 	delete [] pbBuffer;
+	HeapCompact(e_hHeap, 0);
 }
 
 
-void iniSave()
+void shortcutsSave()
 {
-	TCHAR pszIniFile[MAX_PATH];
-	iniGetPath(pszIniFile);
-	const HANDLE hf = CreateFile(pszIniFile,
+	const HANDLE hf = CreateFile(e_pszIniFile,
 		GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
 	if (hf == INVALID_HANDLE_VALUE) {
 		messageBox(NULL, ERR_SAVING_INI);
@@ -571,6 +560,40 @@ void iniSave()
 		psh->save(hf);
 	
 	CloseHandle(hf);
+}
+
+
+void shortcutsClear()
+{
+	while (e_pshFirst) {
+		Shortcut *const psh = e_pshFirst;
+		e_pshFirst = psh->m_pNext;
+		delete psh;
+	}
+	e_pshFirst = NULL;
+}
+
+
+void shortcutsCopyToClipboard()
+{
+	if (!OpenClipboard(NULL))
+		return;
+	EmptyClipboard();
+	
+	// Get the text
+	String s;
+	for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
+		psh->appendItemToString(s);
+	
+	// Allocate and fill shared buffer
+	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (s.getLength() + 1) * sizeof(TCHAR));
+	LPTSTR psz = (LPTSTR)GlobalLock(hMem);
+	lstrcpy(psz, s);
+	GlobalUnlock(hMem);
+	
+	// Copy buffer to clipboard
+	SetClipboardData(CF_TEXT, hMem);
+	CloseClipboard();
 }
 
 
@@ -678,29 +701,6 @@ bool Shortcut::containsProgram(LPCTSTR pszProgram) const
 			return false;
 		pcStart = pc + 1;
 	}
-}
-
-
-void copyShortcutsListToClipboard()
-{
-	if (!OpenClipboard(NULL))
-		return;
-	EmptyClipboard();
-	
-	// Get the text
-	String s;
-	for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
-		psh->appendItemToString(s);
-	
-	// Allocate and fill shared buffer
-	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (s.getLength() + 1) * sizeof(TCHAR));
-	LPTSTR psz = (LPTSTR)GlobalLock(hMem);
-	lstrcpy(psz, s);
-	GlobalUnlock(hMem);
-	
-	// Copy buffer to clipboard
-	SetClipboardData(CF_TEXT, hMem);
-	CloseClipboard();
 }
 
 

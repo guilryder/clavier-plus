@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2006 Guillaume Ryder
+// Copyright (C) 2000-2007 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -25,6 +25,16 @@
 #undef psh1
 #undef psh2
 
+#ifdef UNICODE
+const bool bUnicode = true;
+#else
+const bool bUnicode = false;
+#endif
+
+#ifndef OPENFILENAME_SIZE_VERSION_400
+#define OPENFILENAME_SIZE_VERSION_400  sizeof(OPENFILENAME)
+#endif
+
 
 #ifdef _DEBUG
 // #define SHOW_SETTINGS_AT_LAUNCHING
@@ -36,16 +46,23 @@ const LPCTSTR pszValueAutoStart = pszApp;
 const LPCTSTR pszDonateURL = _T("https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=gryder%40club%2dinternet%2efr&item_name=UtilFr%20%2d%20Clavier%2b&no_shipping=2&no_note=1&tax=0&currency_code=EUR&bn=PP%2dDonationsBF&charset=UTF%2d8");
 const LPCTSTR pszHelpURL = _T("http://utilfr42.free.fr/util/Clavier");
 
+const LPCTSTR pszClavierWindow = _T("RyderClavierWindow");
+
 static UINT msgTaskbarCreated;
 static UINT msgClavierNotifyIcon;
 
 
+const int maxIniFile = 20;
+
 enum
 {
 	idSettings = 1,
-	idCopyList,
+	idListCopy,
+	idIniLoad,
+	idIniSave,
 	idQuit,
-	idFirstShortcut,
+	idFirstIniFile,
+	idFirstShortcut = idFirstIniFile + maxIniFile,
 };
 
 const UINT nbRowMenu = 25;
@@ -63,9 +80,9 @@ static TranslatedString s_sCondKeys;
 
 static HWND s_hdlgModal = NULL;
        HWND s_hdlgMain;
-       HWND e_hlst = NULL;       // Shortcut list
-static Shortcut *s_psh = NULL;   // Current edited shortcut
-       Shortcut *e_pshFirst;     // Shortcut list
+       HWND e_hlst = NULL;       // Shortcuts list
+static Shortcut *s_psh = NULL;   // Shortcut being edited
+       Shortcut *e_pshFirst;     // Shortcuts linked list
 
 // Process GUI events to update shortcuts data from the dialog box controls
 static bool s_bProcessGuiEvents;
@@ -75,6 +92,8 @@ static bool s_bProcessGuiEvents;
 // than the traybar or Clavier+ invisible window.
 static HWND s_hwndLastForeground = NULL;
 
+
+static bool execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch);
 
 static LRESULT CALLBACK prcInvisible  (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static BOOL    CALLBACK prcMain       (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -127,17 +146,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 // Entry point
 void WinMainCRTStartup()
 {
-	msgTaskbarCreated = RegisterWindowMessage(_T("TaskbarCreated"));
+	msgTaskbarCreated    = RegisterWindowMessage(_T("TaskbarCreated"));
 	msgClavierNotifyIcon = RegisterWindowMessage(_T("RyderClavierOptions"));
+	
+	const LPCTSTR pszCmdLine = GetCommandLine();
 	
 #ifndef _DEBUG
 	// Avoid multiple launching
-	// Show the main dialog box if already launched
-	CreateMutex(NULL, TRUE, pszApp);
-	if (GetLastError() == ERROR_ALREADY_EXISTS) {
-		SendMessage(HWND_BROADCAST, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
-		ExitProcess(0);
-		return;
+	// Transmit the command line to the previous instance, if any
+	{
+		const HWND hwnd = FindWindow(_T("STATIC"), pszClavierWindow);
+		if (hwnd) {
+			COPYDATASTRUCT cds;
+			cds.dwData = bUnicode;
+			cds.cbData = (lstrlen(pszCmdLine) + 1) * sizeof(TCHAR);
+			cds.lpData = (void*)pszCmdLine;
+			SendMessage(hwnd, WM_COPYDATA, 0, (LPARAM)&cds);
+			
+			ExitProcess(0);
+			return;
+		}
 	}
 #endif
 	
@@ -167,98 +195,239 @@ void WinMainCRTStartup()
 	
 	setLanguage(getDefaultLanguage());
 	
-	
-	// Load the INI file
-	iniLoad();
-	HeapCompact(e_hHeap, 0);
-	
-	// Create the invisible window
-	e_hwndInvisible = CreateWindow(_T("STATIC"), NULL, 0,
-		0,0,0,0, NULL, NULL, e_hInst, NULL);
-	SubclassWindow(e_hwndInvisible, prcInvisible);
-	
-	// Create the traybar icon
-	trayIconAction(NIM_ADD);
-	
+	if (execCmdLine(pszCmdLine, true)) {
+		
+		// Create the invisible window
+		e_hwndInvisible = CreateWindow(_T("STATIC"),
+			pszClavierWindow, 0, 0,0,0,0, NULL, NULL, e_hInst, NULL);
+		SubclassWindow(e_hwndInvisible, prcInvisible);
+		
+		// Create the traybar icon
+		trayIconAction(NIM_ADD);
+		
 #ifdef SHOW_SETTINGS_AT_LAUNCHING
-	PostMessage(e_hwndInvisible, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
+		PostMessage(e_hwndInvisible, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
 #endif
-	
-	// Message loop
-	DWORD timeMinimum = 0;
-	DWORD timeLast = GetTickCount();
-	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0)) {
-		if (msg.message == WM_HOTKEY) {
-			// Shortcut
-			
-			if (msg.time < timeLast)
-				timeMinimum = 0;
-			if (msg.time < timeMinimum)
-				goto Next;
-			
-			const BYTE vk = (BYTE)HIWORD(msg.lParam);
-			const WORD vkFlags = LOWORD(msg.lParam);
-			const HWND hwndFocus = Keystroke::getKeyboardFocus();
-			
-			// Get the toggle keys state, for conditions checking
-			static const int avkCond[] =
-			{
-				VK_CAPITAL, VK_NUMLOCK, VK_SCROLL,
-			};
-			int aCondState[condTypeCount];
-			for (int i = 0; i < condTypeCount; i++)
-				aCondState[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
-			
-			// Get the current program, for conditions checking
-			TCHAR pszProcess[MAX_PATH];
-			if (!getWindowExecutable(hwndFocus, pszProcess))
-				*pszProcess = _T('\0');
-			
-			Shortcut *const psh = findShortcut(
-				vk, vkFlags, aCondState,
-				(*pszProcess) ? pszProcess : NULL);
-			
-			if (psh) {
-				if (psh->execute())
-					timeMinimum = GetTickCount();
+		
+		// Message loop
+		DWORD timeMinimum = 0;
+		DWORD timeLast = GetTickCount();
+		MSG msg;
+		while (GetMessage(&msg, NULL, 0, 0)) {
+			if (msg.message == WM_HOTKEY) {
+				// Shortcut
+				
+				if (msg.time < timeLast)
+					timeMinimum = 0;
+				if (msg.time < timeMinimum)
+					goto Next;
+				
+				const BYTE vk = (BYTE)HIWORD(msg.lParam);
+				const WORD vkFlags = LOWORD(msg.lParam);
+				const HWND hwndFocus = Keystroke::getKeyboardFocus();
+				
+				// Get the toggle keys state, for conditions checking
+				static const int avkCond[] =
+				{
+					VK_CAPITAL, VK_NUMLOCK, VK_SCROLL,
+				};
+				int aCondState[condTypeCount];
+				for (int i = 0; i < condTypeCount; i++)
+					aCondState[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
+				
+				// Get the current program, for conditions checking
+				TCHAR pszProcess[MAX_PATH];
+				if (!getWindowExecutable(hwndFocus, pszProcess))
+					*pszProcess = _T('\0');
+				
+				Shortcut *const psh = findShortcut(
+					vk, vkFlags, aCondState,
+					(*pszProcess) ? pszProcess : NULL);
+				
+				if (psh) {
+					if (psh->execute(true))
+						timeMinimum = GetTickCount();
+				}else{
+					// No matching shortcut found: simulate the keystroke
+					// without catching it with an hotkey, to perform default processing
+					Keystroke ks;
+					ks.m_vk      = Keystroke::filterVK(vk);
+					ks.m_vkFlags = vkFlags;
+					ks.unregisterHotKey();
+					ks.simulateTyping(hwndFocus, false);
+					ks.registerHotKey();
+				}
+				
 			}else{
-				// No matching shortcut found: simulate the keystroke
-				// without catching it with an hotkey, to perform default processing
-				Keystroke ks;
-				ks.m_vk      = Keystroke::filterVK(vk);
-				ks.m_vkFlags = vkFlags;
-				ks.unregisterHotKey();
-				ks.simulateTyping(hwndFocus, false);
-				ks.registerHotKey();
+				// Other message
+				
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
 			}
 			
-		}else{
-			// Other message
-			
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+		Next:
+			timeLast = msg.time;
 		}
 		
-Next:
-		timeLast = msg.time;
-	}
-	
-	// Delete traybar icon
-	trayIconAction(NIM_DELETE);
-	
-	// Save shortcuts, then delete them
-	iniSave();
-	while (e_pshFirst) {
-		Shortcut *const psh = e_pshFirst;
-		e_pshFirst = psh->m_pNext;
-		delete psh;
+		// Delete traybar icon
+		trayIconAction(NIM_DELETE);
+		
+		// Save shortcuts, then delete them
+		shortcutsSave();
+		shortcutsClear();
 	}
 	
 	CoUninitialize();
 #ifndef _DEBUG
 	ExitProcess(0);
 #endif
+}
+
+
+enum CMDLINE_OPTION
+{
+	cmdoptLoad,
+	cmdoptSendKeys,
+	cmdoptNone,
+};
+
+static LPCTSTR apszCmdOpt[] =
+{
+	_T("load"),
+	_T("sendkeys"),
+};
+
+
+
+// bLaunching is FALSE if the command line is sent by WM_COPYDATA.
+// Return TRUE if Clavier+ should be launched, FALSE if it should terminate now.
+// Return value should be ignored if bNormalLaunch is FALSE.
+bool execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
+{
+	bool bNewIniFile = false;
+	
+	bool bInQuote;
+	const TCHAR *pc = pszCmdLine;
+	TCHAR c;
+	
+	// Skip program name
+	bInQuote = false;
+	do{
+		c = *pc++;
+		if (c == _T('"'))
+			bInQuote ^= true;
+	}while (c && (bInQuote || (c != _T(' ') && c != _T('\t'))));
+	
+	bInQuote = false;
+	
+	int nbArg = 0;
+	if (c) {
+		// Parse arguments
+		
+		CMDLINE_OPTION cmdopt = cmdoptNone;
+		
+		const LPTSTR pszArg = new TCHAR[lstrlen(pszCmdLine) + 1];
+		
+		for (;;) {
+			
+			// Skip argument separator
+			while (*pc == _T(' ') || *pc == '\t')
+				pc++;
+			if (!*pc)
+				break;
+			
+			nbArg++;
+			TCHAR *pcArg = pszArg;
+			for (;;) {
+				bool bCopyChar = true;
+				
+				// Count backslashes
+				int nbBackslash = 0;
+				while (*pc == _T('\\')) {
+					pc++;
+					nbBackslash++;
+				}
+				
+				// Process quoting
+				if (*pc == _T('"')) {
+					if (nbBackslash % 2 == 0) {
+						if (bInQuote && pc[1] == _T('"'))
+							pc++;
+						else{
+							bCopyChar = false;
+							bInQuote ^= true;
+						}
+					}
+					nbBackslash /= 2;
+				}
+				
+				while (nbBackslash--)
+					*pcArg++ = _T('\\');
+				
+				// Stop on spaces
+				c = *pc;
+				if (!c || (!bInQuote && (c == _T(' ') || c == _T('\t'))))
+					break;
+				
+				if (bCopyChar)
+					*pcArg++ = c;
+				pc++;
+			}
+			*pcArg = _T('\0');
+			
+			switch (cmdopt) {
+				
+				// Test for command line option
+				case cmdoptNone:
+					if (*pszArg == _T('/')) {
+						const LPCTSTR pszOption = pszArg + 1;
+						for (cmdopt = (CMDLINE_OPTION)0; cmdopt < cmdoptNone; cmdopt = (CMDLINE_OPTION)(cmdopt + 1))
+							if (!lstrcmpi(pszOption, apszCmdOpt[cmdopt]))
+								break;
+					}
+					break;
+				
+				// Set INI filename
+				case cmdoptLoad:
+					cmdopt = cmdoptNone;
+					bNewIniFile = true;
+					lstrcpyn(e_pszIniFile, pszArg, nbArray(e_pszIniFile));
+					break;
+				
+				// Send keys
+				case cmdoptSendKeys:
+					cmdopt = cmdoptNone;
+					{
+						Keystroke ks;
+						Shortcut sh(ks);
+						sh.m_bCommand = false;
+						sh.m_sText    = pszArg;
+						sh.execute(false);
+					}
+					break;
+			}
+			
+		}
+		
+		delete [] pszArg;
+	}
+	
+	// Default INI file
+	if (!nbArg && bNormalLaunch && !bNewIniFile) {
+		bNewIniFile = true;
+		GetModuleFileName(e_hInst, e_pszIniFile, nbArray(e_pszIniFile));
+		PathRemoveFileSpec(e_pszIniFile);
+		PathAppend(e_pszIniFile, _T("Clavier.ini"));
+	}
+	
+	if (bNewIniFile) {
+		shortcutsClear();
+		shortcutsLoad();
+		
+	}else if (!nbArg && !bNormalLaunch)
+		PostMessage(e_hwndInvisible, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
+	
+	return bNewIniFile;
 }
 
 
@@ -323,10 +492,52 @@ Destroy:
 			if (e_pshFirst)
 				AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 			
+			
+			// Append INI file items
+			
+			// 1) List current INI file
+			LPTSTR apszIniFile[maxIniFile];
+			apszIniFile[0] = e_pszIniFile;
+			UINT nbIniFile = 1;
+			
+			// 2) List INI files in Clavier+ directory
+			TCHAR pszIniFileSpec[MAX_PATH];
+			GetModuleFileName(e_hInst, pszIniFileSpec, nbArray(pszIniFileSpec));
+			PathRemoveFileSpec(pszIniFileSpec);
+			PathAppend(pszIniFileSpec, _T("*.ini"));
+			WIN32_FIND_DATA wfd;
+			const HANDLE hff = FindFirstFile(pszIniFileSpec, &wfd);
+			PathRemoveFileSpec(pszIniFileSpec);
+			if (hff != INVALID_HANDLE_VALUE) {
+				do{
+					if (!(wfd.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_HIDDEN))) {
+						const LPTSTR pszPath = new TCHAR[MAX_PATH];
+						PathCombine(pszPath, pszIniFileSpec, wfd.cFileName);
+						if (lstrcmpi(pszPath, e_pszIniFile)) {
+							apszIniFile[nbIniFile++] = pszPath;
+							if (nbIniFile == maxIniFile)
+								break;
+						}else
+							delete [] pszPath;
+					}
+				}while (FindNextFile(hff, &wfd));
+				FindClose(hff);
+			}
+			
+			// 2) Append INI files to menu
+			for (UINT iIniFile = 0; iIniFile < nbIniFile; iIniFile++)
+				AppendMenu(hMenu, MF_STRING, idFirstIniFile + iIniFile, PathFindFileName(apszIniFile[iIniFile]));
+			CheckMenuRadioItem(hMenu, idFirstIniFile, idFirstIniFile + nbIniFile - 1,
+				idFirstIniFile, MF_BYCOMMAND);
+			
+			// Append command items
 			TCHAR psz[bufString];
-			AppendMenu(hMenu, MF_STRING, idSettings, loadStringAutoRet(IDS_SETTINGS, psz));
-			AppendMenu(hMenu, MF_STRING, idCopyList, loadStringAutoRet(IDS_COPYLIST, psz));
-			AppendMenu(hMenu, MF_STRING, idQuit,     loadStringAutoRet(IDS_QUIT, psz));
+			AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+			AppendMenu(hMenu, MF_STRING, idSettings, loadStringAutoRet(IDS_SETTINGS,  psz));
+			AppendMenu(hMenu, MF_STRING, idListCopy, loadStringAutoRet(IDS_LIST_COPY, psz));
+			AppendMenu(hMenu, MF_STRING, idIniLoad,  loadStringAutoRet(IDS_INI_LOAD,  psz));
+			AppendMenu(hMenu, MF_STRING, idIniSave,  loadStringAutoRet(IDS_INI_SAVE,  psz));
+			AppendMenu(hMenu, MF_STRING, idQuit,     loadStringAutoRet(IDS_QUIT,      psz));
 			SetMenuDefaultItem(hMenu, idSettings, MF_BYCOMMAND);
 			
 			// Show the popup menu
@@ -342,12 +553,38 @@ Destroy:
 					PostMessage(hWnd, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
 					break;
 				
-				case idCopyList:
-					copyShortcutsListToClipboard();
+				case idListCopy:
+					shortcutsCopyToClipboard();
 					break;
-			
-				case idQuit:
-					goto Destroy;
+				
+				case idIniLoad:
+				case idIniSave:
+					{
+						loadStringAuto(IDS_INI_FILTER, psz);
+						for (UINT i = 0; psz[i]; i++)
+							if (psz[i] == _T('|'))
+								psz[i] = _T('\0');
+						
+						OPENFILENAME ofn;
+						ZeroMemory(&ofn, OPENFILENAME_SIZE_VERSION_400);
+						ofn.lStructSize = OPENFILENAME_SIZE_VERSION_400;
+						ofn.hwndOwner   = hWnd;
+						ofn.lpstrFile   = e_pszIniFile;
+						ofn.nMaxFile    = nbArray(e_pszIniFile);
+						ofn.lpstrFilter = psz;
+						if (id == idIniLoad) {
+							ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+							if (GetOpenFileName(&ofn)) {
+								shortcutsClear();
+								shortcutsLoad();
+							}
+						}else{
+							ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
+							if (GetSaveFileName(&ofn))
+								shortcutsSave();
+						}
+					}
+					break;
 				
 				default:
 					if (id >= idFirstShortcut) {
@@ -357,16 +594,38 @@ Destroy:
 						for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
 							if (id-- == 0) {
 								SetForegroundWindow(s_hwndLastForeground);
-								psh->execute();
+								psh->execute(false);
 								break;
 							}
+						
+					}else if (id > idFirstIniFile) {
+						// INI file different than the current one
+						
+						shortcutsClear();
+						lstrcpy(e_pszIniFile, apszIniFile[id - idFirstIniFile]);
+						shortcutsLoad();
 					}
 					break;
 			}
+			
+			for (UINT iIniFile = 1; iIniFile < nbIniFile; iIniFile++)
+				delete [] apszIniFile[iIniFile];
+			
+			if (id == idQuit)
+				goto Destroy;
 		}
 		
 	}else if (uMsg == msgTaskbarCreated)
 		trayIconAction(NIM_ADD);
+	
+	else if (uMsg == WM_COPYDATA) {
+		// Execute command line
+		
+		const COPYDATASTRUCT &cds = *(const COPYDATASTRUCT*)lParam;
+		if (!s_hdlgModal && cds.dwData == (ULONG_PTR)bUnicode)
+			execCmdLine((LPCTSTR)cds.lpData, false);
+		return TRUE;
+	}
 	
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -746,10 +1005,6 @@ void FileMenuItem::execute()
 
 bool browseForCommandLine(HWND hwndParent, LPTSTR pszFile, bool bForceExist)
 {
-#ifndef OPENFILENAME_SIZE_VERSION_400
-#define OPENFILENAME_SIZE_VERSION_400  sizeof(OPENFILENAME)
-#endif
-	
 	PathUnquoteSpaces(pszFile);
 	
 	// Ask for the file
@@ -860,7 +1115,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				}
 			}
 			
-			iniSave();
+			shortcutsSave();
 			
 			if (id == IDCCMD_LANGUAGE &&
 			    dialogBox(IDD_LANGUAGE, s_hdlgModal, prcLanguage) == IDCANCEL)
@@ -1030,7 +1285,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 		
 		
 		case IDCCMD_COPYLIST:
-			copyShortcutsListToClipboard();
+			shortcutsCopyToClipboard();
 			messageBox(s_hdlgMain, MSG_COPYLIST, MB_ICONINFORMATION);
 			break;
 		
@@ -1104,7 +1359,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 			break;
 		
 		case IDCCMD_TEST:
-			s_psh->execute();
+			s_psh->execute(false);
 			break;
 		
 		case IDCCMD_TEXT_MENU:
@@ -2593,7 +2848,7 @@ Done:
 
 // Return true if we should reset the delay,
 // false otherwise.
-bool Shortcut::execute() const
+bool Shortcut::execute(bool bFromHotkey) const
 {
 	// Typing simulation requires the application has the keyboard focus
 	HWND hwndFocus;
@@ -2605,7 +2860,9 @@ bool Shortcut::execute() const
 	
 	memcpy(abKeyboardNew, abKeyboard, sizeof(abKeyboard));
 	
-	if (canReleaseSpecialKeys()) {
+	const bool bCanReleaseSpecialKeys = bFromHotkey && canReleaseSpecialKeys();
+	
+	if (bCanReleaseSpecialKeys) {
 		
 		// Simulate special keys release, to avoid side effects
 		// Avoid to leave Alt and Shift down, alone, at the same time
@@ -2634,7 +2891,7 @@ bool Shortcut::execute() const
 		
 		// Required because the launched program
 		// can be a script that simulates keystrokes
-		if (canReleaseSpecialKeys())
+		if (bCanReleaseSpecialKeys)
 			releaseSpecialKeys(abKeyboard);
 		
 		if (!m_bSupportFileOpen || !tryChangeDirectory(hwndFocus, m_sCommand)) {
@@ -2686,6 +2943,9 @@ bool Shortcut::execute() const
 				const TCHAR *pcEnd = pcStart;
 				while (*pcEnd && (pcEnd[-1] == _T('\\') || pcEnd[0] != _T(']')))
 					pcEnd++;
+				if (!*pcEnd)
+					break;
+				
 				String sInside;
 				bool bBackslash2 = false;
 				for (const TCHAR *pc = pcStart; pc < pcEnd; pc++)
