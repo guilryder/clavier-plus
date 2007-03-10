@@ -33,6 +33,7 @@ enum
 	
 	tokShortcut,
 	tokCode,
+	tokDistinguishLeftRight,
 	tokDescription,
 	tokCommand,
 	tokText,
@@ -55,6 +56,8 @@ enum
 	tokCtrl,
 	tokShift,
 	tokAlt,
+	tokLeft,
+	tokRight,
 	
 	tokConditionCapsLock,
 	tokConditionNumLock,

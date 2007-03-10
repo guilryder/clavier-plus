@@ -119,7 +119,7 @@ static void updateList();
 static int  addItem(Shortcut* psh, bool bSelected);
 static void onItemUpdated(int mskColumns);
 
-static Shortcut* findShortcut(BYTE vk, WORD vkFlags, const int aiCondState[], LPCTSTR pszProgram);
+static Shortcut* findShortcut(const Keystroke& ks, LPCTSTR pszProgram);
 static Shortcut* getSelShortcut();
 
 static DWORD WINAPI threadGetSmallIcons(void* agfi);
@@ -222,27 +222,39 @@ void WinMainCRTStartup()
 				if (msg.time < timeMinimum)
 					goto Next;
 				
-				const BYTE vk = (BYTE)HIWORD(msg.lParam);
-				const WORD vkFlags = LOWORD(msg.lParam);
+				Keystroke ks;
+				ks.m_vk                    = Keystroke::filterVK((BYTE)HIWORD(msg.lParam));
+				ks.m_vkFlags               = LOWORD(msg.lParam);
+				ks.m_bDistinguishLeftRight = true;
 				const HWND hwndFocus = Keystroke::getKeyboardFocus();
+				
+				// Test for right special keys
+				for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+					const DWORD vkKeyFlags = e_aSpecialKey[i].vkFlags;
+					const BYTE vkLeft      = e_aSpecialKey[i].vkLeft;
+					const BYTE vkRight     = (BYTE)(vkLeft + 1);
+					if (ks.m_vkFlags & vkKeyFlags) {
+						if (IsKeyDown(vkRight)) {
+							ks.m_vkFlags &= ~vkKeyFlags;
+							ks.m_vkFlags |= (DWORD)vkKeyFlags << vkFlagsRightOffset;
+						}
+					}
+				}
 				
 				// Get the toggle keys state, for conditions checking
 				static const int avkCond[] =
 				{
 					VK_CAPITAL, VK_NUMLOCK, VK_SCROLL,
 				};
-				int aCondState[condTypeCount];
 				for (int i = 0; i < condTypeCount; i++)
-					aCondState[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
+					ks.m_aCond[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
 				
 				// Get the current program, for conditions checking
 				TCHAR pszProcess[MAX_PATH];
 				if (!getWindowExecutable(hwndFocus, pszProcess))
 					*pszProcess = _T('\0');
 				
-				Shortcut *const psh = findShortcut(
-					vk, vkFlags, aCondState,
-					(*pszProcess) ? pszProcess : NULL);
+				Shortcut *const psh = findShortcut(ks, (*pszProcess) ? pszProcess : NULL);
 				
 				if (psh) {
 					if (psh->execute(true))
@@ -250,9 +262,6 @@ void WinMainCRTStartup()
 				}else{
 					// No matching shortcut found: simulate the keystroke
 					// without catching it with an hotkey, to perform default processing
-					Keystroke ks;
-					ks.m_vk      = Keystroke::filterVK(vk);
-					ks.m_vkFlags = vkFlags;
 					ks.unregisterHotKey();
 					ks.simulateTyping(hwndFocus, false);
 					ks.registerHotKey();
@@ -2161,14 +2170,11 @@ int findToken(LPCTSTR pszToken)
 
 // Find a shortcut in the linked list
 // Should not be called while the main dialog box is displayed
-Shortcut* findShortcut(BYTE vk, WORD vkFlags, const int aiCondState[], LPCTSTR pszProgram)
+Shortcut* findShortcut(const Keystroke& ks, LPCTSTR pszProgram)
 {
-	if (vk == VK_CLEAR)
-		vk = VK_NUMPAD5;
-	
 	Shortcut *pshBest = NULL;
 	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
-		if (psh->match(vk, vkFlags, aiCondState, pszProgram))
+		if (psh->match(ks, pszProgram))
 			if (!pshBest || !pshBest->m_bProgramsOnly)
 				pshBest = psh;
 	
@@ -2222,12 +2228,19 @@ void Shortcut::save(HANDLE hf)
 		int     tokKey;
 		LPCTSTR pszValue;
 	};
-	LINE aLine[2 + 4 + 2 + condTypeCount];
+	LINE aLine[3 + 4 + 2 + condTypeCount];
 	aLine[0].tokKey   = tokShortcut;
 	aLine[0].pszValue = pszHotKey;
 	aLine[1].tokKey   = tokCode;
 	aLine[1].pszValue = pszCode;
 	int nbLine = 2;
+	
+	if (m_bDistinguishLeftRight) {
+		aLine[nbLine].tokKey   = tokDistinguishLeftRight;
+		aLine[nbLine].pszValue = _T("1");
+		nbLine++;
+	}
+	
 	for (int i = 0; i < condTypeCount; i++)
 		if (m_aCond[i] != condIgnore) {
 			aLine[nbLine].tokKey   = tokConditionCapsLock + i;
@@ -2261,10 +2274,11 @@ void Shortcut::save(HANDLE hf)
 		nbLine++;
 		
 		if (m_bSupportFileOpen) {
-			aLine[nbLine].tokKey = tokSupportFileOpen;
+			aLine[nbLine].tokKey   = tokSupportFileOpen;
 			aLine[nbLine].pszValue = _T("1");
 			nbLine++;
 		}
+		
 		
 	}else{
 		// Text
@@ -2711,8 +2725,13 @@ int CALLBACK Shortcut::compare(const Shortcut* psh1, const Shortcut* psh2, LPARA
 				const int vkFlags2 = psh2->m_vkFlags;
 				if (vkFlags1 != vkFlags2)
 					for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
-						const int vkFlags = e_aSpecialKey[i].vkFlags;
-						const int diff = (int)(vkFlags1 & vkFlags) - (int)(vkFlags2 & vkFlags);
+						int vkFlags = e_aSpecialKey[i].vkFlags;
+						int diff = (int)(vkFlags1 & vkFlags) - (int)(vkFlags2 & vkFlags);
+						if (diff)
+							return diff;
+						
+						vkFlags <<= vkFlagsRightOffset;
+						diff = (int)(vkFlags1 & vkFlags) - (int)(vkFlags2 & vkFlags);
 						if (diff)
 							return diff;
 					}
@@ -2734,7 +2753,7 @@ int CALLBACK Shortcut::compare(const Shortcut* psh1, const Shortcut* psh2, LPARA
 void Shortcut::appendMenuItem(HMENU hMenu, UINT id) const
 {
 	TCHAR pszKeyName[bufHotKey];
-	getKeyName(pszKeyName, false);
+	getKeyName(pszKeyName);
 	
 	TCHAR psz[1024];
 	wsprintf(psz, _T("%s\t%s"), pszKeyName, (LPCTSTR)m_sDescription);

@@ -24,12 +24,11 @@
 
 const SPECIALKEY e_aSpecialKey[nbSpecialKey] =
 {
-	{ VK_LWIN,    MOD_WIN,     tokWin },
-	{ VK_CONTROL, MOD_CONTROL, tokCtrl },
-	{ VK_SHIFT,   MOD_SHIFT,   tokShift },
-	{ VK_MENU,    MOD_ALT,     tokAlt },
+	{ VK_LWIN,    VK_LWIN,     MOD_WIN,     tokWin },
+	{ VK_CONTROL, VK_LCONTROL, MOD_CONTROL, tokCtrl },
+	{ VK_SHIFT,   VK_LSHIFT,   MOD_SHIFT,   tokShift },
+	{ VK_MENU,    VK_LMENU,    MOD_ALT,     tokAlt },
 };
-
 
 
 static Keystroke *s_pksEditedOld;    // Pointer to the old value of the currently edited keystroke
@@ -56,6 +55,8 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 				s_prcKeystrokeCtl = SubclassWindow(hctl, prcKeystrokeCtl);
 				PostMessage(hctl, WM_KEYSTROKE, 0,0);
 				
+				CheckDlgButton(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT, s_ks.m_bDistinguishLeftRight);
+				
 				// Load condition names
 				TCHAR pszConds[bufString];
 				loadStringAuto(IDS_CONDITIONS, pszConds);
@@ -81,6 +82,11 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 		// Command
 		case WM_COMMAND:
 			switch (LOWORD(wParam)) {
+				
+				case IDCCHK_DISTINGUISH_LEFT_RIGHT:
+					s_ks.m_bDistinguishLeftRight = ToBool(IsDlgButtonChecked(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT));
+					PostMessage(GetDlgItem(hDlg, IDCTXT), WM_KEYSTROKE, 0,0);
+					break;
 				
 				case IDOK:
 					{
@@ -144,20 +150,23 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		case WM_KEYUP:
 		case WM_SYSKEYUP:
 			{
-				if (wParam == VK_RWIN)
-					wParam = VK_LWIN;
-				
 				// Flags
-				WORD vkFlags = s_ks.m_vkFlags;
+				DWORD vkFlags = s_ks.m_vkFlags;
 				bool bIsSpecial = false;
 				for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
-					const BYTE vk = e_aSpecialKey[i].vk;
-					if (wParam == vk)
+					const BYTE vk      = e_aSpecialKey[i].vk;
+					const BYTE vkLeft  = e_aSpecialKey[i].vkLeft;
+					const BYTE vkRight = (BYTE)(vkLeft + 1);
+					if (wParam == vk || wParam == vkLeft || wParam == vkRight) {
+						wParam = vk;
 						bIsSpecial = true;
+					}
 					
-					const int vkKeyFlags = e_aSpecialKey[i].vkFlags;
-					if (IsKeyDown(vk) || (vk == VK_LWIN && IsKeyDown(VK_RWIN)))
+					const DWORD vkKeyFlags = e_aSpecialKey[i].vkFlags;
+					if (IsKeyDown(vkLeft))
 						vkFlags |= vkKeyFlags;
+					else if (IsKeyDown(vkRight))
+						vkFlags |= (DWORD)vkKeyFlags << vkFlagsRightOffset;
 					else
 						vkFlags &= ~vkKeyFlags;
 				}
@@ -195,7 +204,7 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	}
 	
 	// Ignore mouse events
-	if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
+	if (WM_MOUSEFIRST <= uMsg && uMsg <= WM_MOUSELAST)
 		return 0;
 	
 	return CallWindowProc(s_prcKeystrokeCtl, hWnd, uMsg, wParam, lParam);
@@ -221,22 +230,26 @@ bool AskKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult)
 //------------------------------------------------------------------------
 
 // Get the human readable name of the keystroke
-ATOM Keystroke::getKeyName(LPTSTR pszHotKey, bool bGetAtom) const
+void Keystroke::getKeyName(LPTSTR pszHotKey) const
 {
 	*pszHotKey = _T('\0');
 	
 	// Special keys
 	for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
-		if (m_vkFlags & e_aSpecialKey[i].vkFlags) {
+		const int vkFlagsLeft  = e_aSpecialKey[i].vkFlags;
+		const int vkFlagsRight = vkFlagsLeft << vkFlagsRightOffset;
+		if (m_vkFlags & (vkFlagsLeft | vkFlagsRight)) {
 			StrNCat(pszHotKey, getToken(e_aSpecialKey[i].tok), bufHotKey);
+			if (m_bDistinguishLeftRight) {
+				StrNCat(pszHotKey, _T(" "), bufHotKey);
+				StrNCat(pszHotKey, getToken((m_vkFlags & vkFlagsLeft) ? tokLeft : tokRight), bufHotKey);
+			}
 			StrNCat(pszHotKey, _T(" + "), bufHotKey);
 		}
 	}
 	
 	// Main key
 	getKeyName(m_vk, pszHotKey);
-	
-	return (bGetAtom) ? GlobalAddAtom(pszHotKey) : (ATOM)0;
 }
 
 
@@ -248,9 +261,9 @@ bool Keystroke::isKeyExtended(UINT vk)
 // Get a key name and add it to pszHotKey
 void Keystroke::getKeyName(UINT vk, LPTSTR pszHotKey)
 {
-	long lScan = (::MapVirtualKey(LOBYTE(vk), 0)<<16) | (1L<<25);
+	long lScan = (::MapVirtualKey(LOBYTE(vk), 0) << 16) | (1L << 25);
 	if (isKeyExtended(vk))
-		lScan |= 1L<<24;
+		lScan |= 1L << 24;
 	
 	const int len = lstrlen(pszHotKey);
 	::GetKeyNameText(lScan, pszHotKey + len, bufHotKey - len);
@@ -259,12 +272,19 @@ void Keystroke::getKeyName(UINT vk, LPTSTR pszHotKey)
 }
 
 
-// Test for inclusion
-bool Keystroke::match(BYTE vk, WORD vkFlags, const int aiCondState[]) const
+// Test for inclusion: is 'ks' a particular case of 'this'?
+bool Keystroke::match(const Keystroke& ks) const
 {
-	VERIF(m_vk == vk && m_vkFlags == vkFlags);
+	VERIF(m_vk == ks.m_vk);
+	
+	if (m_bDistinguishLeftRight) {
+		VERIF(ks.m_bDistinguishLeftRight && m_vkFlags == ks.m_vkFlags);
+	}else{
+		VERIF(getVkFlagsNoSide() == ks.getVkFlagsNoSide());
+	}
+	
 	for (int i = 0; i < condTypeCount; i++)
-		VERIF(m_aCond[i] == condIgnore || m_aCond[i] == aiCondState[i]);
+		VERIF(m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
 	return true;
 }
 
@@ -272,19 +292,23 @@ bool Keystroke::match(BYTE vk, WORD vkFlags, const int aiCondState[]) const
 // Register the hotkey
 void Keystroke::registerHotKey()
 {
-	if (m_vk == VK_NUMPAD5)
-		RegisterHotKey(NULL, MAKEWORD(VK_CLEAR, m_vkFlags), m_vkFlags, VK_CLEAR);
+	const WORD vkFlags = getVkFlagsNoSide();
 	
-	RegisterHotKey(NULL, MAKEWORD(m_vk, m_vkFlags), m_vkFlags, m_vk);
+	if (m_vk == VK_NUMPAD5)
+		RegisterHotKey(NULL, MAKEWORD(VK_CLEAR, vkFlags), vkFlags, VK_CLEAR);
+	
+	RegisterHotKey(NULL, MAKEWORD(m_vk, vkFlags), vkFlags, m_vk);
 }
 
 // Unregister the hotkey
 bool Keystroke::unregisterHotKey()
 {
-	if (m_vk == VK_NUMPAD5)
-		UnregisterHotKey(NULL, MAKEWORD(VK_CLEAR, m_vkFlags));
+	const WORD vkFlags = getVkFlagsNoSide();
 	
-	return ToBool(UnregisterHotKey(NULL, MAKEWORD(m_vk, m_vkFlags)));
+	if (m_vk == VK_NUMPAD5)
+		UnregisterHotKey(NULL, MAKEWORD(VK_CLEAR, vkFlags));
+	
+	return ToBool(UnregisterHotKey(NULL, MAKEWORD(m_vk, vkFlags)));
 }
 
 
@@ -292,12 +316,13 @@ bool Keystroke::unregisterHotKey()
 void Keystroke::serialize(LPTSTR psz)
 {
 	bool bSkipPlus = false;
+	int vkFlagsLast = 0;
 	
 	for (;;) {
 		
 		// Skip spaces and '+'
-		while (*psz == ' ' || (*psz == '+' && bSkipPlus)) {
-			if (*psz == '+')
+		while (*psz == _T(' ') || (*psz == _T('+') && bSkipPlus)) {
+			if (*psz == _T('+'))
 				bSkipPlus = false;
 			psz++;
 		}
@@ -307,21 +332,33 @@ void Keystroke::serialize(LPTSTR psz)
 		
 		// Get the next word
 		TCHAR *pcNext = psz;
-		while (*pcNext && *pcNext != ' ' && *pcNext != '+')
+		while (*pcNext && *pcNext != _T(' ') && *pcNext != _T('+'))
 			pcNext++;
 		const TCHAR cOldNext = *pcNext;
 		*pcNext = 0;
 		
 		
 		const int tok = findToken(psz);
+		
 		if (tokWin <= tok && tok <= tokAlt) {
 			// Special key token
 			
+			vkFlagsLast = 0;
 			for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
 				if (e_aSpecialKey[i].tok == tok) {
-					m_vkFlags |= e_aSpecialKey[i].vkFlags;
+					vkFlagsLast = e_aSpecialKey[i].vkFlags;
+					m_vkFlags |= vkFlagsLast;
 					break;
 				}
+			}
+			
+		}else if (tok == tokLeft || tok == tokRight) {
+			// Key side
+			
+			if (tok == tokRight) {
+				m_vkFlags &= ~vkFlagsLast;
+				m_vkFlags |= vkFlagsLast << vkFlagsRightOffset;
+				vkFlagsLast = 0;
 			}
 			
 		}else{
@@ -373,10 +410,12 @@ void Keystroke::keybdEvent(UINT vk, bool bUp)
 // Simulate the typing of the keystroke
 void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bSpecialKeys) const
 {
+	const DWORD vkFlags = getVkFlagsNoSide();
+	
 	// Press the special keys
 	if (bSpecialKeys)
 		for (int i = 0; i < nbArray(e_aSpecialKey); i++)
-			if (m_vkFlags & e_aSpecialKey[i].vkFlags)
+			if (vkFlags & e_aSpecialKey[i].vkFlags)
 				keybdEvent(e_aSpecialKey[i].vk, false);
 	
 	// Press and release the main key
@@ -387,7 +426,7 @@ void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bSpecialKeys) cons
 	// Release the special keys
 	if (bSpecialKeys)
 		for (int i = 0; i < nbArray(e_aSpecialKey); i++)
-			if (m_vkFlags & e_aSpecialKey[i].vkFlags)
+			if (vkFlags & e_aSpecialKey[i].vkFlags)
 				keybdEvent(e_aSpecialKey[i].vk, true);
 }
 
@@ -603,9 +642,9 @@ void shortcutsCopyToClipboard()
 //------------------------------------------------------------------------
 
 // Test for inclusion
-bool Shortcut::match(BYTE vk, WORD vkFlags, const int aiCondState[], LPCTSTR pszProgram) const
+bool Shortcut::match(const Keystroke& ks, LPCTSTR pszProgram) const
 {
-	VERIF(Keystroke::match(vk, vkFlags, aiCondState));
+	VERIF(Keystroke::match(ks));
 	
 	return (pszProgram && m_sPrograms.isSome() && containsProgram(pszProgram)) ^ (!m_bProgramsOnly);
 }
@@ -617,7 +656,14 @@ bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[], bool 
 {
 	VERIF(bProgramsOnly == m_bProgramsOnly);
 	
-	VERIF(m_vk == ks.m_vk && m_vkFlags == ks.m_vkFlags);
+	VERIF(m_vk == ks.m_vk);
+	
+	if (m_bDistinguishLeftRight && ks.m_bDistinguishLeftRight) {
+		VERIF(m_vkFlags == ks.m_vkFlags);
+	}else{
+		VERIF(getVkFlagsNoSide() == ks.getVkFlagsNoSide());
+	}
+	
 	for (int i = 0; i < condTypeCount; i++)
 		VERIF(m_aCond[i] == condIgnore || ks.m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
 	

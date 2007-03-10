@@ -353,6 +353,7 @@ Tri=<i>numéro colonne</i>
 <pre>
 Raccourci=<i>séquence de touches</i>
 Code=<i>code de touche</i>
+DistinguerGaucheDroite=<i>0 ou 1</i>
 Description=<i>texte de description</i>
 Texte=<i>texte à taper quand le raccourci est effectué</i>
 &gt;<i>ligne supplémentaire</i>
@@ -380,6 +381,9 @@ pour le champ <kbd>Texte=</kbd>.</p>
 
 <dt><kbd>Code</kbd></dt>
 <dd>Représentation numérique des touches du raccourci clavier, utilisé en interne par Clavier+. Ce code n’est utilisé que si le champ <kbd>Raccourci</kbd> est erroné.</dd>
+
+<dt><kbd>DistinguishLeftRight</kbd></dt>
+<dd>Indique si Clavier+ doit distinguer les touches spéciales situées à gauche et à droite du clavier. Si ce paramètre vaut 1, les touches <kbd>Ctrl</kbd>, <kbd>Alt</kbd>, <kbd>Maj</kbd> et <kbd>Win</kbd> situées à gauche du clavier seront considérées comme différentes des mêmes touches situées à droite. Cela permet de créer plus de raccourcis. Si ce paramètre vaut 0 (valeur par défaut), seul le nom des touches spéciales est pris en compte.</dd>
 
 <dt><kbd>Répertoire</kbd> (mode commande uniquement)</dt>
 <dd>Répertoire de démarrage de la commande. Si aucun répertoire n’est spécifié, Clavier+ lance le programme dans le répertoire de son exécutable.</dd>

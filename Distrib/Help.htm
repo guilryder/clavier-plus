@@ -207,7 +207,7 @@ E-mail: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a><
 
 <p>For a given keystroke, you can define any count of shortcuts having a <i>only those programs</i> condition, if they refer to different programs. In all cases, you can only define one shortcut having an <i>all programs but</i> condition.</p>
 
-<p>Shortcuts of type <i>only those programs</i> have the priority on <i>all programs but</i> shortcuts. If you associate the condition “only those programs&nbsp;: <kbd>notepad.exe</kbd>” to a first shortcut, and “all programs but: <i>none</i>” to a second shortcut, if both shortcuts have the same keystroke, and if you execute this keystroke in Notepad, the first shortcut will be executed, the second will be ignored.</p>
+<p>Shortcuts of type <i>only those programs</i> have the priority on <i>all programs but</i> shortcuts. If you associate the condition “only those programs: <kbd>notepad.exe</kbd>” to a first shortcut, and “all programs but: <i>none</i>” to a second shortcut, if both shortcuts have the same keystroke, and if you execute this keystroke in Notepad, the first shortcut will be executed, the second will be ignored.</p>
 
 
 <h3>Toggle keys</h3>
@@ -242,7 +242,7 @@ E-mail: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a><
 <p>This syntax allows to launch several programs with the same shortcut. For example, to launch Notepad and the calculator:<br />
 <kbd>[[notepad.exe]][[calc.exe]]</kbd></p>
 
-<p>The command line can contain <kbd>%</kbd> enclosed environment variables, like in <kbd>explorer.exe %WINDIR%</kbd> to open the explorer at Windows directory. The <kbd>%CLIPBOARD%</kbd> environment variable will contain the text currently stored in the clipboard. For example, to open the selected URL with Internet Explorer&nbsp;:<br />
+<p>The command line can contain <kbd>%</kbd> enclosed environment variables, like in <kbd>explorer.exe %WINDIR%</kbd> to open the explorer at Windows directory. The <kbd>%CLIPBOARD%</kbd> environment variable will contain the text currently stored in the clipboard. For example, to open the selected URL with Internet Explorer:<br />
 <kbd>[Ctrl+C][][[iexplore.exe %CLIPBOARD%]]</kbd></p>
 
 
@@ -305,11 +305,11 @@ The arrow menu recalls the special characters list.</p>
 <p>Clavier+ menu, displayed by right clicking Clavier+ icon near the system clock, proposes several commands to manage configuration files:</p>
 <ul>
 <li>Available configuration files: <kbd>*.ini</kbd> files located in Clavier+ directory. Choose a file to load it.</li>
-<li>Load Configuration&nbsp;: load a configuration file, if it is not in the list. Make sure not to load the configuration file of another program, it would be overwritten and lost.</li>
-<li>Save Configuration&nbsp;: save the current shortcuts to a new configuration file.</li>
+<li>Load Configuration: load a configuration file, if it is not in the list. Make sure not to load the configuration file of another program, it would be overwritten and lost.</li>
+<li>Save Configuration: save the current shortcuts to a new configuration file.</li>
 </ul>
 
-<p>Another way to load a configuration file is to run Clavier+ with the <kbd>/load</kbd> <a href="#cmdline">command line</a> option. This allows to load a configuration file with a keystroke, by associating a keyboard shortcut to the command line&nbsp;:</p>
+<p>Another way to load a configuration file is to run Clavier+ with the <kbd>/load</kbd> <a href="#cmdline">command line</a> option. This allows to load a configuration file with a keystroke, by associating a keyboard shortcut to the command line:</p>
 <pre>clavier.exe /load <i>configuration_file.ini</i></pre>
 
 
@@ -330,7 +330,7 @@ Second shortcut settings
 <h4>Global settings</h4>
 
 <pre>
-Language=Français <i>or</i> English <i>or</i> Deutsch
+Language=Français <i>or</i> English <i>or</i> Deutsch <i>or</i> Português
 Size=<i>width</i>,<i>height</i>,<i>maximized</i>,<i>hide icon</i>
 Columns=<i>width 1</i>,<i>width 2</i>,<i>width 3</i>
 Sorting=<i>column index</i>
@@ -338,9 +338,9 @@ Sorting=<i>column index</i>
 
 <dl>
 <dt><kbd>Size</kbd></dt>
-<dd><kbd>width,height</kbd>&nbsp;: size of the configuration window, in pixels.<br />
-<kbd>maximized</kbd>&nbsp;: 1 if the window is maximized, 0 otherwise.<br />
-<kbd>hide icon</kbd>&nbsp;: 1 to hide Clavier+ icon in the tray bar, near the system clock, 0 to keep it visible.
+<dd><kbd>width,height</kbd>: size of the configuration window, in pixels.<br />
+<kbd>maximized</kbd>: 1 if the window is maximized, 0 otherwise.<br />
+<kbd>hide icon</kbd>: 1 to hide Clavier+ icon in the tray bar, near the system clock, 0 to keep it visible.
 </dd>
 
 <dt><kbd>Columns</kbd></dt>
@@ -356,6 +356,7 @@ Sorting=<i>column index</i>
 <pre>
 Shortcut=<i>keystroke</i>
 Code=<i>keystroke code</i> (internally used by Clavier+)
+DistinguishLeftRight=<i>0 or 1</i>
 Description=<i>description text</i>
 Text=<i>text to type when the shortcut is done</i>
 &gt;<i>Other line to type</i>
@@ -382,6 +383,9 @@ ScrollLock=<i>condition</i>
 
 <dt><kbd>Code</kbd></dt>
 <dd>Numerical representation of the keystroke, generated and used by Clavier+. This code is used only if the <kbd>Shortcut</kbd> field is erroneous.</dd>
+
+<dt><kbd>DistinguishLeftRight</kbd></dt>
+<dd>Specifies whether Clavier+ should distinguish between left-side and right-side specials keys. If this setting is 1, <kbd>Ctrl</kbd>, <kbd>Alt</kbd>, <kbd>Shift</kbd> and <kbd>Win</kbd> keys located at the left side of the keyboard are distinguished from their equivalent located at the right side. This allows to create more shortcuts. If this settings is 0 (default value), the side of the special keys is not relevant in the keystroke.</dd>
 
 <dt><kbd>Directory</kbd> (command mode only)</dt>
 <dd>Startup directory of the command. If none is given, Clavier+ uses the directory of the executable itself.</dd>

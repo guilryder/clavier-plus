@@ -25,6 +25,8 @@
 #define IsKeyDown(vk)   (GetKeyState(vk) & 0x8000)
 const BYTE bKeyDown = 0x80;
 
+const int vkFlagsRightOffset = 16;
+
 
 enum
 {
@@ -46,9 +48,10 @@ class Keystroke
 {
 public:
 	
-	BYTE m_vk;
-	WORD m_vkFlags;
-	int  m_aCond[condTypeCount];
+	BYTE  m_vk;
+	DWORD m_vkFlags;
+	int   m_aCond[condTypeCount];
+	bool  m_bDistinguishLeftRight;
 	
 	
 public:
@@ -67,12 +70,18 @@ public:
 	void resetAll()
 	{
 		reset();
+		m_bDistinguishLeftRight = false;
 		for (int i = 0; i < condTypeCount; i++)
 			m_aCond[i] = condIgnore;
 	}
 	
 	
-	ATOM getKeyName(LPTSTR pszHotKey, bool bGetAtom = false) const;
+	WORD getVkFlagsNoSide() const
+	{
+		return (WORD)m_vkFlags | (WORD)(m_vkFlags >> vkFlagsRightOffset);
+	}
+	
+	void getKeyName(LPTSTR pszHotKey) const;
 	
 	void serialize(LPTSTR psz);
 	void simulateTyping(HWND hwndFocus, bool bSpecialKeys = true) const;
@@ -80,7 +89,7 @@ public:
 	void registerHotKey();
 	bool unregisterHotKey();
 	
-	bool match(BYTE vk, WORD vkFlags, const int aiCondState[]) const;
+	bool match(const Keystroke& ks) const;
 	
 	bool canReleaseSpecialKeys() const
 	{
@@ -188,7 +197,7 @@ public:
 	void appendMenuItem(HMENU hMenu, UINT id) const;
 	bool execute(bool bFromHotkey) const;
 	
-	bool match(BYTE vk, WORD vkFlags, const int aiCondState[], LPCTSTR pszProgram) const;
+	bool match(const Keystroke& ks, LPCTSTR pszProgram) const;
 	bool testConflict(const Keystroke& ks, const String asProgram[], bool bProgramsOnly) const;
 	
 	String* getPrograms() const;
@@ -200,9 +209,10 @@ public:
 
 struct SPECIALKEY
 {
-	BYTE vk;
-	int  vkFlags;
-	int  tok;
+	BYTE  vk;
+	BYTE  vkLeft;
+	DWORD vkFlags;
+	int   tok;
 };
 
 const int nbSpecialKey = 4;

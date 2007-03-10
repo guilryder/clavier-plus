@@ -26,6 +26,7 @@ enum
 	langFR,
 	langEN,
 	langDE,
+	langPT,
 	langCount
 };
 

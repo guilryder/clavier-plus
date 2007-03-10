@@ -78,6 +78,7 @@
 #define IDCCMD_TEXT_MENU                1054
 #define IDCCHK_SUPPORTFILEOPEN          1055
 #define IDCCBO_PROGRAMS                 1056
+#define IDCCHK_DISTINGUISH_LEFT_RIGHT   1058
 #define ID_ADD_SPECIALCHAR_FIRST        10000
 #define ID_ADD_PROGRAM_FIRST            11000
 #define ID_TEXT_SPECIALCHAR_FIRST       12000
@@ -108,7 +109,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        133
 #define _APS_NEXT_COMMAND_VALUE         40055
-#define _APS_NEXT_CONTROL_VALUE         1057
+#define _APS_NEXT_CONTROL_VALUE         1059
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
