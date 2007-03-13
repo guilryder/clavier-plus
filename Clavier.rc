@@ -151,7 +151,7 @@ BEGIN
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     GROUPBOX        "Übersetzungen",IDC_STATIC,6,98,145,34
     CONTROL         "Deutsch: Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,76,8
-    CONTROL         "Portugiesisch: Milton C. De Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,113,8
+    CONTROL         "Portugiesisch: Milton C. de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,112,8
     CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,142,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
 END
@@ -478,7 +478,7 @@ BEGIN
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     GROUPBOX        "Translation",IDC_STATIC,6,98,145,34
     CONTROL         "German: Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,74,8
-    CONTROL         "Portuguese: Milton C. De Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,108,8
+    CONTROL         "Portuguese: Milton C. de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,107,8
     CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,142,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
 END
@@ -745,7 +745,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
     GROUPBOX        "Traduction",IDC_STATIC,6,98,145,34
     CONTROL         "Allemand : Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,80,8
-    CONTROL         "Portugais : Milton C. De Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,103,8
+    CONTROL         "Portugais : Milton C. de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,102,8
 END
 
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
@@ -970,7 +970,7 @@ BEGIN
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     GROUPBOX        "Tradução",IDC_STATIC,6,98,145,34
     CONTROL         "Alemão : Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,75,8
-    CONTROL         "Português : Milton C. De Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,106,8
+    CONTROL         "Português : Milton C. de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,105,8
     CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,142,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
 END
@@ -989,7 +989,7 @@ BEGIN
     LTEXT           "&Janela:",IDC_STATIC,6,44,24,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     CONTROL         "&Mudar para a pasta do caminho acima nas janelas de Abrir (o atalho deve ser uma pasta)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,130,18
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,162,18
     PUSHBUTTON      "Cancelar",IDCANCEL,78,93,56,14
     DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
