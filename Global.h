@@ -45,6 +45,7 @@ const LPCTSTR pszApp = _T("Clavier+");
 extern HANDLE e_hHeap;
 extern HINSTANCE e_hInst;
 extern HWND e_hwndInvisible;    // Invisible background window
+extern HWND e_hdlgModal;
 extern bool e_bIconVisible;
 
 

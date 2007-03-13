@@ -89,13 +89,19 @@ margin-bottom: 6pt;
 <p>
 Guillaume Ryder<br />
 Site Web&nbsp;: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br />
-E-mail&nbsp;: <a href="mailto:gryder@club-internet.fr"><kbd>gryder@club-internet.fr</kbd></a><br />
+E-mail&nbsp;: <a href="mailto:gryder@club-internet.fr"><kbd>gryder@club-internet.fr</kbd></a>
 </p>
 
 <p><b>Traduction allemande</b><br />
 Dietmar Vogel<br />
 Site Web&nbsp;: <a href="http://www.verdrahtet.net/"><kbd>http://www.verdrahtet.net</kbd></a><br />
-E-mail&nbsp;: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a><br />
+E-mail&nbsp;: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a>
+</p>
+
+<p><b>Traduction en portugais du Brésil</b><br />
+Milton C. De Almeida<br />
+Site Web&nbsp;: <a href="http://mchal.110mb.com/"><kbd>http://mchal.110mb.com</kbd></a><br />
+E-mail&nbsp;: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kbd></a>
 </p>
 
 
@@ -186,7 +192,8 @@ E-mail&nbsp;: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd
 
 <p>Vous pouvez limiter la reconnaissance du raccourci à certaines conditions. Si toutes les conditions sont vérifiées, l’action associée au raccourci est exécutée. Si une ou plusieurs conditions ne sont pas remplies, Clavier+ ignore le raccourci, et l’action originale du raccourci est effectuée (celle de Windows ou du programme actif). Cela permet de donner des effets différents au même raccourci clavier.</p>
 
-<p><span class="ipt">Attention&nbsp;!</span> Si vous créez plusieurs entrées pour le même raccourci, veillez à leur affecter des conditions mutuellement exclusives. Dans le cas contraire, un message d’erreur s’affichera avant la validation.</p>
+<p><span class="ipt">Attention&nbsp;!</span> Si vous créez plusieurs entrées pour le même raccourci, veillez à leur affecter des conditions mutuellement exclusives. Dans le cas contraire, un message d’erreur s’affichera avant la validation. Par exemple, si vous voulez associer <kbd>Ctrl + X</kbd> au bloc-notes quand le pavé numérique est activé et à la calculatrice dans les autres cas, vous <i>devez</i> donner la condition «&nbsp;Verr. Num.&nbsp;: doit être désactivé&nbsp;» au second raccourci. En effet, «&nbsp;Verr. Num.&nbsp;: pas de condition&nbsp;» peut créer une ambigüité avec d’autres raccourcis, comme <kbd>Ctrl + X</kbd> avec la condition «&nbsp;Verr. Maj.&nbsp;: doit être activé&nbsp;».</p>
+
 
 
 <h3>Programme actif</h3>
@@ -223,7 +230,7 @@ E-mail&nbsp;: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd
 
 <p>Utilisez la commande <i>Simuler une frappe de touches</i> du menu en forme de flèche pour écrire le code correspondant à la frappe de touches souhaitée. Typiquement, ce code est le nom de la combinaison de touches entre crochets, par exemple <kbd>[Ctrl+O]</kbd>.</p>
 
-<p>Notez que simuler une frappe de touches permet d’effectuer de nombreuses actions, notamment manipuler le presse-papiers (avec <kbd>Ctrl+C</kbd> et <kbd>Ctrl+V</kbd>) ou exécuter une commande dans un menu (avec <kbd>Alt+<i>lettre</i></kbd>).</p>
+<p>Notez que simuler une frappe de touches permet d’effectuer de nombreuses actions, notamment manipuler le presse-papiers (avec <kbd>Ctrl + C</kbd> et <kbd>Ctrl + V</kbd>) ou exécuter une commande dans un menu (avec <kbd>Alt + <i>lettre</i></kbd>).</p>
 
 
 <h3>Lancer un programme</h3>
@@ -242,7 +249,7 @@ E-mail&nbsp;: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd
 
 <p>Si vous enchaînez plusieurs actions, il peut être utile de leur laisser le temps de s’exécuter. Pour cela écrivez une paire de crochets&nbsp;: <kbd>[]</kbd>. Cela attendra 100 millisecondes et détectera la nouvelle fenêtre active.</p>
 
-<p>Ce dernier point est très important. Si vous simulez une frappe de touches qui affiche une nouvelle fenêtre (par exemple <kbd>Ctrl+O</kbd> qui affiche la fenêtre <i>Ouvrir</i>) et qu’ensuite vous simulez de la frappe de texte (par exemple le nom d’un fichier), il faut indiquer à Clavier+ de taper le texte dans la <em>nouvelle</em> fenêtre affichée&nbsp;:<br />
+<p>Ce dernier point est très important. Si vous simulez une frappe de touches qui affiche une nouvelle fenêtre (par exemple <kbd>Ctrl + O</kbd> qui affiche la fenêtre <i>Ouvrir</i>) et qu’ensuite vous simulez de la frappe de texte (par exemple le nom d’un fichier), il faut indiquer à Clavier+ de taper le texte dans la <em>nouvelle</em> fenêtre affichée&nbsp;:<br />
 <kbd>[Ctrl+O][]MonFichier.txt[ENTREE]</kbd></p>
 
 <p>Même remarque si vous lancez un programme. Il faut demander à Clavier+ de se repositionner sur la nouvelle fenêtre active, en général celle du programme lancé&nbsp;:<br />
@@ -262,7 +269,7 @@ Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, lan
 <dd>Détecter la nouvelle fenêtre active. Utile si une frappe de touches affiche une nouvelle fenêtre dans laquelle il faut écrire. La commande <kbd>[]</kbd> est souvent préférable car elle effectue également une petite pause.</dd>
 
 <dt><kbd>[{Copy,<i>texte</i>}]</kbd></dt>
-<dd>Copier le texte spécifié dans le presse-papiers. Attention&nbsp;! Cette commande n’a aucun rapport avec le raccourci clavier <kbd>Ctrl+C</kbd> qui, elle, copie la <i>sélection</i> dans le presse-papiers. Si vous utilisez la séquence de touches <kbd>[Ctrl+V]</kbd> par la suite, cela permet d’écrire rapidement de très longs textes, ou d’écrire plusieurs fois le même texte. L’exemple suivant écrit cinq fois le même texte&nbsp;:<br />
+<dd>Copier le texte spécifié dans le presse-papiers. Attention&nbsp;! Cette commande n’a aucun rapport avec le raccourci clavier <kbd>Ctrl + C</kbd> qui, elle, copie la <i>sélection</i> dans le presse-papiers. Si vous utilisez la séquence de touches <kbd>Ctrl + V</kbd> par la suite, cela permet d’écrire rapidement de très longs textes, ou d’écrire plusieurs fois le même texte. L’exemple suivant écrit cinq fois le même texte&nbsp;:<br />
 <kbd>[{Copy,Une longue suite de mots. }][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd></dd>
 
 <dt><kbd>[{MouseButton,<i>code</i>}]</kbd></dt>
@@ -287,7 +294,7 @@ Le menu en forme de flèche rappelle la liste des caractères spéciaux.</p>
 
 <h2 id="print">Imprimer la liste des raccourcis clavier</h2>
 
-<p>Dans la fenêtre de Clavier+, cliquez sur le bouton <i>Copier la liste</i>. Cela place la liste des raccourcis clavier dans le presse-papiers&nbsp;: vous pouvez ensuite la coller dans le logiciel de votre choix pour l’imprimer. Si vous utilisez Word, vous pouvez la mettre sous forme de tableaux&nbsp;: lancez Word, collez la liste avec <kbd>Ctrl+V</kbd>, sélectionnez-là avec <kbd>Ctrl+A</kbd>, puis cliquez sur le bouton <i>Insérer un tableau</i>.</p>
+<p>Dans la fenêtre de Clavier+, cliquez sur le bouton <i>Copier la liste</i>. Cela place la liste des raccourcis clavier dans le presse-papiers&nbsp;: vous pouvez ensuite la coller dans le logiciel de votre choix pour l’imprimer. Si vous utilisez Word, vous pouvez la mettre sous forme de tableaux&nbsp;: lancez Word, collez la liste avec <kbd>Ctrl + V</kbd>, sélectionnez-là avec <kbd>Ctrl + A</kbd>, puis cliquez sur le bouton <i>Insérer un tableau</i>.</p>
 
 
 <h2 id="conffile">Fichiers de configuration</h2>
@@ -297,16 +304,17 @@ Le menu en forme de flèche rappelle la liste des caractères spéciaux.</p>
 
 <h3>Fichiers de configuration multiples</h3>
 
-<p>Si souhaitez utiliser plusieurs jeux de raccourcis, vous pouvez créer plusieurs fichiers de configuration et charger celui qui vont convient. Charger un fichier de configuration peut se faire sans relancer Clavier+.</p>
+<p>Si souhaitez utiliser plusieurs jeux de raccourcis, vous pouvez créer plusieurs fichiers de configuration et charger celui qui vous convient. Charger un fichier de configuration peut se faire sans relancer Clavier+.</p>
 
 <p>Le menu de Clavier+, affiché par un clic droit sur l’icône de Clavier+ à côté de l’horloge, propose plusieurs commandes&nbsp;:</p>
 <ul>
 <li>Liste des fichiers de configuration disponibles&nbsp;: fichiers <kbd>*.ini</kbd> situés dans le répertoire de Clavier+. Cliquez sur un fichier pour le charger.</li>
 <li>Charger configuration&nbsp;: charger un fichier de configuration, dans le cas où il ne serait pas dans la liste. Veillez à ne pas charger un fichier de configuration d’un autre programme, ce fichier serait perdu.</li>
+<li>Fusionner configuration avec&nbsp;: fusionner un autre fichier de configuration dans le fichier courant. Les raccourcis qui génèreraient des conflits ou des ambigüités ne sont pas ajoutés. En particulier, les raccourcis existants ne sont pas écrasés.</li>
 <li>Enregistrer configuration&nbsp;: enregistrer les raccourcis courants dans un nouveau fichier de configuration.</li>
 </ul>
 
-<p>Vous pouvez aussi charger un fichier de configuration en lançant Clavier+ avec l’option <kbd>/load</kbd> de la <a href="#cmdline">ligne de commande</a>. Cela permet, notamment, de changer de fichier de configuration par raccourci clavier, en associant dans Clavier+ un raccourci clavier à la ligne de commande&nbsp;:</p>
+<p>Vous pouvez aussi charger un fichier de configuration en lançant Clavier+ avec l’option <kbd>/load</kbd> ou <kbd>/merge</kbd> de la <a href="#cmdline">ligne de commande</a>. Cela permet, notamment, de changer de fichier de configuration par raccourci clavier, en associant dans Clavier+ un raccourci clavier à la ligne de commande&nbsp;:</p>
 <pre>clavier.exe /load <i>fichier_de_configuration.ini</i></pre>
 
 
@@ -327,7 +335,7 @@ Paramètres du second raccourci
 <h4>Paramètres globaux</h4>
 
 <pre>
-Langue=Français <i>ou</i> English <i>ou</i> Deutsch
+Langue=Français <i>ou</i> English <i>ou</i> Deutsch <i>ou</i> Português brasileiro
 Taille=<i>largeur</i>,<i>hauteur</i>,<i>agrandie</i>,<i>masquer icône</i>
 Colonnes=<i>largeur 1</i>,<i>largeur 2</i>,<i>largeur 3</i>
 Tri=<i>numéro colonne</i>
@@ -407,14 +415,35 @@ pour le champ <kbd>Texte=</kbd>.</p>
 <p>Clavier+ accepte les paramètres de ligne de commande suivants&nbsp;:</p>
 
 <dl>
+<dt><kbd>/launch</i></kbd></dt>
+<dd>Lancer Clavier+, si nécessaire, et le laisser s’exécuter en tâche de fond. La fenêtre de configuration n’est pas affichée.</kbd></dd>
+
+<dt><kbd>/settings</i></kbd></dt>
+<dd>Exécuter Clavier+ en tâche de fond, si nécessaire, puis afficher sa fenêtre de configuration.</kbd></dd>
+
+<dt><kbd>/menu</i></kbd></dt>
+<dd>Exécuter Clavier+ en tâche de fond, si nécessaire, puis afficher son menu. Le menu peut également être affiché en cliquant avec le bouton droit de la souris sur l’icône de Clavier+ à côté de l’horloge.</dd>
+
+<dt><kbd>/quit</i></kbd></dt>
+<dd>Quitter Clavier+ silencieusement. Si Clavier+ n’est pas lancé, ne rien faire.</dd>
+
+<dt><kbd>/addtext</i></kbd></dt>
+<dd>Afficher la fenêtre d’ajout de raccourci texte. Si nécessaire, Clavier+ est lancé en tâche de fond et la fenêtre de configuration est affichée.</dd>
+
+<dt><kbd>/addcommand</i></kbd></dt>
+<dd>Afficher la fenêtre d’ajout de raccourci de lancement de programme. Si nécessaire, Clavier+ est lancé en tâche de fond et la fenêtre de configuration est affichée.</dd>
+
 <dt><kbd>/load <i>fichier_de_configuration.ini</i></kbd></dt>
 <dd>Si Clavier+ n’est pas déjà lancé, le lancer en chargeant le fichier de configuration indiqué. Si Clavier+ est déjà lancé, ne pas le relancer mais charger un nouveau fichier de configuration. Le nom de fichier doit être mis entre guillemets s’il contient des espaces, par exemple&nbsp;: <kbd>clavier.exe /load "Raccourcis Internet.ini"</kbd></dd>
 
+<dt><kbd>/merge <i>configuration_file.ini</i></kbd></dt>
+<dd>Si Clavier+ n’est pas déjà lancé, le lancer en fusionnant le fichier de configuration indiqué au fichier de configuration par défaut – ou à celui spécifié par <kbd>/load</kbd>, s’il y a lieu. Si Clavier+ est déjà lancé, fusionner le fichier de configuration indiqué à sa configuration actuelle. Les raccourcis à fusionner qui créeraient des conflits ou des ambigüités ne sont pas ajoutés.</dd>
+
 <dt><kbd>/sendkeys "<i>texte</i>"</kbd></dt>
-<dd>Simuler une frappe de touches. Le text suit la <a href="#text">syntaxe indiquée ci-dessus</a>. Cette option permet, par exemple, d’écrire du texte en double-cliquant sur un raccourci Windows, ou au lancement de Windows, ou encore en choisissant une commande dans le menu contextuel de l’explorateur. Les guillemets et les antislashs doivent être précédés d’un antislash, par exemple&nbsp;: <kbd>clavier.exe /sendkeys "Voici un \"mot\" entre guillemets et un seul \\ antislash"</kbd></dd>
+<dd>Simuler une frappe de touches. Le texte suit la <a href="#text">syntaxe indiquée ci-dessus</a>. Cette option permet, par exemple, d’écrire du texte en double-cliquant sur un raccourci Windows, ou au lancement de Windows, ou encore en choisissant une commande dans le menu contextuel de l’explorateur. Les guillemets et les antislashs doivent être précédés d’un antislash, par exemple&nbsp;: <kbd>clavier.exe /sendkeys "Voici un \"mot\" entre guillemets et un seul \\ antislash"</kbd></dd>
 </dl>
 
-<p>If Clavier+ is launched without any argument, the behavior depends of whether Clavier+ is already launched. If no, launch Clavier+ silentely. If yes, do not launch Clavier+ again but display the configuration window. This allows to access Clavier+ options even if Clavier+ icon is hidden.</p>
+<p>Si Clavier+ est lancé sans argument, son comportement dépend de si Clavier+ était déjà lancé. Si non, Clavier+ est lancé silencieusement. Si oui, Clavier+ ne se relance pas mais affiche la fenêtre de configuration. Cela permet d’accéder aux options de Clavier+ si son icône est masquée.</p>
 
 
 <h2 id="limits">Limitations</h2>
@@ -456,14 +485,14 @@ Pause
 
 <h3>Raccourcis déconseillés</h3>
 
-<p>Par défaut dans Windows, le raccourcis clavier <kbd>Alt+Maj gauche</kbd> sert à changer la langue du clavier. Il est vivement recommandé de ne pas utiliser de raccourci clavier de type <kbd>Alt+Maj+<i>touche</i></kbd>, car vous risqueriez de changer la langue du clavier sans le vouloir.</p>
+<p>Par défaut dans Windows, le raccourci clavier <kbd>Alt + Maj gauche</kbd> sert à changer la langue du clavier. Il est vivement recommandé de ne pas utiliser de raccourci clavier de type <kbd>Alt + Maj + <i>touche</i></kbd>, car vous risqueriez de changer la langue du clavier sans le vouloir.</p>
 
 
 <h3>Programmes partiellement incompatibles</h3>
 
-<p>Clavier+ peut rencontrer des difficultés avec certaines programmes, notamment en ce qui concerne la frappe de texte et la simulation de frappe de touche&nbsp;:</p>
+<p>Clavier+ peut rencontrer des difficultés avec certains programmes, notamment en ce qui concerne la frappe de texte et la simulation de frappe de touche&nbsp;:</p>
 <ul>
-<li>Certains programmes multi-plateforme, qui ne respectent pas les standards de Windows en matière de gestion du clavier. On peut citer les programmes <b>Java</b> comme <b>OpenOffice</b>, les logiciels Mozilla (<b>Firefox</b>, <b>Thunderbird</b>), <b>Opera</b>, etc. En cas de souci, utilisez la syntaxe <kbd>[|<i>texte</i>|]</kbd> pour forcer Clavier+ à écrire le texte en bas niveau (meilleure compatibilité mais plus lent et plus limité).</li>
+<li>Certains programmes multiplateformes, qui ne respectent pas les standards de Windows en matière de gestion du clavier. On peut citer les programmes <b>Java</b> comme <b>OpenOffice</b>, les logiciels Mozilla (<b>Firefox</b>, <b>Thunderbird</b>), <b>Opera</b>, etc. En cas de souci, utilisez la syntaxe <kbd>[|<i>texte</i>|]</kbd> pour forcer Clavier+ à écrire le texte en bas niveau (meilleure compatibilité mais plus lent et plus limité).</li>
 <li>Les <b>jeux</b>, car ils gèrent le clavier sans se soucier de Windows, et donc de Clavier+.</li>
 <li>Les programmes système, car là aussi ils gèrent le clavier de manière spéciale. On peut citer par exemple <kbd>command.com</kbd>, les émulateurs et machines virtuelles (Cygwin, VirtualPC), les logiciels de virtualisation (VNC).</li>
 </ul>
@@ -484,7 +513,7 @@ shell.SendKeys "7{=}"</pre><p>Consultez la <a href="http://msdn.microsoft.com/ar
 
 <h2 id="examples">Exemples de raccourcis clavier</h2>
 
-<ul><li>Créer un nouveau dossier dans l’explorateur<br />texte <kbd>[#93][N][ENTREE]</kbd> avec la condition de programme <kbd>explorer.exe</kbd></li><li>Exécuter la commande <i>Fichier</i>/<i>Quitter</i><br />texte <kbd>[Alt+F4]</kbd> ou texte <kbd>[Alt+F][Q]</kbd></li><li>Traduire en anglais le mot sélectionné avec un dictionnaire Internet<br />texte <kbd>[Ctrl+C][[http://www.wordreference.com/fren/%CLIPBOARD%]]</kbd></li><li>Écrire un e-mail<br />commande <kbd>mailto:</kbd> ou <kbd>mailto:login@domaine.com&subject=Sujet</kbd></li><li>Faire défiler l’application active de 3 lignes vers le bas<br />texte <kbd>[{MouseWheel,3}]</kbd></li><li>Afficher le panneau de configuration<br />commande <kbd>control.exe</kbd></li><li>Monter ou baisser le volume<br />texte <kbd>[#175]</kbd> ou texte <kbd>[#174]</kbd></li><li>Coller la sélection dans le bloc-notes<br />texte <kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd></li><li>Remplir un formulaire<br />texte <kbd>premier champ[TAB]second champ[TAB]troisième champ[ENTREE]</kbd></li></ul>
+<ul><li>Créer un nouveau dossier dans l’explorateur<br />texte <kbd>[#93][N][ENTREE]</kbd> avec la condition de programme <kbd>explorer.exe</kbd></li><li>Exécuter la commande <i>Fichier</i>/<i>Quitter</i><br />texte <kbd>[Alt+F4]</kbd> ou texte <kbd>[Alt+F][Q]</kbd></li><li>Traduire en anglais le mot sélectionné avec un dictionnaire Internet<br />texte <kbd>[Ctrl+C][[http://www.wordreference.com/fren/%CLIPBOARD%]]</kbd></li><li>Écrire un e-mail<br />commande <kbd>mailto:</kbd> ou <kbd>mailto:login@domaine.com&amp;subject=Sujet</kbd></li><li>Faire défiler l’application active de 3 lignes vers le bas<br />texte <kbd>[{MouseWheel,3}]</kbd></li><li>Afficher le panneau de configuration<br />commande <kbd>control.exe</kbd></li><li>Monter ou baisser le volume<br />texte <kbd>[#175]</kbd> ou texte <kbd>[#174]</kbd></li><li>Coller la sélection dans le bloc-notes<br />texte <kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd></li><li>Remplir un formulaire<br />texte <kbd>premier champ[TAB]second champ[TAB]troisième champ[ENTREE]</kbd></li><li>Arrêter Windows<br />commande <kbd>shutdown.exe -s -t 01</kbd></li><li>Redémarrer Windows<br />commande <kbd>shutdown.exe -r -t 01</kbd></li><li>Fermer la session Windows<br />commande <kbd>shutdown.exe -l</kbd></li></ul>
 
 </body>
 </html>

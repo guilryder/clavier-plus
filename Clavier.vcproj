@@ -405,6 +405,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DonatePT.bmp"
+				>
+			</File>
+			<File
 				RelativePath="Edit.ico"
 				>
 			</File>
@@ -438,6 +442,11 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Distrib\Ajuda.htm"
+				DeploymentContent="true"
+				>
+			</File>
+			<File
 				RelativePath=".\Distrib\Clavier.iss"
 				>
 			</File>
@@ -451,6 +460,10 @@
 			</File>
 			<File
 				RelativePath=".\Distrib\ClavierGerman.ini"
+				>
+			</File>
+			<File
+				RelativePath=".\Distrib\ClavierPortuguese.ini"
 				>
 			</File>
 			<File

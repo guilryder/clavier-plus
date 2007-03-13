@@ -64,7 +64,7 @@ void loadString(UINT id, LPTSTR psz, int buf);
 #define loadStringAutoRet(id, pszBuffer)   (loadStringAuto(id, pszBuffer), pszBuffer)
 
 
-int dialogBox(UINT id, HWND hwndParent, DLGPROC prc);
+int dialogBox(UINT id, HWND hwndParent, DLGPROC prc, LPARAM lInitParam = 0);
 
 HMENU loadMenu(UINT id);
 

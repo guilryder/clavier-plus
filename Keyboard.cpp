@@ -49,6 +49,7 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 		// Initialization
 		case WM_INITDIALOG:
 			{
+				e_hdlgModal = hDlg;
 				centerParent(hDlg);
 				
 				const HWND hctl = GetDlgItem(hDlg, IDCTXT);
@@ -322,8 +323,10 @@ void Keystroke::serialize(LPTSTR psz)
 		
 		// Skip spaces and '+'
 		while (*psz == _T(' ') || (*psz == _T('+') && bSkipPlus)) {
-			if (*psz == _T('+'))
+			if (*psz == _T('+')) {
+				vkFlagsLast = 0;
 				bSkipPlus = false;
+			}
 			psz++;
 		}
 		bSkipPlus = true;
@@ -335,7 +338,7 @@ void Keystroke::serialize(LPTSTR psz)
 		while (*pcNext && *pcNext != _T(' ') && *pcNext != _T('+'))
 			pcNext++;
 		const TCHAR cOldNext = *pcNext;
-		*pcNext = 0;
+		*pcNext = _T('\0');
 		
 		
 		const int tok = findToken(psz);
@@ -352,7 +355,7 @@ void Keystroke::serialize(LPTSTR psz)
 				}
 			}
 			
-		}else if (tok == tokLeft || tok == tokRight) {
+		}else if (vkFlagsLast && (tok == tokLeft || tok == tokRight)) {
 			// Key side
 			
 			if (tok == tokRight) {
@@ -499,11 +502,17 @@ HKEY openAutoStartKey(LPTSTR pszPath)
 
 void shortcutsLoad()
 {
+	shortcutsClear();
+	shortcutsMerge(e_pszIniFile);
+}
+
+void shortcutsMerge(LPCTSTR pszIniFile)
+{
 	e_bIconVisible = true;
 	
 	memcpy(e_acxCol, s_acxColOrig, sizeof(s_acxColOrig));
 	
-	const HANDLE hf = CreateFile(e_pszIniFile,
+	const HANDLE hf = CreateFile(pszIniFile,
 		GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 	if (hf == INVALID_HANDLE_VALUE) {
 		if (GetLastError() != ERROR_FILE_NOT_FOUND) {
@@ -613,21 +622,16 @@ void shortcutsClear()
 }
 
 
-void shortcutsCopyToClipboard()
+void shortcutsCopyToClipboard(const String& rs)
 {
 	if (!OpenClipboard(NULL))
 		return;
 	EmptyClipboard();
 	
-	// Get the text
-	String s;
-	for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
-		psh->appendItemToString(s);
-	
 	// Allocate and fill shared buffer
-	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (s.getLength() + 1) * sizeof(TCHAR));
+	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (rs.getLength() + 1) * sizeof(TCHAR));
 	LPTSTR psz = (LPTSTR)GlobalLock(hMem);
-	lstrcpy(psz, s);
+	lstrcpy(psz, rs);
 	GlobalUnlock(hMem);
 	
 	// Copy buffer to clipboard
@@ -769,6 +773,7 @@ INT_PTR CALLBACK Keystroke::prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPA
 		// Initialization
 		case WM_INITDIALOG:
 			{
+				e_hdlgModal = hDlg;
 				centerParent(hDlg);
 				
 				const HWND hctl = GetDlgItem(hDlg, IDCTXT);

@@ -22,6 +22,7 @@
 #include "Lang.h"
 
 extern HINSTANCE e_hInst;
+extern HWND      e_hdlgModal;
 
 int e_lang;
 
@@ -100,11 +101,16 @@ void loadString(UINT id, LPTSTR psz, int buf)
 }
 
 
-int dialogBox(UINT id, HWND hwndParent, DLGPROC prc)
+int dialogBox(UINT id, HWND hwndParent, DLGPROC prc, LPARAM lInitParam)
 {
-	return DialogBoxIndirect(e_hInst,
+	const HWND hdlgModalOld = e_hdlgModal;
+	
+	const int iResult = DialogBoxIndirectParam(e_hInst,
 		(const DLGTEMPLATE*)loadResource(id, RT_DIALOG),
-		hwndParent, prc);
+		hwndParent, prc, lInitParam);
+	
+	e_hdlgModal = hdlgModalOld;
+	return iResult;
 }
 
 

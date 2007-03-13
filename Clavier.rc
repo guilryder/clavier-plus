@@ -136,7 +136,7 @@ LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 157, 157
+IDD_ABOUT DIALOGEX 0, 0, 157, 167
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_NOPARENTNOTIFY
 CAPTION "Über Clavier+"
@@ -144,35 +144,37 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
     CONTROL         "Clavier+ 10.5",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
-    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nSoftwarelizenz nach GNU GPL",IDC_STATIC,42,20,102,28,SS_NOPREFIX
-    GROUPBOX        "Autor",IDC_STATIC,8,54,142,50
-    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
-    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,14,78,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,14,90,69,8,SS_NOPREFIX
-    CONTROL         "Deutsche Übersetzung: Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,8,114,122,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,132,53,19
-    DEFPUSHBUTTON   "OK",IDOK,101,137,50,14,WS_GROUP
+    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nSoftwarelizenz nach GNU GPL",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    GROUPBOX        "Autor",IDC_STATIC,6,48,145,44
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    GROUPBOX        "Übersetzungen",IDC_STATIC,6,98,145,34
+    CONTROL         "Deutsch: Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,76,8
+    CONTROL         "Portugiesisch: Milton C. De Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,113,8
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,142,53,19
+    DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
 END
 
-IDD_KEYSTROKE DIALOGEX 0, 0, 190, 178
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Verknüpfung"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "&Verknüpfung:",IDC_STATIC,7,8,44,8
-    EDITTEXT        IDCTXT,60,6,124,12,ES_AUTOHSCROLL
+    EDITTEXT        IDCTXT,54,6,166,12,ES_AUTOHSCROLL
     CONTROL         "Zwischen den linken und rechten speziellen Tasten &unterscheiden",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,6,24,180,18
-    LTEXT           "Hinweis:\n- Windows Taste ist benutzbar\n- einige besondere Verknüpfungen sind nicht verfügbar",IDC_STATIC,6,48,176,30,SS_NOPREFIX
-    PUSHBUTTON      "Abbrechen",IDCANCEL,65,159,56,14
-    DEFPUSHBUTTON   "OK",IDOK,127,159,57,14
-    GROUPBOX        "Aktivierungsbedingung",IDC_STATIC,6,84,178,66
+    LTEXT           "Hinweis:\n- Windows Taste ist benutzbar\n- einige besondere Verknüpfungen sind nicht verfügbar",IDC_STATIC,6,48,216,30,SS_NOPREFIX
+    PUSHBUTTON      "Abbrechen",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
+    GROUPBOX        "Aktivierungsbedingung",IDC_STATIC,6,84,214,66
     LTEXT           "&Feststelltaste:",IDC_STATIC,12,98,47,8
-    COMBOBOX        IDCCBO_CAPSLOCK,94,96,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Num-Feststelltaste:",IDC_STATIC,12,116,64,8
-    COMBOBOX        IDCCBO_NUMLOCK,94,114,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Rollen-Feststelltaste:",IDC_STATIC,12,134,69,8
-    COMBOBOX        IDCCBO_SCROLLLOCK,94,132,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_MAIN DIALOGEX 0, 0, 414, 246
@@ -199,20 +201,21 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
     ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
     PUSHBUTTON      "E&rweiterte Einstellungen...",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "&Test",IDCCMD_TEST,354,168,48,14
     LTEXT           "Er&möglichen für:",IDCLBL_PROGRAMS,6,194,53,8
     COMBOBOX        IDCCBO_PROGRAMS,62,192,94,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,158,192,232,12,ES_AUTOHSCROLL
     CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Beschreibung:",IDCLBL_DESCRIPTION,6,210,46,8
     EDITTEXT        IDCTXT_DESCRIPTION,62,208,346,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,4,225,53,19
-    PUSHBUTTON      "&Hilfe",IDCCMD_HELP,94,227,48,14
-    PUSHBUTTON      "L&iste kopieren",IDCCMD_COPYLIST,147,227,48,14
-    PUSHBUTTON      "S&prache...",IDCCMD_LANGUAGE,200,227,48,14
-    PUSHBUTTON      "&Über...",IDCCMD_ABOUT,253,227,48,14
-    PUSHBUTTON      "B&eenden",IDCCMD_QUIT,306,227,48,14
-    DEFPUSHBUTTON   "OK",IDCANCEL,359,227,48,14
-    PUSHBUTTON      "&Test",IDCCMD_TEST,354,168,48,14
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "&Hilfe",IDCCMD_HELP,60,227,48,14
+    PUSHBUTTON      "L&iste kopieren",IDCCMD_COPYLIST,110,227,48,14
+    PUSHBUTTON      "S&prache...",IDCCMD_LANGUAGE,160,227,48,14
+    PUSHBUTTON      "&Über...",IDCCMD_ABOUT,210,227,48,14
+    PUSHBUTTON      "B&eenden",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
 END
 
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
@@ -234,15 +237,15 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
 
-IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Verknüpfung simulieren"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "&Verknüpfung:",-1,7,8,44,8
-    EDITTEXT        IDCTXT,54,6,120,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "Abbrechen",IDCANCEL,54,30,56,14
-    DEFPUSHBUTTON   "OK",IDOK,116,30,57,14
+    LTEXT           "&Verknüpfung:",IDC_STATIC,7,8,44,8
+    EDITTEXT        IDCTXT,55,6,178,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Abbrechen",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
 END
 
 
@@ -254,14 +257,25 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 161
+    END
+
     IDD_KEYSTROKE, DIALOG
     BEGIN
+        RIGHTMARGIN, 190
         BOTTOMMARGIN, 162
     END
 
     IDD_CMDSETTINGS, DIALOG
     BEGIN
         BOTTOMMARGIN, 93
+    END
+
+    IDD_SENDKEYS, DIALOG
+    BEGIN
+        RIGHTMARGIN, 233
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -314,12 +328,12 @@ BEGIN
         END
         POPUP "&Sonderzeichen schreiben"
         BEGIN
-            MENUITEM "Gegenschrägstrich schreiben: \\\\", ID_TEXT_BACKSLASH
-            MENUITEM "Linke Haltewinkel schreiben: \\[", ID_TEXT_BRACKET_OPEN
-            MENUITEM "Rechte Haltewinkel schreiben: \\]", ID_TEXT_BRACKET_CLOSE
-            MENUITEM "Linke Klammer schreiben: \\{", ID_TEXT_BRACE_OPEN
-            MENUITEM "Rechte Klammer schreiben: \\}", ID_TEXT_BRACE_CLOSE
-            MENUITEM "Vertikale Linie Schreiben: \\|", ID_TEXT_PIPE
+            MENUITEM "&Gegenschrägstrich schreiben: \\\\", ID_TEXT_BACKSLASH
+            MENUITEM "Linke &Haltewinkel schreiben: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Rechte Halte&winkel schreiben: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Linke &Klammer schreiben: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Rechte Kla&mmer schreiben: \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "&Vertikale Linie Schreiben: \\|", ID_TEXT_PIPE
         END
         POPUP "&Befehl durchführen"
         BEGIN
@@ -366,6 +380,7 @@ BEGIN
     IDS_BROWSEDIR           "Startordner zum Ausführen des Befehls auswählen."
     IDS_PROGRAMS            "alle Programme aber;nur diese Programme;"
     IDS_TOOLTIPS            "Hinzufügen;Löschen;Ändern;Programm wählen;"
+    IDS_INI_MERGE           "Konfiguration &mischen mit..."
 END
 
 #endif    // German (Germany) resources
@@ -386,25 +401,25 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_KEYSTROKE DIALOGEX 0, 0, 190, 178
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Shortcut"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "&Shortcut:",IDC_STATIC,7,8,30,8
-    EDITTEXT        IDCTXT,54,6,130,12,ES_AUTOHSCROLL
+    EDITTEXT        IDCTXT,42,6,178,12,ES_AUTOHSCROLL
     CONTROL         "&Distinguish between left and right special keys",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,163,10
-    LTEXT           "Notes:\n- you can use the Windows key\n- some special shortcuts are not available",IDC_STATIC,6,42,168,29,SS_NOPREFIX
-    PUSHBUTTON      "Cancel",IDCANCEL,65,159,56,14
-    DEFPUSHBUTTON   "OK",IDOK,127,159,57,14
-    GROUPBOX        "Activation condition",IDC_STATIC,6,84,178,66
+    LTEXT           "Notes:\n- you can use the Windows key\n- some special shortcuts are not available",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    PUSHBUTTON      "Cancel",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
+    GROUPBOX        "Activation condition",IDC_STATIC,6,84,214,66
     LTEXT           "&Caps Lock state:",IDC_STATIC,12,98,54,8
-    COMBOBOX        IDCCBO_CAPSLOCK,94,96,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Num Lock state:",IDC_STATIC,12,116,53,8
-    COMBOBOX        IDCCBO_NUMLOCK,94,114,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Scr&oll Lock state:",IDC_STATIC,12,134,56,8
-    COMBOBOX        IDCCBO_SCROLLLOCK,94,132,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_MAIN DIALOGEX 0, 0, 414, 246
@@ -438,31 +453,34 @@ BEGIN
     CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Description:",IDCLBL_DESCRIPTION,6,210,38,8
     EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,4,225,53,19
-    PUSHBUTTON      "&Help",IDCCMD_HELP,94,227,48,14
-    PUSHBUTTON      "C&opy list",IDCCMD_COPYLIST,147,227,48,14
-    PUSHBUTTON      "Lan&guage...",IDCCMD_LANGUAGE,200,227,48,14
-    PUSHBUTTON      "A&bout...",IDCCMD_ABOUT,253,227,48,14
-    PUSHBUTTON      "&Quit",IDCCMD_QUIT,306,227,48,14
-    DEFPUSHBUTTON   "OK",IDCANCEL,359,227,48,14
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "&Help",IDCCMD_HELP,60,227,48,14
+    PUSHBUTTON      "C&opy list",IDCCMD_COPYLIST,110,227,48,14
+    PUSHBUTTON      "Lan&guage...",IDCCMD_LANGUAGE,160,227,48,14
+    PUSHBUTTON      "A&bout...",IDCCMD_ABOUT,210,227,48,14
+    PUSHBUTTON      "&Quit",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "Cancel",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
 END
 
-IDD_ABOUT DIALOGEX 0, 0, 157, 157
+IDD_ABOUT DIALOGEX 0, 0, 157, 167
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_NOPARENTNOTIFY
 CAPTION "About Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    ICON            IDI_APP,-1,6,6,20,20
-    CONTROL         "Clavier+ 10.5",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
-    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nSoftware under GPL license",-1,42,20,108,28,SS_NOPREFIX
-    GROUPBOX        "Author",-1,8,54,142,50
-    CONTROL         "Guillaume Ryder",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
-    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,14,78,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,14,90,69,8,SS_NOPREFIX
-    CONTROL         "German translation: Dietmar Vogel",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,8,114,110,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,132,53,19
-    DEFPUSHBUTTON   "OK",IDOK,101,137,50,14,WS_GROUP
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    CONTROL         "Clavier+ 10.5",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nSoftware under GPL license",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    GROUPBOX        "Author",IDC_STATIC,6,48,145,44
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    GROUPBOX        "Translation",IDC_STATIC,6,98,145,34
+    CONTROL         "German: Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,74,8
+    CONTROL         "Portuguese: Milton C. De Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,108,8
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,142,53,19
+    DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
 END
 
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
@@ -484,15 +502,15 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
 
-IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Simulate a keystroke"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "&Keystroke:",-1,7,8,36,8
-    EDITTEXT        IDCTXT,54,6,120,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "Cancel",IDCANCEL,54,30,56,14
-    DEFPUSHBUTTON   "OK",IDOK,116,30,57,14
+    LTEXT           "&Keystroke:",IDC_STATIC,7,8,36,8
+    EDITTEXT        IDCTXT,48,6,185,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Cancel",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
 END
 
 
@@ -504,9 +522,24 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
+    IDD_KEYSTROKE, DIALOG
+    BEGIN
+        RIGHTMARGIN, 190
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 161
+    END
+
     IDD_CMDSETTINGS, DIALOG
     BEGIN
         BOTTOMMARGIN, 93
+    END
+
+    IDD_SENDKEYS, DIALOG
+    BEGIN
+        RIGHTMARGIN, 179
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -559,12 +592,12 @@ BEGIN
         END
         POPUP "Write a Sp&ecial Character"
         BEGIN
-            MENUITEM "Write a &Backslash: \\\\",    ID_TEXT_BACKSLASH
-            MENUITEM "Write an Opening Bracket: \\[", ID_TEXT_BRACKET_OPEN
-            MENUITEM "Write a Closing Bracket: \\]", ID_TEXT_BRACKET_CLOSE
-            MENUITEM "Write an Opening Brace: \\{", ID_TEXT_BRACE_OPEN
-            MENUITEM "Write a Closing Brace: \\}",  ID_TEXT_BRACE_CLOSE
-            MENUITEM "Write a Pipe: \\|",           ID_TEXT_PIPE
+            MENUITEM "Write a Back&slash: \\\\",    ID_TEXT_BACKSLASH
+            MENUITEM "Write an Opening &Bracket: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Write a Closing Brac&ket: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Write an Opening Br&ace: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Write a Closing Bra&ce: \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Write a &Pipe: \\|",          ID_TEXT_PIPE
         END
         POPUP "Execute a C&ommand"
         BEGIN
@@ -611,6 +644,7 @@ BEGIN
     IDS_BROWSEDIR           "Choose the startup directory of the command."
     IDS_PROGRAMS            "all programs but;only those programs;"
     IDS_TOOLTIPS            "Add a new shortcut;Delete the selected shortcut;Edit the selected shortcut;Click and drag-drop to select the window of a program;"
+    IDS_INI_MERGE           "&Merge Configuration With..."
 END
 
 #endif    // English (U.S.) resources
@@ -662,53 +696,56 @@ BEGIN
     CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Description :",IDCLBL_DESCRIPTION,6,210,40,8
     EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,4,225,53,19
-    PUSHBUTTON      "&Aide",IDCCMD_HELP,94,227,48,14
-    PUSHBUTTON      "C&opier liste",IDCCMD_COPYLIST,147,227,48,14
-    PUSHBUTTON      "Lan&gue...",IDCCMD_LANGUAGE,200,227,48,14
-    PUSHBUTTON      "À &propos...",IDCCMD_ABOUT,253,227,48,14
-    PUSHBUTTON      "&Quitter",IDCCMD_QUIT,306,227,48,14
-    DEFPUSHBUTTON   "OK",IDCANCEL,359,227,48,14
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "&Aide",IDCCMD_HELP,60,227,48,14
+    PUSHBUTTON      "C&opier liste",IDCCMD_COPYLIST,110,227,48,14
+    PUSHBUTTON      "Lan&gue...",IDCCMD_LANGUAGE,160,227,48,14
+    PUSHBUTTON      "À &propos...",IDCCMD_ABOUT,210,227,48,14
+    PUSHBUTTON      "&Quitter",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "Annuler",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
 END
 
-IDD_KEYSTROKE DIALOGEX 0, 0, 190, 178
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Raccourci clavier"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "&Raccourci :",IDC_STATIC,7,8,38,8
-    EDITTEXT        IDCTXT,54,6,130,12,ES_AUTOHSCROLL
+    EDITTEXT        IDCTXT,48,6,172,12,ES_AUTOHSCROLL
     CONTROL         "Distin&guer les touches de gauche et de droite",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,161,10
-    LTEXT           "Notes :\n- vous pouvez utiliser la touche Windows\n- les touches Ctrl + Alt et Alt Gr sont équivalentes\n- certains raccourcis spéciaux sont indisponibles",IDC_STATIC,6,42,168,38,SS_NOPREFIX
-    GROUPBOX        "Conditions d'activation :",IDC_STATIC,6,84,178,66
+    LTEXT           "Notes :\n- vous pouvez utiliser la touche Windows\n- les touches Ctrl + Alt et Alt Gr sont équivalentes\n- certains raccourcis spéciaux sont indisponibles",IDC_STATIC,6,42,216,38,SS_NOPREFIX
+    GROUPBOX        "Conditions d'activation :",IDC_STATIC,6,84,214,66
     LTEXT           "État de Verr. &Maj. :",IDC_STATIC,12,98,60,8
-    COMBOBOX        IDCCBO_CAPSLOCK,94,96,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "État de Verr. &Num. :",IDC_STATIC,12,116,63,8
-    COMBOBOX        IDCCBO_NUMLOCK,94,114,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "État d'Arrêt &Défil. :",IDC_STATIC,12,134,58,8
-    COMBOBOX        IDCCBO_SCROLLLOCK,94,132,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Annuler",IDCANCEL,65,159,56,14
-    DEFPUSHBUTTON   "OK",IDOK,127,159,57,14
+    COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Annuler",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
 END
 
-IDD_ABOUT DIALOGEX 0, 0, 157, 157
+IDD_ABOUT DIALOGEX 0, 0, 157, 167
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_NOPARENTNOTIFY
 CAPTION "À propos de Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    ICON            IDI_APP,-1,6,6,20,20
-    CONTROL         "Clavier+ 10.5",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
-    CONTROL         "Copyright © 2000-2007\nGuillaume Ryder\nLogiciel sous licence GPL",-1,
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    CONTROL         "Clavier+ 10.5",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    CONTROL         "Copyright © 2000-2007\nGuillaume Ryder\nLogiciel sous licence GPL",IDC_STATIC,
                     "Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | WS_GROUP,42,20,108,28
-    GROUPBOX        "Auteur",-1,8,54,142,50
-    CONTROL         "Guillaume Ryder",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
-    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,14,78,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,14,90,69,8,SS_NOPREFIX
-    CONTROL         "Traduction allemande : Dietmar Vogel",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,8,114,120,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,132,53,19
-    DEFPUSHBUTTON   "OK",IDOK,101,137,50,14,WS_GROUP
+    GROUPBOX        "Auteur",IDC_STATIC,6,48,145,44
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,142,53,19
+    DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
+    GROUPBOX        "Traduction",IDC_STATIC,6,98,145,34
+    CONTROL         "Allemand : Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,80,8
+    CONTROL         "Portugais : Milton C. De Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,103,8
 END
 
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
@@ -730,15 +767,15 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
 
-IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Simuler une frappe de touches"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "&Raccourci :",-1,7,8,38,8
-    EDITTEXT        IDCTXT,54,6,120,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "Annuler",IDCANCEL,54,30,56,14
-    DEFPUSHBUTTON   "OK",IDOK,116,30,57,14
+    LTEXT           "&Raccourci :",IDC_STATIC,7,8,38,8
+    EDITTEXT        IDCTXT,48,6,185,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Annuler",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
 END
 
 
@@ -752,12 +789,23 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_KEYSTROKE, DIALOG
     BEGIN
+        RIGHTMARGIN, 190
         BOTTOMMARGIN, 162
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 161
     END
 
     IDD_CMDSETTINGS, DIALOG
     BEGIN
         BOTTOMMARGIN, 100
+    END
+
+    IDD_SENDKEYS, DIALOG
+    BEGIN
+        RIGHTMARGIN, 179
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -810,12 +858,12 @@ BEGIN
         END
         POPUP "Écrire un caractère s&pécial"
         BEGIN
-            MENUITEM "Écrire un anti-slash : \\\\", ID_TEXT_BACKSLASH
-            MENUITEM "Écrire un crochet ouvrant : \\[", ID_TEXT_BRACKET_OPEN
-            MENUITEM "Écrire un crochet fermant : \\]", ID_TEXT_BRACKET_CLOSE
-            MENUITEM "Écrire une accolade ouvrante : \\{", ID_TEXT_BRACE_OPEN
-            MENUITEM "Écrire une accolade fermante : \\}", ID_TEXT_BRACE_CLOSE
-            MENUITEM "Écrire un pipe : \\|",        ID_TEXT_PIPE
+            MENUITEM "Écrire un &anti-slash : \\\\", ID_TEXT_BACKSLASH
+            MENUITEM "Écrire un &crochet ouvrant : \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Écrire un c&rochet fermant : \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Écrire une acc&olade ouvrante : \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Écrire une accola&de fermante : \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Écrire un &pipe : \\|",       ID_TEXT_PIPE
         END
         POPUP "Exécuter une c&ommande"
         BEGIN
@@ -879,13 +927,14 @@ BEGIN
     IDS_CONDITION_KEYS      "MND"
     IDS_SETTINGS            "&Paramètres..."
     IDS_QUIT                "&Quitter"
-    IDS_LIST_COPY           "&Copier list"
+    IDS_LIST_COPY           "&Copier liste"
     IDS_INI_LOAD            "C&harger configuration..."
     IDS_INI_SAVE            "&Enregistrer configuration..."
     IDS_INI_FILTER          "Fichiers INI|*.ini|"
     IDS_BROWSEDIR           "Choisissez le répertoire de démarrage de la commande."
     IDS_PROGRAMS            "tous les programmes sauf;seulement ces programmes;"
     IDS_TOOLTIPS            "Ajouter un nouveau raccourci;Supprimer le raccourci sélectionné;Éditer le raccourci sélectionné;Cliquer et faire glisser le curseur pour sélectionner la fenêtre d'un programme;"
+    IDS_INI_MERGE           "&Fusionner configuration avec..."
 END
 
 #endif    // French (France) resources
@@ -906,62 +955,64 @@ LANGUAGE LANG_PORTUGUESE, SUBLANG_PORTUGUESE_BRAZILIAN
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 157, 157
+IDD_ABOUT DIALOGEX 0, 0, 157, 167
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_NOPARENTNOTIFY
-CAPTION "About Clavier+"
+CAPTION "Sobre o Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    ICON            IDI_APP,-1,6,6,20,20
-    CONTROL         "Clavier+ 10.5",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
-    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nSoftware under GPL license",-1,42,20,108,28,SS_NOPREFIX
-    GROUPBOX        "Author",-1,8,54,142,50
-    CONTROL         "Guillaume Ryder",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,14,66,52,8
-    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,14,78,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,14,90,69,8,SS_NOPREFIX
-    CONTROL         "German translation: Dietmar Vogel",-1,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,8,114,110,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,132,53,19
-    DEFPUSHBUTTON   "OK",IDOK,101,137,50,14,WS_GROUP
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    CONTROL         "Clavier+ 10.5",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nLançado sob licença GNU GPL",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    GROUPBOX        "Criador",IDC_STATIC,6,48,145,44
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    GROUPBOX        "Tradução",IDC_STATIC,6,98,145,34
+    CONTROL         "Alemão : Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,75,8
+    CONTROL         "Português : Milton C. De Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,106,8
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,142,53,19
+    DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
 END
 
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Program to execute"
+CAPTION "Programa a executar"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "&Command line:",IDC_STATIC,6,8,48,8
+    LTEXT           "&Linha de comando:",IDC_STATIC,6,8,61,8
     EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
-    LTEXT           "&Directory:",IDC_STATIC,6,26,33,8
+    LTEXT           "&Pasta:",IDC_STATIC,6,26,22,8
     EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
-    LTEXT           "&Window:",IDC_STATIC,6,44,43,8
+    LTEXT           "&Janela:",IDC_STATIC,6,44,24,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "C&hange directory in File/Open dialog boxes (the command line should be a folder)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,156,18
-    PUSHBUTTON      "Cancel",IDCANCEL,78,93,56,14
+    CONTROL         "&Mudar para a pasta do caminho acima nas janelas de Abrir (o atalho deve ser uma pasta)",IDCCHK_SUPPORTFILEOPEN,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,130,18
+    PUSHBUTTON      "Cancelar",IDCANCEL,78,93,56,14
     DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
 
-IDD_KEYSTROKE DIALOGEX 0, 0, 190, 178
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Shortcut"
+CAPTION "Atalho"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "&Shortcut:",IDC_STATIC,7,8,30,8
-    EDITTEXT        IDCTXT,54,6,130,12,ES_AUTOHSCROLL
-    CONTROL         "&Distinguish between left and right special keys",IDCCHK_DISTINGUISH_LEFT_RIGHT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,163,10
-    LTEXT           "Notes:\n- you can use the Windows key\n- some special shortcuts are not available",IDC_STATIC,6,42,168,29,SS_NOPREFIX
-    PUSHBUTTON      "Cancel",IDCANCEL,65,159,56,14
-    DEFPUSHBUTTON   "OK",IDOK,127,159,57,14
-    GROUPBOX        "Activation condition",IDC_STATIC,6,84,178,66
-    LTEXT           "&Caps Lock state:",IDC_STATIC,12,98,54,8
-    COMBOBOX        IDCCBO_CAPSLOCK,94,96,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "&Num Lock state:",IDC_STATIC,12,116,53,8
-    COMBOBOX        IDCCBO_NUMLOCK,94,114,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Scr&oll Lock state:",IDC_STATIC,12,134,56,8
-    COMBOBOX        IDCCBO_SCROLLLOCK,94,132,84,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Atalho:",IDC_STATIC,7,8,24,8
+    EDITTEXT        IDCTXT,36,6,184,12,ES_AUTOHSCROLL
+    CONTROL         "&Fazer distinção de teclas especiais\n(se são do lado direito ou esquerdo do teclado)",IDCCHK_DISTINGUISH_LEFT_RIGHT,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,6,24,168,18
+    LTEXT           "Atenção:\n- você pode usar a tecla Windows (Win key)\n- mas outras teclas especiais não",IDC_STATIC,6,48,216,30,SS_NOPREFIX
+    PUSHBUTTON      "Cancelar",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
+    GROUPBOX        "Condição do acionamento",IDC_STATIC,6,84,214,66
+    LTEXT           "Status da &Caps Lock:",IDC_STATIC,12,98,68,8
+    COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Status da &Num Lock:",IDC_STATIC,12,116,66,8
+    COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Status da Scr&oll Lock:",IDC_STATIC,12,134,69,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_MAIN DIALOGEX 0, 0, 414, 246
@@ -974,45 +1025,45 @@ BEGIN
     PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Beware that all shortcuts are disabled while this window is visible.",IDCLBL_HELP,94,115,123,17
-    CONTROL         "L&aunch Clavier+ at Windows startup",IDCCHK_AUTOSTART,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,118,130,10
+    LTEXT           "Atenção: Todos os atalhos ficam desativados enquanto esta janela estiver aberta.",IDCLBL_HELP,94,115,147,17
+    CONTROL         "&Abrir o Clavier+ com o Windows",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,251,118,118,10
     GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
     GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
-    CONTROL         "&Write text",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,49,10
-    CONTROL         "&Launch a program or display a website",IDCOPT_COMMAND,
-                    "Button",BS_AUTORADIOBUTTON,216,138,140,10
+    CONTROL         "&Reproduzir texto",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,70,10
+    CONTROL         "&Abrir programa ou página da web",IDCOPT_COMMAND,"Button",BS_AUTORADIOBUTTON,216,138,123,10
     EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
     PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
     EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
     ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
-    PUSHBUTTON      "Ad&vanced settings...",IDCCMD_CMDSETTINGS,246,168,102,14
-    PUSHBUTTON      "&Test",IDCCMD_TEST,354,168,48,14
-    LTEXT           "&Enable for:",IDCLBL_PROGRAMS,6,194,36,8
-    COMBOBOX        IDCCBO_PROGRAMS,54,192,90,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDCTXT_PROGRAMS,146,192,244,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Configuração a&vançada...",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "&Testar",IDCCMD_TEST,354,168,48,14
+    LTEXT           "A&tivar:",IDCLBL_PROGRAMS,6,194,23,8
+    COMBOBOX        IDCCBO_PROGRAMS,44,192,121,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,167,192,223,12,ES_AUTOHSCROLL
     CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
-    LTEXT           "&Description:",IDCLBL_DESCRIPTION,6,210,38,8
-    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,4,225,53,19
-    PUSHBUTTON      "&Help",IDCCMD_HELP,94,227,48,14
-    PUSHBUTTON      "C&opy list",IDCCMD_COPYLIST,147,227,48,14
-    PUSHBUTTON      "Lan&guage...",IDCCMD_LANGUAGE,200,227,48,14
-    PUSHBUTTON      "A&bout...",IDCCMD_ABOUT,253,227,48,14
-    PUSHBUTTON      "&Quit",IDCCMD_QUIT,306,227,48,14
-    DEFPUSHBUTTON   "OK",IDCANCEL,359,227,48,14
+    LTEXT           "&Descrição:",IDCLBL_DESCRIPTION,6,210,34,8
+    EDITTEXT        IDCTXT_DESCRIPTION,44,208,364,12,ES_AUTOHSCROLL
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "&Ajuda",IDCCMD_HELP,60,227,48,14
+    PUSHBUTTON      "C&opiar lista",IDCCMD_COPYLIST,110,227,48,14
+    PUSHBUTTON      "&Idioma...",IDCCMD_LANGUAGE,160,227,48,14
+    PUSHBUTTON      "&Sobre...",IDCCMD_ABOUT,210,227,48,14
+    PUSHBUTTON      "&Fechar",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
 END
 
-IDD_SENDKEYS DIALOGEX 0, 0, 179, 50
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Simulate a keystroke"
+CAPTION "Simular digitação"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "&Keystroke:",-1,7,8,36,8
-    EDITTEXT        IDCTXT,54,6,120,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "Cancel",IDCANCEL,54,30,56,14
-    DEFPUSHBUTTON   "OK",IDOK,116,30,57,14
+    LTEXT           "&Letra:",IDC_STATIC,7,8,20,8
+    EDITTEXT        IDCTXT,32,6,201,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Cancelar",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
 END
 
 
@@ -1024,9 +1075,19 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 161
+    END
+
     IDD_CMDSETTINGS, DIALOG
     BEGIN
         BOTTOMMARGIN, 93
+    END
+
+    IDD_SENDKEYS, DIALOG
+    BEGIN
+        RIGHTMARGIN, 179
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1048,51 +1109,51 @@ IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
-        POPUP "&Program"
+        POPUP "&Programa"
         BEGIN
             MENUITEM SEPARATOR
         END
-        POPUP "&Internet Favorite"
+        POPUP "&Favoritos"
         BEGIN
             MENUITEM SEPARATOR
         END
-        POPUP "&Special Character"
+        POPUP "Caracter E&special"
         BEGIN
             MENUITEM SEPARATOR
         END
         MENUITEM SEPARATOR
-        MENUITEM "Open &Folder...",             ID_ADD_FOLDER
-        MENUITEM "&Write Text...",              ID_ADD_TEXT
-        MENUITEM "&Launch a Program...",        ID_ADD_COMMAND
-        MENUITEM "&Display a Website...",       ID_ADD_WEBSITE
+        MENUITEM "&Abrir Pasta...",             ID_ADD_FOLDER
+        MENUITEM "&Escrever Texto...",          ID_ADD_TEXT
+        MENUITEM "A&brir Programa...",          ID_ADD_COMMAND
+        MENUITEM "Abrir Página da &Web...",     ID_ADD_WEBSITE
     END
     POPUP " "
     BEGIN
-        MENUITEM "&Simulate a Keystroke: [...]", ID_TEXT_SENDKEYS
-        MENUITEM "Launch a &Program: [[...]]",  ID_TEXT_COMMAND
-        MENUITEM "&Wait 100 milliseconds: []",  ID_TEXT_WAIT
-        MENUITEM "Write Text in &Low-level Mode: [|...|]", ID_TEXT_LOWLEVEL
+        MENUITEM "&Simular Teclagem: [...]",    ID_TEXT_SENDKEYS
+        MENUITEM "Abrir &Programa: [[...]]",    ID_TEXT_COMMAND
+        MENUITEM "&Esperar 100 milissegundos: []", ID_TEXT_WAIT
+        MENUITEM "&Reproduzir Texto (Digitação Simulada): [|...|]", ID_TEXT_LOWLEVEL
         MENUITEM SEPARATOR
-        POPUP "Write a &Character"
+        POPUP "&Digitar um Caracter"
         BEGIN
             MENUITEM SEPARATOR
         END
-        POPUP "Write a Sp&ecial Character"
+        POPUP "Digitar Carater Especi&al"
         BEGIN
-            MENUITEM "Write a &Backslash: \\\\",    ID_TEXT_BACKSLASH
-            MENUITEM "Write an Opening Bracket: \\[", ID_TEXT_BRACKET_OPEN
-            MENUITEM "Write a Closing Bracket: \\]", ID_TEXT_BRACKET_CLOSE
-            MENUITEM "Write an Opening Brace: \\{", ID_TEXT_BRACE_OPEN
-            MENUITEM "Write a Closing Brace: \\}",  ID_TEXT_BRACE_CLOSE
-            MENUITEM "Write a Pipe: \\|",           ID_TEXT_PIPE
+            MENUITEM "Escrever uma &Barra Inclinada: \\\\", ID_TEXT_BACKSLASH
+            MENUITEM "Escrever &Colchete de Abertura: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Escrever C&olchete de Fecho: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Escrever C&have de Abertura: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Escrever Cha&ve de Fecho: \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Escrever Ba&rra Vertical: \\|", ID_TEXT_PIPE
         END
-        POPUP "Execute a C&ommand"
+        POPUP "Executar &Comando"
         BEGIN
-            MENUITEM "&Wait: [{Wait,<duration>}]",  ID_TEXT_CMD_WAIT
-            MENUITEM "&Detect focused window: [{Focus}]", ID_TEXT_CMD_FOCUS
-            MENUITEM "&Copy to clipboard: [{Copy,<text>}]", ID_TEXT_CMD_COPY
-            MENUITEM "&Mouse button: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE
-            MENUITEM "Mouse w&heel: [{MouseWheel,<+/- ticks count>}]", ID_TEXT_CMD_WHEEL
+            MENUITEM "&Esperar: [{Wait,<duração>}]", ID_TEXT_CMD_WAIT
+            MENUITEM "&Selecionar janela selecionada: [{Focus}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Copiar na Área de Armazenagem: [{Copy,<texto>}]", ID_TEXT_CMD_COPY
+            MENUITEM "&Botão do mouse: [{MouseButton,E/M/D(U/D)}]", ID_TEXT_CMD_MOUSE
+            MENUITEM "&Rolar página (esfera): [{MouseWheel,<+/- # de linhas>}]", ID_TEXT_CMD_WHEEL
         END
     END
 END
@@ -1105,32 +1166,33 @@ END
 
 STRINGTABLE 
 BEGIN
-    ERR_INVALID_SHORTCUT    "Valid shortcut required."
-    ERR_SHORTCUT_DUPLICATE  "A keyboard shortcut is duplicated: %s.\nPlease modify or remove one of the duplicates."
-    ERR_SAVING_INI          "Unable to save the settings."
-    ERR_LOADING_INI         "Unable to load the settings."
-    ERR_TARGET              "No program has been chosen.\nPlease keep the mouse button down and drag the cursor\nto a window of the program to choose."
-    ASK_QUIT                "Do you really want to exit Clavier+?\nThis will disable all your shortcuts.\n\n(Press the Shift key while clicking the button\nto skip this message.)"
-    ASK_DELETE              "Do you really want to delete this shortcut?\n\n(Press the Shift key while clicking the button\nto skip this message.)"
-    MSG_COPYLIST            "The shortcuts list has been copied to the clipboard.\n\nYou can paste it with Ctrl+V to a word processor or a spreadsheet."
+    ERR_INVALID_SHORTCUT    "Necessário um atalho válido."
+    ERR_SHORTCUT_DUPLICATE  "Existe duplicidade com uma combinação de teclas: %s.\nAltere ou remova uma das duplicatas."
+    ERR_SAVING_INI          "Não foi possível salvar a configuração."
+    ERR_LOADING_INI         "Não foi possível carregar a configuração."
+    ERR_TARGET              "Você não escolheu nenhum programa. Mantenha\npressionado o botão do mouse e arraste o cursor\naté uma janela do programa visado."
+    ASK_QUIT                "Quer mesmo fechar o Clavier+?\nIsto desativará todos os atalhos.\n\n(Tecle em Shift enquanto clica no botão de exclusão\npara evitar esta mensagem.)"
+    ASK_DELETE              "Quer mesmo apagar este atalho?\n\n(Tecle em Shift enquanto clica no botão de exclusão\npara evitar esta mensagem.)"
+    MSG_COPYLIST            "A lista de atalhos foi copiada na Área de Armazenamento.\n\nVocê pode colá-la (com Ctrl+V) num processador de texto ou numa planilha."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Portugês;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;"
-    IDS_COLUMNS             "Contents;Shortcut;Conditions;Description;"
-    IDS_HELP                "Help.htm"
-    IDS_CONDITIONS          "no condition;must be on;must be off;"
+    IDS_TOKENS              "Português brasileiro;Atalho;Código;DistinguirEsquerdaDireita;Descrição;Comando;Texto;Pasta;Janela;SuportaAberturaArquivo;Programas;TodosProgramasExceto;Nenhum;Idioma;Tamanho;Colunas;Ordenação;Normal;Minimizada;Maximizada;Win;Ctrl;Shift;Alt;Esquerda;Direita;CapsLock;NumLock;ScrollLock;Sim;Não;"
+    IDS_COLUMNS             "Conteúdo;Atalho;Condições;Descrição;"
+    IDS_HELP                "Ajuda.htm"
+    IDS_CONDITIONS          "nenhuma condição;deve estar ativada;deve estar desativada;"
     IDS_CONDITION_KEYS      "CNS"
-    IDS_SETTINGS            "&Settings..."
-    IDS_QUIT                "&Quit"
-    IDS_LIST_COPY           "&Copy List"
-    IDS_INI_LOAD            "&Load Configuration..."
-    IDS_INI_SAVE            "Sa&ve Configuration..."
-    IDS_INI_FILTER          "INI files|*.ini|"
-    IDS_BROWSEDIR           "Choose the startup directory of the command."
-    IDS_PROGRAMS            "all programs but;only those programs;"
-    IDS_TOOLTIPS            "Add a new shortcut;Delete the selected shortcut;Edit the selected shortcut;Click and drag-drop to select the window of a program;"
+    IDS_SETTINGS            "&Configuração..."
+    IDS_QUIT                "&Fechar"
+    IDS_LIST_COPY           "Copiar &Lista"
+    IDS_INI_LOAD            "&Abrir Configuração..."
+    IDS_INI_SAVE            "&Salvar Configuração..."
+    IDS_INI_FILTER          "Arquivos INI|*.ini|"
+    IDS_BROWSEDIR           "Especifique a pasta de abertura do comando."
+    IDS_PROGRAMS            "com qualquer programa, exceto;só com estes;"
+    IDS_TOOLTIPS            "Criar atalho;Apagar o atalho selecionado;Editar o atalho selecionado;Clique, arraste e solte para escolher a janela de um programa;"
+    IDS_INI_MERGE           "TODO &Merge Configuration With..."
 END
 
 #endif    // Portuguese (Brazil) resources

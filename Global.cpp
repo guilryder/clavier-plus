@@ -27,6 +27,7 @@
 HANDLE e_hHeap;
 HINSTANCE e_hInst;
 HWND e_hwndInvisible;
+HWND e_hdlgModal;
 bool e_bIconVisible = true;
 
 

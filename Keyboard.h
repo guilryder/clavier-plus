@@ -163,6 +163,7 @@ protected:
 	
 public:
 	
+	Shortcut(const Shortcut& sh);
 	Shortcut(const Keystroke& ks);
 	~Shortcut() { resetIcons(); }
 	
@@ -227,6 +228,7 @@ extern Shortcut *e_pshFirst;   // Shortcuts linked list
 
 
 void shortcutsLoad();
+void shortcutsMerge(LPCTSTR pszIniFile);
 void shortcutsSave();
 void shortcutsClear();
-void shortcutsCopyToClipboard();
+void shortcutsCopyToClipboard(const String& rs);

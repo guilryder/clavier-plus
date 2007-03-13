@@ -5,6 +5,7 @@
 #define IDCCMD_ABOUT                    3
 #define IDCCMD_LANGUAGE                 4
 #define IDCCMD_COPYLIST                 5
+#define IDCANCEL2                       6
 #define IDI_APP                         102
 #define IDD_ABOUT                       102
 #define IDD_MAIN                        105
@@ -41,6 +42,7 @@
 #define IDS_BROWSEDIR                   267
 #define IDS_PROGRAMS                    268
 #define IDS_TOOLTIPS                    269
+#define IDS_INI_MERGE                   270
 #define IDCLST                          1001
 #define IDCOPT_TEXT                     1006
 #define IDCOPT_COMMAND                  1007

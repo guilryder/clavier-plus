@@ -25,6 +25,10 @@
 #undef psh1
 #undef psh2
 
+#ifdef _DEBUG
+// #define ALLOW_MULTIPLE_INSTANCES
+#endif
+
 #ifdef UNICODE
 const bool bUnicode = true;
 #else
@@ -33,11 +37,6 @@ const bool bUnicode = false;
 
 #ifndef OPENFILENAME_SIZE_VERSION_400
 #define OPENFILENAME_SIZE_VERSION_400  sizeof(OPENFILENAME)
-#endif
-
-
-#ifdef _DEBUG
-// #define SHOW_SETTINGS_AT_LAUNCHING
 #endif
 
 
@@ -59,6 +58,7 @@ enum
 	idSettings = 1,
 	idListCopy,
 	idIniLoad,
+	idIniMerge,
 	idIniSave,
 	idQuit,
 	idFirstIniFile,
@@ -78,7 +78,6 @@ static TranslatedString s_asToken[tokNotFound];
 static TranslatedString s_sCondKeys;
 
 
-static HWND s_hdlgModal = NULL;
        HWND s_hdlgMain;
        HWND e_hlst = NULL;       // Shortcuts list
 static Shortcut *s_psh = NULL;   // Shortcut being edited
@@ -93,7 +92,25 @@ static bool s_bProcessGuiEvents;
 static HWND s_hwndLastForeground = NULL;
 
 
-static bool execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch);
+enum CMDLINE_OPTION
+{
+	cmdoptLaunch,
+	cmdoptSettings,
+	cmdoptMenu,
+	cmdoptQuit,
+	cmdoptAddText,
+	cmdoptAddCommand,
+	
+	cmdoptWithArg,
+	cmdoptLoad = cmdoptWithArg,
+	cmdoptMerge,
+	cmdoptSendKeys,
+	
+	cmdoptNone
+};
+
+static CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch);
+static void processCmdLineAction(CMDLINE_OPTION cmdoptAction);
 
 static LRESULT CALLBACK prcInvisible  (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static BOOL    CALLBACK prcMain       (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -151,7 +168,7 @@ void WinMainCRTStartup()
 	
 	const LPCTSTR pszCmdLine = GetCommandLine();
 	
-#ifndef _DEBUG
+#ifndef ALLOW_MULTIPLE_INSTANCES
 	// Avoid multiple launching
 	// Transmit the command line to the previous instance, if any
 	{
@@ -167,12 +184,13 @@ void WinMainCRTStartup()
 			return;
 		}
 	}
-#endif
+#endif // _DEBUG
 	
 	CoInitialize(NULL);
 	
 	e_hInst = (HINSTANCE)GetModuleHandle(NULL);
 	e_hHeap = GetProcessHeap();
+	e_hdlgModal = NULL;
 	
 	for (int lang = 0; lang < langCount; lang++) {
 		setLanguage(lang);
@@ -195,7 +213,8 @@ void WinMainCRTStartup()
 	
 	setLanguage(getDefaultLanguage());
 	
-	if (execCmdLine(pszCmdLine, true)) {
+	const CMDLINE_OPTION cmdoptAction = execCmdLine(pszCmdLine, true);
+	if (cmdoptAction != cmdoptQuit) {
 		
 		// Create the invisible window
 		e_hwndInvisible = CreateWindow(_T("STATIC"),
@@ -205,9 +224,7 @@ void WinMainCRTStartup()
 		// Create the traybar icon
 		trayIconAction(NIM_ADD);
 		
-#ifdef SHOW_SETTINGS_AT_LAUNCHING
-		PostMessage(e_hwndInvisible, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
-#endif
+		processCmdLineAction(cmdoptAction);
 		
 		// Message loop
 		DWORD timeMinimum = 0;
@@ -289,29 +306,28 @@ void WinMainCRTStartup()
 	CoUninitialize();
 #ifndef _DEBUG
 	ExitProcess(0);
-#endif
+#endif // _DEBUG
 }
 
 
-enum CMDLINE_OPTION
-{
-	cmdoptLoad,
-	cmdoptSendKeys,
-	cmdoptNone,
-};
-
 static LPCTSTR apszCmdOpt[] =
 {
+	_T("launch"),
+	_T("settings"),
+	_T("menu"),
+	_T("quit"),
+	_T("addtext"),
+	_T("addcommand"),
 	_T("load"),
+	_T("merge"),
 	_T("sendkeys"),
 };
 
 
 
 // bLaunching is FALSE if the command line is sent by WM_COPYDATA.
-// Return TRUE if Clavier+ should be launched, FALSE if it should terminate now.
-// Return value should be ignored if bNormalLaunch is FALSE.
-bool execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
+// Return the action to execute.
+CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 {
 	bool bNewIniFile = false;
 	
@@ -328,6 +344,11 @@ bool execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 	}while (c && (bInQuote || (c != _T(' ') && c != _T('\t'))));
 	
 	bInQuote = false;
+	
+	CMDLINE_OPTION cmdoptAction = cmdoptNone;
+	bool bAutoQuit = false;
+	LPTSTR apszIniFileMerge[maxIniFile];
+	int nbIniFileMerge = 0;
 	
 	int nbArg = 0;
 	if (c) {
@@ -384,28 +405,41 @@ bool execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 			}
 			*pcArg = _T('\0');
 			
-			switch (cmdopt) {
-				
+			if (cmdopt == cmdoptNone) {
 				// Test for command line option
-				case cmdoptNone:
-					if (*pszArg == _T('/')) {
-						const LPCTSTR pszOption = pszArg + 1;
-						for (cmdopt = (CMDLINE_OPTION)0; cmdopt < cmdoptNone; cmdopt = (CMDLINE_OPTION)(cmdopt + 1))
-							if (!lstrcmpi(pszOption, apszCmdOpt[cmdopt]))
-								break;
-					}
-					break;
+				if (*pszArg == _T('/')) {
+					const LPCTSTR pszOption = pszArg + 1;
+					for (cmdopt = (CMDLINE_OPTION)0; cmdopt < cmdoptNone; cmdopt = (CMDLINE_OPTION)(cmdopt + 1))
+						if (!lstrcmpi(pszOption, apszCmdOpt[cmdopt]))
+							break;
+				}
+				
+				if (cmdopt >= cmdoptWithArg)
+					continue;
+			}
+			
+			switch (cmdopt) {
 				
 				// Set INI filename
 				case cmdoptLoad:
-					cmdopt = cmdoptNone;
+					bAutoQuit   = false;
 					bNewIniFile = true;
 					lstrcpyn(e_pszIniFile, pszArg, nbArray(e_pszIniFile));
 					break;
 				
+				// Merge an INI file
+				case cmdoptMerge:
+					bAutoQuit = false;
+					if (nbIniFileMerge < nbArray(apszIniFileMerge)) {
+						const LPTSTR pszIniFile = new TCHAR[lstrlen(pszArg) + 1];
+						lstrcpy(pszIniFile, pszArg);
+						apszIniFileMerge[nbIniFileMerge++] = pszIniFile;
+					}
+					break;
+				
 				// Send keys
 				case cmdoptSendKeys:
-					cmdopt = cmdoptNone;
+					bAutoQuit = true;
 					{
 						Keystroke ks;
 						Shortcut sh(ks);
@@ -414,30 +448,75 @@ bool execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 						sh.execute(false);
 					}
 					break;
+				
+				// Other action
+				default:
+					cmdoptAction = cmdopt;
+					bAutoQuit    = false;
+					break;
 			}
 			
+			cmdopt = cmdoptNone;
 		}
 		
 		delete [] pszArg;
 	}
 	
 	// Default INI file
-	if (!nbArg && bNormalLaunch && !bNewIniFile) {
+	if (bNormalLaunch && !bNewIniFile && !bAutoQuit) {
 		bNewIniFile = true;
 		GetModuleFileName(e_hInst, e_pszIniFile, nbArray(e_pszIniFile));
 		PathRemoveFileSpec(e_pszIniFile);
 		PathAppend(e_pszIniFile, _T("Clavier.ini"));
 	}
 	
-	if (bNewIniFile) {
-		shortcutsClear();
-		shortcutsLoad();
+	if (!e_hdlgModal) {
+		if (bNewIniFile)
+			shortcutsLoad();
 		
-	}else if (!nbArg && !bNormalLaunch)
-		PostMessage(e_hwndInvisible, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
+		for (int i = 0; i < nbIniFileMerge; i++) {
+			shortcutsMerge(apszIniFileMerge[i]);
+			delete [] apszIniFileMerge[i];
+		}
+		
+		shortcutsSave();
+	}
 	
-	return bNewIniFile;
+	if (cmdoptAction == cmdoptNone)
+		cmdoptAction = (bNormalLaunch)
+			? ((bAutoQuit) ? cmdoptQuit   : cmdoptLaunch)
+			: ((bAutoQuit) ? cmdoptLaunch : cmdoptSettings);
+	
+	return cmdoptAction;
 }
+
+
+void processCmdLineAction(CMDLINE_OPTION cmdoptAction)
+{
+	switch (cmdoptAction) {
+		
+		case cmdoptSettings:
+			PostMessage(e_hwndInvisible, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
+			break;
+		
+		case cmdoptMenu:
+			PostMessage(e_hwndInvisible, msgClavierNotifyIcon, 0, WM_RBUTTONDOWN);
+			break;
+		
+		case cmdoptQuit:
+			PostMessage(e_hwndInvisible, msgClavierNotifyIcon, IDCCMD_QUIT, 0);
+			break;
+		
+		case cmdoptAddText:
+			PostMessage(e_hwndInvisible, msgClavierNotifyIcon, ID_ADD_TEXT, WM_LBUTTONDOWN);
+			break;
+		
+		case cmdoptAddCommand:
+			PostMessage(e_hwndInvisible, msgClavierNotifyIcon, ID_ADD_COMMAND, WM_LBUTTONDOWN);
+			break;
+	}
+}
+
 
 
 // Invisible window:
@@ -450,7 +529,7 @@ Destroy:
 		PostQuitMessage(0);
 		
 	}else if (uMsg == msgClavierNotifyIcon) {
-		if (wParam != 0)
+		if (wParam == IDCCMD_QUIT)
 			goto Destroy;
 		
 		// Memoize the last foreground window:
@@ -466,8 +545,10 @@ Destroy:
 		if (lParam != WM_LBUTTONDOWN && lParam != WM_RBUTTONDOWN)
 			return 0;
 		
-		if (s_hdlgModal) {
-			SetForegroundWindow(s_hdlgModal);
+		if (e_hdlgModal) {
+			SetForegroundWindow(e_hdlgModal);
+			if (e_hdlgModal == s_hdlgMain && wParam)
+				PostMessage(s_hdlgMain, WM_COMMAND, wParam, 0);
 			return 0;
 		}
 		
@@ -476,7 +557,7 @@ Destroy:
 			
 			for (;;) {
 				HeapCompact(e_hHeap, 0);
-				switch (dialogBox(IDD_MAIN, NULL, prcMain)) {
+				switch (dialogBox(IDD_MAIN, NULL, prcMain, wParam)) {
 					case IDCCMD_LANGUAGE:
 						break;
 					case IDCCMD_QUIT:
@@ -545,6 +626,7 @@ Destroy:
 			AppendMenu(hMenu, MF_STRING, idSettings, loadStringAutoRet(IDS_SETTINGS,  psz));
 			AppendMenu(hMenu, MF_STRING, idListCopy, loadStringAutoRet(IDS_LIST_COPY, psz));
 			AppendMenu(hMenu, MF_STRING, idIniLoad,  loadStringAutoRet(IDS_INI_LOAD,  psz));
+			AppendMenu(hMenu, MF_STRING, idIniMerge, loadStringAutoRet(IDS_INI_MERGE, psz));
 			AppendMenu(hMenu, MF_STRING, idIniSave,  loadStringAutoRet(IDS_INI_SAVE,  psz));
 			AppendMenu(hMenu, MF_STRING, idQuit,     loadStringAutoRet(IDS_QUIT,      psz));
 			SetMenuDefaultItem(hMenu, idSettings, MF_BYCOMMAND);
@@ -563,10 +645,16 @@ Destroy:
 					break;
 				
 				case idListCopy:
-					shortcutsCopyToClipboard();
+					{
+						String s;
+						for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
+							psh->appendItemToString(s);
+						shortcutsCopyToClipboard(s);
+					}
 					break;
 				
 				case idIniLoad:
+				case idIniMerge:
 				case idIniSave:
 					{
 						loadStringAuto(IDS_INI_FILTER, psz);
@@ -574,23 +662,33 @@ Destroy:
 							if (psz[i] == _T('|'))
 								psz[i] = _T('\0');
 						
+						TCHAR pszIniFile[nbArray(e_pszIniFile)];
+						lstrcpy(pszIniFile, e_pszIniFile);
+						
 						OPENFILENAME ofn;
 						ZeroMemory(&ofn, OPENFILENAME_SIZE_VERSION_400);
 						ofn.lStructSize = OPENFILENAME_SIZE_VERSION_400;
 						ofn.hwndOwner   = hWnd;
-						ofn.lpstrFile   = e_pszIniFile;
-						ofn.nMaxFile    = nbArray(e_pszIniFile);
+						ofn.lpstrFile   = pszIniFile;
+						ofn.nMaxFile    = nbArray(pszIniFile);
 						ofn.lpstrFilter = psz;
-						if (id == idIniLoad) {
-							ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-							if (GetOpenFileName(&ofn)) {
-								shortcutsClear();
-								shortcutsLoad();
+						if (id == idIniSave) {
+							ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
+							if (GetSaveFileName(&ofn)) {
+								lstrcpy(e_pszIniFile, pszIniFile);
+								shortcutsSave();
 							}
 						}else{
-							ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
-							if (GetSaveFileName(&ofn))
+							ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+							if (GetOpenFileName(&ofn)) {
+								if (id == idIniLoad) {
+									lstrcpy(e_pszIniFile, pszIniFile);
+									shortcutsLoad();
+								}else
+									shortcutsMerge(pszIniFile);
+								
 								shortcutsSave();
+							}
 						}
 					}
 					break;
@@ -610,7 +708,6 @@ Destroy:
 					}else if (id > idFirstIniFile) {
 						// INI file different than the current one
 						
-						shortcutsClear();
 						lstrcpy(e_pszIniFile, apszIniFile[id - idFirstIniFile]);
 						shortcutsLoad();
 					}
@@ -631,8 +728,8 @@ Destroy:
 		// Execute command line
 		
 		const COPYDATASTRUCT &cds = *(const COPYDATASTRUCT*)lParam;
-		if (!s_hdlgModal && cds.dwData == (ULONG_PTR)bUnicode)
-			execCmdLine((LPCTSTR)cds.lpData, false);
+		if (cds.dwData == (ULONG_PTR)bUnicode)
+			processCmdLineAction(execCmdLine((LPCTSTR)cds.lpData, false));
 		return TRUE;
 	}
 	
@@ -724,6 +821,7 @@ static SIZEPOS aSizePos[] =
 	{ IDCCMD_ABOUT,    sizeposTop | sizeposLeft },
 	{ IDCCMD_QUIT,     sizeposTop | sizeposLeft },
 	{ IDCANCEL,        sizeposTop | sizeposLeft },
+	{ IDOK,            sizeposTop | sizeposLeft },
 };
 
 
@@ -1069,8 +1167,20 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 {
 	switch (id) {
 		
-		case IDCCMD_QUIT:
 		case IDCANCEL:
+			{
+				// Get delete new shortcuts
+				LVITEM lvi;
+				lvi.mask = LVIF_PARAM;
+				for (lvi.iItem = 0; ListView_GetItem(e_hlst, &lvi); lvi.iItem++)
+					delete (Shortcut*)lvi.lParam;
+				
+				EndDialog(s_hdlgMain, IDCANCEL);
+			}
+			break;
+		
+		case IDCCMD_QUIT:
+		case IDOK:
 		case IDCCMD_LANGUAGE:
 			{
 				// Get all shortcuts, check unicity
@@ -1088,6 +1198,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 							psh->getKeyName(pszHotKey);
 							messageBox(s_hdlgMain, ERR_SHORTCUT_DUPLICATE, MB_ICONERROR, pszHotKey);
 							delete [] asProgram;
+			Cancel:
 							delete [] ash;
 							return;
 						}
@@ -1096,11 +1207,11 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				
 				if (id == IDCCMD_QUIT && !IsKeyDown(VK_SHIFT) &&
 				    IDNO == messageBox(s_hdlgMain, ASK_QUIT, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION))
-					break;
+					goto Cancel;
 				
 				// Create a valid linked list from the list box
 				// and register the hot keys
-				e_pshFirst = NULL;
+				shortcutsClear();
 				for (int i = nbItem; --i >= 0;) {
 					Shortcut *const psh = ash[i];
 					psh->resetIcons();
@@ -1109,6 +1220,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 					e_pshFirst = psh;
 				}
 				delete [] ash;
+				shortcutsSave();
 				
 				// Create/delete the auto start key
 				TCHAR pszAutoStartPath[MAX_PATH];
@@ -1124,13 +1236,10 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				}
 			}
 			
-			shortcutsSave();
-			
 			if (id == IDCCMD_LANGUAGE &&
-			    dialogBox(IDD_LANGUAGE, s_hdlgModal, prcLanguage) == IDCANCEL)
+			    dialogBox(IDD_LANGUAGE, e_hdlgModal, prcLanguage) == IDCANCEL)
 				break;
 			
-			s_hdlgModal = NULL;
 			EndDialog(s_hdlgMain, id);
 			break;
 		
@@ -1294,8 +1403,19 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 		
 		
 		case IDCCMD_COPYLIST:
-			shortcutsCopyToClipboard();
-			messageBox(s_hdlgMain, MSG_COPYLIST, MB_ICONINFORMATION);
+			{
+				String s;
+				LVITEM lvi;
+				lvi.mask = LVIF_PARAM;
+				for (lvi.iItem = 0;; lvi.iItem++) {
+					if (!ListView_GetItem(e_hlst, &lvi))
+						break;
+					((const Shortcut*)lvi.lParam)->appendItemToString(s);
+				}
+				shortcutsCopyToClipboard(s);
+				
+				messageBox(s_hdlgMain, MSG_COPYLIST, MB_ICONINFORMATION);
+			}
 			break;
 		
 		
@@ -1432,11 +1552,12 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// Initialization
 		case WM_INITDIALOG:
 			{
+				s_hdlgMain = e_hdlgModal = hDlg;
+				
 				s_bProcessGuiEvents = false;
 				
 				s_prcProgramsTarget = SubclassWindow(GetDlgItem(hDlg, IDCIMG_PROGRAMS), prcProgramsTarget);
 				
-				s_hdlgMain = s_hdlgModal = hDlg;
 				e_hlst = GetDlgItem(hDlg, IDCLST);
 				ListView_SetExtendedListViewStyle(e_hlst, LVS_EX_FULLROWSELECT);
 				
@@ -1490,9 +1611,10 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				// Fill shortcuts list and unregister hot keys
 				int nbShortcut = 0;
 				for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
-					psh->unregisterHotKey();
-					addItem(psh, (s_psh == psh));
-					if (psh->m_bCommand)
+					Shortcut *const pshCopy = new Shortcut(*psh);
+					pshCopy->unregisterHotKey();
+					addItem(pshCopy, (s_psh == psh));
+					if (pshCopy->m_bCommand)
 						nbShortcut++;
 				}
 				onItemUpdated(~0);
@@ -1601,6 +1723,9 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				centerParent(hDlg);
 				
 				SendMessage(hDlg, WM_SIZE, 0, 0);
+				
+				if (lParam)
+					PostMessage(hDlg, WM_COMMAND, (WPARAM)lParam, 0);
 			}
 			return TRUE;
 		
@@ -1875,6 +2000,7 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUN
 		
 		case WM_INITDIALOG:
 			{
+				e_hdlgModal = hDlg;
 				centerParent(hDlg);
 				
 				// Fill "command line show" list
@@ -1930,7 +2056,7 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUN
 					s_psh->resetIcons();
 					
 				case IDCANCEL:
-					s_hdlgModal = s_hdlgMain;
+					e_hdlgModal = s_hdlgMain;
 					EndDialog(hDlg, LOWORD(wParam));
 					break;
 			}
@@ -1950,6 +2076,8 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 		
 		case WM_INITDIALOG:
 			{
+				e_hdlgModal = hDlg;
+				
 				for (int lang = 0; lang < langCount; lang++)
 					ListBox_AddString(hlst, s_asToken[tokLanguageName].get(lang));
 				ListBox_SetCurSel(hlst, e_lang);
@@ -1971,7 +2099,6 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 							wParam = IDCANCEL;
 					}
 				case IDCANCEL:
-					s_hdlgModal = NULL;
 					EndDialog(hDlg, LOWORD(wParam));
 					break;
 			}
@@ -1989,6 +2116,7 @@ INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg) {
 		
 		case WM_INITDIALOG:
+			e_hdlgModal = hDlg;
 			centerParent(hDlg);
 			
 			initializeWebLink(hDlg, IDCLBL_WEBSITE, _T("http://utilfr42.free.fr/"));
@@ -2203,6 +2331,23 @@ static void skipUntilComma(TCHAR*& rpc);
 
 const LPCTSTR pszSeparator  = _T("-\r\n");
 
+
+Shortcut::Shortcut(const Shortcut& sh) : Keystroke(sh)
+{
+	m_pNext            = NULL;
+	m_bCommand         = sh.m_bCommand;
+	m_nShow            = sh.m_nShow;
+	m_bSupportFileOpen = sh.m_bSupportFileOpen;
+	m_bProgramsOnly    = sh.m_bProgramsOnly;
+	m_iSmallIcon       = sh.m_iSmallIcon;
+	m_hIcon            = CopyIcon(sh.m_hIcon);
+	
+	m_sDescription     = sh.m_sDescription;
+	m_sText            = sh.m_sText;
+	m_sCommand         = sh.m_sCommand;
+	m_sDirectory       = sh.m_sDirectory;
+	m_sPrograms        = sh.m_sPrograms;
+}
 
 Shortcut::Shortcut(const Keystroke& ks) : Keystroke(ks)
 {
