@@ -15,5 +15,5 @@ mystart /wait ClavierSrc.mus
 echo Generating ClavierSetup.exe...
 mystart /wait /verb CompileWithIS Clavier.iss
 
-for %%i in (Clavier.zip ClavierSrc.zip ClavierSetup.exe) do move /y %%i E:\Web\utilfr\dn
+for %%i in (Clavier.zip ClavierSrc.zip ClavierSetup.exe) do move /y %%i E:\Web\utilfr\dn || echo Error: %%i
 pause

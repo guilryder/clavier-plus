@@ -576,11 +576,14 @@ Error:
 
 void shortcutsSave()
 {
-	const HANDLE hf = CreateFile(e_pszIniFile,
-		GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
-	if (hf == INVALID_HANDLE_VALUE) {
-		messageBox(NULL, ERR_SAVING_INI);
-		return;
+	HANDLE hf;
+	for (;;) {
+		hf = CreateFile(e_pszIniFile,
+			GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
+		if (hf != INVALID_HANDLE_VALUE)
+			break;
+		
+		VERIFV(messageBox(NULL, ERR_SAVING_INI, MB_ICONERROR | MB_RETRYCANCEL) == IDRETRY);
 	}
 	
 	TCHAR psz[1024];

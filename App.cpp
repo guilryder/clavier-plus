@@ -62,10 +62,7 @@ enum
 	idIniSave,
 	idQuit,
 	idFirstIniFile,
-	idFirstShortcut = idFirstIniFile + maxIniFile,
 };
-
-const UINT nbRowMenu = 25;
 
 
 static const int s_aiShow[] = 
@@ -139,8 +136,8 @@ static void onItemUpdated(int mskColumns);
 static Shortcut* findShortcut(const Keystroke& ks, LPCTSTR pszProgram);
 static Shortcut* getSelShortcut();
 
-static DWORD WINAPI threadGetSmallIcons(void* agfi);
-static DWORD WINAPI threadGetFileIcon(void* pgfi);
+static DWORD WINAPI threadGetFilesIcon(GETFILEICON* apgfi[]);
+static DWORD WINAPI threadGetFileIcon(GETFILEICON& gfi);
 
 static void fillSpecialCharsMenu(HMENU hMenu, int pos, UINT idFirst);
 static void escapeString(LPCTSTR, String& rs);
@@ -529,7 +526,7 @@ Destroy:
 		PostQuitMessage(0);
 		
 	}else if (uMsg == msgClavierNotifyIcon) {
-		if (wParam == IDCCMD_QUIT)
+		if (wParam == 1 || wParam == IDCCMD_QUIT)
 			goto Destroy;
 		
 		// Memoize the last foreground window:
@@ -572,16 +569,6 @@ Destroy:
 			// Right click: display shortcuts menu
 			
 			const HMENU hMenu = CreatePopupMenu();
-			
-			// Add shortcut items
-			UINT id = idFirstShortcut;
-			for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
-				psh->appendMenuItem(hMenu, id++);
-			
-			// Add separator, Show, and Quit
-			if (e_pshFirst)
-				AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-			
 			
 			// Append INI file items
 			
@@ -635,7 +622,7 @@ Destroy:
 			POINT ptCursor;
 			GetCursorPos(&ptCursor);
 			SetForegroundWindow(hWnd);
-			id = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_NONOTIFY,
+			UINT id = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_NONOTIFY,
 				ptCursor.x, ptCursor.y, 0, hWnd, NULL);
 			PostMessage(hWnd, WM_NULL, 0, 0);
 			
@@ -694,20 +681,8 @@ Destroy:
 					break;
 				
 				default:
-					if (id >= idFirstShortcut) {
-						// Shortcut
-						
-						id -= idFirstShortcut;
-						for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
-							if (id-- == 0) {
-								SetForegroundWindow(s_hwndLastForeground);
-								psh->execute(false);
-								break;
-							}
-						
-					}else if (id > idFirstIniFile) {
+					if (id > idFirstIniFile) {
 						// INI file different than the current one
-						
 						lstrcpy(e_pszIniFile, apszIniFile[id - idFirstIniFile]);
 						shortcutsLoad();
 					}
@@ -1174,6 +1149,10 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				lvi.mask = LVIF_PARAM;
 				for (lvi.iItem = 0; ListView_GetItem(e_hlst, &lvi); lvi.iItem++)
 					delete (Shortcut*)lvi.lParam;
+				ListView_DeleteAllItems(e_hlst);
+				
+				for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
+					psh->registerHotKey();
 				
 				EndDialog(s_hdlgMain, IDCANCEL);
 			}
@@ -1220,7 +1199,9 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 					e_pshFirst = psh;
 				}
 				delete [] ash;
-				shortcutsSave();
+				
+				if (id != IDCCMD_QUIT)
+					shortcutsSave();
 				
 				// Create/delete the auto start key
 				TCHAR pszAutoStartPath[MAX_PATH];
@@ -1334,8 +1315,9 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 					
 					// Delete item, hotkey, and shortcut object
 					ListView_DeleteItem(e_hlst, lvi.iItem);
-					((Shortcut*)lvi.lParam)->unregisterHotKey();
-					delete (Shortcut*)lvi.lParam;
+					Shortcut *const psh = (Shortcut*)lvi.lParam;
+					psh->unregisterHotKey();
+					delete psh;
 				}
 				
 				// Select an other item and update
@@ -1609,23 +1591,29 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				
 				// Fill shortcuts list and unregister hot keys
-				int nbShortcut = 0;
+				int nbShortcut = 0, nbShortcutIcon = 0;
 				for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
 					Shortcut *const pshCopy = new Shortcut(*psh);
 					pshCopy->unregisterHotKey();
 					addItem(pshCopy, (s_psh == psh));
+					nbShortcut++;
 					if (pshCopy->m_bCommand)
-						nbShortcut++;
+						nbShortcutIcon++;
 				}
 				onItemUpdated(~0);
 				
 				// Load small icons
-				GETFILEICON **const apgfi = new GETFILEICON*[nbShortcut + 1];
-				apgfi[nbShortcut] = NULL;
-				for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
+				GETFILEICON **const apgfi = new GETFILEICON*[nbShortcutIcon + 1];
+				apgfi[nbShortcutIcon] = NULL;
+				LVITEM lvi;
+				lvi.mask = LVIF_PARAM;
+				for (lvi.iItem = 0; lvi.iItem < nbShortcut ; lvi.iItem++) {
+					ListView_GetItem(e_hlst, &lvi);
+					Shortcut *const psh = (Shortcut*)lvi.lParam;
 					if (psh->m_bCommand)
-						psh->fillGetFileIcon(apgfi[--nbShortcut] = new GETFILEICON, true);
-				startThread(threadGetSmallIcons, apgfi);
+						psh->fillGetFileIcon(apgfi[--nbShortcutIcon] = new GETFILEICON, true);
+				}
+				startThread((LPTHREAD_START_ROUTINE)threadGetFilesIcon, apgfi);
 				
 				// Programs combo box
 				const HWND hcboPrograms = GetDlgItem(hDlg, IDCCBO_PROGRAMS);
@@ -1918,8 +1906,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						psh->onGetFileInfo(*pgfi);
 				}
 				
-				if (pgfi->bAutoDelete)
-					delete pgfi;
+				delete pgfi;
 			}
 			break;
 	}
@@ -2054,6 +2041,7 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUN
 						SendDlgItemMessage(hDlg, IDCCBO_SHOW, CB_GETCURSEL, 0,0)];
 					s_psh->m_bSupportFileOpen = ToBool(IsDlgButtonChecked(hDlg, IDCCHK_SUPPORTFILEOPEN));
 					s_psh->resetIcons();
+					// Fall-through
 					
 				case IDCANCEL:
 					e_hdlgModal = s_hdlgMain;
@@ -2093,9 +2081,10 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 				case IDOK:
 					{
 						const int iLang = ListBox_GetCurSel(hlst);
-						if (e_lang != iLang)
+						if (e_lang != iLang) {
 							setLanguage(iLang);
-						else
+							shortcutsSave();
+						}else
 							wParam = IDCANCEL;
 					}
 				case IDCANCEL:
@@ -2681,21 +2670,19 @@ void Shortcut::findExecutable(LPTSTR pszExecutable)
 }
 
 
-DWORD WINAPI threadGetSmallIcons(void* apgfiParam)
+// Get several icons, then delete the GETFILEICON* array.
+DWORD WINAPI threadGetFilesIcon(GETFILEICON* apgfi[])
 {
-	GETFILEICON **const apgfi = (GETFILEICON**)apgfiParam;
 	for (int i = 0; apgfi[i]; i++)
-		threadGetFileIcon(apgfi[i]);
+		threadGetFileIcon(*apgfi[i]);
 	delete [] apgfi;
 	return 0;
 }
 
 
-
-DWORD WINAPI threadGetFileIcon(void* pgfi)
+// Get an icon, then give it to the main window by posting a WM_GETFILEICON message.
+DWORD WINAPI threadGetFileIcon(GETFILEICON& gfi)
 {
-	GETFILEICON &gfi = *(GETFILEICON*)pgfi;
-	
 	// Use HTML files icon for URLs
 	if (PathIsURL(gfi.pszExecutable)) {
 		lstrcpy(gfi.pszExecutable, _T("a.url"));
@@ -2704,7 +2691,7 @@ DWORD WINAPI threadGetFileIcon(void* pgfi)
 	
 	gfi.bOK = getFileInfo(gfi.pszExecutable, 0, gfi.shfi, gfi.uFlags);
 	
-	PostMessage(s_hdlgMain, WM_GETFILEICON, 0, (LPARAM)pgfi);
+	PostMessage(s_hdlgMain, WM_GETFILEICON, 0, (LPARAM)&gfi);
 	return 0;
 }
 
@@ -2757,13 +2744,12 @@ void Shortcut::fillGetFileIcon(GETFILEICON* pgfi, bool bSmallIcon)
 		? SHGFI_ICON | SHGFI_SMALLICON | SHGFI_SYSICONINDEX
 		: SHGFI_ICON;
 	findExecutable(pgfi->pszExecutable);
-	pgfi->bAutoDelete = true;
 	
 	if (bStart) {
 		if (*pgfi->pszExecutable)
-			startThread(threadGetFileIcon, pgfi);
+			startThread((LPTHREAD_START_ROUTINE)threadGetFileIcon, pgfi);
 		else
-			threadGetFileIcon(pgfi);
+			threadGetFileIcon(*pgfi);
 	}
 }
 
@@ -2891,20 +2877,6 @@ int CALLBACK Shortcut::compare(const Shortcut* psh1, const Shortcut* psh2, LPARA
 	psh2->getColumnText(s_iSortColumn, s2);
 	
 	return lstrcmpi(s1, s2);
-}
-
-
-
-void Shortcut::appendMenuItem(HMENU hMenu, UINT id) const
-{
-	TCHAR pszKeyName[bufHotKey];
-	getKeyName(pszKeyName);
-	
-	TCHAR psz[1024];
-	wsprintf(psz, _T("%s\t%s"), pszKeyName, (LPCTSTR)m_sDescription);
-	
-	AppendMenu(hMenu, (id > idFirstShortcut && ((id - idFirstShortcut) % nbRowMenu) == 0)
-		? MF_STRING | MF_MENUBARBREAK : MF_STRING, id, psz);
 }
 
 

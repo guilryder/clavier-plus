@@ -151,7 +151,8 @@ BEGIN
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     GROUPBOX        "Übersetzungen",IDC_STATIC,6,98,145,34
     CONTROL         "Deutsch: Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,76,8
-    CONTROL         "Portugiesisch: Milton C. de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,112,8
+    CONTROL         "Portugiesisch: Milton Chaves de Almeida",IDC_STATIC,
+                    "Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,129,8
     CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,142,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
 END
@@ -375,12 +376,12 @@ BEGIN
     IDS_QUIT                "&Beenden"
     IDS_LIST_COPY           "Liste &kopieren"
     IDS_INI_LOAD            "Konfiguration &aufladen..."
+    IDS_INI_MERGE           "Konfiguration &mischen mit..."
     IDS_INI_SAVE            "Konfiguration &speichern..."
     IDS_INI_FILTER          "INI Dateien|*.ini|"
     IDS_BROWSEDIR           "Startordner zum Ausführen des Befehls auswählen."
     IDS_PROGRAMS            "alle Programme aber;nur diese Programme;"
     IDS_TOOLTIPS            "Hinzufügen;Löschen;Ändern;Programm wählen;"
-    IDS_INI_MERGE           "Konfiguration &mischen mit..."
 END
 
 #endif    // German (Germany) resources
@@ -478,7 +479,7 @@ BEGIN
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     GROUPBOX        "Translation",IDC_STATIC,6,98,145,34
     CONTROL         "German: Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,74,8
-    CONTROL         "Portuguese: Milton C. de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,107,8
+    CONTROL         "Portuguese: Milton Chaves de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,124,8
     CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,142,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
 END
@@ -497,7 +498,7 @@ BEGIN
     LTEXT           "&Window:",IDC_STATIC,6,44,43,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     CONTROL         "C&hange directory in File/Open dialog boxes (the command line should be a folder)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,156,18
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,153,18
     PUSHBUTTON      "Cancel",IDCANCEL,78,93,56,14
     DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
@@ -639,12 +640,12 @@ BEGIN
     IDS_QUIT                "&Quit"
     IDS_LIST_COPY           "&Copy List"
     IDS_INI_LOAD            "&Load Configuration..."
+    IDS_INI_MERGE           "&Merge Configuration With..."
     IDS_INI_SAVE            "Sa&ve Configuration..."
     IDS_INI_FILTER          "INI files|*.ini|"
     IDS_BROWSEDIR           "Choose the startup directory of the command."
     IDS_PROGRAMS            "all programs but;only those programs;"
     IDS_TOOLTIPS            "Add a new shortcut;Delete the selected shortcut;Edit the selected shortcut;Click and drag-drop to select the window of a program;"
-    IDS_INI_MERGE           "&Merge Configuration With..."
 END
 
 #endif    // English (U.S.) resources
@@ -745,7 +746,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
     GROUPBOX        "Traduction",IDC_STATIC,6,98,145,34
     CONTROL         "Allemand : Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,80,8
-    CONTROL         "Portugais : Milton C. de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,102,8
+    CONTROL         "Portugais : Milton Chaves de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,119,8
 END
 
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
@@ -762,7 +763,7 @@ BEGIN
     LTEXT           "&Fenêtre :",IDC_STATIC,6,44,33,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     CONTROL         "&Changer de répertoire dans les boîtes de dialogue Fichier/Ouvrir (la ligne de commande est un dossier)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,180,18
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,181,18
     PUSHBUTTON      "Annuler",IDCANCEL,78,93,56,14
     DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
@@ -929,12 +930,12 @@ BEGIN
     IDS_QUIT                "&Quitter"
     IDS_LIST_COPY           "&Copier liste"
     IDS_INI_LOAD            "C&harger configuration..."
+    IDS_INI_MERGE           "&Fusionner configuration avec..."
     IDS_INI_SAVE            "&Enregistrer configuration..."
     IDS_INI_FILTER          "Fichiers INI|*.ini|"
     IDS_BROWSEDIR           "Choisissez le répertoire de démarrage de la commande."
     IDS_PROGRAMS            "tous les programmes sauf;seulement ces programmes;"
     IDS_TOOLTIPS            "Ajouter un nouveau raccourci;Supprimer le raccourci sélectionné;Éditer le raccourci sélectionné;Cliquer et faire glisser le curseur pour sélectionner la fenêtre d'un programme;"
-    IDS_INI_MERGE           "&Fusionner configuration avec..."
 END
 
 #endif    // French (France) resources
@@ -963,14 +964,14 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
     CONTROL         "Clavier+ 10.5",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
-    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nLançado sob licença GNU GPL",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nPublicado sob licença GNU GPL",IDC_STATIC,42,20,108,28,SS_NOPREFIX
     GROUPBOX        "Criador",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     GROUPBOX        "Tradução",IDC_STATIC,6,98,145,34
     CONTROL         "Alemão : Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,109,75,8
-    CONTROL         "Português : Milton C. de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,105,8
+    CONTROL         "Português : Milton Chaves de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,119,122,8
     CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,142,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,147,50,14,WS_GROUP
 END
@@ -989,7 +990,7 @@ BEGIN
     LTEXT           "&Janela:",IDC_STATIC,6,44,24,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     CONTROL         "&Mudar para a pasta do caminho acima nas janelas de Abrir (o atalho deve ser uma pasta)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,162,18
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,164,18
     PUSHBUTTON      "Cancelar",IDCANCEL,78,93,56,14
     DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
@@ -1123,7 +1124,7 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "&Abrir Pasta...",             ID_ADD_FOLDER
-        MENUITEM "&Escrever Texto...",          ID_ADD_TEXT
+        MENUITEM "&Transcrever Texto...",       ID_ADD_TEXT
         MENUITEM "A&brir Programa...",          ID_ADD_COMMAND
         MENUITEM "Abrir Página da &Web...",     ID_ADD_WEBSITE
     END
@@ -1138,7 +1139,7 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
-        POPUP "Digitar Carater Especi&al"
+        POPUP "Digitar Caracter Especi&al"
         BEGIN
             MENUITEM "Escrever uma &Barra Inclinada: \\\\", ID_TEXT_BACKSLASH
             MENUITEM "Escrever &Colchete de Abertura: \\[", ID_TEXT_BRACKET_OPEN
@@ -1147,10 +1148,10 @@ BEGIN
             MENUITEM "Escrever Cha&ve de Fecho: \\}", ID_TEXT_BRACE_CLOSE
             MENUITEM "Escrever Ba&rra Vertical: \\|", ID_TEXT_PIPE
         END
-        POPUP "Executar &Comando"
+        POPUP "Efetuar &Comando"
         BEGIN
             MENUITEM "&Esperar: [{Wait,<duração>}]", ID_TEXT_CMD_WAIT
-            MENUITEM "&Selecionar janela selecionada: [{Focus}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Selecionar janela: [{Focus}]", ID_TEXT_CMD_FOCUS
             MENUITEM "&Copiar na Área de Armazenagem: [{Copy,<texto>}]", ID_TEXT_CMD_COPY
             MENUITEM "&Botão do mouse: [{MouseButton,E/M/D(U/D)}]", ID_TEXT_CMD_MOUSE
             MENUITEM "&Rolar página (esfera): [{MouseWheel,<+/- # de linhas>}]", ID_TEXT_CMD_WHEEL
@@ -1187,12 +1188,12 @@ BEGIN
     IDS_QUIT                "&Fechar"
     IDS_LIST_COPY           "Copiar &Lista"
     IDS_INI_LOAD            "&Abrir Configuração..."
+    IDS_INI_MERGE           "&Mesclar com Configuração..."
     IDS_INI_SAVE            "&Salvar Configuração..."
     IDS_INI_FILTER          "Arquivos INI|*.ini|"
     IDS_BROWSEDIR           "Especifique a pasta de abertura do comando."
     IDS_PROGRAMS            "com qualquer programa, exceto;só com estes;"
     IDS_TOOLTIPS            "Criar atalho;Apagar o atalho selecionado;Editar o atalho selecionado;Clique, arraste e solte para escolher a janela de um programa;"
-    IDS_INI_MERGE           "TODO &Merge Configuration With..."
 END
 
 #endif    // Portuguese (Brazil) resources

@@ -124,7 +124,6 @@ struct GETFILEICON
 	TCHAR      pszExecutable[MAX_PATH];
 	UINT       uFlags;
 	bool       bOK;
-	bool       bAutoDelete;
 };
 
 
@@ -195,7 +194,6 @@ public:
 	static int s_iSortColumn;
 	static int CALLBACK compare(const Shortcut* psh1, const Shortcut* psh2, LPARAM lParamSort);
 	
-	void appendMenuItem(HMENU hMenu, UINT id) const;
 	bool execute(bool bFromHotkey) const;
 	
 	bool match(const Keystroke& ks, LPCTSTR pszProgram) const;
