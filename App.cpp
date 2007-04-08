@@ -1183,10 +1183,16 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 						}
 					delete [] asProgram;
 				}
-				
-				if (id == IDCCMD_QUIT && !IsKeyDown(VK_SHIFT) &&
-				    IDNO == messageBox(s_hdlgMain, ASK_QUIT, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION))
-					goto Cancel;
+			
+				if (id == IDCCMD_LANGUAGE) {
+					if (dialogBox(IDD_LANGUAGE, e_hdlgModal, prcLanguage) == IDCANCEL)
+						break;
+					
+				}else if (id == IDCCMD_QUIT) {
+					if (!IsKeyDown(VK_SHIFT) &&
+					    IDNO == messageBox(s_hdlgMain, ASK_QUIT, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION))
+						goto Cancel;
+				}
 				
 				// Create a valid linked list from the list box
 				// and register the hot keys
@@ -1216,10 +1222,6 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 					RegCloseKey(hKeyAutoStart);
 				}
 			}
-			
-			if (id == IDCCMD_LANGUAGE &&
-			    dialogBox(IDD_LANGUAGE, e_hdlgModal, prcLanguage) == IDCANCEL)
-				break;
 			
 			EndDialog(s_hdlgMain, id);
 			break;
