@@ -32,16 +32,10 @@
 #define IDS_HELP                        258
 #define IDS_CONDITIONS                  259
 #define IDS_CONDITION_KEYS              260
-#define IDS_SETTINGS                    261
-#define IDS_QUIT                        262
-#define IDS_LIST_COPY                   263
-#define IDS_INI_LOAD                    264
-#define IDS_INI_MERGE                   265
-#define IDS_INI_SAVE                    266
-#define IDS_INI_FILTER                  267
-#define IDS_BROWSEDIR                   268
-#define IDS_PROGRAMS                    269
-#define IDS_TOOLTIPS                    270
+#define IDS_INI_FILTER                  261
+#define IDS_BROWSEDIR                   262
+#define IDS_PROGRAMS                    263
+#define IDS_TOOLTIPS                    264
 #define IDCLST                          1001
 #define IDCOPT_TEXT                     1006
 #define IDCOPT_COMMAND                  1007
@@ -102,6 +96,14 @@
 #define ID_TEXT_CMD_COPY                40041
 #define ID_TEXT_CMD_MOUSE               40042
 #define ID_TEXT_CMD_WHEEL               40043
+#define ID_TRAY_SETTINGS                40056
+#define ID_TRAY_COPY_LIST               40057
+#define ID_TRAY_COPYLIST                40058
+#define ID_TRAY_INI_LOAD                40059
+#define ID_TRAY_INI_MERGE               40060
+#define ID_TRAY_INI_SAVE                40061
+#define ID_TRAY_QUIT                    40062
+#define ID_TRAY_INI_FIRSTFILE           41000
 
 // Next default values for new objects
 // 
@@ -109,7 +111,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        133
-#define _APS_NEXT_COMMAND_VALUE         40055
+#define _APS_NEXT_COMMAND_VALUE         40067
 #define _APS_NEXT_CONTROL_VALUE         1059
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

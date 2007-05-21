@@ -36,7 +36,7 @@ static bool pathIsSlow(LPCTSTR pszFile);
 
 int messageBox(HWND hWnd, UINT idString, UINT uType, LPCTSTR pszArg)
 {
-	TCHAR pszFormat[256], pszText[256];
+	TCHAR pszFormat[256], pszText[1024];
 	loadStringAuto(idString, pszFormat);
 	wsprintf(pszText, pszFormat, pszArg);
 	return MessageBox(hWnd, pszText, pszApp, uType);
@@ -435,7 +435,7 @@ void findFullPath(LPTSTR pszPath, LPTSTR pszFullPath)
 		
 		DWORD buf = MAX_PATH;
 		if (SUCCEEDED(AssocQueryString(ASSOCF_OPEN_BYEXENAME, ASSOCSTR_EXECUTABLE,
-			 pszPath, _T("open"), pszFullPath, &buf)))
+		    pszPath, _T("open"), pszFullPath, &buf)))
 			return;
 		
 		if (32 < (DWORD)FindExecutable(pszPath, NULL, pszFullPath))

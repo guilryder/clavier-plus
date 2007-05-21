@@ -345,6 +345,16 @@ BEGIN
             MENUITEM "Mä&userad: [{MouseWheel,<+/- Zähl>}]", ID_TEXT_CMD_WHEEL
         END
     END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Einstellungen...",           ID_TRAY_SETTINGS
+        MENUITEM "Liste &kopieren",             ID_TRAY_COPYLIST
+        MENUITEM "Konfiguration &aufladen...",  ID_TRAY_INI_LOAD
+        MENUITEM "Konfiguration &mischen mit...", ID_TRAY_INI_MERGE
+        MENUITEM "Konfiguration &speichern...", ID_TRAY_INI_SAVE
+        MENUITEM "&Beenden",                    ID_TRAY_QUIT
+    END
 END
 
 
@@ -372,12 +382,6 @@ BEGIN
     IDS_HELP                "Hilfe.htm"
     IDS_CONDITIONS          "ohne Bedingung;eingeschaltet;ausgeschaltet;"
     IDS_CONDITION_KEYS      "FNR"
-    IDS_SETTINGS            "&Einstellungen..."
-    IDS_QUIT                "&Beenden"
-    IDS_LIST_COPY           "Liste &kopieren"
-    IDS_INI_LOAD            "Konfiguration &aufladen..."
-    IDS_INI_MERGE           "Konfiguration &mischen mit..."
-    IDS_INI_SAVE            "Konfiguration &speichern..."
     IDS_INI_FILTER          "INI Dateien|*.ini|"
     IDS_BROWSEDIR           "Startordner zum Ausführen des Befehls auswählen."
     IDS_PROGRAMS            "alle Programme aber;nur diese Programme;"
@@ -609,6 +613,16 @@ BEGIN
             MENUITEM "Mouse w&heel: [{MouseWheel,<+/- ticks count>}]", ID_TEXT_CMD_WHEEL
         END
     END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Paramètres...",              ID_TRAY_SETTINGS
+        MENUITEM "&Copier liste",               ID_TRAY_COPYLIST
+        MENUITEM "C&harger configuration...",   ID_TRAY_INI_LOAD
+        MENUITEM "&Fusionner configuration avec...", ID_TRAY_INI_MERGE
+        MENUITEM "&Enregistrer configuration...", ID_TRAY_INI_SAVE
+        MENUITEM "&Quitter",                    ID_TRAY_QUIT
+    END
 END
 
 
@@ -636,12 +650,6 @@ BEGIN
     IDS_HELP                "Help.htm"
     IDS_CONDITIONS          "no condition;must be on;must be off;"
     IDS_CONDITION_KEYS      "CNS"
-    IDS_SETTINGS            "&Settings..."
-    IDS_QUIT                "&Quit"
-    IDS_LIST_COPY           "&Copy List"
-    IDS_INI_LOAD            "&Load Configuration..."
-    IDS_INI_MERGE           "&Merge Configuration With..."
-    IDS_INI_SAVE            "Sa&ve Configuration..."
     IDS_INI_FILTER          "INI files|*.ini|"
     IDS_BROWSEDIR           "Choose the startup directory of the command."
     IDS_PROGRAMS            "all programs but;only those programs;"
@@ -875,6 +883,16 @@ BEGIN
             MENUITEM "&Molette souris : [{MouseWheel,<+/- nb. crans>}]", ID_TEXT_CMD_WHEEL
         END
     END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Paramètres...",              ID_TRAY_SETTINGS
+        MENUITEM "&Copier liste",               ID_TRAY_COPYLIST
+        MENUITEM "C&harger configuration...",   ID_TRAY_INI_LOAD
+        MENUITEM "&Fusionner configuration avec...", ID_TRAY_INI_MERGE
+        MENUITEM "&Enregistrer configuration...", ID_TRAY_INI_SAVE
+        MENUITEM "&Quitter",                    ID_TRAY_QUIT
+    END
 END
 
 
@@ -926,12 +944,6 @@ BEGIN
     IDS_HELP                "Aide.htm"
     IDS_CONDITIONS          "pas de condition;doit être activé;doit être désactivé;"
     IDS_CONDITION_KEYS      "MND"
-    IDS_SETTINGS            "&Paramètres..."
-    IDS_QUIT                "&Quitter"
-    IDS_LIST_COPY           "&Copier liste"
-    IDS_INI_LOAD            "C&harger configuration..."
-    IDS_INI_MERGE           "&Fusionner configuration avec..."
-    IDS_INI_SAVE            "&Enregistrer configuration..."
     IDS_INI_FILTER          "Fichiers INI|*.ini|"
     IDS_BROWSEDIR           "Choisissez le répertoire de démarrage de la commande."
     IDS_PROGRAMS            "tous les programmes sauf;seulement ces programmes;"
@@ -1157,6 +1169,16 @@ BEGIN
             MENUITEM "&Rolar página (esfera): [{MouseWheel,<+/- # de linhas>}]", ID_TEXT_CMD_WHEEL
         END
     END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Configuração...",            ID_TRAY_SETTINGS
+        MENUITEM "Copiar &Lista",               ID_TRAY_COPYLIST
+        MENUITEM "&Abrir Configuração...",      ID_TRAY_INI_LOAD
+        MENUITEM "&Mesclar com Configuração...", ID_TRAY_INI_MERGE
+        MENUITEM "&Salvar Configuração...",     ID_TRAY_INI_SAVE
+        MENUITEM "&Fechar",                     ID_TRAY_QUIT
+    END
 END
 
 
@@ -1184,12 +1206,6 @@ BEGIN
     IDS_HELP                "Ajuda.htm"
     IDS_CONDITIONS          "nenhuma condição;deve estar ativada;deve estar desativada;"
     IDS_CONDITION_KEYS      "CNS"
-    IDS_SETTINGS            "&Configuração..."
-    IDS_QUIT                "&Fechar"
-    IDS_LIST_COPY           "Copiar &Lista"
-    IDS_INI_LOAD            "&Abrir Configuração..."
-    IDS_INI_MERGE           "&Mesclar com Configuração..."
-    IDS_INI_SAVE            "&Salvar Configuração..."
     IDS_INI_FILTER          "Arquivos INI|*.ini|"
     IDS_BROWSEDIR           "Especifique a pasta de abertura do comando."
     IDS_PROGRAMS            "com qualquer programa, exceto;só com estes;"
