@@ -526,7 +526,7 @@ Error:
 	if (size == INVALID_FILE_SIZE)
 		goto Error;
 	
-	BYTE *const pbBuffer = new BYTE[size + 2];
+	BYTE *pbBuffer = new BYTE[size + 2];
 	DWORD lenRead;
 	const bool bOK = ReadFile(hf, pbBuffer, size, &lenRead, NULL) && lenRead == size;
 	CloseHandle(hf);
@@ -546,6 +546,7 @@ Error:
 		const int buf = lstrlenW(wsz) + 1;
 		pszCurrent = new TCHAR[buf];
 		WideCharToMultiByte(CP_ACP, 0, wsz, -1, pszCurrent, buf, NULL, NULL);
+		pbBuffer = (BYTE*)pszCurrent;
 #endif
 	}else{
 #ifdef UNICODE
@@ -553,6 +554,7 @@ Error:
 		const int buf = lstrlenA(asz) + 1;
 		pszCurrent = new TCHAR[buf];
 		MultiByteToWideChar(CP_ACP, 0, asz, -1, pszCurrent, buf);
+		pbBuffer = (BYTE*)pszCurrent;
 #else
 		pszCurrent = (LPTSTR)pbBuffer;
 #endif

@@ -53,18 +53,6 @@ static UINT msgClavierNotifyIcon;
 
 const int maxIniFile = 20;
 
-enum
-{
-	idSettings = 1,
-	idListCopy,
-	idIniLoad,
-	idIniMerge,
-	idIniSave,
-	idQuit,
-	idFirstIniFile,
-};
-
-
 static const int s_aiShow[] = 
 {
 	SW_NORMAL, SW_MINIMIZE, SW_MAXIMIZE,
@@ -110,10 +98,10 @@ static CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch);
 static void processCmdLineAction(CMDLINE_OPTION cmdoptAction);
 
 static LRESULT CALLBACK prcInvisible  (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static BOOL    CALLBACK prcMain       (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static BOOL    CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static BOOL    CALLBACK prcLanguage   (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static BOOL    CALLBACK prcAbout      (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK prcMain       (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK prcLanguage   (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK prcAbout      (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 static LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static WNDPROC s_prcProgramsTarget;
@@ -177,11 +165,14 @@ void WinMainCRTStartup()
 			cds.lpData = (void*)pszCmdLine;
 			SendMessage(hwnd, WM_COPYDATA, 0, (LPARAM)&cds);
 			
-			ExitProcess(0);
+#ifdef _DEBUG
 			return;
+#else
+			ExitProcess(0);
+#endif // _DEBUG
 		}
 	}
-#endif // _DEBUG
+#endif // ALLOW_MULTIPLE_INSTANCES
 	
 	CoInitialize(NULL);
 	
@@ -568,7 +559,9 @@ Destroy:
 		}else /* (lParam == WM_RBUTTONDOWN)*/ {
 			// Right click: display shortcuts menu
 			
-			const HMENU hMenu = CreatePopupMenu();
+			const HMENU hAllMenus = loadMenu(IDM_CONTEXT);
+			const HMENU hMenu = GetSubMenu(hAllMenus, 2);
+			SetMenuDefaultItem(hMenu, ID_TRAY_SETTINGS, MF_BYCOMMAND);
 			
 			// Append INI file items
 			
@@ -603,20 +596,9 @@ Destroy:
 			
 			// 2) Append INI files to menu
 			for (UINT iIniFile = 0; iIniFile < nbIniFile; iIniFile++)
-				AppendMenu(hMenu, MF_STRING, idFirstIniFile + iIniFile, PathFindFileName(apszIniFile[iIniFile]));
-			CheckMenuRadioItem(hMenu, idFirstIniFile, idFirstIniFile + nbIniFile - 1,
-				idFirstIniFile, MF_BYCOMMAND);
-			
-			// Append command items
-			TCHAR psz[bufString];
-			AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-			AppendMenu(hMenu, MF_STRING, idSettings, loadStringAutoRet(IDS_SETTINGS,  psz));
-			AppendMenu(hMenu, MF_STRING, idListCopy, loadStringAutoRet(IDS_LIST_COPY, psz));
-			AppendMenu(hMenu, MF_STRING, idIniLoad,  loadStringAutoRet(IDS_INI_LOAD,  psz));
-			AppendMenu(hMenu, MF_STRING, idIniMerge, loadStringAutoRet(IDS_INI_MERGE, psz));
-			AppendMenu(hMenu, MF_STRING, idIniSave,  loadStringAutoRet(IDS_INI_SAVE,  psz));
-			AppendMenu(hMenu, MF_STRING, idQuit,     loadStringAutoRet(IDS_QUIT,      psz));
-			SetMenuDefaultItem(hMenu, idSettings, MF_BYCOMMAND);
+				InsertMenu(hMenu, iIniFile, MF_BYPOSITION | MF_STRING, ID_TRAY_INI_FIRSTFILE + iIniFile, PathFindFileName(apszIniFile[iIniFile]));
+			CheckMenuRadioItem(hMenu, ID_TRAY_INI_FIRSTFILE, ID_TRAY_INI_FIRSTFILE + nbIniFile - 1,
+				ID_TRAY_INI_FIRSTFILE, MF_BYCOMMAND);
 			
 			// Show the popup menu
 			POINT ptCursor;
@@ -625,13 +607,14 @@ Destroy:
 			UINT id = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_NONOTIFY,
 				ptCursor.x, ptCursor.y, 0, hWnd, NULL);
 			PostMessage(hWnd, WM_NULL, 0, 0);
+			DestroyMenu(hAllMenus);
 			
 			switch (id) {
-				case idSettings:
+				case ID_TRAY_SETTINGS:
 					PostMessage(hWnd, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
 					break;
 				
-				case idListCopy:
+				case ID_TRAY_COPYLIST:
 					{
 						String s;
 						for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
@@ -640,10 +623,11 @@ Destroy:
 					}
 					break;
 				
-				case idIniLoad:
-				case idIniMerge:
-				case idIniSave:
+				case ID_TRAY_INI_LOAD:
+				case ID_TRAY_INI_MERGE:
+				case ID_TRAY_INI_SAVE:
 					{
+						TCHAR psz[bufString];
 						loadStringAuto(IDS_INI_FILTER, psz);
 						for (UINT i = 0; psz[i]; i++)
 							if (psz[i] == _T('|'))
@@ -659,7 +643,7 @@ Destroy:
 						ofn.lpstrFile   = pszIniFile;
 						ofn.nMaxFile    = nbArray(pszIniFile);
 						ofn.lpstrFilter = psz;
-						if (id == idIniSave) {
+						if (id == ID_TRAY_INI_SAVE) {
 							ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
 							if (GetSaveFileName(&ofn)) {
 								lstrcpy(e_pszIniFile, pszIniFile);
@@ -668,7 +652,7 @@ Destroy:
 						}else{
 							ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 							if (GetOpenFileName(&ofn)) {
-								if (id == idIniLoad) {
+								if (id == ID_TRAY_INI_LOAD) {
 									lstrcpy(e_pszIniFile, pszIniFile);
 									shortcutsLoad();
 								}else
@@ -681,9 +665,9 @@ Destroy:
 					break;
 				
 				default:
-					if (id > idFirstIniFile) {
+					if (id > ID_TRAY_INI_FIRSTFILE) {
 						// INI file different than the current one
-						lstrcpy(e_pszIniFile, apszIniFile[id - idFirstIniFile]);
+						lstrcpy(e_pszIniFile, apszIniFile[id - ID_TRAY_INI_FIRSTFILE]);
 						shortcutsLoad();
 					}
 					break;
@@ -692,7 +676,7 @@ Destroy:
 			for (UINT iIniFile = 1; iIniFile < nbIniFile; iIniFile++)
 				delete [] apszIniFile[iIniFile];
 			
-			if (id == idQuit)
+			if (id == ID_TRAY_QUIT)
 				goto Destroy;
 		}
 		
