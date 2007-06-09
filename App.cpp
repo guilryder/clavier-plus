@@ -2575,6 +2575,11 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 				}
 				break;
 			
+			// Distinguish left/right
+			case tokDistinguishLeftRight:
+				m_bDistinguishLeftRight = ToBool(StrToInt(pcSep));
+				break;
+			
 			// Description
 			case tokDescription:
 				m_sDescription = pcSep;
