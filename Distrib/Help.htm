@@ -16,6 +16,11 @@ dt {
 margin-top: 1em;
 }
 
+dd p {
+margin-top: 0.5em;
+margin-bottom: 0.5em;
+}
+
 .toc {
 float: left;
 }
@@ -72,7 +77,7 @@ margin-bottom: 6pt;
 <a href="#utility">What can Clavier+ do</a>
 <a href="#add">Create a keyboard shortcut</a>
 <a href="#conditions">Conditions applied to the shortcuts</a>
-<a href="#text">Text written by the shortcuts</a>
+<a href="#text">Actions of a text shortcut</a>
 <a href="#print">Printing the shortcuts list</a>
 <a href="#conffile">Configuration files</a>
 <a href="#cmdline">Command line options</a>
@@ -154,7 +159,7 @@ E-mail: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kbd></a>
 <li>write special characters: ® and © symbols, currency symbols like € or ¥, etc.</li>
 <li>write text: E-mail address, company name, etc. in any program (Word, Internet browser, notepad)</li>
 <li>simulate keystrokes, for example to execute a command in the menus of a program</li>
-<li>simulate mouse clics or mouse wheel action</li>
+<li>simulate mouse moves and clicks or mouse wheel action</li>
 </ul>
 
 <p>The keyboard shortcuts can use (almost) any key of the keyboard. The Windows key, located around the spacebar, can be used along with Ctrl, Alt and Shift. As programs rarely use this key, many simple keyboard shortcuts are available: <kbd>Win + A</kbd>, <kbd>Win + 2</kbd>, <kbd>Win + .</kbd>, etc.</p>
@@ -172,7 +177,7 @@ E-mail: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kbd></a>
 
 <p>Launch Clavier+. A small keyboard icon appears in the traybar, near the system clock. It indicates that Clavier+ is running, thus keyboard shortcuts are active. Click the icon to display the configuration window. You can resize the window if you find it too small. The upper area contains some example shortcuts.</p>
 
-<p>To create a new keyboard shortcut, click the <i>Add</i> button (having a + shape), and choose the keyboard shortcut action:</p>
+<p>To create a new keyboard shortcut, click the <i>Add</i> button (having the shape of a + symbol), and choose the keyboard shortcut action:</p>
 <ul>
 <li><b>Program:</b> execute a program of the Start menu</li>
 <li><b>Internet Favorite:</b> display a website contained in the favorites of Internet Explorer (if you use another Web browser, for example Firefox, chose <i>Display a Website</i> below)</li>
@@ -223,7 +228,7 @@ E-mail: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kbd></a>
 <p>To specify the conditions, double-click the shortcut in the list. In the <i>Activation condition</i> area, set a condition for each toggle key. You can want the key to be enabled, or disabled, or not setting any condition.</p>
 
 
-<h2 id="text">Text format</h2>
+<h2 id="text">Actions of a text shortcut</h2>
 
 <p>In the <i>Write text</i> textbox, you can specify several kinds of actions:</p>
 
@@ -232,6 +237,7 @@ E-mail: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kbd></a>
 
 <p>Simply write the text to be typed in the text area. The <i>Write a character</i> in the arrow menu allows to insert special characters unreachable from the keyboard.</p>
 
+<p>Typing text does not work with some programs. You can try to use the <kbd>[|<i>text to write</i>|]</kbd> syntax to make Clavier+ using low-level techniques when typing text (better compatibility, but slower and more limited).</p>
 
 <h3>Simulating a keystroke</h3>
 
@@ -252,9 +258,9 @@ E-mail: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kbd></a>
 <kbd>[Ctrl+C][][[iexplore.exe %CLIPBOARD%]]</kbd></p>
 
 
-<h3>Making a pause</h3>
+<h3>Synchronizing</h3>
 
-<p>If your shortcut executes several actions, it may be necessary to let each of them enough time to be executed. To make a pause, write a pair of brackets: <kbd>[]</kbd>. Clavier+ will wait for 100 milliseconds, then detect the new focused window.</p>
+<p>If your shortcut executes several actions, it may be necessary to let each of them enough time to be executed. To make a pause, write a pair of brackets: <kbd>[]</kbd>. Clavier+ will wait for 100 milliseconds, then detect the new focused window. You can also use the command <a href="#focus"><kbd>[{Focus}]</kbd></a> to specify the delay.</p>
 
 <p>This last point is crucial. If you simulate a keystroke that displays a new window (for example <kbd>Ctrl + O</kbd> which pops out the <i>File/Open</i> dialog box), then write some text (for example a filename), you must indicate to Clavier+ that the text should be typed in the <em>new</em> window:<br />
 <kbd>[Ctrl+O][]MyFile.txt[RETURN]</kbd></p>
@@ -272,8 +278,18 @@ This shortcut copies to the clipboard the text currently selected, launches note
 <dt><kbd>[{Wait,<i>duration</i>}]</kbd></dt>
 <dd>Make a pause of the following duration, specified in milliseconds.</dd>
 
-<dt><kbd>[{Focus}]</kbd></dt>
-<dd>Detect the new active window. Useful if a keystroke displays a new window in which the shortcut needs to write. The <kbd>[]</kbd> command is often better, because it also waits a little to let the window a little time to appear.</dd>
+<dt><kbd id="focus">[{Focus,<i>delay</i>,<i>window name</i>}]</kbd></dt>
+<dd><div>Detect or set the new active window. The <i>window name</i> and <i>delay</i> parameters are optional.</div>
+<p>If not empty, <i>delay</i> is the number of milliseconds to wait before activating the window. It may be useful give enough time for the window to appear before trying to activate it. If <i>delay</i> is not specified, there is no delay.</p>
+<p>If <i>window name</i> is empty, Clavier+ detects the new active window and will send the future keystrokes to it. Useful if a keystroke displays a new window in which the shortcut needs to write. Example:<br />
+<kbd>[{Focus}]</kbd> or <kbd>[{Focus,200}]</kbd></p>
+<p>If <i>window name</i> is not empty, Clavier+ activates the first window matching the given name. The name can contain <kbd>*</kbd> and <kbd>?</kbd> wildcards. Backslashes should be used twice to escape commas. Example:<br />
+<kbd>[{Focus,50,* - Microsoft Word}]</kbd> or <kbd>[{Focus,,Title\\, subtitle}]</kbd></p>
+<p>By default, the shortcut execution stops if the window is not found. In order to continue executing the shortcut even if the window is not found, insert an exclamation mark <kbd>!</kbd> before the window title. If you want to search for a window having a title beginning with <kbd>!</kbd>, escape it with two backslashes. Examples:<br />
+<kbd>[{Focus,0,*Internet Explorer}][Alt+F4]</kbd> closes the first Internet Explorer window found. Does nothing if Internet Explorer is not running.<br/>
+<kbd>[{Focus,0,!Untitled*}]Test</kbd> writes <kbd>Test</kbd> in the window having a title beginning with <kbd>Untitled</kbd>, or in the current window if such a window does not exist.<br/>
+<kbd>[{Focus,0,\\!Warning!}]</kbd> activates the first window titled with <kbd>!Warning!</kbd>.</p>
+<p>Note that <kbd>[{Focus,100}]</kbd> is equivalent to <kbd>[]</kbd>.</p></dd>
 
 <dt><kbd>[{Copy,<i>text</i>}]</kbd></dt>
 <dd>Copy the specified text to the clipboard. Beware that this command is completely unrelated to the <kbd>Ctrl + C</kbd> clipboard shortcut, because this shortcut copies the <i>selection</i> to the clipboard. Associated to the <kbd>Ctrl + V</kbd> keystroke, this command allows to write a long text quickly, or to write many times the same text. The following example writes five time the same text:<br />
@@ -283,9 +299,21 @@ This shortcut copies to the clipboard the text currently selected, launches note
 <dd>Simulate a mouse button action. <i>code</i> specifies the button to modify and its new state. It is made of one or two letters.  The first one, mandatory, specifies the button to action: <kbd>L</kbd> = left button, <kbd>M</kbd> = middle button, <kbd>R</kbd> = right button. The second letter, optional, indicates the action to perform: <kbd>D</kbd> = press the button down, <kbd>U</kbd> = release the button up. If the second letter is not specified, the button is pressed then released: this simulates a click. For example, to simulate a double-click with the left mouse button:<br />
 <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd></dd>
 
+<dt><kbd>[{MouseMoveTo,<i>x</i>,<i>y</i>}]</kbd></dt>
+<dd>Move the mouse cursor to the given (x,y) position, specified in pixels relatively to the upper-left corner of the screen. For example, if you have a resolution resolution of 1,024 &times; 768, the following command will move the cursor to the upper right corner:<br />
+<kbd>[{MouseMoveTo,1023,0}]</kbd></dd>
+
+<dt><kbd>[{MouseMoveToFocus,<i>x</i>,<i>y</i>}]</kbd></dt>
+<dd>Move the mouse cursor to the given (x,y) position, specified in pixels relatively to the upper-left corner of the active window. For example, to move the mouse over the system menu if the active window:<br />
+<kbd>[{MouseMoveToFocus,8,8}]</kbd></dd>
+
+<dt><kbd>[{MouseMoveBy,<i>dx</i>,<i>dy</i>}]</kbd></dt>
+<dd>Move the mouse cursor by the given amount of pixels. For example, to move the mouse by 10 pixels left and 3 pixels down:<br />
+<kbd>[{MouseMoveBy,-10,3}]</kbd></dd>
+
 <dt><kbd>[{MouseWheel,<i>ticks</i>}]</kbd></dt>
-<dd>Simulate an action with the mouse wheel. <i>ticks</i> specifies the number of ticks to simulate. A positive value will scroll downwards, a negative one will scroll upwards. For example, to scroll once upwards:<br />
-<kbd>[{MouseWheel,-1}]</kbd></dd>
+<dd>Simulate an action with the mouse wheel. <i>ticks</i> specifies the number of ticks to simulate. A positive value will scroll downwards, a negative one will scroll upwards. For example, to scroll twice upwards:<br />
+<kbd>[{MouseWheel,-2}]</kbd></dd>
 </dl>
 
 
@@ -403,7 +431,7 @@ ScrollLock=<i>condition</i>
 <dt><kbd>SupportFileOpen</kbd> (command mode only)</dt>
 <dd>If the command is the path of a directory, specifies whether Clavier+ should detect File/Open dialog boxes to change their current directory (value 1). If the detection fails, or if this settings is 0 (default value), the directory is opened in Windows Explorer.</dd>
 
-<dt><kbd>Programs</kbd>, <kbd>AllProgramsBut</kbd></dt>
+<dt><kbd>Programs</kbd>, <kbd>AllProgramsBut</kbd> (mutually exclusive)</dt>
 <dd>Activation condition: list of the only programs for which the shortcut is activated (<kbd>Programs</kbd>) or disabled (<kbd>AllProgramsBut</kbd>). The programs are semi-colon-separated. They don’t have a full path: file name only, with extension.</dd>
 
 <dt><kbd>CapsLock</kbd>, <kbd>NumLock</kbd>, <kbd>ScrollLock</kbd></dt>
@@ -461,7 +489,7 @@ Pause
 
 <p>Windows standard shortcuts cannot be modified. Here are some of them:</p>
 
-<table><colgroup><col width="30%"/><col/></colgroup>
+<table><colgroup><col width="30%" /><col/></colgroup>
 <tr><td><kbd>Ctrl + Alt + DEL</kbd></td><td>display task manager</td></tr>
 <tr><td><kbd>F12</kbd></td><td>reserved to the debugger</td></tr>
 <tr><td><kbd>Alt + Tab</kbd></td><td>activate the next task</td></tr>
@@ -502,7 +530,7 @@ Pause
 
 <p>You can access the last version of this FAQ in <a href="http://utilfr42.free.fr/util/Clavier.php#faq">Clavier+ page</a>.</p>
 
-<div class="faq-question">Clavier+ can’t write text in <i>MyFavoriteProgram</i>!</div><div class="faq-answer"><p>Some programs handle the keyboard in a non-standard way, disallowing Clavier+ to write text. To solve this problem, surround your text by <kbd>[|</kbd> and <kbd>|]</kbd>, as below:</p><p><kbd>[|My text|]</kbd></p></div><div class="faq-question">Does Clavier+ works in games?</div><div class="faq-answer"><p>Most of the time, no. Games access the keyboard in low-level, for various raisons (rapidity, cheat protection, …).</p></div><div class="faq-question">I use Clavier+ to write my passwords. How to protect Clavier+ with a password?</div><div class="faq-answer"><p>Clavier+ is not designed to store passwords. At most, under Windows XP Professional, you can encrypt the <kbd>Clavier.ini</kbd> file and hide Clavier+ icon (see below). However I strongly recommend using a program dedicated to passwords storing, like <a href="http://keepass.sourceforge.net/">KeePass</a> or <a href="http://passwordsafe.sourceforge.net/">Password Safe</a>.</p></div><div class="faq-question">How to make the numpad dot key write a comma?</div><div class="faq-answer"><p>Click the plus shaped button, choose <i>Write Text</i>, press the numpad dot key, then click the <i>OK</i> button. Write a comma in the <i>Write text</i> area.</p></div><div class="faq-question">How to create a shortcut to a special folder: My computer, Control panel, …?</div><div class="faq-answer"><p>In Windows Explorer, create a Windows shortcut to the special folder: press the right mouse button on the special folder, drag the mouse to another folder (for example <kbd>C:\</kbd>), release the buton and choose <i>Create shortcut here</i> in the popup menu.</p><p>Then, in Clavier+, create a <i>Launch a program</i> keyboard shortcut that executes the Windows shortcut you have just created. You have to write the full path manually, and to append the <kbd>.lnk</kbd> extension. For example: <kbd>C:\My computer.lnk</kbd> if you have created a shortcut named <kbd>My computer</kbd> in the folder <kbd>C:\</kbd>.</p></div><div class="faq-question">How to open a folder in Explorer and display the tree pane?</div><div class="faq-answer"><p>In the shortcut command line, insert <kbd>explorer /e,</kbd> before the folder path; make sure to write a comma after <kbd>/e</kbd>. For example: <kbd>explorer /e, C:\</kbd></p></div><div class="faq-question">How to remove Clavier+ icon from the traybar?</div><div class="faq-answer"><p>Launch Clavier+ then quit it. Double-click on the <kbd>Clavier.ini</kbd> file located in the same directory than Clavier+. In the second line, that begins with <kbd>Size=</kbd>, replace the <i>last</i> zero by the digit one. For example: <kbd>Size=923,501,0,0</kbd> should become <kbd>Size=923,501,0,1</kbd>.</p><p>As Clavier+ icon will no more be visible, you will have to launch Clavier+ twice to display its configuration window (once to launch it, once to display the window).</p></div><div class="faq-question">How to write a line return with a shortcut?</div><div class="faq-answer"><p>Two solutions:</p><ul><li>insert a line return in the edit box, by pressing the <kbd>Return</kbd> key,</li><li>if the previous solution doesn’t work, write the code <kbd>[RETURN]</kbd></li></ul></div><div class="faq-question">How to simulate the key <i>Dummy</i></div><div class="faq-answer"><p>Click the arrow-shape button, choose the command <i>Simulate a Keystroke</i>.</p></div><div class="faq-question">How to display the context menu?</div><div class="faq-answer"><p>Simulating the key <i>Context Menu</i> allows to display this menu. With the command <i>Simulate a Keystroke</i> in the arrow-shaped button, we can learn that the code of this key is <kbd>#93</kbd>. Thus, writing <kbd>[#93]</kbd> allows to display the context menu. To display the context menu at the position of the mouse cursor, simulate a right-click with: <kbd>[{MouseButton,R}]</kbd></p></div><div class="faq-question">How to change the sound volume?</div><div class="faq-answer"><p>There are three keys related to sound volume:</p><ul><li>mute: code <kbd>[#173]</kbd></li><li>higher volume: code <kbd>[#175]</kbd></li><li>lower volume: code <kbd>[#174]</kbd></li></ul><p>You can use the program <a href="http://localhost/utilfr/dn/VolumeManager.exe">VolumeManager</a> to adjust the volume finely.</p></div><div class="faq-question">How to control a music player: next track, pause, etc.?</div><div class="faq-answer"><p>There are four keys related to music players:</p><ul><li>next track:: code <kbd>[#176]</kbd></li><li>previous track:: code <kbd>[#177]</kbd></li><li>stop: code <kbd>[#178]</kbd></li><li>play/pause: code <kbd>[#179]</kbd></li></ul><p>These keys work even if the music player in not the active application.</p></div><div class="faq-question">How to control the Internet browser: previous page, favorites, etc.?</div><div class="faq-answer"><p>There are several keys related to Internet browsers:</p><ul><li>back: code <kbd>[#166]</kbd></li><li>forward: code <kbd>[#167]</kbd></li><li>refresh: code <kbd>[#168]</kbd></li><li>stop: code <kbd>[#169]</kbd></li><li>search: code <kbd>[#170]</kbd></li><li>favorites: code <kbd>[#171]</kbd></li><li>home: code <kbd>[#172]</kbd></li><li>: code <kbd>[#180]</kbd></li><li>: code <kbd>[#181]</kbd></li><li>: code <kbd>[#182]</kbd></li><li>: code <kbd>[#183]</kbd></li></ul><p>These keys work only if the Internet browser is active.</p></div><div class="faq-question">The checkbox <i>Launch Clavier+ at Windows startup</i> doesn’t work!</div><div class="faq-answer"><p>Create a shortcut to <kbd>Clavier.exe</kbd> in <i>Start Menu/Programs/Startup</i>. To do this, click with the right button on <kbd>Clavier.exe</kbd>, keep the button down and drag the mouse to the Start menu, then <i>Programs</i>, then <i>Startup</i>, and release the mouse button. Choose <i>Create a shortcut here</i>.</p></div><div class="faq-question">How to launch two programs at once?</div><div class="faq-answer"><p>The solution is to enclose the path of the two programs in double brackets, in the <kbd>Write text</kbd> area. For example, to launch notepad and the calculator:</p><pre>[[notepad.exe]][[calc.exe]]</pre></div><div class="faq-question">How to simulate a mouse click, a double-click, a right click?</div><div class="faq-answer"><p>You need to create a shortcut of type <i>Write text</i> and use the <kbd>[{MouseButton,<i>code</i>}]</kbd> special command. For example, to simulate a left click: <kbd>[{MouseButton,L}]</kbd>. For a double-click, execute two left clicks: <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>. For a right click, use the <kbd>R</kbd> code: <kbd>[{MouseButton,R}]</kbd>.</p></div><div class="faq-question">How to do more complicated things: write the current date, activate an application, …?</div><div class="faq-answer"><p>You can create a VBScript program and ask Clavier+ to execute it. The generic procedure is the following: launch Notepad, write the text of your script, save it with the <kbd>.VBS</kbd> file extension, then associate a shortcut to it with Clavier+.</p><p>Some examples of scripts:</p><ul><li>Write the current date in the active program:<pre>set shell = WScript.CreateObject("WScript.Shell")<br />shell.SendKeys Date()</pre></li><li>Activate an application and send keystrokes to it, for example compute 2+7 with the calculator (which should be already launched):<pre>set shell = WScript.CreateObject("WScript.Shell")<br />shell.AppActivate "Calculator"<br />WScript.Sleep(100)<br />shell.SendKeys "2{+}"<br />WScript.Sleep(100)<br />shell.SendKeys "7{=}"</pre><p>Please read the <a href="http://msdn.microsoft.com/archive/default.asp?url=/archive/en-us/wsh/htm/wsMthSendKeys.asp">Microsoft documentation</a> for more information about the available keystrokes in VBScript.</p></li></ul></div>
+<div class="faq-question">Clavier+ can’t write text in <i>MyFavoriteProgram</i>!</div><div class="faq-answer"><p>Some programs handle the keyboard in a non-standard way, disallowing Clavier+ to write text. To solve this problem, surround your text by <kbd>[|</kbd> and <kbd>|]</kbd>, as below:</p><p><kbd>[|My text|]</kbd></p></div><div class="faq-question">Does Clavier+ works with games?</div><div class="faq-answer"><p>Most of the time, no. Games access the keyboard in low-level, for various raisons (rapidity, cheat protection, …).</p></div><div class="faq-question">I use Clavier+ to write my passwords. How to protect Clavier+ with a password?</div><div class="faq-answer"><p>Clavier+ is not designed to store passwords. At most, under Windows XP Professional, you can encrypt the <kbd>Clavier.ini</kbd> file and hide Clavier+ icon (see below). However I strongly recommend using a program dedicated to passwords storing, like <a href="http://keepass.sourceforge.net/">KeePass</a> or <a href="http://passwordsafe.sourceforge.net/">Password Safe</a>.</p></div><div class="faq-question">How to make the numpad dot key write a comma?</div><div class="faq-answer"><p>Click the plus shaped button, choose <i>Write Text</i>, press the numpad dot key, then click the <i>OK</i> button. Write a comma in the <i>Write text</i> area.</p></div><div class="faq-question">How to create a shortcut to a special folder: My computer, Control panel, …?</div><div class="faq-answer"><p>In Windows Explorer, create a Windows shortcut to the special folder: press the right mouse button on the special folder, drag the mouse to another folder (for example <kbd>C:\</kbd>), release the buton and choose <i>Create shortcut here</i> in the popup menu.</p><p>Then, in Clavier+, create a <i>Launch a program</i> keyboard shortcut that executes the Windows shortcut you have just created. You have to write the full path manually, and to append the <kbd>.lnk</kbd> extension. For example: <kbd>C:\My computer.lnk</kbd> if you have created a shortcut named <kbd>My computer</kbd> in the folder <kbd>C:\</kbd>.</p></div><div class="faq-question">How to open a folder in Explorer and display the tree pane?</div><div class="faq-answer"><p>In the shortcut command line, insert <kbd>explorer /e,</kbd> before the folder path; make sure to write a comma after <kbd>/e</kbd>. For example: <kbd>explorer /e, C:\</kbd></p></div><div class="faq-question">How to remove Clavier+ icon from the traybar?</div><div class="faq-answer"><p>Launch Clavier+ then quit it. Double-click on the <kbd>Clavier.ini</kbd> file located in the same directory than Clavier+. In the second line, that begins with <kbd>Size=</kbd>, replace the <i>last</i> zero by the digit one. For example: <kbd>Size=923,501,0,0</kbd> should become <kbd>Size=923,501,0,1</kbd>.</p><p>As Clavier+ icon will no more be visible, you will have to launch Clavier+ twice to display its configuration window (once to launch it, once to display the window).</p></div><div class="faq-question">How to write a line return with a shortcut?</div><div class="faq-answer"><p>Two solutions:</p><ul><li>insert a line return in the edit box, by pressing the <kbd>Return</kbd> key,</li><li>if the previous solution doesn’t work, write the code <kbd>[RETURN]</kbd></li></ul></div><div class="faq-question">How to simulate the key <i>Dummy</i></div><div class="faq-answer"><p>Click the arrow-shape button, choose the command <i>Simulate a Keystroke</i>.</p></div><div class="faq-question">How to display the context menu?</div><div class="faq-answer"><p>Simulating the key <i>Context Menu</i> allows to display this menu. With the command <i>Simulate a Keystroke</i> in the arrow-shaped button, we can learn that the code of this key is <kbd>#93</kbd>. Thus, writing <kbd>[#93]</kbd> allows to display the context menu. To display the context menu at the position of the mouse cursor, simulate a right-click with: <kbd>[{MouseButton,R}]</kbd></p></div><div class="faq-question">How to change the sound volume?</div><div class="faq-answer"><p>There are three keys related to sound volume:</p><ul><li>mute: code <kbd>[#173]</kbd></li><li>higher volume: code <kbd>[#175]</kbd></li><li>lower volume: code <kbd>[#174]</kbd></li></ul><p>You can use the program <a href="http://localhost/utilfr/dn/VolumeManager.exe">VolumeManager</a> to adjust the volume finely.</p></div><div class="faq-question">How to control a music player: next track, pause, etc.?</div><div class="faq-answer"><p>There are four keys related to music players:</p><ul><li>next track:: code <kbd>[#176]</kbd></li><li>previous track:: code <kbd>[#177]</kbd></li><li>stop: code <kbd>[#178]</kbd></li><li>play/pause: code <kbd>[#179]</kbd></li></ul><p>These keys work even if the music player in not the active application.</p></div><div class="faq-question">How to control the Internet browser: previous page, favorites, etc.?</div><div class="faq-answer"><p>There are several keys related to Internet browsers:</p><ul><li>back: code <kbd>[#166]</kbd></li><li>forward: code <kbd>[#167]</kbd></li><li>refresh: code <kbd>[#168]</kbd></li><li>stop: code <kbd>[#169]</kbd></li><li>search: code <kbd>[#170]</kbd></li><li>favorites: code <kbd>[#171]</kbd></li><li>home: code <kbd>[#172]</kbd></li><li>: code <kbd>[#180]</kbd></li><li>: code <kbd>[#181]</kbd></li><li>: code <kbd>[#182]</kbd></li><li>: code <kbd>[#183]</kbd></li></ul><p>These keys work only if the Internet browser is active.</p></div><div class="faq-question">The checkbox <i>Launch Clavier+ at Windows startup</i> doesn’t work!</div><div class="faq-answer"><p>Create a shortcut to <kbd>Clavier.exe</kbd> in <i>Start Menu/Programs/Startup</i>. To do this, click with the right button on <kbd>Clavier.exe</kbd>, keep the button down and drag the mouse to the Start menu, then <i>Programs</i>, then <i>Startup</i>, and release the mouse button. Choose <i>Create a shortcut here</i>.</p></div><div class="faq-question">How to launch two programs at once?</div><div class="faq-answer"><p>The solution is to enclose the path of the two programs in double brackets, in the <kbd>Write text</kbd> area. For example, to launch notepad and the calculator:</p><pre>[[notepad.exe]][[calc.exe]]</pre></div><div class="faq-question">How to simulate a mouse click, a double-click, a right click?</div><div class="faq-answer"><p>You need to create a shortcut of type <i>Write text</i> and use the <kbd>[{MouseButton,<i>code</i>}]</kbd> special command. For example, to simulate a left click: <kbd>[{MouseButton,L}]</kbd>. For a double-click, execute two left clicks: <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>. For a right click, use the <kbd>R</kbd> code: <kbd>[{MouseButton,R}]</kbd>.</p></div><div class="faq-question">How to do more complicated things: write the current date</div><div class="faq-answer"><p>You can create a VBScript program and ask Clavier+ to execute it. The generic procedure is the following: launch Notepad, write the text of your script, save it with the <kbd>.VBS</kbd> file extension, then associate a shortcut to it with Clavier+.</p><p>An example: write the current date in the active program.<pre>set shell = WScript.CreateObject("WScript.Shell")<br />shell.SendKeys Date()</pre></p></div>
 
 
 <h2 id="examples">Shortcuts examples</h2>

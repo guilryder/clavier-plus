@@ -42,8 +42,8 @@ const bool bUnicode = false;
 
 const LPCTSTR pszValueAutoStart = pszApp;
 
-const LPCTSTR pszDonateURL = _T("https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=gryder%40club%2dinternet%2efr&item_name=UtilFr%20%2d%20Clavier%2b&no_shipping=2&no_note=1&tax=0&currency_code=EUR&bn=PP%2dDonationsBF&charset=UTF%2d8");
 const LPCTSTR pszHelpURL = _T("http://utilfr42.free.fr/util/Clavier");
+static TCHAR pszDonateURL[256];
 
 const LPCTSTR pszClavierWindow = _T("RyderClavierWindow");
 
@@ -120,12 +120,27 @@ static void updateItem();
 static void updateList();
 static int  addItem(Shortcut* psh, bool bSelected);
 static void onItemUpdated(int mskColumns);
+static void onShortcutsCountChanged();
 
 static Shortcut* findShortcut(const Keystroke& ks, LPCTSTR pszProgram);
 static Shortcut* getSelShortcut();
 
 static DWORD WINAPI threadGetFilesIcon(GETFILEICON* apgfi[]);
 static DWORD WINAPI threadGetFileIcon(GETFILEICON& gfi);
+
+enum MOUSEMOVE_TYPE {
+	mouseMoveAbsolute,
+	mouseMoveRelativeToWindow,
+	mouseMoveRelativeToCurrent,
+};
+
+static void commandEmpty(DWORD& ridThread, HWND& rhwndFocus);
+static void commandWait(LPTSTR pszArg);
+static bool commandFocus(DWORD& ridThread, HWND& rhwndFocus, LPTSTR pszArg);
+static void commandCopy(LPTSTR pszArg);
+static void commandMouseButton(LPTSTR pszArg);
+static void commandMouseMove(POINT ptOrigin, LPTSTR pszArg);
+static void commandMouseWheel(LPTSTR pszArg);
 
 static void fillSpecialCharsMenu(HMENU hMenu, int pos, UINT idFirst);
 static void escapeString(LPCTSTR, String& rs);
@@ -745,11 +760,13 @@ static SIZEPOS aSizePos[] =
 {
 	{ IDCLST, sizeposWidth | sizeposHeight },
 	
-	{ IDCCMD_ADD,       sizeposTop },
-	{ IDCCMD_DELETE,    sizeposTop },
-	{ IDCCMD_EDIT,      sizeposTop },
-	{ IDCLBL_HELP,      sizeposTop },
-	{ IDCCHK_AUTOSTART, sizeposTop },
+	{ IDCCMD_ADD,            sizeposTop },
+	{ IDCCMD_DELETE,         sizeposTop },
+	{ IDCCMD_EDIT,           sizeposTop },
+	{ IDCLBL_HELP,           sizeposTop },
+	{ IDCLBL_SHORTCUTSCOUNT, sizeposTop },
+	{ IDCTXT_SHORTCUTSCOUNT, sizeposTop },
+	{ IDCCHK_AUTOSTART,      sizeposTop },
 	
 	{ IDCOPT_TEXT,      sizeposTop },
 	{ IDCFRA_TEXT,      sizeposTop | sizeposWidthHalf },
@@ -806,7 +823,7 @@ Shortcut* createShortcut()
 {
 	SetFocus(e_hlst);
 	Keystroke ks;
-	return (AskKeystroke(s_hdlgMain, NULL, ks))
+	return (askKeystroke(s_hdlgMain, NULL, ks))
 		? new Shortcut(ks) : NULL;
 }
 
@@ -815,6 +832,7 @@ void addCreatedShortcut(Shortcut* psh)
 	addItem(psh, true);
 	onItemUpdated(~0);
 	updateList();
+	onShortcutsCountChanged();
 	
 	const HWND hWnd = GetDlgItem(s_hdlgMain, (psh->m_bCommand) ? IDCTXT_COMMAND : IDCTXT_TEXT);
 	if (psh->m_bCommand) {
@@ -1115,9 +1133,12 @@ static const LPCTSTR apszWrite[] =
 	_T("\\}"),
 	_T("\\|"),
 	_T("[{Wait,<duration>}]"),
-	_T("[{Focus}]"),
+	_T("[{Focus,<delay>,<window name>}]"),
 	_T("[{Copy,<text>}]"),
 	_T("[{MouseButton,L/M/R(U/D)}]"),
+	_T("[{MouseMoveTo,x,y}]"),
+	_T("[{MouseMoveToFocus,x,y}]"),
+	_T("[{MouseMoveBy,dx,dy}]"),
 	_T("[{MouseWheel,<+/- ticks>}]"),
 };
 
@@ -1312,6 +1333,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				ListView_SetItemState(e_hlst, lvi.iItem,
 					LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
 				updateList();
+				onShortcutsCountChanged();
 				SetFocus(e_hlst);
 			}
 			break;
@@ -1320,7 +1342,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 			SetFocus(e_hlst);
 			{
 				Keystroke ks = *s_psh;
-				if (AskKeystroke(s_hdlgMain, s_psh, ks)) {
+				if (askKeystroke(s_hdlgMain, s_psh, ks)) {
 					(Keystroke&)*s_psh = ks;
 					updateItem();
 					onItemUpdated((1 << colShortcut) | (1 << colCond));
@@ -1547,6 +1569,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					sp.pt = (POINT&)rc;
 				}
 				
+				loadStringAuto(IDS_DONATEURL, pszDonateURL);
 				initializeWebLink(hDlg, IDCLBL_DONATE, pszDonateURL);
 				SendDlgItemMessage(hDlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
 					(LPARAM)loadBitmap(IDB_DONATE));
@@ -1587,6 +1610,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						nbShortcutIcon++;
 				}
 				onItemUpdated(~0);
+				onShortcutsCountChanged();
 				
 				// Load small icons
 				GETFILEICON **const apgfi = new GETFILEICON*[nbShortcutIcon + 1];
@@ -2096,7 +2120,8 @@ INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			
 			initializeWebLink(hDlg, IDCLBL_WEBSITE, _T("http://utilfr42.free.fr/"));
 			initializeWebLink(hDlg, IDCLBL_EMAIL,   _T("mailto:guillaume@ryder.fr"));
-			initializeWebLink(hDlg, IDCLBL_DONATE, pszDonateURL);
+			loadStringAuto(IDS_DONATEURL, pszDonateURL);
+			initializeWebLink(hDlg, IDCLBL_DONATE,   pszDonateURL);
 			SendDlgItemMessage(hDlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
 				(LPARAM)loadBitmap(IDB_DONATE));
 			return TRUE;
@@ -2223,12 +2248,21 @@ int addItem(Shortcut* psh, bool bSelected)
 }
 
 
-// Called when some columns of an item are updated
+// Called when some columns of an item are updated.
 void onItemUpdated(int mskColumns)
 {
 	if (mskColumns & (1 << Shortcut::s_iSortColumn))
 		ListView_SortItems(e_hlst, Shortcut::compare, NULL);
 	ListView_EnsureVisible(e_hlst, ListView_GetSelectionMark(e_hlst), FALSE);
+}
+
+
+// Called when a shortcut is added or removed.
+// Updates the shortcut counts label.
+void onShortcutsCountChanged()
+{
+	SetDlgItemInt(e_hdlgModal, IDCTXT_SHORTCUTSCOUNT,
+		(UINT)ListView_GetItemCount(e_hlst), TRUE);
 }
 
 
@@ -2302,7 +2336,7 @@ Shortcut* getSelShortcut()
 // Shortcut
 //------------------------------------------------------------------------
 
-static void skipUntilComma(TCHAR*& rpc);
+static void skipUntilComma(TCHAR*& rpc, bool bAcceptEscaping = false);
 
 const LPCTSTR pszSeparator  = _T("-\r\n");
 
@@ -2442,17 +2476,42 @@ void Shortcut::save(HANDLE hf)
 }
 
 
-void skipUntilComma(TCHAR*& rpc)
+void skipUntilComma(TCHAR*& rpc, bool bAcceptEscaping)
 {
-	TCHAR *pc = rpc;
-	while (*pc && *pc != _T(','))
+	TCHAR *const pcStart = rpc;
+	bool bBackslash = false;
+	TCHAR *pc = pcStart;
+	while (*pc) {
+		if (bBackslash)
+			bBackslash = false;
+		else if (*pc == _T(','))
+			break;
+		else if (bAcceptEscaping && *pc == _T('\\'))
+			bBackslash = true;
 		pc++;
+	}
 	if (*pc) {
-		pc++;
+		*pc++ = _T('\0');
 		while (*pc == _T(' '))
 			pc++;
 	}
 	rpc = pc;
+	
+	if (bAcceptEscaping) {
+		const TCHAR *pcIn = pcStart;
+		TCHAR *pcOut = pcStart;
+		bool bBackslash = false;
+		while (*pcIn) {
+			if (*pcIn == _T('\\') && !bBackslash)
+				bBackslash = true;
+			else{
+				bBackslash = false;
+				*pcOut++ = *pcIn;
+			}
+			pcIn++;
+		}
+		*pcOut = _T('\0');
+	}
 }
 
 
@@ -2816,13 +2875,16 @@ void Shortcut::getColumnText(int iColumn, String& rs) const
 						rs += s_acCond[m_aCond[cond]];
 						rs += s_sCondKeys.get()[cond];
 					}
-				if (rs.isSome() && m_sPrograms.isSome())
-					rs += _T(' ');
-				rs += m_sPrograms;
+				if (m_sPrograms.isSome()) {
+					if (rs.isSome())
+						rs += _T(' ');
+					rs += (m_bProgramsOnly) ? _T('+') : _T('-');
+					rs += m_sPrograms;
+				}
 			}
 			break;
 		
-		case 3:
+		case colDescription:
 			rs = m_sDescription;
 			break;
 	}
@@ -2977,14 +3039,13 @@ Done:
 // false otherwise.
 bool Shortcut::execute(bool bFromHotkey) const
 {
+	BYTE abKeyboard[256], abKeyboardNew[256];
+	GetKeyboardState(abKeyboard);
+	
 	// Typing simulation requires the application has the keyboard focus
 	HWND hwndFocus;
 	DWORD idThread;
 	Keystroke::catchKeyboardFocus(hwndFocus, idThread);
-	
-	BYTE abKeyboard[256], abKeyboardNew[256];
-	GetKeyboardState(abKeyboard);
-	
 	memcpy(abKeyboardNew, abKeyboard, sizeof(abKeyboard));
 	
 	const bool bCanReleaseSpecialKeys = bFromHotkey && canReleaseSpecialKeys();
@@ -3018,8 +3079,7 @@ bool Shortcut::execute(bool bFromHotkey) const
 		
 		// Required because the launched program
 		// can be a script that simulates keystrokes
-		if (bCanReleaseSpecialKeys)
-			releaseSpecialKeys(abKeyboard);
+		releaseSpecialKeys(abKeyboard);
 		
 		if (!m_bSupportFileOpen || !tryChangeDirectory(hwndFocus, m_sCommand)) {
 			clipboardToEnvironment();
@@ -3088,9 +3148,7 @@ bool Shortcut::execute(bool bFromHotkey) const
 					// Nothing: catch the focus
 					
 					lastKind = kindNone;
-					sleepBackground(100);
-					Keystroke::detachKeyboardFocus(idThread);
-					Keystroke::catchKeyboardFocus(hwndFocus, idThread);
+					commandEmpty(idThread, hwndFocus);
 					
 				}else if (*pcStart == _T('[') && *pcEnd == _T(']')) {
 					// Double brackets: [[command line]]
@@ -3115,83 +3173,33 @@ bool Shortcut::execute(bool bFromHotkey) const
 						;
 					*pszArg++ = _T('\0');
 					
-					if (!lstrcmpi(pszCommand, _T("Wait"))) {
-						// [{Wait,duration}]
-						
-						sleepBackground(StrToInt(pszArg));
-					
-					}else if (!lstrcmpi(pszCommand, _T("Focus"))) {
-						// [{Focus}]
-						
-						Keystroke::detachKeyboardFocus(idThread);
-						Keystroke::catchKeyboardFocus(hwndFocus, idThread);
-					
-					}else if (!lstrcmpi(pszCommand, _T("Copy"))) {
-						// [{Copy,text}]
-						
-						const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE,
-							(lstrlen(pszArg) + 1) * sizeof(*pszArg));
-						if (hMem) {
-							const LPTSTR pszMem = (LPTSTR)GlobalLock(hMem);
-							if (pszMem)
-								lstrcpy(pszMem, pszArg);
-							GlobalUnlock(hMem);
-							
-							OpenClipboard(NULL);
-							EmptyClipboard();
-							SetClipboardData(CF_TEXT, hMem);
-							CloseClipboard();
-						}
-						
-					}else if (!lstrcmpi(pszCommand, _T("MouseButton"))) {
-						// [{Mouse,state}] where state is 2 letters:
-						// 1 letter for button: L (left), M (middle), R (right)
-						// 1 letter for state: U (up), D (down)
-						
-						DWORD dwFlags = 0;
-						CharUpper(pszArg);
-						switch (lstrlen(pszArg)) {
-							case 2:
-								switch (*(const WORD*)pszArg) {
-									case 'DL':  dwFlags = MOUSEEVENTF_LEFTDOWN;    break;
-									case 'UL':  dwFlags = MOUSEEVENTF_LEFTUP;      break;
-									case 'DM':  dwFlags = MOUSEEVENTF_MIDDLEDOWN;  break;
-									case 'UM':  dwFlags = MOUSEEVENTF_MIDDLEUP;    break;
-									case 'DR':  dwFlags = MOUSEEVENTF_RIGHTDOWN;   break;
-									case 'UR':  dwFlags = MOUSEEVENTF_RIGHTUP;     break;
-								}
-								if (dwFlags) {
-									mouse_event(dwFlags, 0, 0, 0, 0);
-									sleepBackground(0);
-								}
-								break;
-							
-							case 1:
-								switch (*pszArg) {
-									case 'L':  dwFlags = MOUSEEVENTF_LEFTDOWN;    break;
-									case 'M':  dwFlags = MOUSEEVENTF_MIDDLEDOWN;  break;
-									case 'R':  dwFlags = MOUSEEVENTF_RIGHTDOWN;   break;
-								}
-								if (dwFlags) {
-									mouse_event(dwFlags, 0, 0, 0, 0);
-									sleepBackground(0);
-									mouse_event(dwFlags * 2, 0, 0, 0, 0);
-									sleepBackground(0);
-								}
-								break;
-						}
-						
-					}else if (!lstrcmpi(pszCommand, _T("MouseWheel"))) {
-						// [{MouseWheel,offset}]
-						
-						const int offset = -StrToInt(pszArg) * WHEEL_DELTA;
-						if (offset) {
-							mouse_event(MOUSEEVENTF_WHEEL, 0, 0, (DWORD)offset, 0);
-							sleepBackground(0);
-						}
-					}
+					if (!lstrcmpi(pszCommand, _T("Wait")))
+						commandWait(pszArg);
+					else if (!lstrcmpi(pszCommand, _T("Focus"))) {
+						if (!commandFocus(idThread, hwndFocus, pszArg))
+							break;
+					}else if (!lstrcmpi(pszCommand, _T("Copy")))
+						commandCopy(pszArg);
+					else if (!lstrcmpi(pszCommand, _T("MouseButton")))
+						commandMouseButton(pszArg);
+					else if (!lstrcmpi(pszCommand, _T("MouseMoveTo"))) {
+						const POINT ptOrigin = { 0, 0 };
+						commandMouseMove(ptOrigin, pszArg);
+					}else if (!lstrcmpi(pszCommand, _T("MouseMoveToFocus"))) {
+						RECT rcFocusedWindow;
+						const HWND hwndOwner = GetAncestor(hwndFocus, GA_ROOT);
+						if (!hwndOwner || !GetWindowRect(hwndOwner, &rcFocusedWindow))
+							rcFocusedWindow.left = rcFocusedWindow.top = 0;
+						commandMouseMove((const POINT&)rcFocusedWindow, pszArg);
+					}else if (!lstrcmpi(pszCommand, _T("MouseMoveBy"))) {
+						POINT ptOrigin;
+						GetCursorPos(&ptOrigin);
+						commandMouseMove(ptOrigin, pszArg);
+					}else if (!lstrcmpi(pszCommand, _T("MouseWheel")))
+						commandMouseWheel(pszArg);
 					
 				}else{
+					// Simple brackets: [keystroke]
 					
 					releaseSpecialKeys(abKeyboard);
 					
@@ -3257,6 +3265,141 @@ bool Shortcut::execute(bool bFromHotkey) const
 	}
 	
 	return !m_bCommand;
+}
+
+
+// []
+// Sleep for 100 milliseconds and catch the focus.
+// This is a shortcut for [{Focus,100}]
+void commandEmpty(DWORD& ridThread, HWND& rhwndFocus)
+{
+	sleepBackground(100);
+	Keystroke::detachKeyboardFocus(ridThread);
+	Keystroke::catchKeyboardFocus(rhwndFocus, ridThread);
+}
+
+
+// [{Wait,duration}]
+// Sleep for a given number of milliseconds.
+void commandWait(LPTSTR pszArg)
+{
+	sleepBackground(StrToInt(pszArg));
+}
+
+
+// [{Focus,delay,[!]window_name}]
+// Sleep for delay milliseconds and catch the focus.
+// If window_name does not begin with '!', return false if the window is not found.
+bool commandFocus(DWORD& ridThread, HWND& rhwndFocus, LPTSTR pszArg)
+{
+	// Apply the delay
+	const int delay = StrToInt(pszArg);
+	skipUntilComma(pszArg);
+	sleepBackground(delay);
+	
+	// Find the given window
+	const bool bIgnoreNotFound = (pszArg[0] == _T('!'));
+	if (bIgnoreNotFound)
+		pszArg++;
+	const LPCTSTR pszWindowName = pszArg;
+	skipUntilComma(pszArg, true);
+	
+	if (*pszWindowName) {
+		const HWND hwndTarget = findWindowByName(pszWindowName);
+		if (hwndTarget)
+			SetForegroundWindow(hwndTarget);
+		else if (!bIgnoreNotFound)
+			return false;
+	}
+	
+	Keystroke::detachKeyboardFocus(ridThread);
+	Keystroke::catchKeyboardFocus(rhwndFocus, ridThread);
+	return true;
+}
+
+
+// [{Copy,text}]
+// Copy the text argument to the clipboard.
+void commandCopy(LPTSTR pszArg)
+{
+	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE,
+		(lstrlen(pszArg) + 1) * sizeof(*pszArg));
+	VERIFV(hMem);
+	
+	const LPTSTR pszMem = (LPTSTR)GlobalLock(hMem);
+	if (pszMem)
+		lstrcpy(pszMem, pszArg);
+	GlobalUnlock(hMem);
+	
+	OpenClipboard(NULL);
+	EmptyClipboard();
+	SetClipboardData(CF_TEXT, hMem);
+	CloseClipboard();
+}
+
+
+// [{Mouse,state}] where state is 2 letters:
+// 1 letter for button: L (left), M (middle), R (right)
+// 1 letter for state: U (up), D (down)
+// Simulate mouse clicks.
+void commandMouseButton(LPTSTR pszArg)
+{
+	CharUpper(pszArg);
+	DWORD dwFlags = 0;
+	switch (lstrlen(pszArg)) {
+		case 2:
+			switch (*(const WORD*)pszArg) {
+				case 'DL':  dwFlags = MOUSEEVENTF_LEFTDOWN;    break;
+				case 'UL':  dwFlags = MOUSEEVENTF_LEFTUP;      break;
+				case 'DM':  dwFlags = MOUSEEVENTF_MIDDLEDOWN;  break;
+				case 'UM':  dwFlags = MOUSEEVENTF_MIDDLEUP;    break;
+				case 'DR':  dwFlags = MOUSEEVENTF_RIGHTDOWN;   break;
+				case 'UR':  dwFlags = MOUSEEVENTF_RIGHTUP;     break;
+			}
+			if (dwFlags) {
+				mouse_event(dwFlags, 0, 0, 0, 0);
+				sleepBackground(0);
+			}
+			break;
+		
+		case 1:
+			switch (*pszArg) {
+				case 'L':  dwFlags = MOUSEEVENTF_LEFTDOWN;    break;
+				case 'M':  dwFlags = MOUSEEVENTF_MIDDLEDOWN;  break;
+				case 'R':  dwFlags = MOUSEEVENTF_RIGHTDOWN;   break;
+			}
+			if (dwFlags) {
+				mouse_event(dwFlags, 0, 0, 0, 0);
+				sleepBackground(0);
+				mouse_event(dwFlags * 2, 0, 0, 0, 0);
+				sleepBackground(0);
+			}
+			break;
+	}
+}
+
+
+// [{MouseMoveTo,x,y}], [{MouseMoveToFocus,x,y}], [{MouseMoveBy,dx,dy}]
+// Move the mouse cursor.
+void commandMouseMove(POINT ptOrigin, LPTSTR pszArg)
+{
+	ptOrigin.x += StrToInt(pszArg);
+	skipUntilComma(pszArg);
+	ptOrigin.y += StrToInt(pszArg);
+	SetCursorPos(ptOrigin.x, ptOrigin.y);
+	sleepBackground(0);
+}
+
+
+// [{MouseWheel,offset}]
+// Simulate a mouse wheel scroll.
+void commandMouseWheel(LPTSTR pszArg)
+{
+	const int offset = -StrToInt(pszArg) * WHEEL_DELTA;
+	if (offset) {
+		mouse_event(MOUSEEVENTF_WHEEL, 0, 0, (DWORD)offset, 0);
+		sleepBackground(0);
+	}
 }
 
 

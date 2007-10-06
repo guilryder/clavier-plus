@@ -30,8 +30,13 @@ HWND e_hwndInvisible;
 HWND e_hdlgModal;
 bool e_bIconVisible = true;
 
+#define myGetProcAddress(hDLL, functionName) \
+	((PFN_##functionName)GetProcAddress(hDLL, (#functionName ANSI_UNICODE("A", "W"))))
 
-static bool pathIsSlow(LPCTSTR pszFile);
+
+static bool pathIsSlow(LPCTSTR pszPath);
+
+static BOOL CALLBACK prcEnumFindWindowByName(HWND hWnd, LPARAM lParam);
 
 
 int messageBox(HWND hWnd, UINT idString, UINT uType, LPCTSTR pszArg)
@@ -43,13 +48,11 @@ int messageBox(HWND hWnd, UINT idString, UINT uType, LPCTSTR pszArg)
 }
 
 
-
-// Center a dialog box relatively to its parent
-void centerParent(HWND hDlg)
+void centerParent(HWND hWnd)
 {
 	RECT rcParent, rcChild;
 	
-	const HWND hwndParent = GetParent(hDlg);
+	const HWND hwndParent = GetParent(hWnd);
 	MONITORINFO mi;
 	mi.cbSize = sizeof(mi);
 	if (hwndParent) {
@@ -59,14 +62,14 @@ void centerParent(HWND hDlg)
 		GetWindowRect(hwndParent, &rcParent);
 		IntersectRect(&rcParent, &rcParent, &mi.rcWork);
 	}else{
-		const HMONITOR hMonitor = MonitorFromWindow(hDlg, MONITOR_DEFAULTTONEAREST);
+		const HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
 		VERIFV(hMonitor);
 		GetMonitorInfo(hMonitor, &mi);
 		rcParent = mi.rcWork;
 	}
 	
-	GetWindowRect(hDlg, &rcChild);
-	SetWindowPos(hDlg, NULL,
+	GetWindowRect(hWnd, &rcChild);
+	SetWindowPos(hWnd, NULL,
 		(rcParent.left + rcParent.right  + rcChild.left - rcChild.right)  / 2,
 		(rcParent.top  + rcParent.bottom + rcChild.top  - rcChild.bottom) / 2,
 		0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
@@ -81,13 +84,6 @@ void getDlgItemText(HWND hDlg, UINT id, String& rs)
 }
 
 
-void writeFile(HANDLE hf, LPCTSTR psz)
-{
-	DWORD len;
-	WriteFile(hf, psz, lstrlen(psz) * sizeof(TCHAR), &len, NULL);
-}
-
-
 static WNDPROC s_prcLabel;
 static LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -98,8 +94,8 @@ void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink)
 	s_prcLabel = SubclassWindow(hwnd, prcWebLink);
 }
 
-
-// The link itself is stored in GWL_USERDATA style
+// Window procedure for dialog box controls displaying an URL.
+// The link itself is stored in GWL_USERDATA.
 LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg) {
@@ -120,7 +116,7 @@ LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-// Wrapper for CreateThread()
+// Wrapper for CreateThread().
 void startThread(LPTHREAD_START_ROUTINE pfn, void* pParams)
 {
 	DWORD idThread;
@@ -128,8 +124,14 @@ void startThread(LPTHREAD_START_ROUTINE pfn, void* pParams)
 }
 
 
+void writeFile(HANDLE hf, LPCTSTR psz)
+{
+	DWORD len;
+	WriteFile(hf, psz, lstrlen(psz) * sizeof(TCHAR), &len, NULL);
+}
 
-bool getWindowExecutable(HWND hWnd, LPTSTR pszPath)
+
+bool getWindowExecutable(HWND hWnd, LPTSTR pszExecutableName)
 {
 	DWORD idProcess;
 	GetWindowThreadProcessId(hWnd, &idProcess);
@@ -158,7 +160,7 @@ bool getWindowExecutable(HWND hWnd, LPTSTR pszPath)
 		
 		const HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, idProcess);
 		VERIF(hProcess);
-		bOK = (pfnGetProcessImageFileName(hProcess, pszPath, MAX_PATH) > 0);
+		bOK = (pfnGetProcessImageFileName(hProcess, pszExecutableName, MAX_PATH) > 0);
 		CloseHandle(hProcess);
 		
 	}else{
@@ -171,8 +173,8 @@ bool getWindowExecutable(HWND hWnd, LPTSTR pszPath)
 			do{
 				if (pe.th32ProcessID == idProcess) {
 					bOK = true;
-					lstrcpy(pszPath, pe.szExeFile);
-					PathStripPath(pszPath);
+					lstrcpy(pszExecutableName, pe.szExeFile);
+					PathStripPath(pszExecutableName);
 					break;
 				}
 			}while (Process32Next(hSnapshot, &pe));
@@ -181,15 +183,14 @@ bool getWindowExecutable(HWND hWnd, LPTSTR pszPath)
 	}
 	
 	if (bOK) {
-		PathStripPath(pszPath);
-		CharLower(pszPath);
+		PathStripPath(pszExecutableName);
+		CharLower(pszExecutableName);
 	}
 	
 	return bOK;
 }
 
 
-// Sleep the given time in idle priority
 void sleepBackground(DWORD dwDurationMS)
 {
 	const HANDLE hProcess = GetCurrentProcess();
@@ -200,47 +201,49 @@ void sleepBackground(DWORD dwDurationMS)
 }
 
 
-bool pathIsSlow(LPCTSTR pszFile)
+// Indicates if a file is located in a slow drive (network, removable, etc.).
+bool pathIsSlow(LPCTSTR pszPath)
 {
-	const int iDrive = PathGetDriveNumber(pszFile);
+	const int iDrive = PathGetDriveNumber(pszPath);
 	if (iDrive >= 0) {
 		TCHAR pszRoot[4];
 		PathBuildRoot(pszRoot, iDrive);
 		switch (GetDriveType(pszRoot)) {
+			case DRIVE_UNKNOWN:
 			case DRIVE_REMOVABLE:
 			case DRIVE_REMOTE:
 			case DRIVE_CDROM:
 				return true;
 		}
-	}else if (pszFile[0] == '\\' && pszFile[1] == '\\')
+	}else if (pszPath[0] == '\\' && pszPath[1] == '\\')
 		return true;
 	
 	return false;
 }
 
 
-bool getFileInfo(LPCTSTR pszFile, DWORD dwAttributes, SHFILEINFO& shfi, UINT uFlags)
+bool getFileInfo(LPCTSTR pszPath, DWORD dwFileAttributes, SHFILEINFO& shfi, UINT uFlags)
 {
-	TCHAR pszFileTemp[MAX_PATH];
+	TCHAR pszPathTemp[MAX_PATH];
 	
-	if (pathIsSlow(pszFile)) {
+	if (pathIsSlow(pszPath)) {
 		// If UNC server or share, remove any trailing backslash
 		// If normal file, strip the path: extension-based icon
 		
 		uFlags |= SHGFI_USEFILEATTRIBUTES;
-		lstrcpy(pszFileTemp, pszFile);
-		PathRemoveBackslash(pszFileTemp);
-		const LPCTSTR pszFileName = PathFindFileName(pszFile);
-		if (PathIsUNCServer(pszFileTemp) || PathIsUNCServerShare(pszFileTemp))
-			pszFile = pszFileTemp;
-		else if (pszFileName) {
-			lstrcpy(pszFileTemp, pszFileName);
-			pszFile = pszFileTemp;
+		lstrcpy(pszPathTemp, pszPath);
+		PathRemoveBackslash(pszPathTemp);
+		const LPCTSTR pszPathName = PathFindFileName(pszPath);
+		if (PathIsUNCServer(pszPathTemp) || PathIsUNCServerShare(pszPathTemp))
+			pszPath = pszPathTemp;
+		else if (pszPathName) {
+			lstrcpy(pszPathTemp, pszPathName);
+			pszPath = pszPathTemp;
 		}
 	}
 	
 	for (;;) {
-		const bool bOK = ToBool(SHGetFileInfo(pszFile, dwAttributes,
+		const bool bOK = ToBool(SHGetFileInfo(pszPath, dwFileAttributes,
 			&shfi, sizeof(shfi), uFlags));
 		if (bOK || (uFlags & SHGFI_USEFILEATTRIBUTES))
 			return bOK;
@@ -290,6 +293,70 @@ bool checkWindowClass(HWND hWnd, LPCTSTR pszClass, bool bPrefix)
 	if (bPrefix)
 		pszWindowClass[lstrlen(pszClass)] = _T('\0');
 	return !StrCmp(pszWindowClass, pszClass);
+}
+
+struct FINDWINDOWBYNAME
+{
+	LPCTSTR pszWindowSpec;
+	HWND hwndFound;
+};
+
+HWND findWindowByName(LPCTSTR pszWindowSpec)
+{
+	const LPTSTR pszWindowSpecLowercase = new TCHAR[lstrlen(pszWindowSpec) + 1];
+	lstrcpy(pszWindowSpecLowercase, pszWindowSpec);
+	CharLower(pszWindowSpecLowercase);
+	
+	FINDWINDOWBYNAME fwbn;
+	fwbn.pszWindowSpec = pszWindowSpecLowercase;
+	fwbn.hwndFound = NULL;
+	EnumWindows(prcEnumFindWindowByName, (LPARAM)&fwbn);
+	delete [] pszWindowSpecLowercase;
+	return fwbn.hwndFound;
+}
+
+BOOL CALLBACK prcEnumFindWindowByName(HWND hWnd, LPARAM lParam)
+{
+	FINDWINDOWBYNAME &fwbn = *(FINDWINDOWBYNAME*)lParam;
+	TCHAR pszTitle[1024];
+	if (GetWindowText(hWnd, pszTitle, nbArray(pszTitle))) {
+		if (matchWildcards(fwbn.pszWindowSpec, pszTitle)) {
+			fwbn.hwndFound = hWnd;
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+
+bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject)
+{
+	for (;;) {
+		TCHAR c = *pszPattern++;
+		switch (c) {
+			
+			case _T('\0'):
+				return !*pszSubject;
+			
+			case _T('*'):
+				if (!*pszPattern)
+					return true;   // Optimization
+				do{
+					if (matchWildcards(pszPattern, pszSubject))
+						return true;
+				}while (*pszSubject++);
+				return false;
+			
+			case _T('?'):
+				VERIF(*pszSubject);
+				pszSubject++;
+				break;
+			
+			default:
+				VERIF((TCHAR)CharLower((LPTSTR)MAKELONG(*pszSubject++, 0)) == c);
+				break;
+		}
+	}
 }
 
 
@@ -419,7 +486,6 @@ bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath)
 	
 	return false;
 }
-
 
 
 //------------------------------------------------------------------------

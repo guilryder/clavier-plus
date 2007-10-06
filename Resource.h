@@ -36,6 +36,7 @@
 #define IDS_BROWSEDIR                   262
 #define IDS_PROGRAMS                    263
 #define IDS_TOOLTIPS                    264
+#define IDS_DONATEURL                   265
 #define IDCLST                          1001
 #define IDCOPT_TEXT                     1006
 #define IDCOPT_COMMAND                  1007
@@ -74,6 +75,8 @@
 #define IDCCHK_SUPPORTFILEOPEN          1055
 #define IDCCBO_PROGRAMS                 1056
 #define IDCCHK_DISTINGUISH_LEFT_RIGHT   1058
+#define IDCLBL_SHORTCUTSCOUNT           1059
+#define IDCTXT_SHORTCUTSCOUNT           1060
 #define ID_ADD_SPECIALCHAR_FIRST        10000
 #define ID_ADD_PROGRAM_FIRST            11000
 #define ID_TEXT_SPECIALCHAR_FIRST       12000
@@ -94,8 +97,11 @@
 #define ID_TEXT_CMD_WAIT                40039
 #define ID_TEXT_CMD_FOCUS               40040
 #define ID_TEXT_CMD_COPY                40041
-#define ID_TEXT_CMD_MOUSE               40042
-#define ID_TEXT_CMD_WHEEL               40043
+#define ID_TEXT_CMD_MOUSE_BUTTON        40042
+#define ID_TEXT_CMD_MOUSE_MOVE_TO       40043
+#define ID_TEXT_CMD_MOUSE_MOVE_TO_REL   40044
+#define ID_TEXT_CMD_MOUSE_MOVE_BY       40045
+#define ID_TEXT_CMD_MOUSE_WHEEL         40046
 #define ID_TRAY_SETTINGS                40056
 #define ID_TRAY_COPY_LIST               40057
 #define ID_TRAY_COPYLIST                40058
@@ -112,7 +118,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        133
 #define _APS_NEXT_COMMAND_VALUE         40067
-#define _APS_NEXT_CONTROL_VALUE         1059
+#define _APS_NEXT_CONTROL_VALUE         1061
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

@@ -68,30 +68,79 @@ extern bool e_bIconVisible;
 #endif
 
 
-
+// Display a message box. The message is read from string resources.
 int messageBox(HWND hWnd, UINT idString, UINT uType = MB_ICONERROR, LPCTSTR pszArg = NULL);
 
-void centerParent(HWND hDlg);
+// Centers a window relatively to its parent.
+void centerParent(HWND hWnd);
 
+// Reads the text of a dialog box control.
 void getDlgItemText(HWND hDlg, UINT id, String& rs);
 
+// Setups a label control for displaying an URL.
+//
+// Args:
+//   hDlg: The handle of the dialog box containing the control to setup.
+//   idControl: The ID of the label control in the dialog box.
+//   pszLink: The URL to give to the control. It must be static buffer: the string will not
+//     be copied to a buffer.
 void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink);
 
 // Wrapper for CreateThread()
 void startThread(LPTHREAD_START_ROUTINE pfn, void* pParams);
 
-#define myGetProcAddress(hDLL, functionName) \
-	((PFN_##functionName)GetProcAddress(hDLL, (#functionName ANSI_UNICODE("A", "W"))))
+// Writes a NULL-terminated string to a file.
+void writeFile(HANDLE hf, LPCTSTR psz);
 
-bool getWindowExecutable(HWND hWnd, LPTSTR pszPath);
+// Retrieves the executable name of the process associated to a window.
+//
+// Args:
+//   hWnd: The window to get the executable of.
+//   pszExecutableName: The buffer where to put the executable name, without path.
+//     Should have a size of MAX_PATH.
+//
+// Returns:
+//   True on success (pszPath contains a path), false on failure.
+bool getWindowExecutable(HWND hWnd, LPTSTR pszExecutableName);
+
+// Sleeps in idle priority.
+//
+// Args:
+//   dwDurationMS: The time to sleep, in milliseconds.
 void sleepBackground(DWORD dwDurationMS);
 
-bool getFileInfo(LPCTSTR pszFile, DWORD dwAttributes, SHFILEINFO& shfi, UINT uFlags);
+// Wrapper for SHGetFileInfo() that does not call the function if the file belongs
+// to a slow device. If the call to SHGetFileInfo() fails and SHGFI_USEFILEATTRIBUTES was not
+// specified in uFlags, the flag is added and SHGetFileInfo() is called again.
+//
+// Args:
+//   pszPath: The path of the file or directory to call SHGetFileInfo() on.
+//   dwFileAttributes: Given as argument to SHGetFileInfo().
+//   shfi: Where to save the result of SHGetFileInfo().
+//   uFlags: Given as argument to SHGetFileInfo(). If pszPath is on a slow device,
+//     according pathIsSlow(), SHGFI_USEFILEATTRIBUTES is added to uFlags before it is given
+//     to SHGetFileInfo().
+//
+// Returns:
+//   True on success, false on failure.
+bool getFileInfo(LPCTSTR pszPath, DWORD dwFileAttributes, SHFILEINFO& shfi, UINT uFlags);
 
 void clipboardToEnvironment();
 
 HWND findVisibleChildWindow(HWND hwndParent, LPCTSTR pszClass, bool bPrefix);
 bool checkWindowClass(HWND hWnd, LPCTSTR pszClass, bool bPrefix);
+HWND findWindowByName(LPCTSTR pszWindowSpec);
+
+// Determines if a string matches a wildcards pattern, by ignoring case.
+//
+// Args:
+//   pszPattern: The pattern to use for testing matching. Supports '*' and '?'.
+//     This string must be given in lower case.
+//   pszSubject: The string to test against the pattern. The case does not matter.
+//
+// Returns:
+//   True if the subject matches the pattern, false otherwise.
+bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject);
 
 
 //------------------------------------------------------------------------
@@ -110,8 +159,6 @@ bool browseForFolder(HWND hwndParent, LPCTSTR pszTitle, LPTSTR pszDirectory);
 
 bool getSpecialFolderPath(int index, LPTSTR pszPath);
 bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath);
-
-void writeFile(HANDLE hf, LPCTSTR psz);
 
 LPCTSTR getToken(int tok);
 int findToken(LPCTSTR pszToken);

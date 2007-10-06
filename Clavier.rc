@@ -38,8 +38,8 @@ IDI_EDIT                ICON                    "Edit.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 10,5,0,0
- PRODUCTVERSION 10,5,0,0
+ FILEVERSION 10,6,0,0
+ PRODUCTVERSION 10,6,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -56,12 +56,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Guillaume Ryder (http://utilfr42.free.fr)"
             VALUE "FileDescription", "Clavier+"
-            VALUE "FileVersion", "10.5"
+            VALUE "FileVersion", "10.6.0"
             VALUE "InternalName", "Clavier.exe"
             VALUE "LegalCopyright", "Copyright © 2000-2007 Guillaume Ryder"
             VALUE "OriginalFilename", "Clavier.exe"
             VALUE "ProductName", "Clavier+"
-            VALUE "ProductVersion", "10.5"
+            VALUE "ProductVersion", "10.6.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -143,7 +143,7 @@ CAPTION "Über Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
-    CONTROL         "Clavier+ 10.5",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
+    CONTROL         "Clavier+ 10.6.0",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
     LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nSoftwarelizenz nach GNU GPL",IDC_STATIC,42,20,108,28,SS_NOPREFIX
     GROUPBOX        "Autor",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
@@ -188,9 +188,11 @@ BEGIN
     PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Verknüpfungen sind deaktiviert solange dieser Dialog angezeigt wird.",IDCLBL_HELP,94,115,123,17
+    LTEXT           "Verknüpfungen sind deaktiviert solange dieser Dialog angezeigt wird.",IDCLBL_HELP,90,114,123,17
+    LTEXT           "Anzhal der Verknüpfungen:",IDCLBL_SHORTCUTSCOUNT,228,114,88,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,320,114,8,8,SS_NOPREFIX
     CONTROL         "Beim Starten von &Windows Clavier+ ausführen",IDCCHK_AUTOSTART,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,118,165,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,165,10
     GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
     GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
     CONTROL         "Text &schreiben",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,63,10
@@ -339,10 +341,13 @@ BEGIN
         POPUP "&Befehl durchführen"
         BEGIN
             MENUITEM "&Warten: [{Wait,<Dauer>}]",   ID_TEXT_CMD_WAIT
-            MENUITEM "&Detect focused window: [{Focus}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Fenster aktivieren: [{Focus,<Aufschub>,<Fenster-Name>}]", ID_TEXT_CMD_FOCUS
             MENUITEM "&Copy zum Klemmbrett: [{Copy,<Text>}]", ID_TEXT_CMD_COPY
-            MENUITEM "&Maustaste: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE
-            MENUITEM "Mä&userad: [{MouseWheel,<+/- Zähl>}]", ID_TEXT_CMD_WHEEL
+            MENUITEM "&Maustaste: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "Maus &positionieren (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "Maus p&ositionieren (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Maus &bewegen: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "Mä&userad: [{MouseWheel,<+/- Zähl>}]", ID_TEXT_CMD_MOUSE_WHEEL
         END
     END
     POPUP " "
@@ -386,6 +391,7 @@ BEGIN
     IDS_BROWSEDIR           "Startordner zum Ausführen des Befehls auswählen."
     IDS_PROGRAMS            "alle Programme aber;nur diese Programme;"
     IDS_TOOLTIPS            "Hinzufügen;Löschen;Ändern;Programm wählen;"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&no_shipping=1&tax=0&currency_code=EUR"
 END
 
 #endif    // German (Germany) resources
@@ -437,9 +443,11 @@ BEGIN
     PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Beware that all shortcuts are disabled while this window is visible.",IDCLBL_HELP,94,115,123,17
+    LTEXT           "Beware that all shortcuts are disabled while this window is visible.",IDCLBL_HELP,90,114,123,17
+    LTEXT           "Shortcuts count:",IDCLBL_SHORTCUTSCOUNT,228,114,54,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,286,114,30,8,SS_NOPREFIX
     CONTROL         "L&aunch Clavier+ at Windows startup",IDCCHK_AUTOSTART,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,118,130,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,130,10
     GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
     GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
     CONTROL         "&Write text",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,49,10
@@ -475,7 +483,7 @@ CAPTION "About Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
-    CONTROL         "Clavier+ 10.5",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    CONTROL         "Clavier+ 10.6.0",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
     LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nSoftware under GPL license",IDC_STATIC,42,20,108,28,SS_NOPREFIX
     GROUPBOX        "Author",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
@@ -588,7 +596,7 @@ BEGIN
     BEGIN
         MENUITEM "&Simulate a Keystroke: [...]", ID_TEXT_SENDKEYS
         MENUITEM "Launch a &Program: [[...]]",  ID_TEXT_COMMAND
-        MENUITEM "&Wait 100 milliseconds: []",  ID_TEXT_WAIT
+        MENUITEM "&Wait 100 ms then detect focus: []", ID_TEXT_WAIT
         MENUITEM "Write Text in &Low-level Mode: [|...|]", ID_TEXT_LOWLEVEL
         MENUITEM SEPARATOR
         POPUP "Write a &Character"
@@ -604,24 +612,27 @@ BEGIN
             MENUITEM "Write a Closing Bra&ce: \\}", ID_TEXT_BRACE_CLOSE
             MENUITEM "Write a &Pipe: \\|",          ID_TEXT_PIPE
         END
-        POPUP "Execute a C&ommand"
+        POPUP "Execute a Special C&ommand"
         BEGIN
             MENUITEM "&Wait: [{Wait,<duration>}]",  ID_TEXT_CMD_WAIT
-            MENUITEM "&Detect focused window: [{Focus}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Detect focused window: [{Focus,<delay>,<window name>}]", ID_TEXT_CMD_FOCUS
             MENUITEM "&Copy to clipboard: [{Copy,<text>}]", ID_TEXT_CMD_COPY
-            MENUITEM "&Mouse button: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE
-            MENUITEM "Mouse w&heel: [{MouseWheel,<+/- ticks count>}]", ID_TEXT_CMD_WHEEL
+            MENUITEM "&Mouse button: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "Mouse mo&ve to (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "Mouse mov&e to (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Mouse move b&y: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "Mouse w&heel: [{MouseWheel,<+/- ticks count>}]", ID_TEXT_CMD_MOUSE_WHEEL
         END
     END
     POPUP " "
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "&Paramètres...",              ID_TRAY_SETTINGS
-        MENUITEM "&Copier liste",               ID_TRAY_COPYLIST
-        MENUITEM "C&harger configuration...",   ID_TRAY_INI_LOAD
-        MENUITEM "&Fusionner configuration avec...", ID_TRAY_INI_MERGE
-        MENUITEM "&Enregistrer configuration...", ID_TRAY_INI_SAVE
-        MENUITEM "&Quitter",                    ID_TRAY_QUIT
+        MENUITEM "&Settings...",                ID_TRAY_SETTINGS
+        MENUITEM "&Copy List",                  ID_TRAY_COPYLIST
+        MENUITEM "&Load Configuration...",      ID_TRAY_INI_LOAD
+        MENUITEM "&Merge Configuration With...", ID_TRAY_INI_MERGE
+        MENUITEM "Sa&ve Configuration...",      ID_TRAY_INI_SAVE
+        MENUITEM "&Quit",                       ID_TRAY_QUIT
     END
 END
 
@@ -654,6 +665,7 @@ BEGIN
     IDS_BROWSEDIR           "Choose the startup directory of the command."
     IDS_PROGRAMS            "all programs but;only those programs;"
     IDS_TOOLTIPS            "Add a new shortcut;Delete the selected shortcut;Edit the selected shortcut;Click and drag-drop to select the window of a program;"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&no_shipping=1&tax=0&currency_code=USD"
 END
 
 #endif    // English (U.S.) resources
@@ -684,9 +696,11 @@ BEGIN
     PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Les raccourcis sont désactivés lorsque cette boîte de dialogue est affichée.",IDCLBL_HELP,93,115,128,17
+    LTEXT           "Les raccourcis sont désactivés lorsque cette boîte de dialogue est affichée.",IDCLBL_HELP,90,114,128,17
+    LTEXT           "Nombre de raccourcis :",IDCLBL_SHORTCUTSCOUNT,228,114,74,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,306,114,30,8,SS_NOPREFIX
     CONTROL         "Lancer Clavier+ au démarrage de &Windows",IDCCHK_AUTOSTART,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,118,152,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,152,10
     GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
     GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
     CONTROL         "É&crire du texte",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,63,10
@@ -743,7 +757,7 @@ CAPTION "À propos de Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
-    CONTROL         "Clavier+ 10.5",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    CONTROL         "Clavier+ 10.6.0",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
     CONTROL         "Copyright © 2000-2007\nGuillaume Ryder\nLogiciel sous licence GPL",IDC_STATIC,
                     "Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | WS_GROUP,42,20,108,28
     GROUPBOX        "Auteur",IDC_STATIC,6,48,145,44
@@ -858,7 +872,7 @@ BEGIN
     BEGIN
         MENUITEM "&Simuler une frappe de touches : [...]", ID_TEXT_SENDKEYS
         MENUITEM "&Lancer un programme : [[...]]", ID_TEXT_COMMAND
-        MENUITEM "&Attendre 100 millisecondes : []", ID_TEXT_WAIT
+        MENUITEM "&Attendre 100 ms puis détecter focus : []", ID_TEXT_WAIT
         MENUITEM "Écrire du texte en mode &bas niveau : [|...|]", ID_TEXT_LOWLEVEL
         MENUITEM SEPARATOR
         POPUP "Écrire un &caractère"
@@ -874,13 +888,16 @@ BEGIN
             MENUITEM "Écrire une accola&de fermante : \\}", ID_TEXT_BRACE_CLOSE
             MENUITEM "Écrire un &pipe : \\|",       ID_TEXT_PIPE
         END
-        POPUP "Exécuter une c&ommande"
+        POPUP "Exécuter une c&ommande spéciale"
         BEGIN
             MENUITEM "&Attendre : [{Wait,<durée>}]", ID_TEXT_CMD_WAIT
-            MENUITEM "&Détecter fenêtre active : [{Focus}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Détecter fenêtre active : [{Focus,<délai>,<fenêtre>}]", ID_TEXT_CMD_FOCUS
             MENUITEM "&Copier texte : [{Copy,<texte>}]", ID_TEXT_CMD_COPY
-            MENUITEM "Bouton &souris : [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE
-            MENUITEM "&Molette souris : [{MouseWheel,<+/- nb. crans>}]", ID_TEXT_CMD_WHEEL
+            MENUITEM "Bouton &souris: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "&Positionner souris (abs.) : [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "P&ositionner souris (rel.) : [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Déplacer so&uris : [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "&Molette souris : [{MouseWheel,<+/- nb. crans>}]", ID_TEXT_CMD_MOUSE_WHEEL
         END
     END
     POPUP " "
@@ -948,6 +965,7 @@ BEGIN
     IDS_BROWSEDIR           "Choisissez le répertoire de démarrage de la commande."
     IDS_PROGRAMS            "tous les programmes sauf;seulement ces programmes;"
     IDS_TOOLTIPS            "Ajouter un nouveau raccourci;Supprimer le raccourci sélectionné;Éditer le raccourci sélectionné;Cliquer et faire glisser le curseur pour sélectionner la fenêtre d'un programme;"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&no_shipping=1&tax=0&currency_code=EUR"
 END
 
 #endif    // French (France) resources
@@ -975,7 +993,7 @@ CAPTION "Sobre o Clavier+"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
-    CONTROL         "Clavier+ 10.5",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    CONTROL         "Clavier+ 10.6.0",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
     LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nPublicado sob licença GNU GPL",IDC_STATIC,42,20,108,28,SS_NOPREFIX
     GROUPBOX        "Criador",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
@@ -1038,9 +1056,11 @@ BEGIN
     PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Atenção: Todos os atalhos ficam desativados enquanto esta janela estiver aberta.",IDCLBL_HELP,94,115,147,17
+    LTEXT           "Atenção: Todos os atalhos ficam desativados enquanto esta janela estiver aberta.",IDCLBL_HELP,90,114,147,17
+    LTEXT           "Quantidade de atalhos:",IDCLBL_SHORTCUTSCOUNT,246,114,76,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,326,114,30,8,SS_NOPREFIX
     CONTROL         "&Abrir o Clavier+ com o Windows",IDCCHK_AUTOSTART,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,251,118,118,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,246,124,118,10
     GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
     GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
     CONTROL         "&Reproduzir texto",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,70,10
@@ -1163,10 +1183,13 @@ BEGIN
         POPUP "Efetuar &Comando"
         BEGIN
             MENUITEM "&Esperar: [{Wait,<duração>}]", ID_TEXT_CMD_WAIT
-            MENUITEM "&Selecionar janela: [{Focus}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Selecionar janela: [{Focus,<duração>,<janela>}]", ID_TEXT_CMD_FOCUS
             MENUITEM "&Copiar na Área de Armazenagem: [{Copy,<texto>}]", ID_TEXT_CMD_COPY
-            MENUITEM "&Botão do mouse: [{MouseButton,E/M/D(U/D)}]", ID_TEXT_CMD_MOUSE
-            MENUITEM "&Rolar página (esfera): [{MouseWheel,<+/- # de linhas>}]", ID_TEXT_CMD_WHEEL
+            MENUITEM "&Botão do mouse: [{MouseButton,E/M/D(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "M&ueve el mouse (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "Mue&ve el mouse (rel.): [{MouseMoveToFocus,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Mueve el &mouse: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "&Rolar página (esfera): [{MouseWheel,<+/- # de linhas>}]", ID_TEXT_CMD_MOUSE_WHEEL
         END
     END
     POPUP " "
@@ -1210,6 +1233,7 @@ BEGIN
     IDS_BROWSEDIR           "Especifique a pasta de abertura do comando."
     IDS_PROGRAMS            "com qualquer programa, exceto;só com estes;"
     IDS_TOOLTIPS            "Criar atalho;Apagar o atalho selecionado;Editar o atalho selecionado;Clique, arraste e solte para escolher a janela de um programa;"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&no_shipping=1&tax=0&currency_code=USD"
 END
 
 #endif    // Portuguese (Brazil) resources

@@ -212,7 +212,7 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 }
 
 
-bool AskKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult)
+bool askKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult)
 {
 	s_pksEditedOld = pksEdited;
 	s_ksReset = true;
@@ -735,8 +735,6 @@ void Shortcut::cleanPrograms()
 }
 
 
-
-
 bool Shortcut::containsProgram(LPCTSTR pszProgram) const
 {
 	LPCTSTR pszPrograms = m_sPrograms;
@@ -759,10 +757,10 @@ bool Shortcut::containsProgram(LPCTSTR pszProgram) const
 }
 
 
-
 bool Keystroke::askSendKeys(HWND hwndParent, Keystroke& rks)
 {
 	s_ks.reset();
+	s_ks.m_bDistinguishLeftRight = false;
 	
 	VERIF(IDOK == dialogBox(IDD_SENDKEYS, hwndParent, prcSendKeys));
 	

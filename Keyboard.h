@@ -219,7 +219,7 @@ extern const SPECIALKEY e_aSpecialKey[nbSpecialKey];
 
 
 
-bool AskKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult);
+bool askKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult);
 
 
 extern Shortcut *e_pshFirst;   // Shortcuts linked list

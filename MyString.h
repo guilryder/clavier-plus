@@ -28,6 +28,7 @@ extern HANDLE e_hHeap;
 
 inline bool strIsEmpty(LPCTSTR src) { return !src || !*src; }
 inline bool strIsSome(LPCTSTR  src) { return  src &&  *src; }
+
 inline void strMove(LPTSTR dest, LPCTSTR src, int len)
 {
 	while (len > 0) {
@@ -37,25 +38,12 @@ inline void strMove(LPTSTR dest, LPCTSTR src, int len)
 }
 
 
-inline LPTSTR strFind(LPCTSTR psz, LPCTSTR pszSearch) { return StrStr(psz, pszSearch); }
-inline LPTSTR strFind(LPCTSTR psz, TCHAR c)
-{
-	for (;;) {
-		if (!*psz)
-			return NULL;
-		if (*psz == c)
-			return (LPTSTR)psz;
-		psz++;
-	}
-}
-
-
 class String
 {
 public:
 	
-	typedef       TCHAR       *STR;
-	typedef const TCHAR       *CSTR;
+	typedef TCHAR *STR;
+	typedef const TCHAR *CSTR;
 	
 	
 	operator CSTR () const { return getSafe(); }
@@ -68,8 +56,6 @@ public:
 	String() : m_psz(NULL), m_buf(0) {}
 	
 	String(CSTR psz) { affectInit(psz); }
-	
-	String(CSTR psz, int len) { affectInit(psz, len); }
 	
 	String(const String& s) { affectInit((CSTR)s); }
 	
@@ -108,73 +94,6 @@ public:
 		}else
 			affect(psz);
 		return *this;
-	}
-	
-	
-	String& operator = (TCHAR c)
-	{
-		reallocIfNeeded(2);
-		m_psz[0] = c;
-		m_psz[1] = 0;
-		return *this;
-	}
-	
-	
-	void set(CSTR psz, int len)
-	{
-		if (strIsEmpty(psz))
-			empty();
-		else{
-			len++;
-			if (isOverlapping(psz)) {
-				if (m_buf < len) {
-					const STR pszNew = allocNew(len);
-					lstrcpyn(pszNew, psz, len);
-					destroy();
-					m_psz = pszNew;
-				}else{
-					const int bufTrue = lstrlen(psz) + 1;
-					if (len > bufTrue)
-						len = bufTrue;
-					strMove(m_psz, psz, bufTrue);
-					m_psz[len] = 0;
-				}
-			}else{
-				reallocIfNeeded(len);
-				lstrcpyn(m_psz, psz, len);
-			}
-		}
-	}
-	
-	void attach(STR psz)
-	{
-		empty();
-		m_psz = psz;
-		m_buf = lstrlen(psz) + 1;
-	}
-	
-	void attach(STR psz, int buf)
-	{
-		empty();
-		m_psz = psz;
-		m_buf = buf;
-	}
-	
-	void attach(String& rsFrom)
-	{
-		empty();
-		rsFrom.m_psz = rsFrom.m_psz;
-		rsFrom.m_buf = rsFrom.m_buf;
-		rsFrom.m_psz = NULL;
-		rsFrom.m_buf = 0;
-	}
-	
-	STR detach()
-	{
-		const STR psz = m_psz;
-		m_psz = NULL;
-		m_buf = 0;
-		return psz;
 	}
 	
 	
@@ -221,18 +140,11 @@ public:
 	//----------------------------------------------------------------------
 	
 	STR get() { return m_psz; }
-	int getBufferSize() const { return m_buf; }
 	
 	CSTR getSafe() const
 	{
 		static const TCHAR pszEmpty[] = { 0 };
 		return (m_psz) ? m_psz : pszEmpty;
-	}
-	
-	CSTR getSafer() const
-	{
-		static const TCHAR pszEmpty[] = { 0 };
-		return (this && m_psz) ? m_psz : pszEmpty;
 	}
 	
 	TCHAR  operator [] (int    offset) const { return getSafe()[offset]; }
@@ -244,36 +156,6 @@ public:
 	
 	bool isEmpty() const { return strIsEmpty(m_psz); }
 	bool isSome() const { return strIsSome(m_psz); }
-	
-	
-	CSTR mid(int begin) const
-	{
-		if (begin < 0)  return m_psz;
-		const int lenString = getLength();
-		if (begin >= lenString)  begin = lenString;
-		return m_psz + begin;
-	}
-	
-	String mid(int begin, int len) const
-	{
-		const int lenString = getLength();
-		if (begin < 0) {
-			len += begin;
-			begin = 0;
-		}else if (begin >= lenString)
-			begin = lenString;
-		return String(m_psz + begin, len);
-	}
-	
-	String left(int len) const { return String(m_psz, len); }
-	
-	CSTR right(int len) const
-	{
-		if (len < 0)
-			len = 0;
-		const int lenString = getLength();
-		return m_psz + lenString - min(lenString, len);
-	}
 	
 	
 	//----------------------------------------------------------------------
@@ -307,177 +189,6 @@ public:
 	}
 	
 	
-	void makeLower() { CharLower(m_psz); }
-	void makeUpper() { CharUpper(m_psz); }
-	
-	
-	//----------------------------------------------------------------------
-	// Comparison
-	//----------------------------------------------------------------------
-	
-	bool operator == (CSTR psz) const { return !lstrcmp(m_psz, psz); }
-	bool operator != (CSTR psz) const { return  lstrcmp(m_psz, psz) != 0; }
-	bool operator <= (CSTR psz) const { return  lstrcmp(m_psz, psz) <= 0; }
-	bool operator <  (CSTR psz) const { return  lstrcmp(m_psz, psz) <  0; }
-	bool operator >= (CSTR psz) const { return  lstrcmp(m_psz, psz) >= 0; }
-	bool operator >  (CSTR psz) const { return  lstrcmp(m_psz, psz) >  0; }
-	
-	int compare      (CSTR psz) const { return  lstrcmp (m_psz, psz); }
-	int compareNoCase(CSTR psz) const { return  lstrcmpi(m_psz, psz); }
-	
-	
-	//----------------------------------------------------------------------
-	// Search & remplace
-	//----------------------------------------------------------------------
-	
-	STR find(TCHAR c) const { return strFind(m_psz, c); }
-	STR find(CSTR psz) const { return strFind(m_psz, psz); }
-	
-	int findIndex(TCHAR c) const
-	{
-		const STR pszFound = find(c);
-		return (pszFound) ? (int)(pszFound - m_psz) : -1;
-	}
-	
-	int findIndex(CSTR psz) const
-	{
-		const STR pszFound = find(psz);
-		return (pszFound) ? (int)(pszFound - m_psz) : -1;
-	}
-	
-	void replace(TCHAR cOld, TCHAR cNew)
-	{
-		VERIFV(isSome() && cOld != cNew);
-		for (size_t i = 0; m_psz[i]; i++)
-			if (m_psz[i] == cOld)
-				m_psz[i] = cNew;
-	}
-	
-	void replaceTo(String& rsDest, TCHAR cOld, TCHAR cNew) const
-	{
-		if (isSome() && cOld != cNew) {
-			rsDest.alloc(getLength() + 1);
-			for (size_t i = 0; m_psz[i]; i++)
-				rsDest.m_psz[i] = (m_psz[i] == cOld) ? cNew : m_psz[i];
-		}else
-			rsDest.empty();
-	}
-	
-	
-	void replace(CSTR pszOld, CSTR pszNew)
-	{
-		VERIFV(isSome() && strIsSome(pszOld));
-		const int lenOld = lstrlen(pszOld);
-		const int lenNew = lstrlen(pszNew);
-		if (lenOld >= lenNew) {
-			CSTR pszFrom = m_psz;
-			STR  pszTo   = m_psz;
-			for (;;) {
-				const CSTR pszFromNew = strFind(pszFrom, pszOld);
-				if (pszFromNew) {
-					const int diff = (int)(pszFromNew - pszFrom);
-					strMove(pszTo, pszFrom, diff);
-					pszTo += diff;
-					lstrcpy(pszTo, pszNew);
-					pszTo += lenNew;
-					pszFrom = pszFromNew + lenOld;
-				}else{
-					strMove(pszTo, pszFrom, lstrlen(pszFrom) + 1);
-					break;
-				}
-			}
-			
-		}else{
-			
-			// Compute new buffer size
-			int bufNew = 1;
-			bool bDirty = false;
-			const int lenDiff = lenNew - lenOld;
-			CSTR pszFrom = m_psz;
-			for (;;) {
-				const CSTR pszFromNew = strFind(pszFrom, pszOld);
-				if (!pszFromNew) {
-					bufNew += lstrlen(pszFrom);
-					break;
-				}
-				bufNew  += (int)(pszFromNew - pszFrom) + lenDiff;
-				pszFrom  = pszFromNew + lenOld;
-				bDirty = true;
-			}
-			VERIFV(bDirty);
-			
-			// Allocate new buffer
-			const STR pszBufferNew = allocNew(bufNew);
-			
-			// Do replace
-			pszFrom = m_psz;
-			STR pszTo = pszBufferNew;
-			for (;;) {
-				const CSTR pszFromNew = strFind(pszFrom, pszOld);
-				if (pszFromNew) {
-					const int diff = (int)(pszFromNew - pszFrom);
-					strMove(pszTo, pszFrom, diff);
-					pszTo += diff;
-					lstrcpy(pszTo, pszNew);
-					pszTo += lenNew;
-					pszFrom = pszFromNew + lenOld;
-				}else{
-					strMove(pszTo, pszFrom, lstrlen(pszFrom) + 1);
-					break;
-				}
-			}
-			
-			replaceBy(pszBufferNew);
-		}
-	}
-	
-	
-	void replaceTo(String& rsDest, CSTR pszOld, CSTR pszNew) const
-	{
-		if (isSome() && strIsSome(pszOld)) {
-			const int lenOld = lstrlen(pszOld);
-			const int lenNew = lstrlen(pszNew);
-			
-			// Compute new buffer size
-			int bufNew = 1;
-			bool bDirty = false;
-			const int lenDiff = lenNew - lenOld;
-			CSTR pszFrom = m_psz;
-			for (;;) {
-				const CSTR pszFromNew = strFind(pszFrom, pszOld);
-				if (!pszFromNew) {
-					bufNew += lstrlen(pszFrom);
-					break;
-				}
-				bufNew  += (int)(pszFromNew - pszFrom) + lenDiff;
-				pszFrom  = pszFromNew + lenOld;
-				bDirty = true;
-			}
-			VERIFV(bDirty);
-			
-			// Do replace
-			pszFrom = m_psz;
-			STR pszTo = rsDest.getBuffer(bufNew);
-			for (;;) {
-				const CSTR pszFromNew = strFind(pszFrom, pszOld);
-				if (pszFromNew) {
-					const int diff = (int)(pszFromNew - pszFrom);
-					strMove(pszTo, pszFrom, diff);
-					pszTo += diff;
-					lstrcpy(pszTo, pszNew);
-					pszTo += lenNew;
-					pszFrom = pszFromNew + lenOld;
-				}else{
-					strMove(pszTo, pszFrom, lstrlen(pszFrom) + 1);
-					break;
-				}
-			}
-			
-		}else
-			rsDest = *this;
-	}
-	
-	
 protected:
 	
 	STR m_psz;
@@ -504,13 +215,6 @@ protected:
 	}
 	
 	inline void destroy() { bufferFree(m_psz); }
-	
-	inline void replaceBy(STR pszNew)
-	{
-		destroy();
-		m_psz = pszNew;
-	}
-	
 	
 	void affectInit(CSTR psz) { affectInit(psz, lstrlen(psz)); }
 	
