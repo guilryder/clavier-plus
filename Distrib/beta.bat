@@ -15,3 +15,5 @@ for %%i in (ClavierBeta.zip ClavierBetaSrc.zip) do move /y %%i E:\Web\utilfr\dn 
 for %%i in (1 2 3) do C:\Soft\Tools\Clavier.exe /quit
 copy /y ..\release\Clavier.exe C:\Soft\Tools
 start C:\Soft\Tools\Clavier.exe
+
+rd /s /q Sources

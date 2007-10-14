@@ -73,26 +73,29 @@ public:
 	
 	String& operator = (const String& s)
 	{
-		if (&s != this)
+		if (&s != this) {
 			affect((CSTR)s);
+		}
 		return *this;
 	}
 	
 	String& operator = (CSTR psz)
 	{
-		if (strIsEmpty(psz))
+		if (strIsEmpty(psz)) {
 			empty();
-		else if (isOverlapping(psz)) {
+		} else if (isOverlapping(psz)) {
 			const int buf = lstrlen(psz) + 1;
 			if (m_buf < buf) {
 				const STR pszNew = allocNew(buf);
 				lstrcpy(pszNew, psz);
 				destroy();
 				m_psz = pszNew;
-			}else
+			} else {
 				strMove(m_psz, psz, buf);
-		}else
+			}
+		} else {
 			affect(psz);
+		}
 		return *this;
 	}
 	
@@ -105,20 +108,22 @@ public:
 	{
 		if (this == &s) {
 			if (isSome()) {
-				const int len    = getLength();
+				const int len = getLength();
 				const int lenAll = len + len;
 				if (lenAll >= m_buf) {
 					const STR pszNew = allocNew(lenAll + 1);
 					lstrcpy(pszNew,       m_psz);
 					lstrcpy(pszNew + len, m_psz);
-				}else{
-					for (int i = 0; i < len; i++)
+				} else {
+					for (int i = 0; i < len; i++) {
 						m_psz[len + i] = m_psz[i];
+					}
 					m_psz[lenAll] = 0;
 				}
 			}
-		}else
+		} else {
 			append((CSTR)s);
+		}
 		return *this;
 	}
 	
@@ -208,8 +213,9 @@ protected:
 		if (buf > m_buf) {
 			buf *= 2;
 			m_psz = bufferRealloc(m_psz, buf);
-			if (!m_buf)
+			if (!m_buf) {
 				*m_psz = _T('\0');
+			}
 			m_buf = buf;
 		}
 	}
@@ -223,7 +229,7 @@ protected:
 		if (len <= 0) {
 			m_psz = NULL;
 			m_buf = 0;
-		}else{
+		} else {
 			len++;
 			alloc(len);
 			lstrcpyn(m_psz, psz, len);
@@ -232,9 +238,9 @@ protected:
 	
 	void affect(CSTR psz)
 	{
-		if (strIsEmpty(psz))
+		if (strIsEmpty(psz)) {
 			empty();
-		else{
+		} else {
 			const int buf = lstrlen(psz) + 1;
 			if (m_buf < buf) {
 				destroy();
@@ -246,9 +252,9 @@ protected:
 	
 	void append(CSTR psz)
 	{
-		if (isEmpty())
+		if (isEmpty()) {
 			*this = psz;
-		else if (!strIsEmpty(psz)) {
+		} else if (!strIsEmpty(psz)) {
 			const int len  = getLength();
 			const int buf2 = lstrlen(psz) + 2;
 			reallocIfNeeded(len + buf2);

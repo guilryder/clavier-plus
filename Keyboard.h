@@ -71,8 +71,9 @@ public:
 	{
 		reset();
 		m_bDistinguishLeftRight = false;
-		for (int i = 0; i < condTypeCount; i++)
+		for (int i = 0; i < condTypeCount; i++) {
 			m_aCond[i] = condIgnore;
+		}
 	}
 	
 	
@@ -180,8 +181,9 @@ public:
 	
 	HICON getIcon()
 	{
-		if (!m_hIcon)
+		if (!m_hIcon) {
 			findIcon();
+		}
 		return m_hIcon;
 	}
 	

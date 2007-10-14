@@ -204,8 +204,9 @@ void WinMainCRTStartup()
 		TCHAR *pcStart = pszTokens;
 		for (int iToken = 0; iToken < tokNotFound; iToken++) {
 			TCHAR *pc = pcStart;
-			while (*pc != _T(';'))
+			while (*pc != _T(';')) {
 				pc++;
+			}
 			*pc = _T('\0');
 			s_asToken[iToken].set(pcStart);
 			pcStart = pc + 1;
@@ -237,14 +238,16 @@ void WinMainCRTStartup()
 			if (msg.message == WM_HOTKEY) {
 				// Shortcut
 				
-				if (msg.time < timeLast)
+				if (msg.time < timeLast) {
 					timeMinimum = 0;
-				if (msg.time < timeMinimum)
+				}
+				if (msg.time < timeMinimum) {
 					goto Next;
+				}
 				
 				Keystroke ks;
-				ks.m_vk                    = Keystroke::filterVK((BYTE)HIWORD(msg.lParam));
-				ks.m_vkFlags               = LOWORD(msg.lParam);
+				ks.m_vk = Keystroke::filterVK((BYTE)HIWORD(msg.lParam));
+				ks.m_vkFlags = LOWORD(msg.lParam);
 				ks.m_bDistinguishLeftRight = true;
 				const HWND hwndFocus = Keystroke::getKeyboardFocus();
 				
@@ -266,20 +269,23 @@ void WinMainCRTStartup()
 				{
 					VK_CAPITAL, VK_NUMLOCK, VK_SCROLL,
 				};
-				for (int i = 0; i < condTypeCount; i++)
+				for (int i = 0; i < condTypeCount; i++) {
 					ks.m_aCond[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
+				}
 				
 				// Get the current program, for conditions checking
 				TCHAR pszProcess[MAX_PATH];
-				if (!getWindowExecutable(hwndFocus, pszProcess))
+				if (!getWindowExecutable(hwndFocus, pszProcess)) {
 					*pszProcess = _T('\0');
+				}
 				
 				Shortcut *const psh = findShortcut(ks, (*pszProcess) ? pszProcess : NULL);
 				
 				if (psh) {
-					if (psh->execute(true))
+					if (psh->execute(true)) {
 						timeMinimum = GetTickCount();
-				}else{
+					}
+				} else {
 					// No matching shortcut found: simulate the keystroke
 					// without catching it with an hotkey, to perform default processing
 					ks.unregisterHotKey();
@@ -287,7 +293,7 @@ void WinMainCRTStartup()
 					ks.registerHotKey();
 				}
 				
-			}else{
+			} else {
 				// Other message
 				
 				TranslateMessage(&msg);
@@ -340,11 +346,12 @@ CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 	
 	// Skip program name
 	bInQuote = false;
-	do{
+	do {
 		c = *pc++;
-		if (c == _T('"'))
+		if (c == _T('"')) {
 			bInQuote ^= true;
-	}while (c && (bInQuote || (c != _T(' ') && c != _T('\t'))));
+		}
+	} while (c && (bInQuote || (c != _T(' ') && c != _T('\t'))));
 	
 	bInQuote = false;
 	
@@ -364,10 +371,12 @@ CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 		for (;;) {
 			
 			// Skip argument separator
-			while (*pc == _T(' ') || *pc == '\t')
+			while (*pc == _T(' ') || *pc == '\t') {
 				pc++;
-			if (!*pc)
+			}
+			if (!*pc) {
 				break;
+			}
 			
 			nbArg++;
 			TCHAR *pcArg = pszArg;
@@ -384,9 +393,9 @@ CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 				// Process quoting
 				if (*pc == _T('"')) {
 					if (nbBackslash % 2 == 0) {
-						if (bInQuote && pc[1] == _T('"'))
+						if (bInQuote && pc[1] == _T('"')) {
 							pc++;
-						else{
+						} else {
 							bCopyChar = false;
 							bInQuote ^= true;
 						}
@@ -394,16 +403,19 @@ CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 					nbBackslash /= 2;
 				}
 				
-				while (nbBackslash--)
+				while (nbBackslash--) {
 					*pcArg++ = _T('\\');
+				}
 				
 				// Stop on spaces
 				c = *pc;
-				if (!c || (!bInQuote && (c == _T(' ') || c == _T('\t'))))
+				if (!c || (!bInQuote && (c == _T(' ') || c == _T('\t')))) {
 					break;
+				}
 				
-				if (bCopyChar)
+				if (bCopyChar) {
 					*pcArg++ = c;
+				}
 				pc++;
 			}
 			*pcArg = _T('\0');
@@ -412,13 +424,17 @@ CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 				// Test for command line option
 				if (*pszArg == _T('/')) {
 					const LPCTSTR pszOption = pszArg + 1;
-					for (cmdopt = (CMDLINE_OPTION)0; cmdopt < cmdoptNone; cmdopt = (CMDLINE_OPTION)(cmdopt + 1))
-						if (!lstrcmpi(pszOption, apszCmdOpt[cmdopt]))
+					for (cmdopt = (CMDLINE_OPTION)0; cmdopt < cmdoptNone;
+							cmdopt = (CMDLINE_OPTION)(cmdopt + 1)) {
+						if (!lstrcmpi(pszOption, apszCmdOpt[cmdopt])) {
 							break;
+						}
+					}
 				}
 				
-				if (cmdopt >= cmdoptWithArg)
+				if (cmdopt >= cmdoptWithArg) {
 					continue;
+				}
 			}
 			
 			switch (cmdopt) {
@@ -474,8 +490,9 @@ CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 	}
 	
 	if (!e_hdlgModal) {
-		if (bNewIniFile)
+		if (bNewIniFile) {
 			shortcutsLoad();
+		}
 		
 		for (int i = 0; i < nbIniFileMerge; i++) {
 			shortcutsMerge(apszIniFileMerge[i]);
@@ -485,10 +502,11 @@ CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 		shortcutsSave();
 	}
 	
-	if (cmdoptAction == cmdoptNone)
+	if (cmdoptAction == cmdoptNone) {
 		cmdoptAction = (bNormalLaunch)
 			? ((bAutoQuit) ? cmdoptQuit   : cmdoptLaunch)
 			: ((bAutoQuit) ? cmdoptLaunch : cmdoptSettings);
+	}
 	
 	return cmdoptAction;
 }
@@ -531,9 +549,10 @@ LRESULT CALLBACK prcInvisible(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 Destroy:
 		PostQuitMessage(0);
 		
-	}else if (uMsg == msgClavierNotifyIcon) {
-		if (wParam == 1 || wParam == IDCCMD_QUIT)
+	} else if (uMsg == msgClavierNotifyIcon) {
+		if (wParam == 1 || wParam == IDCCMD_QUIT) {
 			goto Destroy;
+		}
 		
 		// Memoize the last foreground window:
 		// used to restore the active window before executing shortcut
@@ -542,16 +561,19 @@ Destroy:
 		const HWND hwndForeground = GetForegroundWindow();
 		TCHAR pszClass[128];
 		GetClassName(hwndForeground, pszClass, nbArray(pszClass));
-		if (lstrcmp(pszClass, _T("Shell_TrayWnd")) && hwndForeground != hWnd)
+		if (lstrcmp(pszClass, _T("Shell_TrayWnd")) && hwndForeground != hWnd) {
 			s_hwndLastForeground = hwndForeground;
+		}
 		
-		if (lParam != WM_LBUTTONDOWN && lParam != WM_RBUTTONDOWN)
+		if (lParam != WM_LBUTTONDOWN && lParam != WM_RBUTTONDOWN) {
 			return 0;
+		}
 		
 		if (e_hdlgModal) {
 			SetForegroundWindow(e_hdlgModal);
-			if (e_hdlgModal == s_hdlgMain && wParam)
+			if (e_hdlgModal == s_hdlgMain && wParam) {
 				PostMessage(s_hdlgMain, WM_COMMAND, wParam, 0);
+			}
 			return 0;
 		}
 		
@@ -571,7 +593,7 @@ Destroy:
 				}
 			}
 			
-		}else /* (lParam == WM_RBUTTONDOWN)*/ {
+		} else /* (lParam == WM_RBUTTONDOWN)*/ {
 			// Right click: display shortcuts menu
 			
 			const HMENU hAllMenus = loadMenu(IDM_CONTEXT);
@@ -594,24 +616,28 @@ Destroy:
 			const HANDLE hff = FindFirstFile(pszIniFileSpec, &wfd);
 			PathRemoveFileSpec(pszIniFileSpec);
 			if (hff != INVALID_HANDLE_VALUE) {
-				do{
+				do {
 					if (!(wfd.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_HIDDEN))) {
 						const LPTSTR pszPath = new TCHAR[MAX_PATH];
 						PathCombine(pszPath, pszIniFileSpec, wfd.cFileName);
 						if (lstrcmpi(pszPath, e_pszIniFile)) {
 							apszIniFile[nbIniFile++] = pszPath;
-							if (nbIniFile == maxIniFile)
+							if (nbIniFile == maxIniFile) {
 								break;
-						}else
+							}
+						} else {
 							delete [] pszPath;
+						}
 					}
-				}while (FindNextFile(hff, &wfd));
+				} while (FindNextFile(hff, &wfd));
 				FindClose(hff);
 			}
 			
 			// 2) Append INI files to menu
-			for (UINT iIniFile = 0; iIniFile < nbIniFile; iIniFile++)
-				InsertMenu(hMenu, iIniFile, MF_BYPOSITION | MF_STRING, ID_TRAY_INI_FIRSTFILE + iIniFile, PathFindFileName(apszIniFile[iIniFile]));
+			for (UINT iIniFile = 0; iIniFile < nbIniFile; iIniFile++) {
+				InsertMenu(hMenu, iIniFile, MF_BYPOSITION | MF_STRING, ID_TRAY_INI_FIRSTFILE + iIniFile,
+						PathFindFileName(apszIniFile[iIniFile]));
+			}
 			CheckMenuRadioItem(hMenu, ID_TRAY_INI_FIRSTFILE, ID_TRAY_INI_FIRSTFILE + nbIniFile - 1,
 				ID_TRAY_INI_FIRSTFILE, MF_BYCOMMAND);
 			
@@ -632,8 +658,9 @@ Destroy:
 				case ID_TRAY_COPYLIST:
 					{
 						String s;
-						for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
+						for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
 							psh->appendItemToString(s);
+						}
 						shortcutsCopyToClipboard(s);
 					}
 					break;
@@ -644,9 +671,11 @@ Destroy:
 					{
 						TCHAR psz[bufString];
 						loadStringAuto(IDS_INI_FILTER, psz);
-						for (UINT i = 0; psz[i]; i++)
-							if (psz[i] == _T('|'))
+						for (UINT i = 0; psz[i]; i++) {
+							if (psz[i] == _T('|')) {
 								psz[i] = _T('\0');
+							}
+						}
 						
 						TCHAR pszIniFile[nbArray(e_pszIniFile)];
 						lstrcpy(pszIniFile, e_pszIniFile);
@@ -664,15 +693,15 @@ Destroy:
 								lstrcpy(e_pszIniFile, pszIniFile);
 								shortcutsSave();
 							}
-						}else{
+						} else {
 							ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 							if (GetOpenFileName(&ofn)) {
 								if (id == ID_TRAY_INI_LOAD) {
 									lstrcpy(e_pszIniFile, pszIniFile);
 									shortcutsLoad();
-								}else
+								} else {
 									shortcutsMerge(pszIniFile);
-								
+								}
 								shortcutsSave();
 							}
 						}
@@ -688,22 +717,25 @@ Destroy:
 					break;
 			}
 			
-			for (UINT iIniFile = 1; iIniFile < nbIniFile; iIniFile++)
+			for (UINT iIniFile = 1; iIniFile < nbIniFile; iIniFile++) {
 				delete [] apszIniFile[iIniFile];
+			}
 			
-			if (id == ID_TRAY_QUIT)
+			if (id == ID_TRAY_QUIT) {
 				goto Destroy;
+			}
 		}
 		
-	}else if (uMsg == msgTaskbarCreated)
+	} else if (uMsg == msgTaskbarCreated) {
 		trayIconAction(NIM_ADD);
 	
-	else if (uMsg == WM_COPYDATA) {
+	} else if (uMsg == WM_COPYDATA) {
 		// Execute command line
 		
 		const COPYDATASTRUCT &cds = *(const COPYDATASTRUCT*)lParam;
-		if (cds.dwData == (ULONG_PTR)bUnicode)
+		if (cds.dwData == (ULONG_PTR)bUnicode) {
 			processCmdLineAction(execCmdLine((LPCTSTR)cds.lpData, false));
+		}
 		return TRUE;
 	}
 	
@@ -736,21 +768,25 @@ struct SIZEPOS
 		POINT ptNew = pt;
 		SIZE sizeNew = size;
 		
-		if (flags & sizeposLeft)
+		if (flags & sizeposLeft) {
 			ptNew.x += dx;
-		else if (flags & sizeposLeftHalf)
+		} else if (flags & sizeposLeftHalf) {
 			ptNew.x += dx / 2;
+		}
 		
-		if (flags & sizeposWidth)
+		if (flags & sizeposWidth) {
 			sizeNew.cx += dx;
-		else if (flags & sizeposWidthHalf)
+		} else if (flags & sizeposWidthHalf) {
 			sizeNew.cx += dx / 2;
+		}
 		
-		if (flags & sizeposTop)
+		if (flags & sizeposTop) {
 			ptNew.y += dy;
+		}
 		
-		if (flags & sizeposHeight)
+		if (flags & sizeposHeight) {
 			sizeNew.cy += dy;
+		}
 		
 		MoveWindow(hctl, ptNew.x, ptNew.y, sizeNew.cx, sizeNew.cy, FALSE);
 	}
@@ -884,15 +920,17 @@ FileMenuItem* findItemAndCleanMenu(HMENU hMenu, UINT id)
 	for (UINT pos = 0; GetMenuItemInfo(hMenu, pos, TRUE, &mii); pos++) {
 		FileMenuItem *pItem = (FileMenuItem*)mii.dwItemData;
 		if (pItem) {
-			if (mii.wID == id && id)
+			if (mii.wID == id && id) {
 				pItemToExecute = pItem;
-			else if (!(mii.fType & MFT_SEPARATOR))
+			} else if (!(mii.fType & MFT_SEPARATOR)) {
 				delete pItem;
+			}
 		}
 		if (mii.hSubMenu) {
 			pItem = findItemAndCleanMenu(mii.hSubMenu, id);
-			if (pItem && !pItemToExecute)
+			if (pItem && !pItemToExecute) {
 				pItemToExecute = pItem;
+			}
 		}
 	}
 	
@@ -925,14 +963,15 @@ void FileMenuItem::populate(HMENU hMenu)
 		TCHAR pszFolder[MAX_PATH];
 		
 		if (m_bStartMenu) {
-			if (!getSpecialFolderPath((iSource) ? CSIDL_COMMON_STARTMENU : CSIDL_STARTMENU, pszFolder))
+			if (!getSpecialFolderPath((iSource) ? CSIDL_COMMON_STARTMENU : CSIDL_STARTMENU, pszFolder)) {
 				continue;
-			if (m_sPath.isSome())
+			}
+			if (m_sPath.isSome()) {
 				PathAppend(pszFolder, m_sPath);
-			
-		}else{
-			if (iSource > 0)
-				break;
+			}
+		} else if (iSource > 0) {
+			break;
+		} else {
 			lstrcpyn(pszFolder, m_sPath, nbArray(pszFolder));
 		}
 		
@@ -940,12 +979,13 @@ void FileMenuItem::populate(HMENU hMenu)
 		PathCombine(pszPath, pszFolder, _T("*"));
 		WIN32_FIND_DATA wfd;
 		const HANDLE hff = FindFirstFile(pszPath, &wfd);
-		if (hff == INVALID_HANDLE_VALUE)
+		if (hff == INVALID_HANDLE_VALUE) {
 			continue;
-		do{
-			if (wfd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)
+		}
+		do {
+			if (wfd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) {
 				continue;
-			
+			}
 			PathCombine(pszPath, pszFolder, wfd.cFileName);
 			
 			TCHAR pszRelativeFolder[MAX_PATH];
@@ -958,8 +998,9 @@ void FileMenuItem::populate(HMENU hMenu)
 			UINT pos;
 			if (bIsDir) {
 				if (wfd.cFileName[0] == _T('.') &&
-					(wfd.cFileName[1] == _T('.') || !wfd.cFileName[1]))
+						(wfd.cFileName[1] == _T('.') || !wfd.cFileName[1])) {
 					continue;
+				}
 				
 				lstrcpyn(pszRelativeFolder, m_sPath, nbArray(pszRelativeFolder));
 				PathAppend(pszRelativeFolder, wfd.cFileName);
@@ -968,11 +1009,13 @@ void FileMenuItem::populate(HMENU hMenu)
 				if (iSource) {
 					const int nbItem = GetMenuItemCount(hMenu);
 					for (int i = 0; i < nbItem; i++) {
-						if (!GetMenuItemInfo(hMenu, i, TRUE, &mii))
+						if (!GetMenuItemInfo(hMenu, i, TRUE, &mii)) {
 							continue;
+						}
 						const FileMenuItem &fmiOther = *(const FileMenuItem*)mii.dwItemData;
-						if (fmiOther.isDir() && !lstrcmpi(fmiOther.m_sPath, pszRelativeFolder))
+						if (fmiOther.isDir() && !lstrcmpi(fmiOther.m_sPath, pszRelativeFolder)) {
 							goto Next;
+						}
 					}
 				}
 				
@@ -980,7 +1023,7 @@ void FileMenuItem::populate(HMENU hMenu)
 				mii.hSubMenu = CreatePopupMenu();
 				pos = posFolder++;
 				
-			}else{
+			} else {
 				mii.fMask = MIIM_DATA | MIIM_TYPE | MIIM_ID;
 				mii.wID   = s_idAddMenuId++;
 				pos = (UINT)-1;
@@ -991,11 +1034,12 @@ void FileMenuItem::populate(HMENU hMenu)
 			// Get the small icon
 			SHFILEINFO shfi;
 			if (!getFileInfo(pszPath, wfd.dwFileAttributes, shfi,
-			    SHGFI_ICON | SHGFI_SMALLICON | SHGFI_SYSICONINDEX))
+					SHGFI_ICON | SHGFI_SMALLICON | SHGFI_SYSICONINDEX)) {
 				shfi.iIcon = -1;
+			}
 			
 			mii.dwItemData = (ULONG_PTR)new FileMenuItem(bIsDir, m_bStartMenu,
-				wfd.cFileName, pszItemPath, shfi.iIcon);
+					wfd.cFileName, pszItemPath, shfi.iIcon);
 			
 			// Create the phantom sub-item used by WM_INITMENUPOPUP
 			// to get the parent of the popup to initialize
@@ -1008,7 +1052,7 @@ void FileMenuItem::populate(HMENU hMenu)
 			
 		Next:
 			;
-		}while (FindNextFile(hff, &wfd));
+		} while (FindNextFile(hff, &wfd));
 		FindClose(hff);
 	}
 	
@@ -1038,10 +1082,12 @@ void FileMenuItem::measureItem(HDC hdc, MEASUREITEMSTRUCT& mis)
 	mis.itemHeight = rc.bottom - rc.top;
 	int cyMenu = GetSystemMetrics(SM_CYMENU);
 	int cyIcon = GetSystemMetrics(SM_CXSMICON);
-	if (cyMenu < cyIcon)
+	if (cyMenu < cyIcon) {
 		cyMenu = cyIcon;
-	if ((int)mis.itemHeight < cyMenu)
+	}
+	if ((int)mis.itemHeight < cyMenu) {
 		mis.itemHeight = cyMenu;
+	}
 }
 
 
@@ -1051,7 +1097,7 @@ void FileMenuItem::drawItem(DRAWITEMSTRUCT& dis)
 	if (dis.itemState & ODS_SELECTED) {
 		sysColorText = COLOR_HIGHLIGHTTEXT;
 		sysColorBack = COLOR_HIGHLIGHT;
-	}else{
+	} else {
 		sysColorText = COLOR_MENUTEXT;
 		sysColorBack = COLOR_MENU;
 	}
@@ -1080,9 +1126,9 @@ void FileMenuItem::drawItem(DRAWITEMSTRUCT& dis)
 void FileMenuItem::execute()
 {
 	TCHAR pszPath[MAX_PATH];
-	if (!getShellLinkTarget(m_sPath, pszPath))
+	if (!getShellLinkTarget(m_sPath, pszPath)) {
 		lstrcpy(pszPath, m_sPath);
-	
+	}
 	createAndAddShortcut(pszPath);
 }
 
@@ -1152,12 +1198,14 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				// Get delete new shortcuts
 				LVITEM lvi;
 				lvi.mask = LVIF_PARAM;
-				for (lvi.iItem = 0; ListView_GetItem(e_hlst, &lvi); lvi.iItem++)
+				for (lvi.iItem = 0; ListView_GetItem(e_hlst, &lvi); lvi.iItem++) {
 					delete (Shortcut*)lvi.lParam;
+				}
 				ListView_DeleteAllItems(e_hlst);
 				
-				for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
+				for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
 					psh->registerHotKey();
+				}
 				
 				EndDialog(s_hdlgMain, IDCANCEL);
 			}
@@ -1176,7 +1224,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 					ListView_GetItem(e_hlst, &lvi);
 					Shortcut *const psh = ash[lvi.iItem] = (Shortcut*)lvi.lParam;
 					String *const asProgram = psh->getPrograms();
-					for (int i = 0; i < lvi.iItem; i++)
+					for (int i = 0; i < lvi.iItem; i++) {
 						if (ash[i]->testConflict(*psh, asProgram, psh->m_bProgramsOnly)) {
 							TCHAR pszHotKey[bufHotKey];
 							psh->getKeyName(pszHotKey);
@@ -1186,17 +1234,19 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 							delete [] ash;
 							return;
 						}
+					}
 					delete [] asProgram;
 				}
 			
 				if (id == IDCCMD_LANGUAGE) {
-					if (dialogBox(IDD_LANGUAGE, e_hdlgModal, prcLanguage) == IDCANCEL)
+					if (dialogBox(IDD_LANGUAGE, e_hdlgModal, prcLanguage) == IDCANCEL) {
 						break;
-					
-				}else if (id == IDCCMD_QUIT) {
-					if (!IsKeyDown(VK_SHIFT) &&
-					    IDNO == messageBox(s_hdlgMain, ASK_QUIT, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION))
+					}
+				} else if (id == IDCCMD_QUIT) {
+					if (!IsKeyDown(VK_SHIFT) && IDNO ==
+							messageBox(s_hdlgMain, ASK_QUIT, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION)) {
 						goto Cancel;
+					}
 				}
 				
 				// Create a valid linked list from the list box
@@ -1211,19 +1261,20 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				}
 				delete [] ash;
 				
-				if (id != IDCCMD_QUIT)
+				if (id != IDCCMD_QUIT) {
 					shortcutsSave();
+				}
 				
 				// Create/delete the auto start key
 				TCHAR pszAutoStartPath[MAX_PATH];
 				const HKEY hKeyAutoStart = openAutoStartKey(pszAutoStartPath);
 				if (hKeyAutoStart) {
-					if (IsDlgButtonChecked(s_hdlgMain, IDCCHK_AUTOSTART))
+					if (IsDlgButtonChecked(s_hdlgMain, IDCCHK_AUTOSTART)) {
 						RegSetValueEx(hKeyAutoStart, pszValueAutoStart, NULL, REG_SZ,
 							(const BYTE*)pszAutoStartPath, lstrlen(pszAutoStartPath) + 1);
-					else
+					} else {
 						RegDeleteValue(hKeyAutoStart, pszValueAutoStart);
-					
+					}
 					RegCloseKey(hKeyAutoStart);
 				}
 			}
@@ -1279,16 +1330,18 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				if (pItem) {
 					pItem->execute();
 					delete pItem;
-				}else if (id)
+				} else if (id) {
 					SendMessage(s_hdlgMain, WM_COMMAND, id, 0);
+				}
 			}
 			break;
 		
 		case ID_ADD_FOLDER:
 			{
 				TCHAR pszFolder[MAX_PATH] = _T("");
-				if (browseForFolder(s_hdlgMain, NULL, pszFolder))
+				if (browseForFolder(s_hdlgMain, NULL, pszFolder)) {
 					createAndAddShortcut(pszFolder);
+				}
 			}
 			break;
 		
@@ -1308,8 +1361,9 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 		case IDCCMD_DELETE:
 			{
 				if (!IsKeyDown(VK_SHIFT) && IDNO == messageBox(
-				    s_hdlgMain, ASK_DELETE, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION))
+						s_hdlgMain, ASK_DELETE, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION)) {
 					break;
+				}
 				
 				SetFocus(GetDlgItem(s_hdlgMain, IDCCMD_ADD));
 				SendMessage(s_hdlgMain, WM_NEXTDLGCTL, TRUE, FALSE);
@@ -1328,10 +1382,11 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				}
 				
 				// Select an other item and update
-				if (lvi.iItem >= ListView_GetItemCount(e_hlst))
+				if (lvi.iItem >= ListView_GetItemCount(e_hlst)) {
 					lvi.iItem--;
+				}
 				ListView_SetItemState(e_hlst, lvi.iItem,
-					LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
+						LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
 				updateList();
 				onShortcutsCountChanged();
 				SetFocus(e_hlst);
@@ -1398,8 +1453,9 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				LVITEM lvi;
 				lvi.mask = LVIF_PARAM;
 				for (lvi.iItem = 0;; lvi.iItem++) {
-					if (!ListView_GetItem(e_hlst, &lvi))
+					if (!ListView_GetItem(e_hlst, &lvi)) {
 						break;
+					}
 					((const Shortcut*)lvi.lParam)->appendItemToString(s);
 				}
 				shortcutsCopyToClipboard(s);
@@ -1449,15 +1505,17 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 				
 				updateItem();
 				
-				if (iColumn >= 0)
+				if (iColumn >= 0) {
 					onItemUpdated(1 << iColumn);
+				}
 			}
 			break;
 		
 		case IDCCBO_PROGRAMS:
-			if (wNotify == CBN_SELCHANGE)
+			if (wNotify == CBN_SELCHANGE) {
 				s_psh->m_bProgramsOnly = ToBool(SendDlgItemMessage(s_hdlgMain,
 					IDCCBO_PROGRAMS, CB_GETCURSEL, 0, 0));
+			}
 			break;
 		
 		// Browse for command line
@@ -1519,13 +1577,14 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 					psh->m_sText    = pszText;
 					addCreatedShortcut(psh);
 				}
-			}else if (ID_TEXT_SPECIALCHAR_FIRST <= id && id < ID_TEXT_SPECIALCHAR_FIRST + 256) {
+			} else if (ID_TEXT_SPECIALCHAR_FIRST <= id && id < ID_TEXT_SPECIALCHAR_FIRST + 256) {
 				const TCHAR pszText[] = { (TCHAR)(id - ID_TEXT_SPECIALCHAR_FIRST), _T('\0') };
 				String s;
 				escapeString(pszText, s);
 				appendText(s);
-			}else if (ID_TEXT_LOWLEVEL <= id && id < ID_TEXT_LOWLEVEL + nbArray(apszWrite))
+			} else if (ID_TEXT_LOWLEVEL <= id && id < ID_TEXT_LOWLEVEL + nbArray(apszWrite)) {
 				appendText(apszWrite[id - ID_TEXT_LOWLEVEL]);
+			}
 			break;
 	}
 }
@@ -1593,8 +1652,9 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				lvc.mask = LVCF_TEXT | LVCF_SUBITEM;
 				for (lvc.iSubItem = 0; lvc.iSubItem < colCount; lvc.iSubItem++) {
 					lvc.pszText = pcText;
-					while (*pcText != _T(';'))
+					while (*pcText != _T(';')) {
 						pcText++;
+					}
 					*pcText++ = _T('\0');
 					ListView_InsertColumn(e_hlst, lvc.iSubItem, &lvc);
 				}
@@ -1606,8 +1666,9 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					pshCopy->unregisterHotKey();
 					addItem(pshCopy, (s_psh == psh));
 					nbShortcut++;
-					if (pshCopy->m_bCommand)
+					if (pshCopy->m_bCommand) {
 						nbShortcutIcon++;
+					}
 				}
 				onItemUpdated(~0);
 				onShortcutsCountChanged();
@@ -1620,8 +1681,9 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				for (lvi.iItem = 0; lvi.iItem < nbShortcut ; lvi.iItem++) {
 					ListView_GetItem(e_hlst, &lvi);
 					Shortcut *const psh = (Shortcut*)lvi.lParam;
-					if (psh->m_bCommand)
+					if (psh->m_bCommand) {
 						psh->fillGetFileIcon(apgfi[--nbShortcutIcon] = new GETFILEICON, true);
+					}
 				}
 				startThread((LPTHREAD_START_ROUTINE)threadGetFilesIcon, apgfi);
 				
@@ -1632,8 +1694,9 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				TCHAR *pcStart = pszPrograms;
 				for (int i = 0; i < 2; i++) {
 					TCHAR *pc = pcStart;
-					while (*pc != _T(';'))
+					while (*pc != _T(';')) {
 						pc++;
+					}
 					*pc = _T('\0');
 					SendMessage(hcboPrograms, CB_ADDSTRING, 0, (LPARAM)pcStart);
 					pcStart = pc + 1;
@@ -1662,15 +1725,18 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					const UINT id = (i < 3) ? IDCCMD_ADD + i : IDCIMG_PROGRAMS;
 					
 					const HWND hctl = GetDlgItem(hDlg, id);
-					if (i < 3)
+					if (i < 3) {
 						SendMessage(hctl, BM_SETIMAGE, IMAGE_ICON,
-							(LPARAM)(HICON)LoadImage(e_hInst, MAKEINTRESOURCE(IDI_ADD + i), IMAGE_ICON, 15,15, 0));
+								(LPARAM)(HICON)LoadImage(e_hInst,
+										MAKEINTRESOURCE(IDI_ADD + i), IMAGE_ICON, 15,15, 0));
+					}
 					
-					ti.hwnd     = hctl;
-					ti.uId      = (UINT)hctl;
+					ti.hwnd = hctl;
+					ti.uId = (UINT)hctl;
 					ti.lpszText = pcText;
-					while (*pcText != _T(';'))
+					while (*pcText != _T(';')) {
 						pcText++;
+					}
 					*pcText++ = _T('\0');
 					SendMessage(hwndTT, TTM_ADDTOOL, 0, (LPARAM)&ti);
 				}
@@ -1683,10 +1749,12 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					TCHAR pszPath[MAX_PATH];
 					
 					if (ERROR_SUCCESS == RegQueryValueEx(hKeyAutoStart, pszValueAutoStart, NULL,
-					    &dwType, NULL, &dwLen) && dwType == REG_SZ && dwLen < nbArray(pszPath))
+							&dwType, NULL, &dwLen) && dwType == REG_SZ && dwLen < nbArray(pszPath)) {
 						if (ERROR_SUCCESS == RegQueryValueEx(hKeyAutoStart, pszValueAutoStart, NULL,
-						    NULL, (BYTE*)pszPath, &dwLen) && !lstrcmpi(pszPath, pszAutoStartPath))
+								NULL, (BYTE*)pszPath, &dwLen) && !lstrcmpi(pszPath, pszAutoStartPath)) {
 							CheckDlgButton(hDlg, IDCCHK_AUTOSTART, TRUE);
+						}
+					}
 					
 					RegCloseKey(hKeyAutoStart);
 				}
@@ -1694,14 +1762,14 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				s_bProcessGuiEvents = true;
 				
 				SendMessage(hDlg, WM_SETICON, FALSE,
-					(LPARAM)(HICON)LoadImage(e_hInst, MAKEINTRESOURCE(IDI_APP), IMAGE_ICON, 16,16, 0));
+						(LPARAM)(HICON)LoadImage(e_hInst, MAKEINTRESOURCE(IDI_APP), IMAGE_ICON, 16,16, 0));
 				SendMessage(hDlg, WM_SETICON, TRUE,
-					(LPARAM)LoadIcon(e_hInst, MAKEINTRESOURCE(IDI_APP)));
+						(LPARAM)LoadIcon(e_hInst, MAKEINTRESOURCE(IDI_APP)));
 				
 				// Restore window size from settings
-				if (e_sizeMainDialog.cx < sizeMinimum.cx || e_sizeMainDialog.cy < sizeMinimum.cy)
+				if (e_sizeMainDialog.cx < sizeMinimum.cx || e_sizeMainDialog.cy < sizeMinimum.cy) {
 					e_sizeMainDialog = sizeMinimum;
-				else{
+				} else{
 					const HMONITOR hMonitor = MonitorFromWindow(hDlg, MONITOR_DEFAULTTOPRIMARY);
 					MONITORINFO mi;
 					mi.cbSize = sizeof(mi);
@@ -1722,8 +1790,9 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				
 				SendMessage(hDlg, WM_SIZE, 0, 0);
 				
-				if (lParam)
+				if (lParam) {
 					PostMessage(hDlg, WM_COMMAND, (WPARAM)lParam, 0);
+				}
 			}
 			return TRUE;
 		
@@ -1744,7 +1813,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				
 				RECT rcUpdate;
 				if (GetUpdateRect(hDlg, &rcUpdate, TRUE) &&
-				    IntersectRect(&rcUpdate, &rc, &rcUpdate)) {
+						IntersectRect(&rcUpdate, &rc, &rcUpdate)) {
 					PAINTSTRUCT ps;
 					const HDC hdc = BeginPaint(hDlg, &ps);
 					
@@ -1787,8 +1856,9 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						{
 							LVITEM &lvi = ((NMLVDISPINFO*)lParam)->item;
 							Shortcut *const psh = (Shortcut*)lvi.lParam;
-							if (lvi.mask & LVIF_IMAGE)
+							if (lvi.mask & LVIF_IMAGE) {
 								lvi.iImage = psh->getSmallIconIndex();
+							}
 							if (lvi.mask & LVIF_TEXT) {
 								String s;
 								psh->getColumnText(lvi.iSubItem, s);
@@ -1808,7 +1878,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				return 0;
 				
-			}else if (wParam == 0 && ((NMHDR*)lParam)->code == HDN_ENDTRACK) {
+			} else if (wParam == 0 && ((NMHDR*)lParam)->code == HDN_ENDTRACK) {
 				// Get columns size
 				LVCOLUMN lvc;
 				lvc.mask = LVCF_WIDTH;
@@ -1833,8 +1903,9 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				int dx = rcClientNew.right  - rcClientOrig.right;
 				int dy = rcClientNew.bottom - rcClientOrig.bottom;
 				
-				for (int i = 0; i < nbArray(aSizePos); i++)
+				for (int i = 0; i < nbArray(aSizePos); i++) {
 					aSizePos[i].updateGui(dx, dy);
+				}
 				
 				// Resize columns
 				LVCOLUMN lvc;
@@ -1870,8 +1941,8 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				mii.fMask = MIIM_DATA | MIIM_TYPE;
 				mii.cch   = 0;
 				if (GetMenuItemCount(hMenu) == 1 &&
-				    GetMenuItemInfo(hMenu, 0, TRUE, &mii) &&
-				    (mii.fType & MFT_SEPARATOR)) {
+						GetMenuItemInfo(hMenu, 0, TRUE, &mii) &&
+						(mii.fType & MFT_SEPARATOR)) {
 					RemoveMenu(hMenu, 0, MF_BYPOSITION);
 					((FileMenuItem*)mii.dwItemData)->populate(hMenu);
 				}
@@ -1912,8 +1983,9 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				for (lvi.iItem = ListView_GetItemCount(e_hlst); --lvi.iItem >= 0;) {
 					ListView_GetItem(e_hlst, &lvi);
 					Shortcut *const psh = (Shortcut*)lvi.lParam;
-					if (psh == pgfi->psh)
+					if (psh == pgfi->psh) {
 						psh->onGetFileInfo(*pgfi);
+					}
 				}
 				
 				delete pgfi;
@@ -1948,17 +2020,19 @@ LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 				DWORD idProcess;
 				TCHAR pszPath[MAX_PATH];
 				if (GetWindowThreadProcessId(hWnd, &idProcess) &&
-				    idProcess != GetCurrentProcessId() &&
-				    getWindowExecutable(hWnd, pszPath)) {
-					if (rs.isSome())
+						idProcess != GetCurrentProcessId() &&
+						getWindowExecutable(hWnd, pszPath)) {
+					if (rs.isSome()) {
 						rs += _T(';');
+					}
 					rs += pszPath;
 				}
 				
 				String sOldPrograms;
 				getDlgItemText(s_hdlgMain, IDCTXT_PROGRAMS, sOldPrograms);
-				if (lstrcmp(sOldPrograms, rs))
+				if (lstrcmp(sOldPrograms, rs)) {
 					SetDlgItemText(s_hdlgMain, IDCTXT_PROGRAMS, rs);
+				}
 			}
 			break;
 		
@@ -1970,8 +2044,9 @@ LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 					if (lstrcmp(s_psh->m_sPrograms, s_sOldPrograms)) {
 						s_psh->cleanPrograms();
 						SetDlgItemText(s_hdlgMain, IDCTXT_PROGRAMS, s_psh->m_sPrograms);
-					}else
+					} else {
 						messageBox(hWnd, ERR_TARGET, MB_ICONEXCLAMATION);
+					}
 				}
 			}
 			break;
@@ -1979,8 +2054,9 @@ LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		case WM_CAPTURECHANGED:
 			if (s_bCapturingProgram) {
 				s_bCapturingProgram = false;
-				if (s_psh)
+				if (s_psh) {
 					SetDlgItemText(s_hdlgMain, IDCTXT_PROGRAMS, s_sOldPrograms);
+				}
 			}
 			break;
 	}
@@ -2001,16 +2077,20 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUN
 				centerParent(hDlg);
 				
 				// Fill "command line show" list
-				for (int i = 0; i < nbArray(s_aiShow); i++)
-					SendDlgItemMessage(hDlg, IDCCBO_SHOW, CB_ADDSTRING, 0, (LPARAM)getToken(tokShowNormal + i));
+				for (int i = 0; i < nbArray(s_aiShow); i++) {
+					SendDlgItemMessage(hDlg, IDCCBO_SHOW, CB_ADDSTRING, 0,
+							(LPARAM)getToken(tokShowNormal + i));
+				}
 				
 				SetDlgItemText(hDlg, IDCTXT_COMMAND,   s_psh->m_sCommand);
 				SetDlgItemText(hDlg, IDCTXT_DIRECTORY, s_psh->m_sDirectory);
 				
 				int iShow;
-				for (iShow = 0; iShow < nbArray(s_aiShow); iShow++)
-					if (s_aiShow[iShow] == s_psh->m_nShow)
+				for (iShow = 0; iShow < nbArray(s_aiShow); iShow++) {
+					if (s_aiShow[iShow] == s_psh->m_nShow) {
 						break;
+					}
+				}
 				SendDlgItemMessage(hDlg, IDCCBO_SHOW, CB_SETCURSEL, (WPARAM)iShow, 0);
 				
 				CheckDlgButton(hDlg, IDCCHK_SUPPORTFILEOPEN, s_psh->m_bSupportFileOpen);
@@ -2034,13 +2114,14 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUN
 						
 						TCHAR pszTitle[MAX_PATH];
 						loadStringAuto(IDS_BROWSEDIR, pszTitle);
-						if (!browseForFolder(hDlg, pszTitle, pszDir))
+						if (!browseForFolder(hDlg, pszTitle, pszDir)) {
 							break;
+						}
 						
 						// Update internal structures
 						SetDlgItemText(hDlg, IDCTXT_DIRECTORY, pszDir);
 						SendMessage(hDlg, WM_COMMAND, MAKEWPARAM(IDCTXT_DIRECTORY, EN_KILLFOCUS),
-							(LPARAM)GetDlgItem(hDlg, IDCTXT_DIRECTORY));
+								(LPARAM)GetDlgItem(hDlg, IDCTXT_DIRECTORY));
 					}
 					break;
 				
@@ -2076,8 +2157,9 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 			{
 				e_hdlgModal = hDlg;
 				
-				for (int lang = 0; lang < langCount; lang++)
+				for (int lang = 0; lang < langCount; lang++) {
 					ListBox_AddString(hlst, s_asToken[tokLanguageName].get(lang));
+				}
 				ListBox_SetCurSel(hlst, e_lang);
 			}
 			return TRUE;
@@ -2085,8 +2167,9 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 		case WM_COMMAND:
 			switch (LOWORD(wParam)) {
 				case IDCLST_LANGUAGE:
-					if (HIWORD(wParam) != LBN_DBLCLK)
+					if (HIWORD(wParam) != LBN_DBLCLK) {
 						break;
+					}
 				// Fall-through
 				case IDOK:
 					{
@@ -2094,8 +2177,9 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 						if (e_lang != iLang) {
 							setLanguage(iLang);
 							shortcutsSave();
-						}else
+						} else {
 							wParam = IDCANCEL;
+						}
 					}
 				case IDCANCEL:
 					EndDialog(hDlg, LOWORD(wParam));
@@ -2214,8 +2298,9 @@ void updateList()
 		!bCommand, !bCommand,
 		bCommand, bCommand, bCommand, bCommand,
 	};
-	for (int i = 0; i < nbArray(s_aid); i++)
+	for (int i = 0; i < nbArray(s_aid); i++) {
 		EnableWindow(GetDlgItem(s_hdlgMain, s_aid[i]), bSel && abEnabled[i]);
+	}
 	
 	
 	// Icon
@@ -2241,8 +2326,9 @@ int addItem(Shortcut* psh, bool bSelected)
 	lvi.iImage    = I_IMAGECALLBACK;
 	lvi.iItem     = ListView_InsertItem(e_hlst, &lvi);
 	lvi.mask      = LVIF_TEXT;
-	for (lvi.iSubItem = 1; lvi.iSubItem < nbArray(e_acxCol); lvi.iSubItem++)
+	for (lvi.iSubItem = 1; lvi.iSubItem < nbArray(e_acxCol); lvi.iSubItem++) {
 		ListView_SetItem(e_hlst, &lvi);
+	}
 	
 	return lvi.iItem;
 }
@@ -2251,8 +2337,9 @@ int addItem(Shortcut* psh, bool bSelected)
 // Called when some columns of an item are updated.
 void onItemUpdated(int mskColumns)
 {
-	if (mskColumns & (1 << Shortcut::s_iSortColumn))
+	if (mskColumns & (1 << Shortcut::s_iSortColumn)) {
 		ListView_SortItems(e_hlst, Shortcut::compare, NULL);
+	}
 	ListView_EnsureVisible(e_hlst, ListView_GetSelectionMark(e_hlst), FALSE);
 }
 
@@ -2274,12 +2361,12 @@ void trayIconAction(DWORD dwMessage)
 	
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
-	nid.cbSize           = sizeof(NOTIFYICONDATA);
-	nid.hWnd             = e_hwndInvisible;
-	nid.uFlags           = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+	nid.cbSize = sizeof(NOTIFYICONDATA);
+	nid.hWnd = e_hwndInvisible;
+	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	nid.uCallbackMessage = msgClavierNotifyIcon;
 	if (dwMessage != NIM_DELETE) {
-		nid.hIcon         = (HICON)LoadImage(e_hInst, MAKEINTRESOURCE(IDI_APP), IMAGE_ICON, 16,16, 0);
+		nid.hIcon = (HICON)LoadImage(e_hInst, MAKEINTRESOURCE(IDI_APP), IMAGE_ICON, 16,16, 0);
 		lstrcpy(nid.szTip, pszApp);
 	}
 	Shell_NotifyIcon(dwMessage, &nid);
@@ -2296,11 +2383,13 @@ LPCTSTR getToken(int tok)
 // Return a tok* or tokNotFound if not found
 int findToken(LPCTSTR pszToken)
 {
-	for (int tok = 0; tok < nbArray(s_asToken); tok++)
-		for (int lang = 0; lang < langCount; lang++)
-			if (!lstrcmpi(pszToken, s_asToken[tok].get(lang)))
+	for (int tok = 0; tok < nbArray(s_asToken); tok++) {
+		for (int lang = 0; lang < langCount; lang++) {
+			if (!lstrcmpi(pszToken, s_asToken[tok].get(lang))) {
 				return tok;
-	
+			}
+		}
+	}
 	return tokNotFound;
 }
 
@@ -2310,11 +2399,13 @@ int findToken(LPCTSTR pszToken)
 Shortcut* findShortcut(const Keystroke& ks, LPCTSTR pszProgram)
 {
 	Shortcut *pshBest = NULL;
-	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
-		if (psh->match(ks, pszProgram))
-			if (!pshBest || !pshBest->m_bProgramsOnly)
+	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
+		if (psh->match(ks, pszProgram)) {
+			if (!pshBest || !pshBest->m_bProgramsOnly) {
 				pshBest = psh;
-	
+			}
+		}
+	}
 	return pshBest;
 }
 
@@ -2323,8 +2414,9 @@ Shortcut* getSelShortcut()
 {
 	LVITEM lvi;
 	lvi.iItem = ListView_GetNextItem(e_hlst, -1, LVNI_SELECTED);
-	if (lvi.iItem < 0)
+	if (lvi.iItem < 0) {
 		return NULL;
+	}
 	lvi.mask = LVIF_PARAM;
 	ListView_GetItem(e_hlst, &lvi);
 	return (Shortcut*)lvi.lParam;
@@ -2395,12 +2487,13 @@ void Shortcut::save(HANDLE hf)
 		nbLine++;
 	}
 	
-	for (int i = 0; i < condTypeCount; i++)
+	for (int i = 0; i < condTypeCount; i++) {
 		if (m_aCond[i] != condIgnore) {
 			aLine[nbLine].tokKey   = tokConditionCapsLock + i;
 			aLine[nbLine].pszValue = getToken(m_aCond[i] - 1 + tokConditionYes);
 			nbLine++;
 		}
+	}
 	
 	String sText;
 	
@@ -2434,7 +2527,7 @@ void Shortcut::save(HANDLE hf)
 		}
 		
 		
-	}else{
+	} else {
 		// Text
 		
 		// Copy the text, replace "\r\n" by "\r\n>"
@@ -2482,18 +2575,20 @@ void skipUntilComma(TCHAR*& rpc, bool bAcceptEscaping)
 	bool bBackslash = false;
 	TCHAR *pc = pcStart;
 	while (*pc) {
-		if (bBackslash)
+		if (bBackslash) {
 			bBackslash = false;
-		else if (*pc == _T(','))
+		} else if (*pc == _T(',')) {
 			break;
-		else if (bAcceptEscaping && *pc == _T('\\'))
+		} else if (bAcceptEscaping && *pc == _T('\\')) {
 			bBackslash = true;
+		}
 		pc++;
 	}
 	if (*pc) {
 		*pc++ = _T('\0');
-		while (*pc == _T(' '))
+		while (*pc == _T(' ')) {
 			pc++;
+		}
 	}
 	rpc = pc;
 	
@@ -2502,9 +2597,9 @@ void skipUntilComma(TCHAR*& rpc, bool bAcceptEscaping)
 		TCHAR *pcOut = pcStart;
 		bool bBackslash = false;
 		while (*pcIn) {
-			if (*pcIn == _T('\\') && !bBackslash)
+			if (*pcIn == _T('\\') && !bBackslash) {
 				bBackslash = true;
-			else{
+			} else{
 				bBackslash = false;
 				*pcOut++ = *pcIn;
 			}
@@ -2525,26 +2620,31 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 		
 		// Read the line
 		LPTSTR pszLine = rpszCurrent;
-		if (!pszLine)
+		if (!pszLine) {
 			break;
+		}
 		LPTSTR pszLineEnd = pszLine;
-		while (*pszLineEnd && *pszLineEnd != _T('\n') && *pszLineEnd != _T('\r'))
+		while (*pszLineEnd && *pszLineEnd != _T('\n') && *pszLineEnd != _T('\r')) {
 			pszLineEnd++;
+		}
 		if (*pszLineEnd) {
 			*pszLineEnd = _T('\0');
 			rpszCurrent = pszLineEnd + 1;
-		}else
+		} else {
 			rpszCurrent = NULL;
+		}
 		
 		int len = (int)(pszLineEnd - pszLine);
 		
 		// If end of shortcut, stop
-		if (*pszLine == pszSeparator[0])
+		if (*pszLine == pszSeparator[0]) {
 			break;
+		}
 		
 		// If the line is empty, ignore it
-		if (!len)
+		if (!len) {
 			continue;
+		}
 		
 		// If next line of text, get it
 		if (*pszLine == _T('>') && !m_bCommand && *m_sText) {
@@ -2555,38 +2655,43 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 		
 		// Get the key name
 		TCHAR *pcSep = pszLine;
-		while (*pcSep && *pcSep != _T(' ') && *pcSep != _T('='))
+		while (*pcSep && *pcSep != _T(' ') && *pcSep != _T('=')) {
 			pcSep++;
+		}
 		const TCHAR cOldSel = *pcSep;
 		*pcSep = 0;
 		
 		// Identify the key
 		const int tokKey = findToken(pszLine);
-		if (tokKey == tokNotFound)
+		if (tokKey == tokNotFound) {
 			continue;
+		}
 		
 		// Get the value
 		*pcSep = cOldSel;
-		while (*pcSep && *pcSep != _T('='))
+		while (*pcSep && *pcSep != _T('=')) {
 			pcSep++;
-		if (*pcSep)
+		}
+		if (*pcSep) {
 			pcSep++;
+		}
 		len -= (pcSep - pszLine);
 		switch (tokKey) {
 			
 			// Language
 			case tokLanguage:
-				{
-					for (int lang = 0; lang < langCount; lang++)
-						if (!lstrcmpi(pcSep, s_asToken[tokLanguageName].get(lang)))
-							setLanguage(lang);
+				for (int lang = 0; lang < langCount; lang++) {
+					if (!lstrcmpi(pcSep, s_asToken[tokLanguageName].get(lang))) {
+						setLanguage(lang);
+					}
 				}
 				break;
 			
 			// Main window size
 			case tokSize:
-				while (*pcSep == _T(' '))
+				while (*pcSep == _T(' ')) {
 					pcSep++;
+				}
 				e_sizeMainDialog.cx = StrToInt(pcSep);
 				
 				skipUntilComma(pcSep);
@@ -2602,11 +2707,13 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 			// Main window columns width
 			case tokColumns:
 				for (int i = 0; i < colCount - 1; i++) {
-					if (!*pcSep)
+					if (!*pcSep) {
 						break;
+					}
 					int cx = StrToInt(pcSep);
-					if (cx >= 0)
+					if (cx >= 0) {
 						e_acxCol[i] = cx;
+					}
 					skipUntilComma(pcSep);
 				}
 				break;
@@ -2614,8 +2721,9 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 			// Sorting column
 			case tokSorting:
 				s_iSortColumn = StrToInt(pcSep);
-				if (s_iSortColumn < 0 || s_iSortColumn >= colCount)
+				if (s_iSortColumn < 0 || s_iSortColumn >= colCount) {
 					s_iSortColumn = colContents;
+				}
 				break;
 			
 			// Shortcut
@@ -2668,8 +2776,9 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 			case tokWindow:
 				{
 					const int iShow = findToken(pcSep) - tokShowNormal;
-					if (0 <= iShow && iShow <= nbArray(s_aiShow))
+					if (0 <= iShow && iShow <= nbArray(s_aiShow)) {
 						m_nShow = s_aiShow[iShow];
+					}
 				}
 				break;
 			
@@ -2684,8 +2793,9 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 			case tokConditionScrollLock:
 				{
 					int cond = findToken(pcSep);
-					if (tokConditionYes <= cond && cond <= tokConditionNo)
+					if (tokConditionYes <= cond && cond <= tokConditionNo) {
 						m_aCond[tokKey - tokConditionCapsLock] = cond - tokConditionYes + condYes;
+					}
 				}
 				break;
 		}
@@ -2699,11 +2809,12 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 	// and any count of shortcuts having different programs conditions
 	String *const asProgram = getPrograms();
 	bool bOK = true;
-	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
+	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
 		if (psh->testConflict(*this, asProgram, m_bProgramsOnly)) {
 			bOK = false;
 			break;
 		}
+	}
 	delete [] asProgram;
 	
 	return bOK;
@@ -2723,8 +2834,9 @@ void Shortcut::findExecutable(LPTSTR pszExecutable)
 // Get several icons, then delete the GETFILEICON* array.
 DWORD WINAPI threadGetFilesIcon(GETFILEICON* apgfi[])
 {
-	for (int i = 0; apgfi[i]; i++)
+	for (int i = 0; apgfi[i]; i++) {
 		threadGetFileIcon(*apgfi[i]);
+	}
 	delete [] apgfi;
 	return 0;
 }
@@ -2757,16 +2869,18 @@ void Shortcut::onGetFileInfo(GETFILEICON& gfi)
 		lvfi.flags  = LVFI_PARAM;
 		lvfi.lParam = (LPARAM)gfi.psh;
 		const int iItem = ListView_FindItem(e_hlst, -1, &lvfi);
-		if (iItem >= 0)
+		if (iItem >= 0) {
 			ListView_RedrawItems(e_hlst, iItem,iItem);
+		}
 		
-	}else{
+	} else {
 		// Big icon
 		
 		m_hIcon = (gfi.bOK) ? gfi.shfi.hIcon : NULL;
-		if (s_psh == this)
+		if (s_psh == this) {
 			SendDlgItemMessage(s_hdlgMain, IDCLBL_ICON, STM_SETICON,
-				(WPARAM)((m_bCommand) ? m_hIcon : NULL), 0);
+					(WPARAM)((m_bCommand) ? m_hIcon : NULL), 0);
+		}
 	}
 }
 
@@ -2776,18 +2890,21 @@ void Shortcut::findSmallIconIndex()
 	VERIFV(m_iSmallIcon != iconThreadRunning);
 	m_iSmallIcon = iconThreadRunning;
 	
-	if (m_bCommand)
+	if (m_bCommand) {
 		fillGetFileIcon(NULL, true);
+	}
 }
 
 void Shortcut::fillGetFileIcon(GETFILEICON* pgfi, bool bSmallIcon)
 {
 	const bool bStart = !pgfi;
-	if (bStart)
+	if (bStart) {
 		pgfi = new GETFILEICON;
+	}
 	
-	if (bSmallIcon)
+	if (bSmallIcon) {
 		m_iSmallIcon = iconThreadRunning;
+	}
 	
 	pgfi->psh         = this;
 	pgfi->uFlags      = (bSmallIcon)
@@ -2796,10 +2913,11 @@ void Shortcut::fillGetFileIcon(GETFILEICON* pgfi, bool bSmallIcon)
 	findExecutable(pgfi->pszExecutable);
 	
 	if (bStart) {
-		if (*pgfi->pszExecutable)
+		if (*pgfi->pszExecutable) {
 			startThread((LPTHREAD_START_ROUTINE)threadGetFileIcon, pgfi);
-		else
+		} else {
 			threadGetFileIcon(*pgfi);
+		}
 	}
 }
 
@@ -2810,11 +2928,12 @@ void Shortcut::findIcon()
 
 int Shortcut::getSmallIconIndex()
 {
-	if (!m_bCommand)
+	if (!m_bCommand) {
 		return -1;
-	
-	if (m_iSmallIcon == iconNeeded)
+	}
+	if (m_iSmallIcon == iconNeeded) {
 		findSmallIconIndex();
+	}
 	return m_iSmallIcon;
 }
 
@@ -2870,14 +2989,16 @@ void Shortcut::getColumnText(int iColumn, String& rs) const
 			{
 				static const TCHAR s_acCond[] = { _T('\0'), _T('+'), _T('-') };
 				
-				for (int cond = 0; cond < 3; cond++)
+				for (int cond = 0; cond < 3; cond++) {
 					if (m_aCond[cond]) {
 						rs += s_acCond[m_aCond[cond]];
 						rs += s_sCondKeys.get()[cond];
 					}
+				}
 				if (m_sPrograms.isSome()) {
-					if (rs.isSome())
+					if (rs.isSome()) {
 						rs += _T(' ');
+					}
 					rs += (m_bProgramsOnly) ? _T('+') : _T('-');
 					rs += m_sPrograms;
 				}
@@ -2899,26 +3020,29 @@ int CALLBACK Shortcut::compare(const Shortcut* psh1, const Shortcut* psh2, LPARA
 {
 	switch (s_iSortColumn) {
 		case colContents:
-			if (psh1->m_bCommand != psh2->m_bCommand)
+			if (psh1->m_bCommand != psh2->m_bCommand) {
 				return (!psh1->m_bCommand || psh2->m_bCommand) ? +1 : -1;
+			}
 			break;
 		
 		case colShortcut:
 			{
 				const int vkFlags1 = psh1->m_vkFlags;
 				const int vkFlags2 = psh2->m_vkFlags;
-				if (vkFlags1 != vkFlags2)
+				if (vkFlags1 != vkFlags2) {
 					for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
 						int vkFlags = e_aSpecialKey[i].vkFlags;
 						int diff = (int)(vkFlags1 & vkFlags) - (int)(vkFlags2 & vkFlags);
-						if (diff)
+						if (diff) {
 							return diff;
-						
+						}
 						vkFlags <<= vkFlagsRightOffset;
 						diff = (int)(vkFlags1 & vkFlags) - (int)(vkFlags2 & vkFlags);
-						if (diff)
+						if (diff) {
 							return diff;
+						}
 					}
+				}
 				
 				return (int)psh1->m_vk - (int)psh2->m_vk;
 			}
@@ -2936,8 +3060,9 @@ int CALLBACK Shortcut::compare(const Shortcut* psh1, const Shortcut* psh2, LPARA
 bool Shortcut::tryChangeDirectory(HWND hdlg, LPCTSTR pszDirectory)
 {
 	// Get the active dialog box
-	while (hdlg && (GetWindowStyle(hdlg) & WS_CHILD))
+	while (hdlg && (GetWindowStyle(hdlg) & WS_CHILD)) {
 		hdlg = GetParent(hdlg);
+	}
 	
 	VERIF(hdlg);
 	
@@ -2980,18 +3105,18 @@ bool Shortcut::tryChangeDirectory(HWND hdlg, LPCTSTR pszDirectory)
 	// - Check that the dialog box class contains "bosa_sdm_"
 	// - Find the first visible edit box (Edit or RichEdit)
 	if (checkWindowClass(hdlg, _T("bosa_sdm_"), true)) {
-		
 		const DWORD dwStyle = GetWindowStyle(hdlg);
 		UINT id = 0;
-		if (dwStyle == 0x96CC0000)
+		if (dwStyle == 0x96CC0000) {
 			id = 0x36;
-		else if (dwStyle == 0x94C80000)
+		} else if (dwStyle == 0x94C80000) {
 			id = 0x30;
+		}
 		
 		const HWND hctl = GetDlgItem(hdlg, id);
 		if (id && hctl &&
-		   (checkWindowClass(hctl, _T("Edit"), false) ||
-		    checkWindowClass(hctl, _T("RichEdit20W"), false))) {
+				(checkWindowClass(hctl, _T("Edit"), false) ||
+				checkWindowClass(hctl, _T("RichEdit20W"), false))) {
 			TCHAR pszPathSave[MAX_PATH];
 			SendMessage(hctl, WM_GETTEXT, nbArray(pszPathSave), (LPARAM)pszPathSave);
 			if (SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszDirectoryNoQuotes)) {
@@ -3012,9 +3137,9 @@ bool Shortcut::tryChangeDirectory(HWND hdlg, LPCTSTR pszDirectory)
 		static const UINT aid[] = { cmb13, edt1 };
 		for (size_t control = 0; control < nbArray(aid); control++) {
 			const HWND hctl = GetDlgItem(hdlg, aid[control]);
-			if (!hctl)
+			if (!hctl) {
 				continue;
-			
+			}
 			TCHAR pszPathSave[MAX_PATH];
 			SendMessage(hctl, WM_GETTEXT, nbArray(pszPathSave), (LPARAM)pszPathSave);
 			if (SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszDirectoryNoQuotes)) {
@@ -3057,21 +3182,23 @@ bool Shortcut::execute(bool bFromHotkey) const
 		// because it is one of Windows keyboard layout shortcut:
 		// simulate Ctrl down, release Alt and Shift, then release Ctrl
 		bool bReleaseControl = false;
-		if ((abKeyboard[VK_MENU]    & bKeyDown) &&
-		    (abKeyboard[VK_SHIFT]   & bKeyDown) &&
-		   !(abKeyboard[VK_CONTROL] & bKeyDown)) {
+		if ((abKeyboard[VK_MENU] & bKeyDown) &&
+				(abKeyboard[VK_SHIFT] & bKeyDown) &&
+				!(abKeyboard[VK_CONTROL] & bKeyDown)) {
 			bReleaseControl = true;
 			keybdEvent(VK_CONTROL, false);
 			abKeyboardNew[VK_CONTROL] = bKeyDown;
 		}
 		
-		for (int i = 0; i < nbArray(e_aSpecialKey); i++)
+		for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
 			abKeyboardNew[e_aSpecialKey[i].vk] = 0;
+		}
 		abKeyboardNew[m_vk] = 0;
 		SetKeyboardState(abKeyboardNew);
 		
-		if (bReleaseControl)
+		if (bReleaseControl) {
 			keybdEvent(VK_CONTROL, true);
+		}
 	}
 	
 	if (m_bCommand) {
@@ -3079,7 +3206,9 @@ bool Shortcut::execute(bool bFromHotkey) const
 		
 		// Required because the launched program
 		// can be a script that simulates keystrokes
-		releaseSpecialKeys(abKeyboard);
+		if (bCanReleaseSpecialKeys) {
+			releaseSpecialKeys(abKeyboard);
+		}
 		
 		if (!m_bSupportFileOpen || !tryChangeDirectory(hwndFocus, m_sCommand)) {
 			clipboardToEnvironment();
@@ -3088,7 +3217,7 @@ bool Shortcut::execute(bool bFromHotkey) const
 			startThread(threadShellExecute, pParams);
 		}
 		
-	}else{
+	} else {
 		// Text
 		
 		enum KIND
@@ -3104,8 +3233,9 @@ bool Shortcut::execute(bool bFromHotkey) const
 		LPCTSTR pszText = m_sText;
 		for (int i = 0; pszText[i]; i++) {
 			const UTCHAR c = (UTCHAR)pszText[i];
-			if (c == _T('\n'))
+			if (c == _T('\n')) {
 				continue;
+			}
 			
 			if (!bBackslash && c == _T('\\')) {
 				bBackslash = true;
@@ -3113,8 +3243,9 @@ bool Shortcut::execute(bool bFromHotkey) const
 			}
 			
 			if (bBackslash || c != _T('[')) {
-				if (lastKind != kindText)
+				if (lastKind != kindText) {
 					sleepBackground(0);
+				}
 				lastKind = kindText;
 				
 				bBackslash = false;
@@ -3122,27 +3253,31 @@ bool Shortcut::execute(bool bFromHotkey) const
 				PostMessage(hwndFocus, WM_CHAR, c, MAKELPARAM(1,
 					MapVirtualKey(LOBYTE(vkMask), 0)));
 				
-			}else{
+			} else {
 				// Inline shortcut, or inline command line execution
 				
 				// Go to the end of the shortcut, and serialize it
 				const LPCTSTR pcStart = pszText + i + 1;
 				const TCHAR *pcEnd = pcStart;
-				while (*pcEnd && (pcEnd[-1] == _T('\\') || pcEnd[0] != _T(']')))
+				while (*pcEnd && (pcEnd[-1] == _T('\\') || pcEnd[0] != _T(']'))) {
 					pcEnd++;
-				if (!*pcEnd)
+				}
+				if (!*pcEnd) {
 					break;
+				}
 				
 				String sInside;
 				bool bBackslash2 = false;
-				for (const TCHAR *pc = pcStart; pc < pcEnd; pc++)
+				for (const TCHAR *pc = pcStart; pc < pcEnd; pc++) {
 					if (bBackslash2) {
 						bBackslash2 = false;
 						sInside += *pc;
-					}else if (*pc == _T('\\'))
+					} else if (*pc == _T('\\')) {
 						bBackslash2 = true;
-					else
+					} else {
 						sInside += *pc;
+					}
+				}
 				
 				if (sInside.isEmpty()) {
 					// Nothing: catch the focus
@@ -3150,7 +3285,7 @@ bool Shortcut::execute(bool bFromHotkey) const
 					lastKind = kindNone;
 					commandEmpty(idThread, hwndFocus);
 					
-				}else if (*pcStart == _T('[') && *pcEnd == _T(']')) {
+				} else if (*pcStart == _T('[') && *pcEnd == _T(']')) {
 					// Double brackets: [[command line]]
 					
 					pcEnd++;
@@ -3162,43 +3297,46 @@ bool Shortcut::execute(bool bFromHotkey) const
 					clipboardToEnvironment();
 					shellExecuteCmdLine((LPCTSTR)sInside + 1, NULL, SW_SHOWDEFAULT);
 					
-				}else if (*pcStart == _T('{') && pcEnd[-1] == _T('}')) {
+				} else if (*pcStart == _T('{') && pcEnd[-1] == _T('}')) {
 					// Braces: [{command}]
 					
 					sInside[sInside.getLength() - 1] = _T('\0');
 					const LPCTSTR pszCommand = sInside + 1;
 					
 					LPTSTR pszArg;
-					for (pszArg = (LPTSTR)pszCommand; *pszArg && *pszArg != _T(','); pszArg++)
+					for (pszArg = (LPTSTR)pszCommand; *pszArg && *pszArg != _T(','); pszArg++) {
 						;
+					}
 					*pszArg++ = _T('\0');
 					
-					if (!lstrcmpi(pszCommand, _T("Wait")))
+					if (!lstrcmpi(pszCommand, _T("Wait"))) {
 						commandWait(pszArg);
-					else if (!lstrcmpi(pszCommand, _T("Focus"))) {
-						if (!commandFocus(idThread, hwndFocus, pszArg))
+					} else if (!lstrcmpi(pszCommand, _T("Focus"))) {
+						if (!commandFocus(idThread, hwndFocus, pszArg)) {
 							break;
-					}else if (!lstrcmpi(pszCommand, _T("Copy")))
+						}
+					} else if (!lstrcmpi(pszCommand, _T("Copy"))) {
 						commandCopy(pszArg);
-					else if (!lstrcmpi(pszCommand, _T("MouseButton")))
+					} else if (!lstrcmpi(pszCommand, _T("MouseButton"))) {
 						commandMouseButton(pszArg);
-					else if (!lstrcmpi(pszCommand, _T("MouseMoveTo"))) {
+					} else if (!lstrcmpi(pszCommand, _T("MouseMoveTo"))) {
 						const POINT ptOrigin = { 0, 0 };
 						commandMouseMove(ptOrigin, pszArg);
-					}else if (!lstrcmpi(pszCommand, _T("MouseMoveToFocus"))) {
+					} else if (!lstrcmpi(pszCommand, _T("MouseMoveToFocus"))) {
 						RECT rcFocusedWindow;
 						const HWND hwndOwner = GetAncestor(hwndFocus, GA_ROOT);
-						if (!hwndOwner || !GetWindowRect(hwndOwner, &rcFocusedWindow))
+						if (!hwndOwner || !GetWindowRect(hwndOwner, &rcFocusedWindow)) {
 							rcFocusedWindow.left = rcFocusedWindow.top = 0;
+						}
 						commandMouseMove((const POINT&)rcFocusedWindow, pszArg);
-					}else if (!lstrcmpi(pszCommand, _T("MouseMoveBy"))) {
+					} else if (!lstrcmpi(pszCommand, _T("MouseMoveBy"))) {
 						POINT ptOrigin;
 						GetCursorPos(&ptOrigin);
 						commandMouseMove(ptOrigin, pszArg);
-					}else if (!lstrcmpi(pszCommand, _T("MouseWheel")))
+					} else if (!lstrcmpi(pszCommand, _T("MouseWheel"))) {
 						commandMouseWheel(pszArg);
-					
-				}else{
+					}
+				} else {
 					// Simple brackets: [keystroke]
 					
 					releaseSpecialKeys(abKeyboard);
@@ -3230,32 +3368,41 @@ bool Shortcut::execute(bool bFromHotkey) const
 								}
 								
 								keybd_event(VK_MENU, scanCodeAlt, KEYEVENTF_KEYUP, 0);
-								if (bAltIsHotKey)
+								if (bAltIsHotKey) {
 									ks.registerHotKey();
+								}
 								
-							}else{
+							} else {
 								const BYTE bFlags = HIBYTE(wKey);
 								ks.m_vk      = LOBYTE(wKey);
 								ks.m_vkFlags = 0;
-								if (bFlags & (1 << 0))   ks.m_vkFlags |= MOD_SHIFT;
-								if (bFlags & (1 << 1))   ks.m_vkFlags |= MOD_CONTROL;
-								if (bFlags & (1 << 2))   ks.m_vkFlags |= MOD_ALT;
+								if (bFlags & (1 << 0)) {
+									ks.m_vkFlags |= MOD_SHIFT;
+								}
+								if (bFlags & (1 << 1)) {
+									ks.m_vkFlags |= MOD_CONTROL;
+								}
+								if (bFlags & (1 << 2)) {
+									ks.m_vkFlags |= MOD_ALT;
+								}
 								
 								const bool bWasRegistered = ks.unregisterHotKey();
 								ks.simulateTyping(hwndFocus);
-								if (bWasRegistered)
+								if (bWasRegistered) {
 									ks.registerHotKey();
+								}
 							}
 						}
 						
-					}else{
+					} else {
 						// Simple brackets: [keystroke]
 						
 						ks.serialize(sInside.get());
 						const bool bWasRegistered = ks.unregisterHotKey();
 						ks.simulateTyping(hwndFocus);
-						if (bWasRegistered)
+						if (bWasRegistered) {
 							ks.registerHotKey();
+						}
 					}
 				}
 				
@@ -3299,17 +3446,19 @@ bool commandFocus(DWORD& ridThread, HWND& rhwndFocus, LPTSTR pszArg)
 	
 	// Find the given window
 	const bool bIgnoreNotFound = (pszArg[0] == _T('!'));
-	if (bIgnoreNotFound)
+	if (bIgnoreNotFound) {
 		pszArg++;
+	}
 	const LPCTSTR pszWindowName = pszArg;
 	skipUntilComma(pszArg, true);
 	
 	if (*pszWindowName) {
 		const HWND hwndTarget = findWindowByName(pszWindowName);
-		if (hwndTarget)
+		if (hwndTarget) {
 			SetForegroundWindow(hwndTarget);
-		else if (!bIgnoreNotFound)
+		} else if (!bIgnoreNotFound) {
 			return false;
+		}
 	}
 	
 	Keystroke::detachKeyboardFocus(ridThread);
@@ -3327,8 +3476,9 @@ void commandCopy(LPTSTR pszArg)
 	VERIFV(hMem);
 	
 	const LPTSTR pszMem = (LPTSTR)GlobalLock(hMem);
-	if (pszMem)
+	if (pszMem) {
 		lstrcpy(pszMem, pszArg);
+	}
 	GlobalUnlock(hMem);
 	
 	OpenClipboard(NULL);
@@ -3420,7 +3570,7 @@ void fillSpecialCharsMenu(HMENU hMenu, int pos, UINT idFirst)
 void escapeString(LPCTSTR psz, String& rs)
 {
 	rs.getBuffer(lstrlen(psz) + 1);
-	for (;;)
+	for (;;) {
 		switch (*psz) {
 			case '\0':
 				return;
@@ -3435,6 +3585,7 @@ void escapeString(LPCTSTR psz, String& rs)
 				rs += *psz++;
 				break;
 		}
+	}
 }
 
 

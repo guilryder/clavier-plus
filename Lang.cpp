@@ -45,11 +45,11 @@ static void* loadResource(UINT id, LPCTSTR pszType);
 int getDefaultLanguage()
 {
 	const LANGID langID = PRIMARYLANGID(LANGIDFROMLCID(GetUserDefaultLCID()));
-	
-	for (int lang = 0; lang < nbArray(s_aLangID); lang++)
-		if (PRIMARYLANGID(s_aLangID[lang]) == langID)
+	for (int lang = 0; lang < nbArray(s_aLangID); lang++) {
+		if (PRIMARYLANGID(s_aLangID[lang]) == langID) {
 			return lang;
-	
+		}
+	}
 	return langEN;
 }
 
@@ -81,8 +81,9 @@ const STRING_RESOURCE* loadStringResource(UINT id)
 		(const STRING_RESOURCE*)loadResource(id / 16 + 1, RT_STRING);
 	VERIFP(pResource, NULL);
 	
-	for (id &= 15; id > 0; id--)
+	for (id &= 15; id > 0; id--) {
 		pResource = (STRING_RESOURCE*)(pResource->wsz + pResource->len);
+	}
 	
 	return pResource;
 }
@@ -91,13 +92,15 @@ const STRING_RESOURCE* loadStringResource(UINT id)
 void loadString(UINT id, LPTSTR psz, int buf)
 {
 	const STRING_RESOURCE *const pResource = loadStringResource(id);
-	if (buf > pResource->len)
+	if (buf > pResource->len) {
 		buf = pResource->len + 1;
+	}
 	
-	if (pResource)
+	if (pResource) {
 		pResource->copy(psz, buf);
-	else
+	} else {
 		*psz = _T('\0');
+	}
 }
 
 

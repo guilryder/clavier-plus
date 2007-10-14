@@ -63,8 +63,9 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 				loadStringAuto(IDS_CONDITIONS, pszConds);
 				TCHAR *pc = pszConds;
 				for (int iCond = 0; iCond < condCount; iCond++) {
-					while (*pc != _T(';'))
+					while (*pc != _T(';')) {
 						pc++;
+					}
 					*pc++ = _T('\0');
 				}
 				
@@ -100,8 +101,9 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 							break;
 						}
 						
-						for (int i = 0; i < condTypeCount; i++)
+						for (int i = 0; i < condTypeCount; i++) {
 							s_ks.m_aCond[i] = ComboBox_GetCurSel(GetDlgItem(hDlg, IDCCBO_CAPSLOCK + i));
+						}
 					}
 					// Fall-through
 				
@@ -143,8 +145,9 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		
 		case WM_KEYDOWN:
 		case WM_SYSKEYDOWN:
-			if (s_ksReset)
+			if (s_ksReset) {
 				s_ks.reset();
+			}
 			bIsDown = true;
 			// Fall-through
 		
@@ -155,21 +158,23 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 				DWORD vkFlags = s_ks.m_vkFlags;
 				bool bIsSpecial = false;
 				for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
-					const BYTE vk      = e_aSpecialKey[i].vk;
-					const BYTE vkLeft  = e_aSpecialKey[i].vkLeft;
+					const BYTE vk = e_aSpecialKey[i].vk;
+					const BYTE vkLeft = e_aSpecialKey[i].vkLeft;
 					const BYTE vkRight = (BYTE)(vkLeft + 1);
 					if (wParam == vk || wParam == vkLeft || wParam == vkRight) {
 						wParam = vk;
 						bIsSpecial = true;
 					}
-					
 					const DWORD vkKeyFlags = e_aSpecialKey[i].vkFlags;
-					if (IsKeyDown(vkLeft))
+					if (IsKeyDown(vkLeft)) {
 						vkFlags |= vkKeyFlags;
-					else if (IsKeyDown(vkRight))
+					} else if (IsKeyDown(vkRight)) {
 						vkFlags |= (DWORD)vkKeyFlags << vkFlagsRightOffset;
-					else
+					} else if (IsKeyDown(vk)) {  // Required by Win 9x
+						vkFlags |= vkKeyFlags;
+					} else {
 						vkFlags &= ~vkKeyFlags;
+					}
 				}
 				
 				// Key
@@ -178,14 +183,16 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 				bool bUpdateFlags = true;
 				if (bIsDown) {
 					s_ksReset = false;
-					if (!bIsSpecial)
+					if (!bIsSpecial) {
 						s_ks.m_vk = Keystroke::filterVK((BYTE)wParam);
-				}else{
+					}
+				} else {
 					s_ksReset |= !bIsSpecial;
 					bUpdateFlags &= !s_ks.m_vk;
 				}
-				if (bUpdateFlags)
+				if (bUpdateFlags) {
 					s_ks.m_vkFlags = vkFlags;
+				}
 			}
 			// Fall-through
 		
@@ -194,8 +201,9 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			{
 				TCHAR pszHotKey[bufHotKey];
 				s_ks.getKeyName(pszHotKey);
-				if (!*pszHotKey)
+				if (!*pszHotKey) {
 					lstrcpy(pszHotKey, getToken(tokNone));
+				}
 				
 				SetWindowText(hWnd, pszHotKey);
 				const int len = lstrlen(pszHotKey);
@@ -205,8 +213,9 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	}
 	
 	// Ignore mouse events
-	if (WM_MOUSEFIRST <= uMsg && uMsg <= WM_MOUSELAST)
+	if (WM_MOUSEFIRST <= uMsg && uMsg <= WM_MOUSELAST) {
 		return 0;
+	}
 	
 	return CallWindowProc(s_prcKeystrokeCtl, hWnd, uMsg, wParam, lParam);
 }
@@ -237,7 +246,7 @@ void Keystroke::getKeyName(LPTSTR pszHotKey) const
 	
 	// Special keys
 	for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
-		const int vkFlagsLeft  = e_aSpecialKey[i].vkFlags;
+		const int vkFlagsLeft = e_aSpecialKey[i].vkFlags;
 		const int vkFlagsRight = vkFlagsLeft << vkFlagsRightOffset;
 		if (m_vkFlags & (vkFlagsLeft | vkFlagsRight)) {
 			StrNCat(pszHotKey, getToken(e_aSpecialKey[i].tok), bufHotKey);
@@ -263,13 +272,15 @@ bool Keystroke::isKeyExtended(UINT vk)
 void Keystroke::getKeyName(UINT vk, LPTSTR pszHotKey)
 {
 	long lScan = (::MapVirtualKey(LOBYTE(vk), 0) << 16) | (1L << 25);
-	if (isKeyExtended(vk))
+	if (isKeyExtended(vk)) {
 		lScan |= 1L << 24;
+	}
 	
 	const int len = lstrlen(pszHotKey);
 	::GetKeyNameText(lScan, pszHotKey + len, bufHotKey - len);
-	if (vk >= 0xA6 && vk <= 0xB7 || (vk && !*pszHotKey))
+	if (vk >= 0xA6 && vk <= 0xB7 || (vk && !*pszHotKey)) {
 		wsprintf(pszHotKey + len, _T("#%d"), vk);
+	}
 }
 
 
@@ -280,12 +291,13 @@ bool Keystroke::match(const Keystroke& ks) const
 	
 	if (m_bDistinguishLeftRight) {
 		VERIF(ks.m_bDistinguishLeftRight && m_vkFlags == ks.m_vkFlags);
-	}else{
+	} else {
 		VERIF(getVkFlagsNoSide() == ks.getVkFlagsNoSide());
 	}
 	
-	for (int i = 0; i < condTypeCount; i++)
+	for (int i = 0; i < condTypeCount; i++) {
 		VERIF(m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
+	}
 	return true;
 }
 
@@ -294,10 +306,9 @@ bool Keystroke::match(const Keystroke& ks) const
 void Keystroke::registerHotKey()
 {
 	const WORD vkFlags = getVkFlagsNoSide();
-	
-	if (m_vk == VK_NUMPAD5)
+	if (m_vk == VK_NUMPAD5) {
 		RegisterHotKey(NULL, MAKEWORD(VK_CLEAR, vkFlags), vkFlags, VK_CLEAR);
-	
+	}
 	RegisterHotKey(NULL, MAKEWORD(m_vk, vkFlags), vkFlags, m_vk);
 }
 
@@ -305,10 +316,9 @@ void Keystroke::registerHotKey()
 bool Keystroke::unregisterHotKey()
 {
 	const WORD vkFlags = getVkFlagsNoSide();
-	
-	if (m_vk == VK_NUMPAD5)
+	if (m_vk == VK_NUMPAD5) {
 		UnregisterHotKey(NULL, MAKEWORD(VK_CLEAR, vkFlags));
-	
+	}
 	return ToBool(UnregisterHotKey(NULL, MAKEWORD(m_vk, vkFlags)));
 }
 
@@ -330,13 +340,15 @@ void Keystroke::serialize(LPTSTR psz)
 			psz++;
 		}
 		bSkipPlus = true;
-		if (!*psz)
+		if (!*psz) {
 			break;
+		}
 		
 		// Get the next word
 		TCHAR *pcNext = psz;
-		while (*pcNext && *pcNext != _T(' ') && *pcNext != _T('+'))
+		while (*pcNext && *pcNext != _T(' ') && *pcNext != _T('+')) {
 			pcNext++;
+		}
 		const TCHAR cOldNext = *pcNext;
 		*pcNext = _T('\0');
 		
@@ -355,7 +367,7 @@ void Keystroke::serialize(LPTSTR psz)
 				}
 			}
 			
-		}else if (vkFlagsLast && (tok == tokLeft || tok == tokRight)) {
+		} else if (vkFlagsLast && (tok == tokLeft || tok == tokRight)) {
 			// Key side
 			
 			if (tok == tokRight) {
@@ -364,23 +376,23 @@ void Keystroke::serialize(LPTSTR psz)
 				vkFlagsLast = 0;
 			}
 			
-		}else{
+		} else {
 			// Normal key token
 			
 			*pcNext = cOldNext;
 			
 			for (int vk = 0x07; vk < 0xFF; vk++) {
-				if (vk == 0x0A)
+				if (vk == 0x0A) {
 					vk = 0x0B;
-				else if (vk == 0x5E || vk == 0xE0)
+				} else if (vk == 0x5E || vk == 0xE0) {
 					continue;
-				else if (vk == 0xB8)
+				} else if (vk == 0xB8) {
 					vk = 0xB9;
-				else if (vk == 0xC1)
+				} else if (vk == 0xC1) {
 					vk = 0xD7;
-				else if (vk == 0xA0)
+				} else if (vk == 0xA0) {
 					vk = 0xA5;
-				else{
+				} else {
 					TCHAR pszHotKey[bufHotKey] = _T("");
 					getKeyName(vk, pszHotKey);
 					if (!lstrcmpi(psz, pszHotKey)) {
@@ -395,8 +407,9 @@ void Keystroke::serialize(LPTSTR psz)
 		}
 		
 		psz = pcNext;
-		if (cOldNext)
+		if (cOldNext) {
 			psz++;
+		}
 	}
 }
 
@@ -404,8 +417,9 @@ void Keystroke::serialize(LPTSTR psz)
 void Keystroke::keybdEvent(UINT vk, bool bUp)
 {
 	DWORD dwFlags = (bUp) ? KEYEVENTF_KEYUP : 0;
-	if (isKeyExtended(vk))
+	if (isKeyExtended(vk)) {
 		dwFlags |= KEYEVENTF_EXTENDEDKEY;
+	}
 	keybd_event((BYTE)vk, (BYTE)MapVirtualKey(vk, 0), dwFlags, 0);
 }
 
@@ -416,10 +430,13 @@ void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bSpecialKeys) cons
 	const DWORD vkFlags = getVkFlagsNoSide();
 	
 	// Press the special keys
-	if (bSpecialKeys)
-		for (int i = 0; i < nbArray(e_aSpecialKey); i++)
-			if (vkFlags & e_aSpecialKey[i].vkFlags)
+	if (bSpecialKeys) {
+		for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+			if (vkFlags & e_aSpecialKey[i].vkFlags) {
 				keybdEvent(e_aSpecialKey[i].vk, false);
+			}
+		}
+	}
 	
 	// Press and release the main key
 	keybdEvent(m_vk, false);
@@ -427,10 +444,13 @@ void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bSpecialKeys) cons
 	keybdEvent(m_vk, true);
 	
 	// Release the special keys
-	if (bSpecialKeys)
-		for (int i = 0; i < nbArray(e_aSpecialKey); i++)
-			if (vkFlags & e_aSpecialKey[i].vkFlags)
+	if (bSpecialKeys) {
+		for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+			if (vkFlags & e_aSpecialKey[i].vkFlags) {
 				keybdEvent(e_aSpecialKey[i].vk, true);
+			}
+		}
+	}
 }
 
 
@@ -488,14 +508,14 @@ TCHAR e_pszIniFile[MAX_PATH];
 // Open the key for Clavier+ launching at Windows startup
 HKEY openAutoStartKey(LPTSTR pszPath)
 {
-	if (!GetModuleFileName(NULL, pszPath, MAX_PATH))
+	if (!GetModuleFileName(NULL, pszPath, MAX_PATH)) {
 		*pszPath = 0;
-	
+	}
 	HKEY hKey;
 	if (ERROR_SUCCESS != RegOpenKey(HKEY_CURRENT_USER,
-	    _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"), &hKey))
+			_T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"), &hKey)) {
 		hKey = NULL;
-	
+	}
 	return hKey;
 }
 
@@ -523,8 +543,9 @@ Error:
 	}
 	
 	DWORD size = GetFileSize(hf, NULL);
-	if (size == INVALID_FILE_SIZE)
+	if (size == INVALID_FILE_SIZE) {
 		goto Error;
+	}
 	
 	BYTE *pbBuffer = new BYTE[size + 2];
 	DWORD lenRead;
@@ -548,7 +569,7 @@ Error:
 		WideCharToMultiByte(CP_ACP, 0, wsz, -1, pszCurrent, buf, NULL, NULL);
 		pbBuffer = (BYTE*)pszCurrent;
 #endif
-	}else{
+	} else {
 #ifdef UNICODE
 		LPSTR asz = (LPSTR)pbBuffer;
 		const int buf = lstrlenA(asz) + 1;
@@ -561,15 +582,16 @@ Error:
 	}
 	
 	Keystroke ks;
-	do{
+	do {
 		Shortcut *const psh = new Shortcut(ks);
 		if (psh->load(pszCurrent)) {
 			psh->m_pNext = e_pshFirst;
 			e_pshFirst = psh;
 			psh->registerHotKey();
-		}else
+		} else {
 			delete psh;
-	}while (pszCurrent);
+		}
+	} while (pszCurrent);
 	
 	delete [] pbBuffer;
 	HeapCompact(e_hHeap, 0);
@@ -582,9 +604,9 @@ void shortcutsSave()
 	for (;;) {
 		hf = CreateFile(e_pszIniFile,
 			GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
-		if (hf != INVALID_HANDLE_VALUE)
+		if (hf != INVALID_HANDLE_VALUE) {
 			break;
-		
+		}
 		VERIFV(messageBox(NULL, ERR_SAVING_INI, MB_ICONERROR | MB_RETRYCANCEL) == IDRETRY);
 	}
 	
@@ -609,8 +631,9 @@ void shortcutsSave()
 		getToken(tokSorting), Shortcut::s_iSortColumn);
 	writeFile(hf, psz);
 	
-	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext)
+	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
 		psh->save(hf);
+	}
 	
 	CloseHandle(hf);
 }
@@ -629,8 +652,9 @@ void shortcutsClear()
 
 void shortcutsCopyToClipboard(const String& rs)
 {
-	if (!OpenClipboard(NULL))
+	if (!OpenClipboard(NULL)) {
 		return;
+	}
 	EmptyClipboard();
 	
 	// Allocate and fill shared buffer
@@ -669,21 +693,24 @@ bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[], bool 
 	
 	if (m_bDistinguishLeftRight && ks.m_bDistinguishLeftRight) {
 		VERIF(m_vkFlags == ks.m_vkFlags);
-	}else{
+	} else {
 		VERIF(getVkFlagsNoSide() == ks.getVkFlagsNoSide());
 	}
 	
-	for (int i = 0; i < condTypeCount; i++)
+	for (int i = 0; i < condTypeCount; i++) {
 		VERIF(m_aCond[i] == condIgnore || ks.m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
+	}
 	
-	if (!m_bProgramsOnly || !bProgramsOnly)
+	if (!m_bProgramsOnly || !bProgramsOnly) {
 		return true;
+	}
 	
 	VERIF(asProgram && m_sPrograms.isSome());
-	for (int i = 0; asProgram[i].isSome(); i++)
-		if (containsProgram(asProgram[i]))
+	for (int i = 0; asProgram[i].isSome(); i++) {
+		if (containsProgram(asProgram[i])) {
 			return true;
-	
+		}
+	}
 	return false;
 }
 
@@ -695,18 +722,21 @@ String* Shortcut::getPrograms() const
 	
 	const LPCTSTR pszPrograms = m_sPrograms;
 	int nbProgram = 0;
-	for (int i = 0; pszPrograms[i]; i++)
-		if (pszPrograms[i] == _T(';') && i > 0 && pszPrograms[i - 1] != _T(';'))
+	for (int i = 0; pszPrograms[i]; i++) {
+		if (pszPrograms[i] == _T(';') && i > 0 && pszPrograms[i - 1] != _T(';')) {
 			nbProgram++;
-	
+		}
+	}
 	String *const asProgram = new String[nbProgram + 2];
 	nbProgram = 0;
 	for (int i = 0; pszPrograms[i]; i++) {
 		if (pszPrograms[i] == _T(';')) {
-			if (i > 0 && pszPrograms[i - 1] != _T(';'))
+			if (i > 0 && pszPrograms[i - 1] != _T(';')) {
 				nbProgram++;
-		}else
+			}
+		} else {
 			asProgram[nbProgram] += pszPrograms[i];
+		}
 	}
 	
 	return asProgram;
@@ -720,11 +750,14 @@ void Shortcut::cleanPrograms()
 	VERIFV(asProgram);
 	
 	for (int i = 0; asProgram[i].isSome(); i++) {
-		for (int j = 0; j < i; j++)
-			if (!lstrcmpi(asProgram[i], asProgram[j]))
+		for (int j = 0; j < i; j++) {
+			if (!lstrcmpi(asProgram[i], asProgram[j])) {
 				goto Next;
-		if (m_sPrograms.isSome())
+			}
+		}
+		if (m_sPrograms.isSome()) {
 			m_sPrograms += _T(';');
+		}
 		m_sPrograms += asProgram[i];
 		
 	Next:
@@ -743,15 +776,18 @@ bool Shortcut::containsProgram(LPCTSTR pszProgram) const
 	const TCHAR *pcStart = pszPrograms;
 	for (;;) {
 		const TCHAR *pc = pcStart;
-		while (*pc && *pc != _T(';'))
+		while (*pc && *pc != _T(';')) {
 			pc++;
+		}
 		
 		if (CSTR_EQUAL == CompareString(LOCALE_USER_DEFAULT, NORM_IGNORECASE,
-		    pcStart, pc - pcStart, pszProgram, -1))
+				pcStart, pc - pcStart, pszProgram, -1)) {
 			return true;
+		}
 		
-		if (!*pc)
+		if (!*pc) {
 			return false;
+		}
 		pcStart = pc + 1;
 	}
 }
