@@ -837,12 +837,12 @@ static SIZEPOS aSizePos[] =
 };
 
 
-static void createAndAddShortcut(LPCTSTR pszCommand = NULL);
+static void createAndAddShortcut(LPCTSTR pszCommand = NULL, bool bSupportFileOpen = false);
 static Shortcut* createShortcut();
 static void addCreatedShortcut(Shortcut* psh);
 
 
-void createAndAddShortcut(LPCTSTR pszCommand)
+void createAndAddShortcut(LPCTSTR pszCommand, bool bSupportFileOpen)
 {
 	Shortcut *const psh = createShortcut();
 	if (psh) {
@@ -851,6 +851,7 @@ void createAndAddShortcut(LPCTSTR pszCommand)
 			psh->m_sCommand = pszCommand;
 			PathQuoteSpaces(psh->m_sCommand.getBuffer(MAX_PATH));
 		}
+		psh->m_bSupportFileOpen = bSupportFileOpen;
 		addCreatedShortcut(psh);
 	}
 }
@@ -1340,7 +1341,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 			{
 				TCHAR pszFolder[MAX_PATH] = _T("");
 				if (browseForFolder(s_hdlgMain, NULL, pszFolder)) {
-					createAndAddShortcut(pszFolder);
+					createAndAddShortcut(pszFolder, true);
 				}
 			}
 			break;
