@@ -58,7 +58,7 @@ BEGIN
             VALUE "FileDescription", "Clavier+"
             VALUE "FileVersion", "10.6.1"
             VALUE "InternalName", "Clavier.exe"
-            VALUE "LegalCopyright", "Copyright © 2000-2007 Guillaume Ryder"
+            VALUE "LegalCopyright", "Copyright © 2000-2008 Guillaume Ryder"
             VALUE "OriginalFilename", "Clavier.exe"
             VALUE "ProductName", "Clavier+"
             VALUE "ProductVersion", "10.6.1"
@@ -144,7 +144,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
     CONTROL         "Clavier+ 10.6.1",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
-    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nSoftwarelizenz nach GNU GPL",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    LTEXT           "Copyright © 2000-2008\nGuillaume Ryder\nSoftwarelizenz nach GNU GPL",IDC_STATIC,42,20,108,28,SS_NOPREFIX
     GROUPBOX        "Autor",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
@@ -484,7 +484,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
     CONTROL         "Clavier+ 10.6.1",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
-    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nSoftware under GPL license",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    LTEXT           "Copyright © 2000-2008\nGuillaume Ryder\nSoftware under GPL license",IDC_STATIC,42,20,108,28,SS_NOPREFIX
     GROUPBOX        "Author",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
@@ -758,7 +758,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
     CONTROL         "Clavier+ 10.6.1",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
-    CONTROL         "Copyright © 2000-2007\nGuillaume Ryder\nLogiciel sous licence GPL",IDC_STATIC,
+    CONTROL         "Copyright © 2000-2008\nGuillaume Ryder\nLogiciel sous licence GPL",IDC_STATIC,
                     "Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | WS_GROUP,42,20,108,28
     GROUPBOX        "Auteur",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
@@ -994,7 +994,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
     CONTROL         "Clavier+ 10.6.1",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
-    LTEXT           "Copyright © 2000-2007\nGuillaume Ryder\nPublicado sob licença GNU GPL",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    LTEXT           "Copyright © 2000-2008\nGuillaume Ryder\nPublicado sob licença GNU GPL",IDC_STATIC,42,20,108,28,SS_NOPREFIX
     GROUPBOX        "Criador",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,52,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX

@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2007 Guillaume Ryder
+// Copyright (C) 2000-2008 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,53 +22,50 @@
 
 #include "App.h"
 
-#define IsKeyDown(vk)   (GetKeyState(vk) & 0x8000)
+#define IsKeyDown(vk) \
+	(GetKeyState(vk) & 0x8000)
+
 const BYTE bKeyDown = 0x80;
 
 const int vkFlagsRightOffset = 16;
 
 
-enum
-{
+enum {
 	condTypeShiftLock,
 	condTypeNumLock,
 	condTypeScrollLock,
 	condTypeCount
 };
 
-enum
-{
+enum {
 	condIgnore,
 	condYes,
 	condNo,
 	condCount
 };
 
-class Keystroke
-{
+
+class Keystroke {
 public:
 	
-	BYTE  m_vk;
+	BYTE m_vk;
 	DWORD m_vkFlags;
-	int   m_aCond[condTypeCount];
-	bool  m_bDistinguishLeftRight;
+	int m_aCond[condTypeCount];
+	bool m_bDistinguishLeftRight;
 	
 	
 public:
 	
-	Keystroke()
-	{
+	Keystroke() {
 		resetAll();
 	}
 	
-	void reset()
-	{
-		m_vk      = 0;
+	void reset() {
+		m_vk = 0;
 		m_vkFlags = 0;
 	}
 	
-	void resetAll()
-	{
+	void resetAll() {
 		reset();
 		m_bDistinguishLeftRight = false;
 		for (int i = 0; i < condTypeCount; i++) {
@@ -77,8 +74,7 @@ public:
 	}
 	
 	
-	WORD getVkFlagsNoSide() const
-	{
+	WORD getVkFlagsNoSide() const {
 		return (WORD)m_vkFlags | (WORD)(m_vkFlags >> vkFlagsRightOffset);
 	}
 	
@@ -92,8 +88,7 @@ public:
 	
 	bool match(const Keystroke& ks) const;
 	
-	bool canReleaseSpecialKeys() const
-	{
+	bool canReleaseSpecialKeys() const {
 		return (0xA6 > m_vk || m_vk > 0xB7);
 	}
 	
@@ -101,7 +96,9 @@ public:
 	
 	
 	static void keybdEvent(UINT vk, bool bUp);
-	static BYTE filterVK(BYTE vk) { return (vk == VK_CLEAR) ? VK_NUMPAD5 : vk; }
+	static BYTE filterVK(BYTE vk) {
+		return (vk == VK_CLEAR) ? VK_NUMPAD5 : vk;
+	}
 	static bool isKeyExtended(UINT vk);
 	static void getKeyName(UINT vk, LPTSTR pszHotKey);
 	static HWND getKeyboardFocus();
@@ -118,24 +115,22 @@ private:
 
 class Shortcut;
 
-struct GETFILEICON
-{
-	Shortcut  *psh;
+struct GETFILEICON {
+	Shortcut* psh;
 	SHFILEINFO shfi;
-	TCHAR      pszExecutable[MAX_PATH];
-	UINT       uFlags;
-	bool       bOK;
+	TCHAR pszExecutable[MAX_PATH];
+	UINT uFlags;
+	bool bOK;
 };
 
 
-class Shortcut : public Keystroke
-{
+class Shortcut : public Keystroke {
 public:
 	
-	Shortcut *m_pNext;
+	Shortcut* m_pNext;
 	
 	bool m_bCommand;
-	int  m_nShow;
+	int m_nShow;
 	bool m_bProgramsOnly;
 	bool m_bSupportFileOpen;
 	
@@ -148,14 +143,13 @@ public:
 	
 protected:
 	
-	enum
-	{
-		iconInvalid       = -1,
-		iconNeeded        = -2,
+	enum {
+		iconInvalid = -1,
+		iconNeeded = -2,
 		iconThreadRunning = -3,
 	};
 	
-	int   m_iSmallIcon;
+	int m_iSmallIcon;
 	HICON m_hIcon;
 	
 	bool containsProgram(LPCTSTR pszProgram) const;
@@ -165,7 +159,9 @@ public:
 	
 	Shortcut(const Shortcut& sh);
 	Shortcut(const Keystroke& ks);
-	~Shortcut() { resetIcons(); }
+	~Shortcut() {
+		resetIcons();
+	}
 	
 	void save(HANDLE hf);
 	bool load(LPTSTR& rpszCurrent);
@@ -179,8 +175,7 @@ public:
 	
 	int getSmallIconIndex();
 	
-	HICON getIcon()
-	{
+	HICON getIcon() {
 		if (!m_hIcon) {
 			findIcon();
 		}
@@ -208,23 +203,21 @@ public:
 };
 
 
-struct SPECIALKEY
-{
-	BYTE  vk;
-	BYTE  vkLeft;
+struct SPECIALKEY {
+	BYTE vk;
+	BYTE vkLeft;
 	DWORD vkFlags;
-	int   tok;
+	int tok;
 };
 
 const int nbSpecialKey = 4;
 extern const SPECIALKEY e_aSpecialKey[nbSpecialKey];
 
 
-
 bool askKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult);
 
 
-extern Shortcut *e_pshFirst;   // Shortcuts linked list
+extern Shortcut* e_pshFirst;  // Shortcuts linked list
 
 
 void shortcutsLoad();

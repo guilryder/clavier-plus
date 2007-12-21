@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2007 Guillaume Ryder
+// Copyright (C) 2000-2008 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -17,6 +17,9 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+// Implement the intrinsices used by the application.
+// Needed to remove all dependencies to Visual C++ runtime DLLs.
+
 
 extern "C" void* memset(void* dest, int value, size_t size);
 extern "C" void* memcpy(void* dest, const void* src, size_t size);
@@ -26,8 +29,7 @@ extern "C" void* memcpy(void* dest, const void* src, size_t size);
 
 typedef unsigned char BYTE;
 
-void* memset(void* dst, int value, size_t size)
-{
+void* memset(void* dst, int value, size_t size) {
 	BYTE *pdst = (BYTE*)dst;
 	while (size > 0) {
 		size--;
@@ -37,9 +39,8 @@ void* memset(void* dst, int value, size_t size)
 	return dst;
 }
 
-void* memcpy(void* dst, const void* src, size_t size)
-{
-	      BYTE *pdst =       (BYTE*)dst;
+void* memcpy(void* dst, const void* src, size_t size) {
+	BYTE *pdst = (BYTE*)dst;
 	const BYTE *psrc = (const BYTE*)src;
 	while (size > 0) {
 		size--;
@@ -51,9 +52,8 @@ void* memcpy(void* dst, const void* src, size_t size)
 
 #ifndef _DEBUG
 
-extern "C" int atexit(void (__cdecl*)())
-{
+extern "C" int atexit(void (__cdecl*)()) {
 	return 0;
 }
 
-#endif
+#endif // !_DEBUG

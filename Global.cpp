@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2007 Guillaume Ryder
+// Copyright (C) 2000-2008 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -39,8 +39,7 @@ static bool pathIsSlow(LPCTSTR pszPath);
 static BOOL CALLBACK prcEnumFindWindowByName(HWND hWnd, LPARAM lParam);
 
 
-int messageBox(HWND hWnd, UINT idString, UINT uType, LPCTSTR pszArg)
-{
+int messageBox(HWND hWnd, UINT idString, UINT uType, LPCTSTR pszArg) {
 	TCHAR pszFormat[256], pszText[1024];
 	loadStringAuto(idString, pszFormat);
 	wsprintf(pszText, pszFormat, pszArg);
@@ -48,8 +47,7 @@ int messageBox(HWND hWnd, UINT idString, UINT uType, LPCTSTR pszArg)
 }
 
 
-void centerParent(HWND hWnd)
-{
+void centerParent(HWND hWnd) {
 	RECT rcParent, rcChild;
 	
 	const HWND hwndParent = GetParent(hWnd);
@@ -76,8 +74,7 @@ void centerParent(HWND hWnd)
 }
 
 
-void getDlgItemText(HWND hDlg, UINT id, String& rs)
-{
+void getDlgItemText(HWND hDlg, UINT id, String& rs) {
 	const HWND hwnd = GetDlgItem(hDlg, id);
 	const int buf = GetWindowTextLength(hwnd) + 1;
 	GetWindowText(hwnd, rs.getBuffer(buf), buf);
@@ -87,8 +84,7 @@ void getDlgItemText(HWND hDlg, UINT id, String& rs)
 static WNDPROC s_prcLabel;
 static LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink)
-{
+void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink) {
 	const HWND hwnd = GetDlgItem(hDlg, idControl);
 	SetWindowLong(hwnd, GWL_USERDATA, (LONG)pszLink);
 	s_prcLabel = SubclassWindow(hwnd, prcWebLink);
@@ -96,8 +92,7 @@ void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink)
 
 // Window procedure for dialog box controls displaying an URL.
 // The link itself is stored in GWL_USERDATA.
-LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 		
 		case WM_SETCURSOR:
@@ -117,22 +112,19 @@ LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 
 // Wrapper for CreateThread().
-void startThread(LPTHREAD_START_ROUTINE pfn, void* pParams)
-{
+void startThread(LPTHREAD_START_ROUTINE pfn, void* pParams) {
 	DWORD idThread;
 	CloseHandle(CreateThread(NULL, 0, pfn, pParams, 0, &idThread));
 }
 
 
-void writeFile(HANDLE hf, LPCTSTR psz)
-{
+void writeFile(HANDLE hf, LPCTSTR psz) {
 	DWORD len;
 	WriteFile(hf, psz, lstrlen(psz) * sizeof(TCHAR), &len, NULL);
 }
 
 
-bool getWindowExecutable(HWND hWnd, LPTSTR pszExecutableName)
-{
+bool getWindowExecutable(HWND hWnd, LPTSTR pszExecutableName) {
 	DWORD idProcess;
 	GetWindowThreadProcessId(hWnd, &idProcess);
 	
@@ -192,8 +184,7 @@ bool getWindowExecutable(HWND hWnd, LPTSTR pszExecutableName)
 }
 
 
-void sleepBackground(DWORD dwDurationMS)
-{
+void sleepBackground(DWORD dwDurationMS) {
 	const HANDLE hProcess = GetCurrentProcess();
 	const DWORD dwOldPriority = GetPriorityClass(hProcess);
 	SetPriorityClass(hProcess, IDLE_PRIORITY_CLASS);
@@ -203,8 +194,7 @@ void sleepBackground(DWORD dwDurationMS)
 
 
 // Indicates if a file is located in a slow drive (network, removable, etc.).
-bool pathIsSlow(LPCTSTR pszPath)
-{
+bool pathIsSlow(LPCTSTR pszPath) {
 	const int iDrive = PathGetDriveNumber(pszPath);
 	if (iDrive >= 0) {
 		TCHAR pszRoot[4];
@@ -223,8 +213,7 @@ bool pathIsSlow(LPCTSTR pszPath)
 }
 
 
-bool getFileInfo(LPCTSTR pszPath, DWORD dwFileAttributes, SHFILEINFO& shfi, UINT uFlags)
-{
+bool getFileInfo(LPCTSTR pszPath, DWORD dwFileAttributes, SHFILEINFO& shfi, UINT uFlags) {
 	TCHAR pszPathTemp[MAX_PATH];
 	
 	if (pathIsSlow(pszPath)) {
@@ -254,8 +243,7 @@ bool getFileInfo(LPCTSTR pszPath, DWORD dwFileAttributes, SHFILEINFO& shfi, UINT
 }
 
 
-void clipboardToEnvironment()
-{
+void clipboardToEnvironment() {
 	bool bOK = false;
 	
 	if (IsClipboardFormatAvailable(CF_TEXT) && OpenClipboard(NULL)) {
@@ -279,8 +267,7 @@ void clipboardToEnvironment()
 }
 
 
-HWND findVisibleChildWindow(HWND hwndParent, LPCTSTR pszClass, bool bPrefix)
-{
+HWND findVisibleChildWindow(HWND hwndParent, LPCTSTR pszClass, bool bPrefix) {
 	HWND hwndChild = NULL;
 	while (ToBool(hwndChild = FindWindowEx(hwndParent, hwndChild, NULL, NULL))) {
 		if ((GetWindowStyle(hwndChild) & WS_VISIBLE) &&
@@ -291,8 +278,7 @@ HWND findVisibleChildWindow(HWND hwndParent, LPCTSTR pszClass, bool bPrefix)
 	return NULL;
 }
 
-bool checkWindowClass(HWND hWnd, LPCTSTR pszClass, bool bPrefix)
-{
+bool checkWindowClass(HWND hWnd, LPCTSTR pszClass, bool bPrefix) {
 	TCHAR pszWindowClass[200];
 	VERIF(GetClassName(hWnd, pszWindowClass, nbArray(pszWindowClass)));
 	if (bPrefix) {
@@ -301,14 +287,12 @@ bool checkWindowClass(HWND hWnd, LPCTSTR pszClass, bool bPrefix)
 	return !StrCmp(pszWindowClass, pszClass);
 }
 
-struct FINDWINDOWBYNAME
-{
+struct FINDWINDOWBYNAME {
 	LPCTSTR pszWindowSpec;
 	HWND hwndFound;
 };
 
-HWND findWindowByName(LPCTSTR pszWindowSpec)
-{
+HWND findWindowByName(LPCTSTR pszWindowSpec) {
 	const LPTSTR pszWindowSpecLowercase = new TCHAR[lstrlen(pszWindowSpec) + 1];
 	lstrcpy(pszWindowSpecLowercase, pszWindowSpec);
 	CharLower(pszWindowSpecLowercase);
@@ -321,8 +305,7 @@ HWND findWindowByName(LPCTSTR pszWindowSpec)
 	return fwbn.hwndFound;
 }
 
-BOOL CALLBACK prcEnumFindWindowByName(HWND hWnd, LPARAM lParam)
-{
+BOOL CALLBACK prcEnumFindWindowByName(HWND hWnd, LPARAM lParam) {
 	FINDWINDOWBYNAME &fwbn = *(FINDWINDOWBYNAME*)lParam;
 	TCHAR pszTitle[1024];
 	if (GetWindowText(hWnd, pszTitle, nbArray(pszTitle))) {
@@ -335,8 +318,7 @@ BOOL CALLBACK prcEnumFindWindowByName(HWND hWnd, LPARAM lParam)
 }
 
 
-bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject)
-{
+bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject) {
 	for (;;) {
 		TCHAR c = *pszPattern++;
 		switch (c) {
@@ -378,8 +360,7 @@ bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject)
 
 static int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 
-bool browseForFolder(HWND hwndParent, LPCTSTR pszTitle, LPTSTR pszDirectory)
-{
+bool browseForFolder(HWND hwndParent, LPCTSTR pszTitle, LPTSTR pszDirectory) {
 	BROWSEINFO bi;
 	ZeroMemory(&bi, sizeof(bi));
 	bi.hwndOwner = hwndParent;
@@ -395,8 +376,7 @@ bool browseForFolder(HWND hwndParent, LPCTSTR pszTitle, LPTSTR pszDirectory)
 	return true;
 }
 
-int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM lpData)
-{
+int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM lpData) {
 	if (uMsg == BFFM_INITIALIZED) {
 		SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
 	}
@@ -409,8 +389,7 @@ int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM lpD
 //------------------------------------------------------------------------
 
 // Wrapper for SHGetSpecialFolderPath
-bool getSpecialFolderPath(int index, LPTSTR pszPath)
-{
+bool getSpecialFolderPath(int index, LPTSTR pszPath) {
 	return ToBool(SHGetSpecialFolderPath(NULL, pszPath, index, TRUE));
 }
 
@@ -421,8 +400,7 @@ bool getSpecialFolderPath(int index, LPTSTR pszPath)
 // - IUniformResourceLocator shortcuts
 // - IShellLink shortcuts
 // If the file is a normal file, return its path unchanged
-bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath)
-{
+bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath) {
 	*pszTargetPath = _T('\0');
 	
 	// Resolve Installer shortcuts
@@ -506,8 +484,7 @@ bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath)
 // Command line parsing and executing
 //------------------------------------------------------------------------
 
-void findFullPath(LPTSTR pszPath, LPTSTR pszFullPath)
-{
+void findFullPath(LPTSTR pszPath, LPTSTR pszFullPath) {
 	if (!pathIsSlow(pszPath)) {
 		PathUnquoteSpaces(pszPath);
 		if (SearchPath(NULL, pszPath, NULL, MAX_PATH, pszFullPath, NULL)) {
@@ -529,8 +506,7 @@ void findFullPath(LPTSTR pszPath, LPTSTR pszFullPath)
 }
 
 
-void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow)
-{
+void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow) {
 	// Expand the environment variables before splitting
 	TCHAR pszCommandExp[MAX_PATH + bufClipboardString];
 	ExpandEnvironmentStrings(pszCommand, pszCommandExp, nbArray(pszCommandExp));
@@ -563,8 +539,7 @@ void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow)
 }
 
 
-DWORD WINAPI threadShellExecute(void* pParams)
-{
+DWORD WINAPI threadShellExecute(void* pParams) {
 	THREAD_SHELLEXECUTE &params = *(THREAD_SHELLEXECUTE*)pParams;
 	shellExecuteCmdLine(params.sCommand, params.sDirectory, params.nShow);
 	delete (THREAD_SHELLEXECUTE*)pParams;

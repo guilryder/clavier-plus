@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="Clavier"
 	ProjectGUID="{66754282-6FA1-49D0-97C3-8793C5C3A757}"
 	RootNamespace="Clavier"
@@ -398,10 +398,6 @@
 			</File>
 			<File
 				RelativePath="DonateFR.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\DonatePO.bmp"
 				>
 			</File>
 			<File

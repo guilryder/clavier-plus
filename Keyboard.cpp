@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2007 Guillaume Ryder
+// Copyright (C) 2000-2008 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,8 +22,7 @@
 #include "App.h"
 
 
-const SPECIALKEY e_aSpecialKey[nbSpecialKey] =
-{
+const SPECIALKEY e_aSpecialKey[nbSpecialKey] = {
 	{ VK_LWIN,    VK_LWIN,     MOD_WIN,     tokWin },
 	{ VK_CONTROL, VK_LCONTROL, MOD_CONTROL, tokCtrl },
 	{ VK_SHIFT,   VK_LSHIFT,   MOD_SHIFT,   tokShift },
@@ -31,19 +30,24 @@ const SPECIALKEY e_aSpecialKey[nbSpecialKey] =
 };
 
 
-static Keystroke *s_pksEditedOld;    // Pointer to the old value of the currently edited keystroke
-static bool       s_ksReset;         // TRUE if we should reset the keystroke textbox ASAP
-static Keystroke  s_ks;              // Currently edited keystroke value
+// Pointer to the old value of the currently edited keystroke
+static Keystroke *s_pksEditedOld;
 
+// TRUE if we should reset the keystroke textbox ASAP
+static bool s_ksReset;
+
+// Currently edited keystroke value
+static Keystroke s_ks;
+
+// Default window proc of edit controls. Used by prcKeystrokeCtl.
 static WNDPROC s_prcKeystrokeCtl;
 
+// Window proc an edit box allowing to enter a keystroke.
 static LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 
-
 // Shortcut keystroke and conditions dialog box
-INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
-{
+INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
 	switch (uMsg) {
 		
 		// Initialization
@@ -119,8 +123,7 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
 
 
 // Edit text of keystroke dialog box
-LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	bool bIsDown = false;
 	
 	switch (uMsg) {
@@ -221,8 +224,7 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 }
 
 
-bool askKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult)
-{
+bool askKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult) {
 	s_pksEditedOld = pksEdited;
 	s_ksReset = true;
 	
@@ -240,8 +242,7 @@ bool askKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult)
 //------------------------------------------------------------------------
 
 // Get the human readable name of the keystroke
-void Keystroke::getKeyName(LPTSTR pszHotKey) const
-{
+void Keystroke::getKeyName(LPTSTR pszHotKey) const {
 	*pszHotKey = _T('\0');
 	
 	// Special keys
@@ -263,14 +264,12 @@ void Keystroke::getKeyName(LPTSTR pszHotKey) const
 }
 
 
-bool Keystroke::isKeyExtended(UINT vk)
-{
+bool Keystroke::isKeyExtended(UINT vk) {
 	return vk == VK_NUMLOCK || vk == VK_DIVIDE || (vk >= VK_PRIOR && vk <= VK_DELETE);
 }
 
 // Get a key name and add it to pszHotKey
-void Keystroke::getKeyName(UINT vk, LPTSTR pszHotKey)
-{
+void Keystroke::getKeyName(UINT vk, LPTSTR pszHotKey) {
 	long lScan = (::MapVirtualKey(LOBYTE(vk), 0) << 16) | (1L << 25);
 	if (isKeyExtended(vk)) {
 		lScan |= 1L << 24;
@@ -285,8 +284,7 @@ void Keystroke::getKeyName(UINT vk, LPTSTR pszHotKey)
 
 
 // Test for inclusion: is 'ks' a particular case of 'this'?
-bool Keystroke::match(const Keystroke& ks) const
-{
+bool Keystroke::match(const Keystroke& ks) const {
 	VERIF(m_vk == ks.m_vk);
 	
 	if (m_bDistinguishLeftRight) {
@@ -303,8 +301,7 @@ bool Keystroke::match(const Keystroke& ks) const
 
 
 // Register the hotkey
-void Keystroke::registerHotKey()
-{
+void Keystroke::registerHotKey() {
 	const WORD vkFlags = getVkFlagsNoSide();
 	if (m_vk == VK_NUMPAD5) {
 		RegisterHotKey(NULL, MAKEWORD(VK_CLEAR, vkFlags), vkFlags, VK_CLEAR);
@@ -313,8 +310,7 @@ void Keystroke::registerHotKey()
 }
 
 // Unregister the hotkey
-bool Keystroke::unregisterHotKey()
-{
+bool Keystroke::unregisterHotKey() {
 	const WORD vkFlags = getVkFlagsNoSide();
 	if (m_vk == VK_NUMPAD5) {
 		UnregisterHotKey(NULL, MAKEWORD(VK_CLEAR, vkFlags));
@@ -324,8 +320,7 @@ bool Keystroke::unregisterHotKey()
 
 
 // Serialize the shortcut itself (the key name)
-void Keystroke::serialize(LPTSTR psz)
-{
+void Keystroke::serialize(LPTSTR psz) {
 	bool bSkipPlus = false;
 	int vkFlagsLast = 0;
 	
@@ -414,8 +409,7 @@ void Keystroke::serialize(LPTSTR psz)
 }
 
 
-void Keystroke::keybdEvent(UINT vk, bool bUp)
-{
+void Keystroke::keybdEvent(UINT vk, bool bUp) {
 	DWORD dwFlags = (bUp) ? KEYEVENTF_KEYUP : 0;
 	if (isKeyExtended(vk)) {
 		dwFlags |= KEYEVENTF_EXTENDEDKEY;
@@ -425,8 +419,7 @@ void Keystroke::keybdEvent(UINT vk, bool bUp)
 
 
 // Simulate the typing of the keystroke
-void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bSpecialKeys) const
-{
+void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bSpecialKeys) const {
 	const DWORD vkFlags = getVkFlagsNoSide();
 	
 	// Press the special keys
@@ -455,8 +448,7 @@ void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bSpecialKeys) cons
 
 
 // Get the keyboard focus window
-HWND Keystroke::getKeyboardFocus()
-{
+HWND Keystroke::getKeyboardFocus() {
 	HWND hwndFocus;
 	DWORD idThread;
 	catchKeyboardFocus(hwndFocus, idThread);
@@ -465,8 +457,7 @@ HWND Keystroke::getKeyboardFocus()
 }
 
 // Get the keyboard focus and the focus window
-void Keystroke::catchKeyboardFocus(HWND& rhwndFocus, DWORD& ridThread)
-{
+void Keystroke::catchKeyboardFocus(HWND& rhwndFocus, DWORD& ridThread) {
 	const HWND hwndForeground = GetForegroundWindow();
 	ridThread = GetWindowThreadProcessId(hwndForeground, NULL);
 	AttachThreadInput(GetCurrentThreadId(), ridThread, TRUE);
@@ -474,13 +465,11 @@ void Keystroke::catchKeyboardFocus(HWND& rhwndFocus, DWORD& ridThread)
 	rhwndFocus = (hwndFocus) ? hwndFocus : hwndForeground;
 }
 
-void Keystroke::detachKeyboardFocus(DWORD idThread)
-{
+void Keystroke::detachKeyboardFocus(DWORD idThread) {
 	AttachThreadInput(GetCurrentThreadId(), idThread, FALSE);
 }
 
-void Keystroke::releaseSpecialKeys(BYTE abKeyboard[])
-{
+void Keystroke::releaseSpecialKeys(BYTE abKeyboard[]) {
 	for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
 		const BYTE vk = e_aSpecialKey[i].vk;
 		if (abKeyboard[vk] & bKeyDown) {
@@ -506,8 +495,7 @@ TCHAR e_pszIniFile[MAX_PATH];
 
 
 // Open the key for Clavier+ launching at Windows startup
-HKEY openAutoStartKey(LPTSTR pszPath)
-{
+HKEY openAutoStartKey(LPTSTR pszPath) {
 	if (!GetModuleFileName(NULL, pszPath, MAX_PATH)) {
 		*pszPath = 0;
 	}
@@ -520,14 +508,12 @@ HKEY openAutoStartKey(LPTSTR pszPath)
 }
 
 
-void shortcutsLoad()
-{
+void shortcutsLoad() {
 	shortcutsClear();
 	shortcutsMerge(e_pszIniFile);
 }
 
-void shortcutsMerge(LPCTSTR pszIniFile)
-{
+void shortcutsMerge(LPCTSTR pszIniFile) {
 	e_bIconVisible = true;
 	
 	memcpy(e_acxCol, s_acxColOrig, sizeof(s_acxColOrig));
@@ -598,8 +584,7 @@ Error:
 }
 
 
-void shortcutsSave()
-{
+void shortcutsSave() {
 	HANDLE hf;
 	for (;;) {
 		hf = CreateFile(e_pszIniFile,
@@ -639,8 +624,7 @@ void shortcutsSave()
 }
 
 
-void shortcutsClear()
-{
+void shortcutsClear() {
 	while (e_pshFirst) {
 		Shortcut *const psh = e_pshFirst;
 		e_pshFirst = psh->m_pNext;
@@ -650,8 +634,7 @@ void shortcutsClear()
 }
 
 
-void shortcutsCopyToClipboard(const String& rs)
-{
+void shortcutsCopyToClipboard(const String& rs) {
 	if (!OpenClipboard(NULL)) {
 		return;
 	}
@@ -675,8 +658,7 @@ void shortcutsCopyToClipboard(const String& rs)
 //------------------------------------------------------------------------
 
 // Test for inclusion
-bool Shortcut::match(const Keystroke& ks, LPCTSTR pszProgram) const
-{
+bool Shortcut::match(const Keystroke& ks, LPCTSTR pszProgram) const {
 	VERIF(Keystroke::match(ks));
 	
 	return (pszProgram && m_sPrograms.isSome() && containsProgram(pszProgram)) ^ (!m_bProgramsOnly);
@@ -685,8 +667,7 @@ bool Shortcut::match(const Keystroke& ks, LPCTSTR pszProgram) const
 
 
 // Test for intersection
-bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[], bool bProgramsOnly) const
-{
+bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[], bool bProgramsOnly) const {
 	VERIF(bProgramsOnly == m_bProgramsOnly);
 	
 	VERIF(m_vk == ks.m_vk);
@@ -716,8 +697,7 @@ bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[], bool 
 
 
 // Get programs array, NULL if no program.
-String* Shortcut::getPrograms() const
-{
+String* Shortcut::getPrograms() const {
 	VERIFP(m_sPrograms.isSome(), NULL);
 	
 	const LPCTSTR pszPrograms = m_sPrograms;
@@ -743,8 +723,7 @@ String* Shortcut::getPrograms() const
 }
 
 // Eliminate duplicates in programs
-void Shortcut::cleanPrograms()
-{
+void Shortcut::cleanPrograms() {
 	String *const asProgram = getPrograms();
 	m_sPrograms.empty();
 	VERIFV(asProgram);
@@ -768,8 +747,7 @@ void Shortcut::cleanPrograms()
 }
 
 
-bool Shortcut::containsProgram(LPCTSTR pszProgram) const
-{
+bool Shortcut::containsProgram(LPCTSTR pszProgram) const {
 	LPCTSTR pszPrograms = m_sPrograms;
 	VERIF(*pszPrograms);
 	
@@ -793,8 +771,7 @@ bool Shortcut::containsProgram(LPCTSTR pszProgram) const
 }
 
 
-bool Keystroke::askSendKeys(HWND hwndParent, Keystroke& rks)
-{
+bool Keystroke::askSendKeys(HWND hwndParent, Keystroke& rks) {
 	s_ks.reset();
 	s_ks.m_bDistinguishLeftRight = false;
 	
@@ -805,8 +782,7 @@ bool Keystroke::askSendKeys(HWND hwndParent, Keystroke& rks)
 }
 
 
-INT_PTR CALLBACK Keystroke::prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM)
-{
+INT_PTR CALLBACK Keystroke::prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
 	switch (uMsg) {
 		
 		// Initialization

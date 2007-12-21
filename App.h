@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2007 Guillaume Ryder
+// Copyright (C) 2000-2008 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -23,12 +23,13 @@
 #include "Global.h"
 #include "Keyboard.h"
 
-#define WM_KEYSTROKE     (WM_USER + 100)
-#define WM_GETFILEICON   (WM_USER + 101)
+#define WM_KEYSTROKE  (WM_USER + 100)
+#define WM_GETFILEICON  (WM_USER + 101)
 
 
-enum
-{
+// Each token is associated to a part of the IDS_TOKENS resource string. IDS_TOKENS is a ';'
+// separated string whose parts are in the same other as the values of this enum.
+enum {
 	tokLanguageName,
 	
 	tokShortcut,

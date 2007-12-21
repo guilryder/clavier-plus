@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2007 Guillaume Ryder
+// Copyright (C) 2000-2008 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -170,22 +170,24 @@ int findToken(LPCTSTR pszToken);
 
 #include "Lang.h"
 
-class TranslatedString
-{
+class TranslatedString {
 public:
 	
-	void load(UINT id)
-	{
+	void load(UINT id) {
 		loadStringAuto(id, m_apsz[e_lang]);
 	}
 	
-	void set(LPCTSTR psz)
-	{
+	void set(LPCTSTR psz) {
 		lstrcpy(m_apsz[e_lang], psz);
 	}
 	
-	LPCTSTR get(int lang) const { return m_apsz[lang]; }
-	LPCTSTR get() const { return get(e_lang); }
+	LPCTSTR get(int lang) const {
+		return m_apsz[lang];
+	}
+	
+	LPCTSTR get() const {
+		return get(e_lang);
+	}
 	
 	
 private:
@@ -207,8 +209,7 @@ void findFullPath(LPTSTR pszPath, LPTSTR pszFullPath);
 void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow);
 
 
-struct THREAD_SHELLEXECUTE
-{
+struct THREAD_SHELLEXECUTE {
 	THREAD_SHELLEXECUTE(const String& sCommand, const String& sDirectory, int nShow)
 		: sCommand(sCommand), sDirectory(sDirectory), nShow(nShow) {}
 	
@@ -224,8 +225,7 @@ DWORD WINAPI threadShellExecute(void* pParams);
 // Settings loading and saving
 //------------------------------------------------------------------------
 
-enum
-{
+enum {
 	colContents,
 	colShortcut,
 	colCond,

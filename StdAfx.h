@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2007 Guillaume Ryder
+// Copyright (C) 2000-2008 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,18 +22,20 @@
 
 #pragma warning (disable: 4710 4711)
 
-#define _WIN32_IE      0x0400
-#define _WIN32_WINNT   0x0400
-#define _WIN32_WINDOWS 0x0500
-#define WINVER         0x0500
-#define STRICT 1
+// Require compatibility with Windows 95/NT4 and IE4 only
+#define _WIN32_IE       0x0400
+#define _WIN32_WINNT    0x0400
+#define _WIN32_WINDOWS  0x0500
+#define WINVER          0x0500
+#define STRICT  1
 
-#define __STDC_WANT_SECURE_LIB__ 0
+// Disable some Microsoft standard library extensions.
+#define __STDC_WANT_SECURE_LIB__  0
 #define _CRT_DISABLE_PERFCRIT_LOCKS
 
+// Do not include some Windows APIs we don't need.
 #define VC_EXTRALEAN
 #define WIN32_LEAN_AND_MEAN
-
 #define NOGDICAPMASKS
 #define NOSYSCOMMANDS
 #define NORASTEROPS
@@ -75,10 +77,11 @@
 #define new DEBUG_NEW
 
 
+// ANSI_UNICODE(ansi, unicode) evaluates to ansi in ASCII mode, else to unicode.
 #ifdef UNICODE
-#define ANSI_UNICODE(ansi, unicode)   unicode
+#define ANSI_UNICODE(ansi, unicode)  unicode
 #else
-#define ANSI_UNICODE(ansi, unicode)   ansi
+#define ANSI_UNICODE(ansi, unicode)  ansi
 #endif
 
 

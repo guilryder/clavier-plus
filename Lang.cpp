@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2007 Guillaume Ryder
+// Copyright (C) 2000-2008 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,18 +22,17 @@
 #include "Lang.h"
 
 extern HINSTANCE e_hInst;
-extern HWND      e_hdlgModal;
+extern HWND e_hdlgModal;
 
 int e_lang;
 
 
 static LANGID s_langID;
 
-static const LANGID s_aLangID[] =
-{
-	MAKELANGID(LANG_FRENCH,     SUBLANG_FRENCH),
-	MAKELANGID(LANG_ENGLISH,    SUBLANG_ENGLISH_US),
-	MAKELANGID(LANG_GERMAN,     SUBLANG_GERMAN),
+static const LANGID s_aLangID[] = {
+	MAKELANGID(LANG_FRENCH, SUBLANG_FRENCH),
+	MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US),
+	MAKELANGID(LANG_GERMAN, SUBLANG_GERMAN),
 	MAKELANGID(LANG_PORTUGUESE, SUBLANG_PORTUGUESE_BRAZILIAN),
 };
 
@@ -42,8 +41,7 @@ static void* loadResource(UINT id, LPCTSTR pszType);
 
 
 
-int getDefaultLanguage()
-{
+int getDefaultLanguage() {
 	const LANGID langID = PRIMARYLANGID(LANGIDFROMLCID(GetUserDefaultLCID()));
 	for (int lang = 0; lang < nbArray(s_aLangID); lang++) {
 		if (PRIMARYLANGID(s_aLangID[lang]) == langID) {
@@ -54,18 +52,15 @@ int getDefaultLanguage()
 }
 
 
-void setLanguage(int lang)
-{
+void setLanguage(int lang) {
 	e_lang = lang;
 	s_langID = s_aLangID[lang];
 }
 
 
 
-void* loadResource(UINT id, LPCTSTR pszType)
-{
-	const HRSRC hResource = FindResourceEx(e_hInst, pszType,
-		MAKEINTRESOURCE(id), s_langID);
+void* loadResource(UINT id, LPCTSTR pszType) {
+	const HRSRC hResource = FindResourceEx(e_hInst, pszType, MAKEINTRESOURCE(id), s_langID);
 	VERIFP(hResource, NULL);
 	
 	const HGLOBAL hGlobal = LoadResource(e_hInst, hResource);
@@ -75,8 +70,7 @@ void* loadResource(UINT id, LPCTSTR pszType)
 }
 
 
-const STRING_RESOURCE* loadStringResource(UINT id)
-{
+const STRING_RESOURCE* loadStringResource(UINT id) {
 	const STRING_RESOURCE *pResource =
 		(const STRING_RESOURCE*)loadResource(id / 16 + 1, RT_STRING);
 	VERIFP(pResource, NULL);
@@ -89,8 +83,7 @@ const STRING_RESOURCE* loadStringResource(UINT id)
 }
 
 
-void loadString(UINT id, LPTSTR psz, int buf)
-{
+void loadString(UINT id, LPTSTR psz, int buf) {
 	const STRING_RESOURCE *const pResource = loadStringResource(id);
 	if (buf > pResource->len) {
 		buf = pResource->len + 1;
@@ -104,11 +97,11 @@ void loadString(UINT id, LPTSTR psz, int buf)
 }
 
 
-int dialogBox(UINT id, HWND hwndParent, DLGPROC prc, LPARAM lInitParam)
-{
+int dialogBox(UINT id, HWND hwndParent, DLGPROC prc, LPARAM lInitParam) {
 	const HWND hdlgModalOld = e_hdlgModal;
 	
-	const int iResult = DialogBoxIndirectParam(e_hInst,
+	const int iResult = DialogBoxIndirectParam(
+		e_hInst,
 		(const DLGTEMPLATE*)loadResource(id, RT_DIALOG),
 		hwndParent, prc, lInitParam);
 	
@@ -117,19 +110,18 @@ int dialogBox(UINT id, HWND hwndParent, DLGPROC prc, LPARAM lInitParam)
 }
 
 
-HMENU loadMenu(UINT id)
-{
+HMENU loadMenu(UINT id) {
 	return LoadMenuIndirect((const MENUTEMPLATE*)loadResource(id, RT_MENU));
 }
 
 
-HBITMAP loadBitmap(UINT id)
-{
+HBITMAP loadBitmap(UINT id) {
 	BITMAPINFO *const pbi = (BITMAPINFO*)loadResource(id, RT_BITMAP);
 	VERIFP(pbi, NULL);
 	
 	const HDC hdc = GetDC(NULL);
-	const HBITMAP hBitmap = CreateDIBitmap(hdc, &pbi->bmiHeader, CBM_INIT,
+	const HBITMAP hBitmap = CreateDIBitmap(
+		hdc, &pbi->bmiHeader, CBM_INIT,
 		pbi->bmiColors + pbi->bmiHeader.biClrUsed,
 		pbi, DIB_RGB_COLORS);
 	ReleaseDC(NULL, hdc);

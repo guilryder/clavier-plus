@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2007 Guillaume Ryder
+// Copyright (C) 2000-2008 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -21,8 +21,7 @@
 #pragma once
 
 
-enum
-{
+enum {
 	langFR,
 	langEN,
 	langDE,
@@ -37,15 +36,12 @@ int getDefaultLanguage();
 void setLanguage(int lang);
 
 
-
 #pragma warning(disable: 4200)
-struct STRING_RESOURCE
-{
-	WORD  len;
+struct STRING_RESOURCE {
+	WORD len;
 	WCHAR wsz[];
 	
-	void copy(LPTSTR pszDest, int buf) const
-	{
+	void copy(LPTSTR pszDest, int buf) const {
 #ifdef UNICODE
 		lstrcpyn(pszDest, wsz, buf);
 #else
@@ -60,8 +56,12 @@ struct STRING_RESOURCE
 const STRING_RESOURCE* loadStringResource(UINT id);
 
 void loadString(UINT id, LPTSTR psz, int buf);
-#define loadStringAuto(id, pszBuffer)   loadString(id, pszBuffer, nbArray(pszBuffer))
-#define loadStringAutoRet(id, pszBuffer)   (loadStringAuto(id, pszBuffer), pszBuffer)
+
+#define loadStringAuto(id, pszBuffer) \
+	loadString(id, pszBuffer, nbArray(pszBuffer))
+
+#define loadStringAutoRet(id, pszBuffer) \
+	(loadStringAuto(id, pszBuffer), pszBuffer)
 
 
 int dialogBox(UINT id, HWND hwndParent, DLGPROC prc, LPARAM lInitParam = 0);

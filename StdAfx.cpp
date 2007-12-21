@@ -1,7 +1,7 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2007 Guillaume Ryder
+// Copyright (C) 2000-2008 Guillaume Ryder
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -23,16 +23,17 @@
 
 #ifndef _DEBUG
 
+// Implement the new and delete operators with a Windows heap.
+// Needed to remove all dependencies to Visual C++ runtime DLLs.
+
 extern HANDLE e_hHeap;
 
-void* operator new(size_t size)
-{
+void* operator new(size_t size) {
 	return HeapAlloc(e_hHeap, 0, size);
 }
 
-void operator delete(void* p)
-{
+void operator delete(void* p) {
 	HeapFree(e_hHeap, 0, p);
 }
 
-#endif
+#endif // !_DEBUG
