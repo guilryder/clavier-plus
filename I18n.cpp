@@ -3,10 +3,10 @@
 //
 // Copyright (C) 2000-2008 Guillaume Ryder
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,17 +14,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "StdAfx.h"
-#include "Lang.h"
+#include "I18n.h"
 
 extern HINSTANCE e_hInst;
 extern HWND e_hdlgModal;
 
-int e_lang;
+namespace i18n {
+
+static int s_lang;
 
 
 static LANGID s_langID;
@@ -40,6 +41,15 @@ static const LANGID s_aLangID[] = {
 static void* loadResource(UINT id, LPCTSTR pszType);
 
 
+int getLanguage() {
+	return s_lang;
+}
+
+void setLanguage(int lang) {
+	s_lang = lang;
+	s_langID = s_aLangID[lang];
+}
+
 
 int getDefaultLanguage() {
 	const LANGID langID = PRIMARYLANGID(LANGIDFROMLCID(GetUserDefaultLCID()));
@@ -50,13 +60,6 @@ int getDefaultLanguage() {
 	}
 	return langEN;
 }
-
-
-void setLanguage(int lang) {
-	e_lang = lang;
-	s_langID = s_aLangID[lang];
-}
-
 
 
 void* loadResource(UINT id, LPCTSTR pszType) {
@@ -71,39 +74,39 @@ void* loadResource(UINT id, LPCTSTR pszType) {
 
 
 const STRING_RESOURCE* loadStringResource(UINT id) {
-	const STRING_RESOURCE *pResource =
+	const STRING_RESOURCE *resource =
 		(const STRING_RESOURCE*)loadResource(id / 16 + 1, RT_STRING);
-	VERIFP(pResource, NULL);
+	VERIFP(resource, NULL);
 	
 	for (id &= 15; id > 0; id--) {
-		pResource = (STRING_RESOURCE*)(pResource->wsz + pResource->len);
+		resource = (STRING_RESOURCE*)(resource->strbuf + resource->length);
 	}
 	
-	return pResource;
+	return resource;
 }
 
 
-void loadString(UINT id, LPTSTR psz, int buf) {
-	const STRING_RESOURCE *const pResource = loadStringResource(id);
-	if (buf > pResource->len) {
-		buf = pResource->len + 1;
+void loadString(UINT id, LPTSTR strbuf, int buffer_length) {
+	const STRING_RESOURCE *const resource = loadStringResource(id);
+	if (buffer_length > resource->length) {
+		buffer_length = resource->length + 1;
 	}
 	
-	if (pResource) {
-		pResource->copy(psz, buf);
+	if (resource) {
+		resource->copy(strbuf, buffer_length);
 	} else {
-		*psz = _T('\0');
+		*strbuf = _T('\0');
 	}
 }
 
 
-int dialogBox(UINT id, HWND hwndParent, DLGPROC prc, LPARAM lInitParam) {
+int dialogBox(UINT id, HWND hwnd_parent, DLGPROC window_proc, LPARAM lInitParam) {
 	const HWND hdlgModalOld = e_hdlgModal;
 	
 	const int iResult = DialogBoxIndirectParam(
 		e_hInst,
 		(const DLGTEMPLATE*)loadResource(id, RT_DIALOG),
-		hwndParent, prc, lInitParam);
+		hwnd_parent, window_proc, lInitParam);
 	
 	e_hdlgModal = hdlgModalOld;
 	return iResult;
@@ -128,3 +131,5 @@ HBITMAP loadBitmap(UINT id) {
 	
 	return hBitmap;
 }
+
+}  // i18n namespace

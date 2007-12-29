@@ -3,10 +3,10 @@
 //
 // Copyright (C) 2000-2008 Guillaume Ryder
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,8 +14,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #pragma once
@@ -83,16 +82,13 @@ public:
 	void serialize(LPTSTR psz);
 	void simulateTyping(HWND hwndFocus, bool bSpecialKeys = true) const;
 	
-	void registerHotKey();
-	bool unregisterHotKey();
-	
 	bool match(const Keystroke& ks) const;
 	
 	bool canReleaseSpecialKeys() const {
 		return (0xA6 > m_vk || m_vk > 0xB7);
 	}
 	
-	static bool askSendKeys(HWND hwndParent, Keystroke& rks);
+	static bool askSendKeys(HWND hwnd_parent, Keystroke& rks);
 	
 	
 	static void keybdEvent(UINT vk, bool bUp);
@@ -214,7 +210,7 @@ const int nbSpecialKey = 4;
 extern const SPECIALKEY e_aSpecialKey[nbSpecialKey];
 
 
-bool askKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult);
+bool askKeystroke(HWND hwnd_parent, Shortcut* pksEdited, Keystroke& rksResult);
 
 
 extern Shortcut* e_pshFirst;  // Shortcuts linked list

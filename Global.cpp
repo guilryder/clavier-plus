@@ -3,10 +3,10 @@
 //
 // Copyright (C) 2000-2008 Guillaume Ryder
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,8 +14,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "StdAfx.h"
@@ -41,7 +40,7 @@ static BOOL CALLBACK prcEnumFindWindowByName(HWND hWnd, LPARAM lParam);
 
 int messageBox(HWND hWnd, UINT idString, UINT uType, LPCTSTR pszArg) {
 	TCHAR pszFormat[256], pszText[1024];
-	loadStringAuto(idString, pszFormat);
+	i18n::loadStringAuto(idString, pszFormat);
 	wsprintf(pszText, pszFormat, pszArg);
 	return MessageBox(hWnd, pszText, pszApp, uType);
 }
@@ -50,14 +49,14 @@ int messageBox(HWND hWnd, UINT idString, UINT uType, LPCTSTR pszArg) {
 void centerParent(HWND hWnd) {
 	RECT rcParent, rcChild;
 	
-	const HWND hwndParent = GetParent(hWnd);
+	const HWND hwnd_parent = GetParent(hWnd);
 	MONITORINFO mi;
 	mi.cbSize = sizeof(mi);
-	if (hwndParent) {
-		const HMONITOR hMonitor = MonitorFromWindow(hwndParent, MONITOR_DEFAULTTONULL);
+	if (hwnd_parent) {
+		const HMONITOR hMonitor = MonitorFromWindow(hwnd_parent, MONITOR_DEFAULTTONULL);
 		VERIFV(hMonitor);
 		GetMonitorInfo(hMonitor, &mi);
-		GetWindowRect(hwndParent, &rcParent);
+		GetWindowRect(hwnd_parent, &rcParent);
 		IntersectRect(&rcParent, &rcParent, &mi.rcWork);
 	} else {
 		const HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
@@ -267,9 +266,9 @@ void clipboardToEnvironment() {
 }
 
 
-HWND findVisibleChildWindow(HWND hwndParent, LPCTSTR pszClass, bool bPrefix) {
+HWND findVisibleChildWindow(HWND hwnd_parent, LPCTSTR pszClass, bool bPrefix) {
 	HWND hwndChild = NULL;
-	while (ToBool(hwndChild = FindWindowEx(hwndParent, hwndChild, NULL, NULL))) {
+	while (ToBool(hwndChild = FindWindowEx(hwnd_parent, hwndChild, NULL, NULL))) {
 		if ((GetWindowStyle(hwndChild) & WS_VISIBLE) &&
 				checkWindowClass(hwndChild, pszClass, bPrefix)) {
 			return hwndChild;
@@ -360,10 +359,10 @@ bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject) {
 
 static int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 
-bool browseForFolder(HWND hwndParent, LPCTSTR pszTitle, LPTSTR pszDirectory) {
+bool browseForFolder(HWND hwnd_parent, LPCTSTR pszTitle, LPTSTR pszDirectory) {
 	BROWSEINFO bi;
 	ZeroMemory(&bi, sizeof(bi));
-	bi.hwndOwner = hwndParent;
+	bi.hwndOwner = hwnd_parent;
 	bi.lpszTitle = pszTitle;
 	bi.ulFlags   = BIF_RETURNONLYFSDIRS;
 	bi.lpfn      = prcBrowseForFolderCallback;

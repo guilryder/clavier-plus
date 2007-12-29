@@ -3,10 +3,10 @@
 //
 // Copyright (C) 2000-2008 Guillaume Ryder
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,8 +14,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "StdAfx.h"
@@ -92,8 +91,14 @@ enum CMDLINE_OPTION {
 	cmdoptNone
 };
 
+static void initializeLanguage();
+static void runGui(CMDLINE_OPTION cmdoptAction);
+static bool processKeyMessage(UINT uMsg, const KBDLLHOOKSTRUCT& data);
 static CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch);
 static void processCmdLineAction(CMDLINE_OPTION cmdoptAction);
+
+static HHOOK s_hKeyboardHook;
+static LRESULT CALLBACK prcKeyboardHook(int nCode, WPARAM wParam, LPARAM lParam);
 
 static LRESULT CALLBACK prcInvisible(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -107,7 +112,7 @@ static WNDPROC s_prcProgramsTarget;
 // ID of the next menu item to add to the "Add" sub-menus (programs and favorites)
 static UINT s_idAddMenuId;
 
-static bool browseForCommandLine(HWND hwndParent, LPTSTR pszFile, bool bForceExist);
+static bool browseForCommandLine(HWND hwnd_parent, LPTSTR pszFile, bool bForceExist);
 static bool browseForCommandLine(HWND hDlg);
 static void onMainCommand(UINT id, WORD wNotify, HWND hWnd);
 
@@ -157,6 +162,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #endif // _DEBUG
 
 
+LRESULT CALLBACK prcKeyboardHook(int nCode, WPARAM wParam, LPARAM lParam) {
+	if (nCode >= 0
+			&& !e_hdlgModal
+			&& processKeyMessage(wParam, *reinterpret_cast<const KBDLLHOOKSTRUCT*>(lParam))) {
+		return TRUE;
+	} else {
+		return CallNextHookEx(s_hKeyboardHook, nCode, wParam, lParam);
+	}
+}
+
 // Entry point
 void WinMainCRTStartup() {
 	msgTaskbarCreated = RegisterWindowMessage(_T("TaskbarCreated"));
@@ -191,12 +206,30 @@ void WinMainCRTStartup() {
 	e_hHeap = GetProcessHeap();
 	e_hdlgModal = NULL;
 	
-	for (int lang = 0; lang < langCount; lang++) {
-		setLanguage(lang);
+	initializeLanguage();
+	
+	s_hKeyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, prcKeyboardHook, e_hInst, 0);
+	
+	const CMDLINE_OPTION cmdoptAction = execCmdLine(pszCmdLine, true);
+	if (cmdoptAction != cmdoptQuit) {
+		runGui(cmdoptAction);
+	}
+	
+	UnhookWindowsHookEx(s_hKeyboardHook);
+	
+	CoUninitialize();
+#ifndef _DEBUG
+	ExitProcess(0);
+#endif // _DEBUG
+}
+
+void initializeLanguage() {
+	for (int lang = 0; lang < i18n::langCount; lang++) {
+		i18n::setLanguage(lang);
 		
 		// Load tokens
 		static TCHAR pszTokens[512];
-		loadStringAuto(IDS_TOKENS, pszTokens);
+		i18n::loadStringAuto(IDS_TOKENS, pszTokens);
 		TCHAR *pcStart = pszTokens;
 		for (int iToken = 0; iToken < tokNotFound; iToken++) {
 			TCHAR *pc = pcStart;
@@ -211,106 +244,95 @@ void WinMainCRTStartup() {
 		s_sCondKeys.load(IDS_CONDITION_KEYS);
 	}
 	
-	setLanguage(getDefaultLanguage());
+	i18n::setLanguage(i18n::getDefaultLanguage());
+}
+
+void runGui(CMDLINE_OPTION cmdoptAction) {
+	// Create the invisible window
+	e_hwndInvisible = CreateWindow(_T("STATIC"),
+		pszClavierWindow, 0, 0,0,0,0, NULL, NULL, e_hInst, NULL);
+	SubclassWindow(e_hwndInvisible, prcInvisible);
 	
-	const CMDLINE_OPTION cmdoptAction = execCmdLine(pszCmdLine, true);
-	if (cmdoptAction != cmdoptQuit) {
-		
-		// Create the invisible window
-		e_hwndInvisible = CreateWindow(_T("STATIC"),
-			pszClavierWindow, 0, 0,0,0,0, NULL, NULL, e_hInst, NULL);
-		SubclassWindow(e_hwndInvisible, prcInvisible);
-		
-		// Create the traybar icon
-		trayIconAction(NIM_ADD);
-		
-		processCmdLineAction(cmdoptAction);
-		
-		// Message loop
-		DWORD timeMinimum = 0;
-		DWORD timeLast = GetTickCount();
-		MSG msg;
-		while (GetMessage(&msg, NULL, 0, 0)) {
-			if (msg.message == WM_HOTKEY) {
-				// Shortcut
-				
-				if (msg.time < timeLast) {
-					timeMinimum = 0;
-				}
-				if (msg.time < timeMinimum) {
-					goto Next;
-				}
-				
-				Keystroke ks;
-				ks.m_vk = Keystroke::filterVK((BYTE)HIWORD(msg.lParam));
-				ks.m_vkFlags = LOWORD(msg.lParam);
-				ks.m_bDistinguishLeftRight = true;
-				const HWND hwndFocus = Keystroke::getKeyboardFocus();
-				
-				// Test for right special keys
-				for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
-					const DWORD vkKeyFlags = e_aSpecialKey[i].vkFlags;
-					const BYTE vkLeft = e_aSpecialKey[i].vkLeft;
-					const BYTE vkRight = (BYTE)(vkLeft + 1);
-					if (ks.m_vkFlags & vkKeyFlags) {
-						if (IsKeyDown(vkRight)) {
-							ks.m_vkFlags &= ~vkKeyFlags;
-							ks.m_vkFlags |= (DWORD)vkKeyFlags << vkFlagsRightOffset;
-						}
-					}
-				}
-				
-				// Get the toggle keys state, for conditions checking
-				static const int avkCond[] = {
-					VK_CAPITAL, VK_NUMLOCK, VK_SCROLL,
-				};
-				for (int i = 0; i < condTypeCount; i++) {
-					ks.m_aCond[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
-				}
-				
-				// Get the current program, for conditions checking
-				TCHAR pszProcess[MAX_PATH];
-				if (!getWindowExecutable(hwndFocus, pszProcess)) {
-					*pszProcess = _T('\0');
-				}
-				
-				Shortcut *const psh = findShortcut(ks, (*pszProcess) ? pszProcess : NULL);
-				
-				if (psh) {
-					if (psh->execute(true)) {
-						timeMinimum = GetTickCount();
-					}
-				} else {
-					// No matching shortcut found: simulate the keystroke
-					// without catching it with an hotkey, to perform default processing
-					ks.unregisterHotKey();
-					ks.simulateTyping(hwndFocus, false);
-					ks.registerHotKey();
-				}
-				
-			} else {
-				// Other message
-				
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-			
-		Next:
-			timeLast = msg.time;
-		}
-		
-		// Delete traybar icon
-		trayIconAction(NIM_DELETE);
-		
-		// Save shortcuts, then delete them
-		shortcutsSave();
-		shortcutsClear();
+	// Create the traybar icon
+	trayIconAction(NIM_ADD);
+	
+	processCmdLineAction(cmdoptAction);
+	
+	// Message loop
+	MSG msg;
+	while (GetMessage(&msg, NULL, 0, 0)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
 	}
 	
-	CoUninitialize();
-#ifndef _DEBUG
-	ExitProcess(0);
-#endif // _DEBUG
+	// Delete traybar icon
+	trayIconAction(NIM_DELETE);
+	
+	// Save shortcuts, then delete them
+	shortcutsSave();
+	shortcutsClear();
+}
+
+bool processKeyMessage(UINT uMsg, const KBDLLHOOKSTRUCT& data) {
+	VERIF(uMsg == WM_KEYDOWN || uMsg == WM_SYSKEYDOWN);
+	
+	// Do not process simulated keystrokes.
+	VERIF(!(data.flags & LLKHF_INJECTED));
+	
+	TCHAR psz[1024];
+	wsprintf(psz, _T("uMsg: %08lX - vk: %3lu scan: %3lu flags: %8X\n"),
+		uMsg, data.vkCode, data.scanCode, data.flags);
+	OutputDebugString(psz);
+	
+#if 0 ///$$$
+	HWND hwndFocus;
+	UINT idThread;
+	Keystroke::catchKeyboardFocus(hwndFocus, idThread);
+#endif ///$$$
+	
+	Keystroke ks;
+	ks.m_vk = Keystroke::filterVK((BYTE)data.vkCode);
+	ks.m_vkFlags = 0;
+	ks.m_bDistinguishLeftRight = true;
+	
+	// Test for right special keys
+	for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+		const DWORD vkKeyFlags = e_aSpecialKey[i].vkFlags;
+		const BYTE vkLeft = e_aSpecialKey[i].vkLeft;
+		const BYTE vkRight = (BYTE)(vkLeft + 1);
+		if (IsKeyDown(vkRight)) {
+			// Test for right key first, since left special key codes are the same as "unsided" key codes.
+			wsprintf(psz, _T("  Right key down: %lu\n"), vkLeft);
+			OutputDebugString(psz);
+			ks.m_vkFlags |= vkKeyFlags << vkFlagsRightOffset;
+		} else if (IsKeyDown(vkLeft)) {
+			wsprintf(psz, _T("  Left key down: %lu\n"), vkLeft);
+			OutputDebugString(psz);
+			ks.m_vkFlags |= vkKeyFlags;
+		}
+	}
+	
+	const HWND hwndFocus = Keystroke::getKeyboardFocus();
+	
+	// Get the toggle keys state, for conditions checking
+	static const int avkCond[] = {
+		VK_CAPITAL, VK_NUMLOCK, VK_SCROLL,
+	};
+	for (int i = 0; i < condTypeCount; i++) {
+		ks.m_aCond[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
+	}
+	
+	// Get the current program, for conditions checking
+	TCHAR pszProcess[MAX_PATH];
+	if (!getWindowExecutable(hwndFocus, pszProcess)) {
+		*pszProcess = _T('\0');
+	}
+	
+	Shortcut *const psh = findShortcut(ks, (*pszProcess) ? pszProcess : NULL);
+	VERIF(psh);
+	
+	psh->execute(true);
+	return true;
 }
 
 
@@ -573,7 +595,7 @@ Destroy:
 			
 			for (;;) {
 				HeapCompact(e_hHeap, 0);
-				switch (dialogBox(IDD_MAIN, NULL, prcMain, wParam)) {
+				switch (i18n::dialogBox(IDD_MAIN, NULL, prcMain, wParam)) {
 					case IDCCMD_LANGUAGE:
 						break;
 					case IDCCMD_QUIT:
@@ -587,7 +609,7 @@ Destroy:
 		} else /* (lParam == WM_RBUTTONDOWN)*/ {
 			// Right click: display shortcuts menu
 			
-			const HMENU hAllMenus = loadMenu(IDM_CONTEXT);
+			const HMENU hAllMenus = i18n::loadMenu(IDM_CONTEXT);
 			const HMENU hMenu = GetSubMenu(hAllMenus, 2);
 			SetMenuDefaultItem(hMenu, ID_TRAY_SETTINGS, MF_BYCOMMAND);
 			
@@ -661,7 +683,7 @@ Destroy:
 				case ID_TRAY_INI_SAVE:
 					{
 						TCHAR psz[bufString];
-						loadStringAuto(IDS_INI_FILTER, psz);
+						i18n::loadStringAuto(IDS_INI_FILTER, psz);
 						for (UINT i = 0; psz[i]; i++) {
 							if (psz[i] == _T('|')) {
 								psz[i] = _T('\0');
@@ -1112,14 +1134,14 @@ void FileMenuItem::execute() {
 }
 
 
-bool browseForCommandLine(HWND hwndParent, LPTSTR pszFile, bool bForceExist) {
+bool browseForCommandLine(HWND hwnd_parent, LPTSTR pszFile, bool bForceExist) {
 	PathUnquoteSpaces(pszFile);
 	
 	// Ask for the file
 	OPENFILENAME ofn;
 	ZeroMemory(&ofn, OPENFILENAME_SIZE_VERSION_400);
 	ofn.lStructSize = OPENFILENAME_SIZE_VERSION_400;
-	ofn.hwndOwner = hwndParent;
+	ofn.hwndOwner = hwnd_parent;
 	ofn.lpstrFile = pszFile;
 	ofn.nMaxFile = MAX_PATH;
 	ofn.Flags = (bForceExist) ? OFN_FILEMUSTEXIST | OFN_HIDEREADONLY : OFN_HIDEREADONLY;
@@ -1177,11 +1199,6 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 					delete (Shortcut*)lvi.lParam;
 				}
 				ListView_DeleteAllItems(e_hlst);
-				
-				for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
-					psh->registerHotKey();
-				}
-				
 				EndDialog(s_hdlgMain, IDCANCEL);
 			}
 			break;
@@ -1214,7 +1231,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				}
 			
 				if (id == IDCCMD_LANGUAGE) {
-					if (dialogBox(IDD_LANGUAGE, e_hdlgModal, prcLanguage) == IDCANCEL) {
+					if (i18n::dialogBox(IDD_LANGUAGE, e_hdlgModal, prcLanguage) == IDCANCEL) {
 						break;
 					}
 				} else if (id == IDCCMD_QUIT) {
@@ -1230,7 +1247,6 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				for (int i = nbItem; --i >= 0;) {
 					Shortcut *const psh = ash[i];
 					psh->resetIcons();
-					psh->registerHotKey();
 					psh->m_pNext = e_pshFirst;
 					e_pshFirst = psh;
 				}
@@ -1260,7 +1276,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		// Display "Add" menu
 		case IDCCMD_ADD:
 			{
-				const HMENU hAllMenus = loadMenu(IDM_CONTEXT);
+				const HMENU hAllMenus = i18n::loadMenu(IDM_CONTEXT);
 				
 				HMENU hMenu = GetSubMenu(hAllMenus, 0);
 				TCHAR pszFolder[MAX_PATH];
@@ -1351,9 +1367,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 					
 					// Delete item, hotkey, and shortcut object
 					ListView_DeleteItem(e_hlst, lvi.iItem);
-					Shortcut *const psh = (Shortcut*)lvi.lParam;
-					psh->unregisterHotKey();
-					delete psh;
+					delete (Shortcut*)lvi.lParam;
 				}
 				
 				// Select an other item and update
@@ -1405,7 +1419,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				PathRemoveFileSpec(pszPath);
 				
 				TCHAR pszFile[MAX_PATH];
-				loadStringAuto(IDS_HELP, pszFile);
+				i18n::loadStringAuto(IDS_HELP, pszFile);
 				PathAppend(pszPath, pszFile);
 				
 				if (32 >= (DWORD)ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT)) {
@@ -1418,7 +1432,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		
 		
 		case IDCCMD_ABOUT:
-			dialogBox(IDD_ABOUT, s_hdlgMain, prcAbout);
+			i18n::dialogBox(IDD_ABOUT, s_hdlgMain, prcAbout);
 			break;
 		
 		
@@ -1514,7 +1528,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 			break;
 		
 		case IDCCMD_CMDSETTINGS:
-			if (IDOK == dialogBox(IDD_CMDSETTINGS, s_hdlgMain, prcCmdSettings)) {
+			if (IDOK == i18n::dialogBox(IDD_CMDSETTINGS, s_hdlgMain, prcCmdSettings)) {
 				updateList();
 				updateItem();
 				onItemUpdated(1 << colContents);
@@ -1527,7 +1541,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		
 		case IDCCMD_TEXT_MENU:
 			{
-				const HMENU hAllMenus = loadMenu(IDM_CONTEXT);
+				const HMENU hAllMenus = i18n::loadMenu(IDM_CONTEXT);
 				const HMENU hMenu = GetSubMenu(hAllMenus, 1);
 				
 				fillSpecialCharsMenu(hMenu, 5, ID_TEXT_SPECIALCHAR_FIRST);
@@ -1613,10 +1627,10 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 					sp.pt = (POINT&)rc;
 				}
 				
-				loadStringAuto(IDS_DONATEURL, pszDonateURL);
+				i18n::loadStringAuto(IDS_DONATEURL, pszDonateURL);
 				initializeWebLink(hDlg, IDCLBL_DONATE, pszDonateURL);
 				SendDlgItemMessage(hDlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
-					(LPARAM)loadBitmap(IDB_DONATE));
+					(LPARAM)i18n::loadBitmap(IDB_DONATE));
 				
 				SendDlgItemMessage(hDlg, IDCCMD_TEXT_MENU, BM_SETIMAGE, IMAGE_BITMAP,
 					(LPARAM)LoadBitmap(NULL, MAKEINTRESOURCE(OBM_COMBO)));
@@ -1631,7 +1645,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				TCHAR pszText[512];
 				
 				// Add columns to the list
-				loadStringAuto(IDS_COLUMNS, pszText);
+				i18n::loadStringAuto(IDS_COLUMNS, pszText);
 				TCHAR *pcText = pszText;
 				LVCOLUMN lvc;
 				lvc.mask = LVCF_TEXT | LVCF_SUBITEM;
@@ -1648,7 +1662,6 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				int nbShortcut = 0, nbShortcutIcon = 0;
 				for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
 					Shortcut *const pshCopy = new Shortcut(*psh);
-					pshCopy->unregisterHotKey();
 					addItem(pshCopy, (s_psh == psh));
 					nbShortcut++;
 					if (pshCopy->m_bCommand) {
@@ -1675,7 +1688,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				// Programs combo box
 				const HWND hcboPrograms = GetDlgItem(hDlg, IDCCBO_PROGRAMS);
 				TCHAR pszPrograms[bufString];
-				loadStringAuto(IDS_PROGRAMS, pszPrograms);
+				i18n::loadStringAuto(IDS_PROGRAMS, pszPrograms);
 				TCHAR *pcStart = pszPrograms;
 				for (int i = 0; i < 2; i++) {
 					TCHAR *pc = pcStart;
@@ -1700,7 +1713,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 					HWND_TOPMOST, 0, 0, 0, 0,
 					SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 				
-				loadStringAuto(IDS_TOOLTIPS, pszText);
+				i18n::loadStringAuto(IDS_TOOLTIPS, pszText);
 				pcText = pszText;
 				TOOLINFO ti;
 				ti.cbSize = sizeof(ti);
@@ -2097,7 +2110,7 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUN
 						GetDlgItemText(hDlg, IDCTXT_DIRECTORY, pszDir, nbArray(pszDir));
 						
 						TCHAR pszTitle[MAX_PATH];
-						loadStringAuto(IDS_BROWSEDIR, pszTitle);
+						i18n::loadStringAuto(IDS_BROWSEDIR, pszTitle);
 						if (!browseForFolder(hDlg, pszTitle, pszDir)) {
 							break;
 						}
@@ -2140,10 +2153,10 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
 			{
 				e_hdlgModal = hDlg;
 				
-				for (int lang = 0; lang < langCount; lang++) {
+				for (int lang = 0; lang < i18n::langCount; lang++) {
 					ListBox_AddString(hlst, s_asToken[tokLanguageName].get(lang));
 				}
-				ListBox_SetCurSel(hlst, e_lang);
+				ListBox_SetCurSel(hlst, i18n::getLanguage());
 			}
 			return TRUE;
 		
@@ -2157,8 +2170,8 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
 				case IDOK:
 					{
 						const int iLang = ListBox_GetCurSel(hlst);
-						if (e_lang != iLang) {
-							setLanguage(iLang);
+						if (i18n::getLanguage() != iLang) {
+							i18n::setLanguage(iLang);
 							shortcutsSave();
 						} else {
 							wParam = IDCANCEL;
@@ -2186,10 +2199,10 @@ INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			
 			initializeWebLink(hDlg, IDCLBL_WEBSITE, _T("http://utilfr42.free.fr/"));
 			initializeWebLink(hDlg, IDCLBL_EMAIL, _T("mailto:guillaume@ryder.fr"));
-			loadStringAuto(IDS_DONATEURL, pszDonateURL);
+			i18n::loadStringAuto(IDS_DONATEURL, pszDonateURL);
 			initializeWebLink(hDlg, IDCLBL_DONATE, pszDonateURL);
 			SendDlgItemMessage(hDlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
-				(LPARAM)loadBitmap(IDB_DONATE));
+				(LPARAM)i18n::loadBitmap(IDB_DONATE));
 			return TRUE;
 		
 		case WM_CTLCOLORSTATIC:
@@ -2356,7 +2369,7 @@ LPCTSTR getToken(int tok) {
 // Return a tok* or tokNotFound if not found
 int findToken(LPCTSTR pszToken) {
 	for (int tok = 0; tok < nbArray(s_asToken); tok++) {
-		for (int lang = 0; lang < langCount; lang++) {
+		for (int lang = 0; lang < i18n::langCount; lang++) {
 			if (!lstrcmpi(pszToken, s_asToken[tok].get(lang))) {
 				return tok;
 			}
@@ -2644,9 +2657,9 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 			
 			// Language
 			case tokLanguage:
-				for (int lang = 0; lang < langCount; lang++) {
+				for (int lang = 0; lang < i18n::langCount; lang++) {
 					if (!lstrcmpi(pcSep, s_asToken[tokLanguageName].get(lang))) {
-						setLanguage(lang);
+						i18n::setLanguage(lang);
 					}
 				}
 				break;
@@ -3303,9 +3316,6 @@ bool Shortcut::execute(bool bFromHotkey) const {
 								TCHAR pszCode[5];
 								wsprintf(pszCode, _T("0%u"), (UTCHAR)*psz);
 								
-								ks.m_vk = VK_MENU;
-								ks.m_vkFlags = 0;
-								const bool bAltIsHotKey = ks.unregisterHotKey();
 								const BYTE scanCodeAlt = (BYTE)MapVirtualKey(VK_MENU, 0);
 								keybd_event(VK_MENU, scanCodeAlt, 0, 0);
 								
@@ -3317,9 +3327,6 @@ bool Shortcut::execute(bool bFromHotkey) const {
 								}
 								
 								keybd_event(VK_MENU, scanCodeAlt, KEYEVENTF_KEYUP, 0);
-								if (bAltIsHotKey) {
-									ks.registerHotKey();
-								}
 								
 							} else {
 								const BYTE bFlags = HIBYTE(wKey);
@@ -3335,11 +3342,7 @@ bool Shortcut::execute(bool bFromHotkey) const {
 									ks.m_vkFlags |= MOD_ALT;
 								}
 								
-								const bool bWasRegistered = ks.unregisterHotKey();
 								ks.simulateTyping(hwndFocus);
-								if (bWasRegistered) {
-									ks.registerHotKey();
-								}
 							}
 						}
 						
@@ -3347,11 +3350,7 @@ bool Shortcut::execute(bool bFromHotkey) const {
 						// Simple brackets: [keystroke]
 						
 						ks.serialize(sInside.get());
-						const bool bWasRegistered = ks.unregisterHotKey();
 						ks.simulateTyping(hwndFocus);
-						if (bWasRegistered) {
-							ks.registerHotKey();
-						}
 					}
 				}
 				

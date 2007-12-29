@@ -3,10 +3,10 @@
 //
 // Copyright (C) 2000-2008 Guillaume Ryder
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,8 +14,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "StdAfx.h"
@@ -64,7 +63,7 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
 				
 				// Load condition names
 				TCHAR pszConds[bufString];
-				loadStringAuto(IDS_CONDITIONS, pszConds);
+				i18n::loadStringAuto(IDS_CONDITIONS, pszConds);
 				TCHAR *pc = pszConds;
 				for (int iCond = 0; iCond < condCount; iCond++) {
 					while (*pc != _T(';')) {
@@ -224,12 +223,12 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 }
 
 
-bool askKeystroke(HWND hwndParent, Shortcut* pksEdited, Keystroke& rksResult) {
+bool askKeystroke(HWND hwnd_parent, Shortcut* pksEdited, Keystroke& rksResult) {
 	s_pksEditedOld = pksEdited;
 	s_ksReset = true;
 	
 	s_ks = rksResult;
-	VERIF(IDOK == dialogBox(IDD_KEYSTROKE, hwndParent, prcKeystroke));
+	VERIF(IDOK == i18n::dialogBox(IDD_KEYSTROKE, hwnd_parent, prcKeystroke));
 	
 	rksResult = s_ks;
 	return true;
@@ -297,25 +296,6 @@ bool Keystroke::match(const Keystroke& ks) const {
 		VERIF(m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
 	}
 	return true;
-}
-
-
-// Register the hotkey
-void Keystroke::registerHotKey() {
-	const WORD vkFlags = getVkFlagsNoSide();
-	if (m_vk == VK_NUMPAD5) {
-		RegisterHotKey(NULL, MAKEWORD(VK_CLEAR, vkFlags), vkFlags, VK_CLEAR);
-	}
-	RegisterHotKey(NULL, MAKEWORD(m_vk, vkFlags), vkFlags, m_vk);
-}
-
-// Unregister the hotkey
-bool Keystroke::unregisterHotKey() {
-	const WORD vkFlags = getVkFlagsNoSide();
-	if (m_vk == VK_NUMPAD5) {
-		UnregisterHotKey(NULL, MAKEWORD(VK_CLEAR, vkFlags));
-	}
-	return ToBool(UnregisterHotKey(NULL, MAKEWORD(m_vk, vkFlags)));
 }
 
 
@@ -573,7 +553,6 @@ Error:
 		if (psh->load(pszCurrent)) {
 			psh->m_pNext = e_pshFirst;
 			e_pshFirst = psh;
-			psh->registerHotKey();
 		} else {
 			delete psh;
 		}
@@ -771,11 +750,11 @@ bool Shortcut::containsProgram(LPCTSTR pszProgram) const {
 }
 
 
-bool Keystroke::askSendKeys(HWND hwndParent, Keystroke& rks) {
+bool Keystroke::askSendKeys(HWND hwnd_parent, Keystroke& rks) {
 	s_ks.reset();
 	s_ks.m_bDistinguishLeftRight = false;
 	
-	VERIF(IDOK == dialogBox(IDD_SENDKEYS, hwndParent, prcSendKeys));
+	VERIF(IDOK == i18n::dialogBox(IDD_SENDKEYS, hwnd_parent, prcSendKeys));
 	
 	rks = s_ks;
 	return true;

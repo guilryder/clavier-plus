@@ -3,10 +3,10 @@
 //
 // Copyright (C) 2000-2008 Guillaume Ryder
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,8 +14,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #pragma once
@@ -34,7 +33,7 @@ class String;
 
 const size_t bufString = 128;
 const size_t bufHotKey = 128;
-const size_t bufCode   =  32;
+const size_t bufCode = 32;
 
 const int bufClipboardString = MAX_PATH * 10;
 
@@ -44,7 +43,7 @@ const LPCTSTR pszApp = _T("Clavier+");
 
 extern HANDLE e_hHeap;
 extern HINSTANCE e_hInst;
-extern HWND e_hwndInvisible;    // Invisible background window
+extern HWND e_hwndInvisible;  // Invisible background window
 extern HWND e_hdlgModal;
 extern bool e_bIconVisible;
 
@@ -127,7 +126,7 @@ bool getFileInfo(LPCTSTR pszPath, DWORD dwFileAttributes, SHFILEINFO& shfi, UINT
 
 void clipboardToEnvironment();
 
-HWND findVisibleChildWindow(HWND hwndParent, LPCTSTR pszClass, bool bPrefix);
+HWND findVisibleChildWindow(HWND hwnd_parent, LPCTSTR pszClass, bool bPrefix);
 bool checkWindowClass(HWND hWnd, LPCTSTR pszClass, bool bPrefix);
 HWND findWindowByName(LPCTSTR pszWindowSpec);
 
@@ -150,7 +149,7 @@ bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject);
 // - return directory path instead of LPITEMIDLIST
 //------------------------------------------------------------------------
 
-bool browseForFolder(HWND hwndParent, LPCTSTR pszTitle, LPTSTR pszDirectory);
+bool browseForFolder(HWND hwnd_parent, LPCTSTR pszTitle, LPTSTR pszDirectory);
 
 
 //------------------------------------------------------------------------
@@ -168,17 +167,17 @@ int findToken(LPCTSTR pszToken);
 // Strings translation
 //------------------------------------------------------------------------
 
-#include "Lang.h"
+#include "I18n.h"
 
 class TranslatedString {
 public:
 	
 	void load(UINT id) {
-		loadStringAuto(id, m_apsz[e_lang]);
+		i18n::loadStringAuto(id, m_apsz[i18n::getLanguage()]);
 	}
 	
 	void set(LPCTSTR psz) {
-		lstrcpy(m_apsz[e_lang], psz);
+		lstrcpy(m_apsz[i18n::getLanguage()], psz);
 	}
 	
 	LPCTSTR get(int lang) const {
@@ -186,13 +185,13 @@ public:
 	}
 	
 	LPCTSTR get() const {
-		return get(e_lang);
+		return get(i18n::getLanguage());
 	}
 	
 	
 private:
 	
-	TCHAR m_apsz[langCount][bufString];
+	TCHAR m_apsz[i18n::langCount][bufString];
 };
 
 
