@@ -55,4 +55,4 @@ extern "C" int atexit(void (__cdecl*)()) {
 	return 0;
 }
 
-#endif // !_DEBUG
+#endif  // !_DEBUG

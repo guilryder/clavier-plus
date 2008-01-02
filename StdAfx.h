@@ -67,9 +67,9 @@
 #ifdef _DEBUG
 #include <stdlib.h>
 #include <crtdbg.h>
-#define DEBUG_NEW      new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define DEBUG_NEW  new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #else
-#define DEBUG_NEW      new
+#define DEBUG_NEW  new
 #endif
 
 #define new DEBUG_NEW
@@ -83,13 +83,13 @@
 #endif
 
 
-#define ToBool(f)        ((f) != 0)
-#define nbArray(a)       (sizeof(a)/sizeof(a[0]))
+#define ToBool(f)  ((f) != 0)
+#define nbArray(a)  (sizeof(a)/sizeof(a[0]))
 #define MYUNUSED(param)
 
 #define VERIFP(f,value)  { if (!(f))  return (value); }
-#define VERIF(f)         VERIFP(f,false)
-#define VERIFV(f)        { if (!(f))  return; }
+#define VERIF(f)  VERIFP(f,false)
+#define VERIFV(f)  { if (!(f))  return; }
 
-#define min(a,b)   (((a) < (b)) ? (a) : (b))
-#define max(a,b)   (((a) > (b)) ? (a) : (b))
+#define min(a,b)  (((a) < (b)) ? (a) : (b))
+#define max(a,b)  (((a) > (b)) ? (a) : (b))

@@ -159,8 +159,33 @@ bool browseForFolder(HWND hwnd_parent, LPCTSTR pszTitle, LPTSTR pszDirectory);
 bool getSpecialFolderPath(int index, LPTSTR pszPath);
 bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath);
 
+
+//------------------------------------------------------------------------
+// Application-specific helpers
+//------------------------------------------------------------------------
+
+// Returns the translation of a token in the current language.
 LPCTSTR getToken(int tok);
+
+// Returns the name of a language in this language.
+LPCTSTR getLanguageName(int lang);
+
+// Returns the index of a token from its name. The name of the token can be in any language.
+//
+// Returns:
+//   A tok* enum value, or tokNotFound if the token does not match any token.
 int findToken(LPCTSTR pszToken);
+
+// Increments a string pointer until the end of the string or a comma is encountered, then skips
+// spaces. The comma is replaced by a null character, so that the initial pointer (before being
+// incremented) will point to the string before the comma.
+//
+// Args:
+//   rpc: A reference to the pointer to increment. The string initially pointed will be unescaped if
+//     bUnescape is true.
+//   bUnescape: If true, unescapes the string according to backslashes. The string is unescaped in
+//     place, which is possible because the unescaping process can only reduce the string length.
+void skipUntilComma(TCHAR*& rpc, bool bUnescape = false);
 
 
 //------------------------------------------------------------------------
@@ -169,34 +194,38 @@ int findToken(LPCTSTR pszToken);
 
 #include "I18n.h"
 
+// A string translated in all available languages.
 class TranslatedString {
 public:
 	
+	// Loads the translation of the string for the current language.
 	void load(UINT id) {
-		i18n::loadStringAuto(id, m_apsz[i18n::getLanguage()]);
+		i18n::loadStringAuto(id, m_translations[i18n::getLanguage()]);
 	}
 	
+	// Sets the translation of the string for the current language.
 	void set(LPCTSTR psz) {
-		lstrcpy(m_apsz[i18n::getLanguage()], psz);
+		lstrcpy(m_translations[i18n::getLanguage()], psz);
 	}
 	
+	// Returns the translation of the string for a given language.
 	LPCTSTR get(int lang) const {
-		return m_apsz[lang];
+		return m_translations[lang];
 	}
 	
+	// Returns the translation of the string for the current language.
 	LPCTSTR get() const {
 		return get(i18n::getLanguage());
 	}
 	
-	
 private:
 	
-	TCHAR m_apsz[i18n::langCount][bufString];
+	// Translations of the string, indexed by language.
+	TCHAR m_translations[i18n::langCount][bufString];
 };
 
 
 #include "MyString.h"
-
 
 
 //------------------------------------------------------------------------
@@ -214,7 +243,7 @@ struct THREAD_SHELLEXECUTE {
 	
 	String sCommand;
 	String sDirectory;
-	int    nShow;
+	int nShow;
 };
 
 DWORD WINAPI threadShellExecute(void* pParams);

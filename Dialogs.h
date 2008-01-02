@@ -17,22 +17,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "StdAfx.h"
+#pragma once
 
+namespace dialogs {
 
-#ifndef _DEBUG
+extern HWND e_hdlgMain;
 
-// Implement the new and delete operators with a Windows heap.
-// Needed to remove all dependencies to Visual C++ runtime DLLs.
+// Performs initialization for the current language. Should be called for each available language.
+void initializeCurrentLanguage();
 
-extern HANDLE e_hHeap;
+// Displays the main window as a modal dialog box.
+//
+// Args:
+//   initial_command: If not zero, the ID of the WM_COMMAND command to post initially. Used, for
+//     example, to open the "add shortcut" dialog box initially.
+//
+// Returns:
+//   The ID of the last clicked button: ID_OK, ID_CANCEL, IDCCMD_QUIT, IDCCMD_LANGUAGE.
+UINT showMainDialogModal(UINT initial_command);
 
-void* operator new(size_t size) {
-	return HeapAlloc(e_hHeap, 0, size);
-}
-
-void operator delete(void* p) {
-	HeapFree(e_hHeap, 0, p);
-}
-
-#endif  // !_DEBUG
+}  // dialogs namespace

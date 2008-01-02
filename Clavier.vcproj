@@ -482,11 +482,27 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Dialogs.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Dialogs.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Global.cpp"
 			>
 		</File>
 		<File
 			RelativePath=".\Global.h"
+			>
+		</File>
+		<File
+			RelativePath=".\Hook.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Hook.h"
 			>
 		</File>
 		<File
@@ -536,15 +552,23 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath=".\Keyboard.cpp"
+			RelativePath=".\Keystroke.cpp"
 			>
 		</File>
 		<File
-			RelativePath=".\Keyboard.h"
+			RelativePath=".\Keystroke.h"
 			>
 		</File>
 		<File
 			RelativePath=".\MyString.h"
+			>
+		</File>
+		<File
+			RelativePath=".\Shortcut.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Shortcut.h"
 			>
 		</File>
 		<File

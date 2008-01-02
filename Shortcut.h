@@ -19,106 +19,11 @@
 
 #pragma once
 
-#include "App.h"
+#include "Keystroke.h"
 
-#define IsKeyDown(vk) \
-	(GetKeyState(vk) & 0x8000)
+struct GETFILEICON;
 
-const BYTE bKeyDown = 0x80;
-
-const int vkFlagsRightOffset = 16;
-
-
-enum {
-	condTypeShiftLock,
-	condTypeNumLock,
-	condTypeScrollLock,
-	condTypeCount
-};
-
-enum {
-	condIgnore,
-	condYes,
-	condNo,
-	condCount
-};
-
-
-class Keystroke {
-public:
-	
-	BYTE m_vk;
-	DWORD m_vkFlags;
-	int m_aCond[condTypeCount];
-	bool m_bDistinguishLeftRight;
-	
-	
-public:
-	
-	Keystroke() {
-		resetAll();
-	}
-	
-	void reset() {
-		m_vk = 0;
-		m_vkFlags = 0;
-	}
-	
-	void resetAll() {
-		reset();
-		m_bDistinguishLeftRight = false;
-		for (int i = 0; i < condTypeCount; i++) {
-			m_aCond[i] = condIgnore;
-		}
-	}
-	
-	
-	WORD getVkFlagsNoSide() const {
-		return (WORD)m_vkFlags | (WORD)(m_vkFlags >> vkFlagsRightOffset);
-	}
-	
-	void getKeyName(LPTSTR pszHotKey) const;
-	
-	void serialize(LPTSTR psz);
-	void simulateTyping(HWND hwndFocus, bool bSpecialKeys = true) const;
-	
-	bool match(const Keystroke& ks) const;
-	
-	bool canReleaseSpecialKeys() const {
-		return (0xA6 > m_vk || m_vk > 0xB7);
-	}
-	
-	static bool askSendKeys(HWND hwnd_parent, Keystroke& rks);
-	
-	
-	static void keybdEvent(UINT vk, bool bUp);
-	static BYTE filterVK(BYTE vk) {
-		return (vk == VK_CLEAR) ? VK_NUMPAD5 : vk;
-	}
-	static bool isKeyExtended(UINT vk);
-	static void getKeyName(UINT vk, LPTSTR pszHotKey);
-	static HWND getKeyboardFocus();
-	static void catchKeyboardFocus(HWND& rhwndFocus, DWORD& ridThread);
-	static void detachKeyboardFocus(DWORD idThread);
-	static void releaseSpecialKeys(BYTE abKeyboard[]);
-	
-private:
-	
-	static INT_PTR CALLBACK prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-};
-
-
-
-class Shortcut;
-
-struct GETFILEICON {
-	Shortcut* psh;
-	SHFILEINFO shfi;
-	TCHAR pszExecutable[MAX_PATH];
-	UINT uFlags;
-	bool bOK;
-};
-
+namespace shortcut {
 
 class Shortcut : public Keystroke {
 public:
@@ -136,8 +41,7 @@ public:
 	String m_sDirectory;
 	String m_sPrograms;
 	
-	
-protected:
+private:
 	
 	enum {
 		iconInvalid = -1,
@@ -149,7 +53,6 @@ protected:
 	HICON m_hIcon;
 	
 	bool containsProgram(LPCTSTR pszProgram) const;
-	
 	
 public:
 	
@@ -199,25 +102,19 @@ public:
 };
 
 
-struct SPECIALKEY {
-	BYTE vk;
-	BYTE vkLeft;
-	DWORD vkFlags;
-	int tok;
-};
+extern Shortcut *e_pshFirst;  // Head of the shortcuts linked list
 
-const int nbSpecialKey = 4;
-extern const SPECIALKEY e_aSpecialKey[nbSpecialKey];
+const int nbShowOption = 3;
+extern const int aiShowOption[nbShowOption];
 
+Shortcut* find(const Keystroke& ks, LPCTSTR pszProgram);
 
-bool askKeystroke(HWND hwnd_parent, Shortcut* pksEdited, Keystroke& rksResult);
+void loadShortcuts();
+void mergeShortcuts(LPCTSTR pszIniFile);
+void saveShortcuts();
+void clearShortcuts();
+void copyShortcutsToClipboard(const String& rs);
 
+}  // shortcut namespace
 
-extern Shortcut* e_pshFirst;  // Shortcuts linked list
-
-
-void shortcutsLoad();
-void shortcutsMerge(LPCTSTR pszIniFile);
-void shortcutsSave();
-void shortcutsClear();
-void shortcutsCopyToClipboard(const String& rs);
+using shortcut::Shortcut;

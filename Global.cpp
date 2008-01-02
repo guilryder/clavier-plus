@@ -67,8 +67,8 @@ void centerParent(HWND hWnd) {
 	
 	GetWindowRect(hWnd, &rcChild);
 	SetWindowPos(hWnd, NULL,
-		(rcParent.left + rcParent.right  + rcChild.left - rcChild.right)  / 2,
-		(rcParent.top  + rcParent.bottom + rcChild.top  - rcChild.bottom) / 2,
+		(rcParent.left + rcParent.right + rcChild.left - rcChild.right) / 2,
+		(rcParent.top + rcParent.bottom + rcChild.top - rcChild.bottom) / 2,
 		0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
@@ -349,7 +349,6 @@ bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject) {
 }
 
 
-
 //------------------------------------------------------------------------
 // SHBrowseForFolder wrapper:
 // - use given title
@@ -364,9 +363,9 @@ bool browseForFolder(HWND hwnd_parent, LPCTSTR pszTitle, LPTSTR pszDirectory) {
 	ZeroMemory(&bi, sizeof(bi));
 	bi.hwndOwner = hwnd_parent;
 	bi.lpszTitle = pszTitle;
-	bi.ulFlags   = BIF_RETURNONLYFSDIRS;
-	bi.lpfn      = prcBrowseForFolderCallback;
-	bi.lParam    = (LPARAM)pszDirectory;
+	bi.ulFlags = BIF_RETURNONLYFSDIRS;
+	bi.lpfn = prcBrowseForFolderCallback;
+	bi.lParam = (LPARAM)pszDirectory;
 	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
 	if (!pidl || !SHGetPathFromIDList(pidl, pszDirectory)) {
 		return false;
@@ -526,14 +525,14 @@ void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow) {
 	
 	// Run the command line
 	SHELLEXECUTEINFO sei;
-	sei.cbSize       = sizeof(sei);
-	sei.fMask        = SEE_MASK_FLAG_DDEWAIT;
-	sei.hwnd         = e_hwndInvisible;
-	sei.lpFile       = pszPath;
-	sei.lpVerb       = NULL;
+	sei.cbSize = sizeof(sei);
+	sei.fMask = SEE_MASK_FLAG_DDEWAIT;
+	sei.hwnd = e_hwndInvisible;
+	sei.lpFile = pszPath;
+	sei.lpVerb = NULL;
 	sei.lpParameters = PathGetArgs(pszCommandExp);
-	sei.lpDirectory  = pszDirectory;
-	sei.nShow        = nShow;
+	sei.lpDirectory = pszDirectory;
+	sei.nShow = nShow;
 	ShellExecuteEx(&sei);
 }
 

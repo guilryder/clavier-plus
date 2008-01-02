@@ -18,14 +18,15 @@
 
 
 #include "StdAfx.h"
-#include "App.h"
+#include "Hook.h"
+#include "Keystroke.h"
 
 
 const SPECIALKEY e_aSpecialKey[nbSpecialKey] = {
-	{ VK_LWIN,    VK_LWIN,     MOD_WIN,     tokWin },
+	{ VK_LWIN, VK_LWIN, MOD_WIN, tokWin },
 	{ VK_CONTROL, VK_LCONTROL, MOD_CONTROL, tokCtrl },
-	{ VK_SHIFT,   VK_LSHIFT,   MOD_SHIFT,   tokShift },
-	{ VK_MENU,    VK_LMENU,    MOD_ALT,     tokAlt },
+	{ VK_SHIFT, VK_LSHIFT, MOD_SHIFT, tokShift },
+	{ VK_MENU, VK_LMENU, MOD_ALT, tokAlt },
 };
 
 
@@ -42,12 +43,12 @@ static Keystroke s_ks;
 static WNDPROC s_prcKeystrokeCtl;
 
 // Window proc an edit box allowing to enter a keystroke.
-static LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 
 // Shortcut keystroke and conditions dialog box
-INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
-	switch (uMsg) {
+INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
+	switch (message) {
 		
 		// Initialization
 		case WM_INITDIALOG:
@@ -55,9 +56,11 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
 				e_hdlgModal = hDlg;
 				centerParent(hDlg);
 				
-				const HWND hctl = GetDlgItem(hDlg, IDCTXT);
-				s_prcKeystrokeCtl = SubclassWindow(hctl, prcKeystrokeCtl);
-				PostMessage(hctl, WM_KEYSTROKE, 0,0);
+				// Subclass the keystroke control. Display the initial keystroke name.
+				const HWND hwnd_keystroke = GetDlgItem(hDlg, IDCTXT);
+				s_prcKeystrokeCtl = SubclassWindow(hwnd_keystroke, prcKeystrokeCtl);
+				keyboard_hook::setCatchAllKeysWindow(hwnd_keystroke);
+				PostMessage(hwnd_keystroke, WM_KEYSTROKE, 0,0);
 				
 				CheckDlgButton(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT, s_ks.m_bDistinguishLeftRight);
 				
@@ -89,7 +92,8 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
 			switch (LOWORD(wParam)) {
 				
 				case IDCCHK_DISTINGUISH_LEFT_RIGHT:
-					s_ks.m_bDistinguishLeftRight = ToBool(IsDlgButtonChecked(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT));
+					s_ks.m_bDistinguishLeftRight =
+						ToBool(IsDlgButtonChecked(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT));
 					PostMessage(GetDlgItem(hDlg, IDCTXT), WM_KEYSTROKE, 0,0);
 					break;
 				
@@ -122,10 +126,14 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
 
 
 // Edit text of keystroke dialog box
-LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	bool bIsDown = false;
 	
-	switch (uMsg) {
+	switch (message) {
+		
+		case WM_DESTROY:
+			keyboard_hook::setCatchAllKeysWindow(NULL);
+			break;
 		
 		case WM_LBUTTONDOWN:
 			SetFocus(hWnd);
@@ -135,45 +143,43 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			SetCursor(LoadCursor(NULL, IDC_ARROW));
 			return TRUE;
 		
-		
 		case WM_GETDLGCODE:
 			return DLGC_WANTALLKEYS;
 		
-		case WM_CHAR:
-		case WM_DEADCHAR:
-		case WM_SYSCHAR:
-		case WM_SYSDEADCHAR:
-			return 0;
-		
-		case WM_KEYDOWN:
-		case WM_SYSKEYDOWN:
+		// These messages are sent by the keyboard hook. Arguments:
+		// wParam: the virtual key code
+		// lParam: the special keys bitmask
+		//   special_key_index * 2: "left key is down" bit
+		//   special_key_index * 2 + 1: "right key is down" bit
+		case WM_CLAVIER_KEYDOWN:
 			if (s_ksReset) {
 				s_ks.reset();
 			}
 			bIsDown = true;
 			// Fall-through
 		
-		case WM_KEYUP:
-		case WM_SYSKEYUP:
+		case WM_CLAVIER_KEYUP:
 			{
+				BYTE vk_typed = static_cast<BYTE>(wParam);
+				const DWORD special_keys_down_mask = lParam;
+				
 				// Flags
 				DWORD vkFlags = s_ks.m_vkFlags;
 				bool bIsSpecial = false;
-				for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
-					const BYTE vk = e_aSpecialKey[i].vk;
-					const BYTE vkLeft = e_aSpecialKey[i].vkLeft;
-					const BYTE vkRight = (BYTE)(vkLeft + 1);
-					if (wParam == vk || wParam == vkLeft || wParam == vkRight) {
-						wParam = vk;
+				for (int special_key = 0; special_key < nbArray(e_aSpecialKey); special_key++) {
+					const BYTE vk = e_aSpecialKey[special_key].vk;
+					const BYTE vk_left = e_aSpecialKey[special_key].vkLeft;
+					const BYTE vk_right = (BYTE)(vk_left + 1);
+					if (vk_typed == vk || vk_typed == vk_left || vk_typed == vk_right) {
+						vk_typed = vk;
 						bIsSpecial = true;
 					}
-					const DWORD vkKeyFlags = e_aSpecialKey[i].vkFlags;
-					if (IsKeyDown(vkLeft)) {
+					
+					const DWORD vkKeyFlags = e_aSpecialKey[special_key].vkFlags;
+					if (special_keys_down_mask & (1L << (special_key * 2))) {
 						vkFlags |= vkKeyFlags;
-					} else if (IsKeyDown(vkRight)) {
+					} else if (special_keys_down_mask & (1L << (special_key * 2 + 1))) {
 						vkFlags |= (DWORD)vkKeyFlags << vkFlagsRightOffset;
-					} else if (IsKeyDown(vk)) {  // Required by Win 9x
-						vkFlags |= vkKeyFlags;
 					} else {
 						vkFlags &= ~vkKeyFlags;
 					}
@@ -186,7 +192,7 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 				if (bIsDown) {
 					s_ksReset = false;
 					if (!bIsSpecial) {
-						s_ks.m_vk = Keystroke::filterVK((BYTE)wParam);
+						s_ks.m_vk = Keystroke::filterVK(vk_typed);
 					}
 				} else {
 					s_ksReset |= !bIsSpecial;
@@ -214,16 +220,17 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			return 0;
 	}
 	
-	// Ignore mouse events
-	if (WM_MOUSEFIRST <= uMsg && uMsg <= WM_MOUSELAST) {
+	// Ignore mouse and keyboard events
+	if ((WM_MOUSEFIRST <= message && message <= WM_MOUSELAST)
+			|| (WM_KEYFIRST <= message && message <= WM_KEYLAST)) {
 		return 0;
 	}
 	
-	return CallWindowProc(s_prcKeystrokeCtl, hWnd, uMsg, wParam, lParam);
+	return CallWindowProc(s_prcKeystrokeCtl, hWnd, message, wParam, lParam);
 }
 
 
-bool askKeystroke(HWND hwnd_parent, Shortcut* pksEdited, Keystroke& rksResult) {
+bool askKeystroke(HWND hwnd_parent, Keystroke* pksEdited, Keystroke& rksResult) {
 	s_pksEditedOld = pksEdited;
 	s_ksReset = true;
 	
@@ -233,7 +240,6 @@ bool askKeystroke(HWND hwnd_parent, Shortcut* pksEdited, Keystroke& rksResult) {
 	rksResult = s_ks;
 	return true;
 }
-
 
 
 //------------------------------------------------------------------------
@@ -452,7 +458,7 @@ void Keystroke::detachKeyboardFocus(DWORD idThread) {
 void Keystroke::releaseSpecialKeys(BYTE abKeyboard[]) {
 	for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
 		const BYTE vk = e_aSpecialKey[i].vk;
-		if (abKeyboard[vk] & bKeyDown) {
+		if (abKeyboard[vk] & keyDownMask) {
 			abKeyboard[vk] = 0;
 			keybdEvent(vk, true);
 		}
@@ -460,13 +466,11 @@ void Keystroke::releaseSpecialKeys(BYTE abKeyboard[]) {
 }
 
 
-
 //------------------------------------------------------------------------
-// Settings loading and saving
+// Settings serialization
 //------------------------------------------------------------------------
 
 int e_acxCol[colCount];
-static const int s_acxColOrig[] = { 40, 20, 20 };
 
 SIZE e_sizeMainDialog = { 0, 0 };
 bool e_bMaximizeMainDialog = false;
@@ -488,268 +492,6 @@ HKEY openAutoStartKey(LPTSTR pszPath) {
 }
 
 
-void shortcutsLoad() {
-	shortcutsClear();
-	shortcutsMerge(e_pszIniFile);
-}
-
-void shortcutsMerge(LPCTSTR pszIniFile) {
-	e_bIconVisible = true;
-	
-	memcpy(e_acxCol, s_acxColOrig, sizeof(s_acxColOrig));
-	
-	const HANDLE hf = CreateFile(pszIniFile,
-		GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-	if (hf == INVALID_HANDLE_VALUE) {
-		if (GetLastError() != ERROR_FILE_NOT_FOUND) {
-Error:
-			messageBox(NULL, ERR_LOADING_INI);
-		}
-		return;
-	}
-	
-	DWORD size = GetFileSize(hf, NULL);
-	if (size == INVALID_FILE_SIZE) {
-		goto Error;
-	}
-	
-	BYTE *pbBuffer = new BYTE[size + 2];
-	DWORD lenRead;
-	const bool bOK = ReadFile(hf, pbBuffer, size, &lenRead, NULL) && lenRead == size;
-	CloseHandle(hf);
-	
-	if (!bOK) {
-		delete [] pbBuffer;
-		goto Error;
-	}
-	
-	pbBuffer[size] = pbBuffer[size + 1] = 0;
-	LPTSTR pszCurrent;
-	if (IsTextUnicode(pbBuffer, size, NULL)) {
-#ifdef UNICODE
-		pszCurrent = (LPTSTR)pbBuffer;
-#else
-		LPWSTR wsz = (LPWSTR)pbBuffer;
-		const int buf = lstrlenW(wsz) + 1;
-		pszCurrent = new TCHAR[buf];
-		WideCharToMultiByte(CP_ACP, 0, wsz, -1, pszCurrent, buf, NULL, NULL);
-		pbBuffer = (BYTE*)pszCurrent;
-#endif
-	} else {
-#ifdef UNICODE
-		LPSTR asz = (LPSTR)pbBuffer;
-		const int buf = lstrlenA(asz) + 1;
-		pszCurrent = new TCHAR[buf];
-		MultiByteToWideChar(CP_ACP, 0, asz, -1, pszCurrent, buf);
-		pbBuffer = (BYTE*)pszCurrent;
-#else
-		pszCurrent = (LPTSTR)pbBuffer;
-#endif
-	}
-	
-	Keystroke ks;
-	do {
-		Shortcut *const psh = new Shortcut(ks);
-		if (psh->load(pszCurrent)) {
-			psh->m_pNext = e_pshFirst;
-			e_pshFirst = psh;
-		} else {
-			delete psh;
-		}
-	} while (pszCurrent);
-	
-	delete [] pbBuffer;
-	HeapCompact(e_hHeap, 0);
-}
-
-
-void shortcutsSave() {
-	HANDLE hf;
-	for (;;) {
-		hf = CreateFile(e_pszIniFile,
-			GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
-		if (hf != INVALID_HANDLE_VALUE) {
-			break;
-		}
-		VERIFV(messageBox(NULL, ERR_SAVING_INI, MB_ICONERROR | MB_RETRYCANCEL) == IDRETRY);
-	}
-	
-	TCHAR psz[1024];
-	
-	wsprintf(psz, _T("%s=%s\r\n"),
-		getToken(tokLanguage), getToken(tokLanguageName));
-	writeFile(hf, psz);
-	
-	wsprintf(psz, _T("%s=%d,%d,%d,%d\r\n"),
-		getToken(tokSize), e_sizeMainDialog.cx, e_sizeMainDialog.cy,
-		e_bMaximizeMainDialog, !e_bIconVisible);
-	writeFile(hf, psz);
-	
-	writeFile(hf, getToken(tokColumns));
-	for (int i = 0; i < nbColSize; i++) {
-		wsprintf(psz, (i == 0) ? _T("=%d") : _T(",%d"), e_acxCol[i]);
-		writeFile(hf, psz);
-	}
-	
-	wsprintf(psz, _T("\r\n%s=%d\r\n\r\n"),
-		getToken(tokSorting), Shortcut::s_iSortColumn);
-	writeFile(hf, psz);
-	
-	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
-		psh->save(hf);
-	}
-	
-	CloseHandle(hf);
-}
-
-
-void shortcutsClear() {
-	while (e_pshFirst) {
-		Shortcut *const psh = e_pshFirst;
-		e_pshFirst = psh->m_pNext;
-		delete psh;
-	}
-	e_pshFirst = NULL;
-}
-
-
-void shortcutsCopyToClipboard(const String& rs) {
-	if (!OpenClipboard(NULL)) {
-		return;
-	}
-	EmptyClipboard();
-	
-	// Allocate and fill shared buffer
-	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (rs.getLength() + 1) * sizeof(TCHAR));
-	LPTSTR psz = (LPTSTR)GlobalLock(hMem);
-	lstrcpy(psz, rs);
-	GlobalUnlock(hMem);
-	
-	// Copy buffer to clipboard
-	SetClipboardData(CF_TEXT, hMem);
-	CloseClipboard();
-}
-
-
-
-//------------------------------------------------------------------------
-// Shortcut
-//------------------------------------------------------------------------
-
-// Test for inclusion
-bool Shortcut::match(const Keystroke& ks, LPCTSTR pszProgram) const {
-	VERIF(Keystroke::match(ks));
-	
-	return (pszProgram && m_sPrograms.isSome() && containsProgram(pszProgram)) ^ (!m_bProgramsOnly);
-}
-
-
-
-// Test for intersection
-bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[], bool bProgramsOnly) const {
-	VERIF(bProgramsOnly == m_bProgramsOnly);
-	
-	VERIF(m_vk == ks.m_vk);
-	
-	if (m_bDistinguishLeftRight && ks.m_bDistinguishLeftRight) {
-		VERIF(m_vkFlags == ks.m_vkFlags);
-	} else {
-		VERIF(getVkFlagsNoSide() == ks.getVkFlagsNoSide());
-	}
-	
-	for (int i = 0; i < condTypeCount; i++) {
-		VERIF(m_aCond[i] == condIgnore || ks.m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
-	}
-	
-	if (!m_bProgramsOnly || !bProgramsOnly) {
-		return true;
-	}
-	
-	VERIF(asProgram && m_sPrograms.isSome());
-	for (int i = 0; asProgram[i].isSome(); i++) {
-		if (containsProgram(asProgram[i])) {
-			return true;
-		}
-	}
-	return false;
-}
-
-
-// Get programs array, NULL if no program.
-String* Shortcut::getPrograms() const {
-	VERIFP(m_sPrograms.isSome(), NULL);
-	
-	const LPCTSTR pszPrograms = m_sPrograms;
-	int nbProgram = 0;
-	for (int i = 0; pszPrograms[i]; i++) {
-		if (pszPrograms[i] == _T(';') && i > 0 && pszPrograms[i - 1] != _T(';')) {
-			nbProgram++;
-		}
-	}
-	String *const asProgram = new String[nbProgram + 2];
-	nbProgram = 0;
-	for (int i = 0; pszPrograms[i]; i++) {
-		if (pszPrograms[i] == _T(';')) {
-			if (i > 0 && pszPrograms[i - 1] != _T(';')) {
-				nbProgram++;
-			}
-		} else {
-			asProgram[nbProgram] += pszPrograms[i];
-		}
-	}
-	
-	return asProgram;
-}
-
-// Eliminate duplicates in programs
-void Shortcut::cleanPrograms() {
-	String *const asProgram = getPrograms();
-	m_sPrograms.empty();
-	VERIFV(asProgram);
-	
-	for (int i = 0; asProgram[i].isSome(); i++) {
-		for (int j = 0; j < i; j++) {
-			if (!lstrcmpi(asProgram[i], asProgram[j])) {
-				goto Next;
-			}
-		}
-		if (m_sPrograms.isSome()) {
-			m_sPrograms += _T(';');
-		}
-		m_sPrograms += asProgram[i];
-		
-	Next:
-		;
-	}
-	
-	delete [] asProgram;
-}
-
-
-bool Shortcut::containsProgram(LPCTSTR pszProgram) const {
-	LPCTSTR pszPrograms = m_sPrograms;
-	VERIF(*pszPrograms);
-	
-	const TCHAR *pcStart = pszPrograms;
-	for (;;) {
-		const TCHAR *pc = pcStart;
-		while (*pc && *pc != _T(';')) {
-			pc++;
-		}
-		
-		if (CSTR_EQUAL == CompareString(LOCALE_USER_DEFAULT, NORM_IGNORECASE,
-				pcStart, pc - pcStart, pszProgram, -1)) {
-			return true;
-		}
-		
-		if (!*pc) {
-			return false;
-		}
-		pcStart = pc + 1;
-	}
-}
-
-
 bool Keystroke::askSendKeys(HWND hwnd_parent, Keystroke& rks) {
 	s_ks.reset();
 	s_ks.m_bDistinguishLeftRight = false;
@@ -761,8 +503,8 @@ bool Keystroke::askSendKeys(HWND hwnd_parent, Keystroke& rks) {
 }
 
 
-INT_PTR CALLBACK Keystroke::prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
-	switch (uMsg) {
+INT_PTR CALLBACK Keystroke::prcSendKeys(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
+	switch (message) {
 		
 		// Initialization
 		case WM_INITDIALOG:

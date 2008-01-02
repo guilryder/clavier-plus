@@ -49,11 +49,9 @@ public:
 	typedef TCHAR* STR;
 	typedef const TCHAR* CSTR;
 	
-	
 	operator CSTR () const {
 		return getSafe();
 	}
-	
 	
 	//----------------------------------------------------------------------
 	// Constructors, destructor
@@ -77,7 +75,6 @@ public:
 	~String() {
 		destroy();
 	}
-	
 	
 	//----------------------------------------------------------------------
 	// Affectation
@@ -108,7 +105,6 @@ public:
 		}
 		return *this;
 	}
-	
 	
 	//----------------------------------------------------------------------
 	// Appending
@@ -146,7 +142,6 @@ public:
 		return *this;
 	}
 	
-	
 	//----------------------------------------------------------------------
 	// Get
 	//----------------------------------------------------------------------
@@ -180,7 +175,6 @@ public:
 		return m_strbuf && *m_strbuf;
 	}
 	
-	
 	//----------------------------------------------------------------------
 	// Operations
 	//----------------------------------------------------------------------
@@ -208,8 +202,7 @@ public:
 		return true;
 	}
 	
-	
-protected:
+private:
 	
 	STR m_strbuf;
 	int m_buf_length;
@@ -284,13 +277,11 @@ protected:
 		m_strbuf[length + 1] = 0;
 	}
 	
-	
 	inline bool isOverlapping(CSTR strbuf) const {
 		return m_strbuf <= strbuf && strbuf < m_strbuf + m_buf_length;
 	}
 	
-	
-protected:
+private:
 	
 	static STR bufferAlloc(int buf_length) {
 		return (STR)HeapAlloc(e_hHeap, 0, buf_length * sizeof(TCHAR));

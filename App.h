@@ -20,7 +20,10 @@
 #pragma once
 
 #include "Global.h"
-#include "Keyboard.h"
+
+#ifndef OPENFILENAME_SIZE_VERSION_400
+#define OPENFILENAME_SIZE_VERSION_400  sizeof(OPENFILENAME)
+#endif  // !OPENFILENAME_SIZE_VERSION_400
 
 #define WM_KEYSTROKE  (WM_USER + 100)
 #define WM_GETFILEICON  (WM_USER + 101)
@@ -67,7 +70,3 @@ enum {
 	
 	tokNotFound
 };
-
-
-// Shortcut list, NULL if the dialog box is not displayed
-extern HWND e_hlst;
