@@ -95,6 +95,7 @@ void initializeCurrentLanguage() {
 
 
 UINT showMainDialogModal(UINT initial_command) {
+	shortcut::GuardList guard;
 	return i18n::dialogBox(IDD_MAIN, NULL, prcMain, initial_command);
 }
 
@@ -550,29 +551,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		case IDOK:
 		case IDCCMD_LANGUAGE:
 			{
-				// Get all shortcuts, check unicity
-				const int nbItem = ListView_GetItemCount(s_hwnd_list);
-				Shortcut **const ash = new Shortcut*[nbItem];
-				LVITEM lvi;
-				lvi.mask = LVIF_PARAM;
-				for (lvi.iItem = 0; lvi.iItem < nbItem; lvi.iItem++) {
-					ListView_GetItem(s_hwnd_list, &lvi);
-					Shortcut *const psh = ash[lvi.iItem] = (Shortcut*)lvi.lParam;
-					String *const asProgram = psh->getPrograms();
-					for (int i = 0; i < lvi.iItem; i++) {
-						if (ash[i]->testConflict(*psh, asProgram, psh->m_bProgramsOnly)) {
-							TCHAR pszHotKey[bufHotKey];
-							psh->getKeyName(pszHotKey);
-							messageBox(e_hdlgMain, ERR_SHORTCUT_DUPLICATE, MB_ICONERROR, pszHotKey);
-							delete [] asProgram;
-			Cancel:
-							delete [] ash;
-							return;
-						}
-					}
-					delete [] asProgram;
-				}
-			
+				// Test for cancellation before doing anything else.
 				if (id == IDCCMD_LANGUAGE) {
 					if (i18n::dialogBox(IDD_LANGUAGE, e_hdlgModal, prcLanguage) == IDCANCEL) {
 						break;
@@ -580,8 +559,18 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				} else if (id == IDCCMD_QUIT) {
 					if (!isKeyDown(VK_SHIFT) && IDNO ==
 							messageBox(e_hdlgMain, ASK_QUIT, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION)) {
-						goto Cancel;
+						break;
 					}
+				}
+				
+				// Get all shortcuts from the list.
+				const int nbItem = ListView_GetItemCount(s_hwnd_list);
+				Shortcut **const ash = new Shortcut*[nbItem];
+				LVITEM lvi;
+				lvi.mask = LVIF_PARAM;
+				for (lvi.iItem = 0; lvi.iItem < nbItem; lvi.iItem++) {
+					ListView_GetItem(s_hwnd_list, &lvi);
+					ash[lvi.iItem] = reinterpret_cast<Shortcut*>(lvi.lParam);
 				}
 				
 				// Create a valid linked list from the list box
@@ -590,8 +579,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				for (int i = nbItem; --i >= 0;) {
 					Shortcut *const psh = ash[i];
 					psh->resetIcons();
-					psh->m_pNext = shortcut::e_pshFirst;
-					shortcut::e_pshFirst = psh;
+					psh->addToList();
 				}
 				delete [] ash;
 				
@@ -788,7 +776,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 					if (!ListView_GetItem(s_hwnd_list, &lvi)) {
 						break;
 					}
-					((const Shortcut*)lvi.lParam)->appendItemToString(s);
+					reinterpret_cast<const Shortcut*>(lvi.lParam)->appendCsvLineToString(s);
 				}
 				shortcut::copyShortcutsToClipboard(s);
 				
@@ -820,7 +808,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		case IDCTXT_DESCRIPTION:
 			if (s_bProcessGuiEvents && wNotify == EN_CHANGE) {
 				int iColumn = -1;
-				String *ps;
+				String* ps;
 				switch (id) {
 					case IDCTXT_TEXT:
 						ps = &s_psh->m_sText;
@@ -1003,7 +991,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				
 				// Fill shortcuts list and unregister hot keys
 				int nbShortcut = 0, nbShortcutIcon = 0;
-				for (Shortcut *psh = shortcut::e_pshFirst; psh; psh = psh->m_pNext) {
+				for (Shortcut *psh = shortcut::getFirst(); psh; psh = psh->getNext()) {
 					Shortcut *const pshCopy = new Shortcut(*psh);
 					addItem(pshCopy, (s_psh == psh));
 					nbShortcut++;
@@ -1730,6 +1718,14 @@ DWORD WINAPI threadGetFileIcon(GETFILEICON& gfi) {
 }
 
 
+void Shortcut::findExecutable(LPTSTR pszExecutable) {
+	TCHAR pszFile[MAX_PATH];
+	StrCpyN(pszFile, m_sCommand, nbArray(pszFile));
+	PathRemoveArgs(pszFile);
+	findFullPath(pszFile, pszExecutable);
+}
+
+
 void Shortcut::onGetFileInfo(GETFILEICON& gfi) {
 	if (gfi.uFlags & SHGFI_SYSICONINDEX) {
 		// Small icon index
@@ -1814,7 +1810,7 @@ void Shortcut::resetIcons() {
 
 // Add shortcut tabular representation to the given string
 // Return the new end of the string
-void Shortcut::appendItemToString(String& rs) const {
+void Shortcut::appendCsvLineToString(String& rs) const {
 	TCHAR pszHotKey[bufHotKey];
 	getKeyName(pszHotKey);
 	rs += pszHotKey;

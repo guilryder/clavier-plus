@@ -116,6 +116,7 @@ void WinMainCRTStartup() {
 #endif  // ALLOW_MULTIPLE_INSTANCES
 	
 	CoInitialize(NULL);
+	shortcut::initialize();
 	
 	e_hInst = (HINSTANCE)GetModuleHandle(NULL);
 	e_hHeap = GetProcessHeap();
@@ -123,15 +124,12 @@ void WinMainCRTStartup() {
 	
 	initializeLanguages();
 	
-	keyboard_hook::install();
-	
 	const CMDLINE_OPTION cmdoptAction = execCmdLine(pszCmdLine, true);
 	if (cmdoptAction != cmdoptQuit) {
 		runGui(cmdoptAction);
 	}
 	
-	keyboard_hook::uninstall();
-	
+	shortcut::terminate();
 	CoUninitialize();
 #ifndef _DEBUG
 	ExitProcess(0);
@@ -171,6 +169,8 @@ void runGui(CMDLINE_OPTION cmdoptAction) {
 	// Create the traybar icon
 	updateTrayIcon(NIM_ADD);
 	
+	keyboard_hook::install();
+	
 	processCmdLineAction(cmdoptAction);
 	
 	// Message loop
@@ -179,6 +179,8 @@ void runGui(CMDLINE_OPTION cmdoptAction) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+	
+	keyboard_hook::uninstall();
 	
 	// Delete traybar icon
 	updateTrayIcon(NIM_DELETE);
@@ -467,6 +469,7 @@ Destroy:
 	} else if (uMsg == WM_COPYDATA) {
 		// Execute command line
 		
+		shortcut::GuardList guard;
 		const COPYDATASTRUCT &cds = *(const COPYDATASTRUCT*)lParam;
 		if (cds.dwData == (ULONG_PTR)bUnicode) {
 			processCmdLineAction(execCmdLine((LPCTSTR)cds.lpData, false));
@@ -498,6 +501,7 @@ void updateTrayIcon(DWORD dwMessage) {
 
 
 UINT displayTrayIconMenu() {
+	shortcut::GuardList guard;
 	const HWND hwnd = e_hwndInvisible;
 	
 	const HMENU hAllMenus = i18n::loadMenu(IDM_CONTEXT);
@@ -562,8 +566,8 @@ UINT displayTrayIconMenu() {
 		case ID_TRAY_COPYLIST:
 			{
 				String s;
-				for (const Shortcut *psh = shortcut::e_pshFirst; psh; psh = psh->m_pNext) {
-					psh->appendItemToString(s);
+				for (const Shortcut *psh = shortcut::getFirst(); psh; psh = psh->getNext()) {
+					psh->appendCsvLineToString(s);
 				}
 				shortcut::copyShortcutsToClipboard(s);
 			}

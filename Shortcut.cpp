@@ -22,7 +22,9 @@
 
 namespace shortcut {
 
-Shortcut* e_pshFirst = NULL;
+static Shortcut* s_first_shortcut;
+
+CRITICAL_SECTION GuardList::s_critical_section;
 
 const int aiShowOption[nbShowOption] = {
 	SW_NORMAL, SW_MINIMIZE, SW_MAXIMIZE,
@@ -48,8 +50,23 @@ static void commandMouseWheel(LPTSTR pszArg);
 
 const LPCTSTR pszLineSeparator = _T("-\r\n");
 
+
+void initialize() {
+	s_first_shortcut = NULL;
+	InitializeCriticalSection(&GuardList::s_critical_section);
+}
+
+void terminate() {
+	DeleteCriticalSection(&GuardList::s_critical_section);
+}
+
+Shortcut* getFirst() {
+	return s_first_shortcut;
+}
+
+
 Shortcut::Shortcut(const Shortcut& sh) : Keystroke(sh) {
-	m_pNext = NULL;
+	m_next_shortcut = NULL;
 	m_bCommand = sh.m_bCommand;
 	m_nShow = sh.m_nShow;
 	m_bSupportFileOpen = sh.m_bSupportFileOpen;
@@ -65,7 +82,7 @@ Shortcut::Shortcut(const Shortcut& sh) : Keystroke(sh) {
 }
 
 Shortcut::Shortcut(const Keystroke& ks) : Keystroke(ks) {
-	m_pNext = NULL;
+	m_next_shortcut = NULL;
 	m_bCommand = false;
 	m_nShow = SW_NORMAL;
 	m_bSupportFileOpen = false;
@@ -74,6 +91,15 @@ Shortcut::Shortcut(const Keystroke& ks) : Keystroke(ks) {
 	m_hIcon = NULL;
 }
 
+void Shortcut::addToList() {
+	m_next_shortcut = s_first_shortcut;
+	s_first_shortcut = this;
+}
+
+
+//------------------------------------------------------------------------
+// Serialization
+//------------------------------------------------------------------------
 
 void Shortcut::save(HANDLE hf) {
 	cleanPrograms();
@@ -371,35 +397,14 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 	}
 	
 	// Valid shortcut
-	VERIF(m_vk);
-	
-	// No conflict between shortcuts, except concerning programs:
-	// there can be one programs-conditions-less shortcut
-	// and any count of shortcuts having different programs conditions
-	String *const asProgram = getPrograms();
-	bool bOK = true;
-	for (Shortcut *psh = shortcut::e_pshFirst; psh; psh = psh->m_pNext) {
-		if (psh->testConflict(*this, asProgram, m_bProgramsOnly)) {
-			bOK = false;
-			break;
-		}
-	}
-	delete [] asProgram;
-	
-	return bOK;
+	return ToBool(m_vk);
 }
 
 
-void Shortcut::findExecutable(LPTSTR pszExecutable) {
-	TCHAR pszFile[MAX_PATH];
-	StrCpyN(pszFile, m_sCommand, nbArray(pszFile));
-	PathRemoveArgs(pszFile);
-	findFullPath(pszFile, pszExecutable);
-}
+//------------------------------------------------------------------------
+// Executing
+//------------------------------------------------------------------------
 
-
-// Return true if we should reset the delay,
-// false otherwise.
 bool Shortcut::execute(bool bFromHotkey) const {
 	BYTE abKeyboard[256], abKeyboardNew[256];
 	GetKeyboardState(abKeyboard);
@@ -769,46 +774,8 @@ void commandMouseWheel(LPTSTR pszArg) {
 
 
 //------------------------------------------------------------------------
-// Shortcut
+// Matching
 //------------------------------------------------------------------------
-
-// Test for inclusion
-bool Shortcut::match(const Keystroke& ks, LPCTSTR pszProgram) const {
-	VERIF(Keystroke::match(ks));
-	
-	return (pszProgram && m_sPrograms.isSome() && containsProgram(pszProgram)) ^ (!m_bProgramsOnly);
-}
-
-
-// Test for intersection
-bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[], bool bProgramsOnly) const {
-	VERIF(bProgramsOnly == m_bProgramsOnly);
-	
-	VERIF(m_vk == ks.m_vk);
-	
-	if (m_bDistinguishLeftRight && ks.m_bDistinguishLeftRight) {
-		VERIF(m_vkFlags == ks.m_vkFlags);
-	} else {
-		VERIF(getVkFlagsNoSide() == ks.getVkFlagsNoSide());
-	}
-	
-	for (int i = 0; i < condTypeCount; i++) {
-		VERIF(m_aCond[i] == condIgnore || ks.m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
-	}
-	
-	if (!m_bProgramsOnly || !bProgramsOnly) {
-		return true;
-	}
-	
-	VERIF(asProgram && m_sPrograms.isSome());
-	for (int i = 0; asProgram[i].isSome(); i++) {
-		if (containsProgram(asProgram[i])) {
-			return true;
-		}
-	}
-	return false;
-}
-
 
 // Get programs array, NULL if no program.
 String* Shortcut::getPrograms() const {
@@ -884,18 +851,50 @@ bool Shortcut::containsProgram(LPCTSTR pszProgram) const {
 	}
 }
 
-// Find a shortcut in the linked list
-// Should not be called while the main dialog box is displayed
-Shortcut* find(const Keystroke& ks, LPCTSTR pszProgram) {
-	Shortcut *pshBest = NULL;
-	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
-		if (psh->match(ks, pszProgram)) {
-			if (!pshBest || !pshBest->m_bProgramsOnly) {
-				pshBest = psh;
+int Shortcut::computeMatchingLevel(const Keystroke& ks, LPCTSTR pszProgram) const {
+	if (Keystroke::match(ks)) {
+		if (pszProgram) {
+			if ((m_sPrograms.isSome() && containsProgram(pszProgram)) ^ (!m_bProgramsOnly)) {
+				return m_bProgramsOnly ? 2 : 1;
 			}
+		} else {
+			// No program in the environment: always match.
+			return 1;
 		}
 	}
-	return pshBest;
+	return 0;
+}
+
+MATCHING_RESULT e_matching_result;
+
+void computeAllMatchingLevels(const Keystroke& ks, LPCTSTR pszProgram) {
+	e_matching_result.matching_shortcuts_count = 0;
+	e_matching_result.max_matching_level = 0;
+	
+	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
+		const int matching_level = shortcut->computeMatchingLevel(ks, pszProgram);
+		shortcut->setMatchingLevel(matching_level);
+		if (matching_level == e_matching_result.max_matching_level) {
+			e_matching_result.matching_shortcuts_count++;
+		} else if (matching_level > e_matching_result.max_matching_level) {
+			e_matching_result.max_matching_level = matching_level;
+			e_matching_result.matching_shortcuts_count = 1;
+		}
+	}
+	
+	if (e_matching_result.max_matching_level <= 0) {
+		e_matching_result.matching_shortcuts_count = 0;
+	}
+}
+
+Shortcut* getNextMatching(Shortcut* from_this, int min_matching_level) {
+	while (from_this) {
+		if (from_this->getMatchingLevel() >= min_matching_level) {
+			return from_this;
+		}
+		from_this = from_this->getNext();
+	}
+	return NULL;
 }
 
 
@@ -966,8 +965,7 @@ Error:
 	do {
 		Shortcut *const psh = new Shortcut(ks);
 		if (psh->load(pszCurrent)) {
-			psh->m_pNext = e_pshFirst;
-			e_pshFirst = psh;
+			psh->addToList();
 		} else {
 			delete psh;
 		}
@@ -1010,8 +1008,8 @@ void saveShortcuts() {
 		getToken(tokSorting), Shortcut::s_iSortColumn);
 	writeFile(hf, psz);
 	
-	for (Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
-		psh->save(hf);
+	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
+		shortcut->save(hf);
 	}
 	
 	CloseHandle(hf);
@@ -1019,12 +1017,12 @@ void saveShortcuts() {
 
 
 void clearShortcuts() {
-	while (e_pshFirst) {
-		Shortcut *const psh = e_pshFirst;
-		e_pshFirst = psh->m_pNext;
-		delete psh;
+	while (s_first_shortcut) {
+		Shortcut *const old_first_shortcut = s_first_shortcut;
+		s_first_shortcut = old_first_shortcut->getNext();
+		delete old_first_shortcut;
 	}
-	e_pshFirst = NULL;
+	s_first_shortcut = NULL;
 }
 
 

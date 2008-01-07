@@ -24,14 +24,23 @@
 
 namespace keyboard_hook {
 
-static HWND s_hwnd_catch_all_keys = NULL;
-static DWORD s_special_keys_down_mask;
+const DWORD uninstall_timeout = 5000;  // milliseconds
 
 static HHOOK s_keyboard_hook;
 
-// Low-level keyboard hook procedure (WH_KEYBOARD_LL hook).
-// Calls redirectHookMessage() or processShortcutHookMessage() if the key message should be
-// processed.
+static HWND s_hwnd_catch_all_keys;
+
+// Specifies which special keys are currently down. Meaningful only if s_hwnd_catch_all_keys is not
+// NULL. This is a bitmask:
+//   special_key_index * 2: "left key is down" bit
+//   special_key_index * 2 + 1: "right key is down" bit
+static DWORD s_special_keys_down_mask;
+
+// Specifies the special keys we are waiting for being down.
+static DWORD s_special_keys_waiting_for_down_mask;
+
+// Low-level keyboard hook procedure (WH_KEYBOARD_LL hook). Calls redirectHookMessage() or
+// processShortcutHookMessage() if the key message should be processed.
 static LRESULT CALLBACK keyboardHookCallback(int code, WPARAM wParam, LPARAM lParam);
 
 // Redirects a keyboard hook message to s_hwnd_catch_all_keys. Updates s_special_keys_down_mask if
@@ -41,16 +50,46 @@ static void redirectHookMessage(UINT message, const KBDLLHOOKSTRUCT& data);
 // Processes a keyboard hook message for shortcuts.
 //
 // Returns:
-//   true if the message matches a shortcut and should not be removed from the messages queue,
+//   true if the message has been processed and should be removed from the message queue,
 //   false if the message should be forwarded to the next hook in the chain.
 static bool processShortcutHookMessage(UINT message, const KBDLLHOOKSTRUCT& data);
 
+static HANDLE s_shortcut_executing_thread_event;  // Set to wake shortcutExecutingThread().
+static HANDLE s_shortcut_executing_thread;  // The only shortcutExecutingThread() thread.
+static bool s_executing;  // Set by shortcutExecutingThread() while executing a shortcut.
+static bool s_want_quit;  // Set when shortcutExecutingThread() should quit.
+
+// Background thread that executes the matching shortcuts. Uses the matching result stored in
+// shortcut::e_matching_level. It is an infinite loop waiting for s_shortcut_executing_thread_event
+// to be set. It stops when when s_want_quit is true.
+//
+// Returns:
+//   true if the message has been processed and should be removed from the message queue,
+//   false if the message should be forwarded to the next hook in the chain.
+static DWORD WINAPI shortcutExecutingThread(void* param);
+
+// Executes one of the shortcuts according to their matching level and the results stored in
+// shortcut::e_matching_level.
+static void executeMatchingShortcut();
 
 void install() {
+	s_hwnd_catch_all_keys = NULL;
+	s_executing = false;
+	s_want_quit = false;
+	s_shortcut_executing_thread_event = CreateEvent(NULL, FALSE, FALSE, NULL);
 	s_keyboard_hook = SetWindowsHookEx(WH_KEYBOARD_LL, keyboardHookCallback, e_hInst, 0);
+	DWORD thread_id;
+	s_shortcut_executing_thread = CreateThread(NULL, 0, shortcutExecutingThread, NULL, 0, &thread_id);
 }
 
 void uninstall() {
+	// Close the shortcut executing thread.
+	s_want_quit = true;
+	SetEvent(s_shortcut_executing_thread_event);
+	WaitForSingleObject(s_shortcut_executing_thread, uninstall_timeout);
+	TerminateThread(s_shortcut_executing_thread_event, 0);
+	CloseHandle(s_shortcut_executing_thread);
+	
 	UnhookWindowsHookEx(s_keyboard_hook);
 }
 
@@ -132,13 +171,7 @@ bool processShortcutHookMessage(UINT message, const KBDLLHOOKSTRUCT& data) {
 	wsprintf(log_line, _T("message: %08lX - vk: %3lu scan: %3lu flags: %8X\n"),
 		message, data.vkCode, data.scanCode, data.flags);
 	OutputDebugString(log_line);
-#endif // _DEBUG
-	
-#if 0  ///$$$
-	HWND hwnd_focus;
-	UINT idThread;
-	Keystroke::catchKeyboardFocus(hwnd_focus, idThread);
-#endif  ///$$$
+#endif  // _DEBUG
 	
 	Keystroke ks;
 	ks.m_vk = Keystroke::filterVK((BYTE)data.vkCode);
@@ -181,12 +214,55 @@ bool processShortcutHookMessage(UINT message, const KBDLLHOOKSTRUCT& data) {
 	if (!getWindowExecutable(hwnd_focus, process_name)) {
 		*process_name = _T('\0');
 	}
+	const LPCTSTR process_name_nullable = (*process_name) ? process_name : NULL;
 	
-	Shortcut *const pShortcut = shortcut::find(ks, (*process_name) ? process_name : NULL);
-	VERIF(pShortcut);
+	shortcut::computeAllMatchingLevels(ks, process_name_nullable);
+	if (shortcut::e_matching_result.matching_shortcuts_count == 0) {
+		// No matching shortcut: perform default action for the keystroke.
+		return false;
+	}
 	
-	pShortcut->execute(true);
+	if (!s_executing) {
+		s_executing = true;
+		SetEvent(s_shortcut_executing_thread_event);
+	}
+	
 	return true;
+}
+
+DWORD WINAPI shortcutExecutingThread(void* MYUNUSED(param)) {
+	for (;;) {
+		WaitForSingleObject(s_shortcut_executing_thread_event, INFINITE);
+		if (s_want_quit) {
+			break;
+		}
+		
+		shortcut::GuardList guard;
+		executeMatchingShortcut();
+		s_executing = false;
+	}
+	return 0;
+}
+
+void executeMatchingShortcut() {
+	using shortcut::e_matching_result;
+	using shortcut::getNextMatching;
+	
+	if (e_matching_result.matching_shortcuts_count == 1) {
+		// Exactly one matching shortcut: execute it right now.
+		getNextMatching(shortcut::getFirst(), e_matching_result.max_matching_level)->execute(true);
+		
+	} else {
+		// Several matching shortcuts: let the user choose which one he wants to execute.
+		for (Shortcut* matching_shortcut = shortcut::getFirst();;
+				matching_shortcut = matching_shortcut->getNext()) {
+			matching_shortcut = getNextMatching(matching_shortcut, e_matching_result.max_matching_level);
+			if (!matching_shortcut) {
+				break;
+			}
+			///$$$ TODO
+		}
+	}
 }
 
 }  // keyboard_hook namespace
