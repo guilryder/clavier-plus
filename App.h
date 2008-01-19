@@ -70,3 +70,9 @@ enum {
 	
 	tokNotFound
 };
+
+
+namespace app {
+	void initialize();
+	void terminate();
+}  // app namespace

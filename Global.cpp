@@ -85,8 +85,8 @@ static LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink) {
 	const HWND hwnd = GetDlgItem(hDlg, idControl);
-	SetWindowLong(hwnd, GWL_USERDATA, (LONG)pszLink);
-	s_prcLabel = SubclassWindow(hwnd, prcWebLink);
+	setWindowLongPtr(hwnd, GWL_USERDATA, reinterpret_cast<LONG_PTR>(pszLink));
+	s_prcLabel = subclassWindow(hwnd, prcWebLink);
 }
 
 // Window procedure for dialog box controls displaying an URL.
@@ -102,7 +102,8 @@ LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			return HTCLIENT;
 		
 		case WM_LBUTTONDOWN:
-			ShellExecute(hWnd, NULL, (LPCTSTR)GetWindowLong(hWnd, GWL_USERDATA), NULL, NULL, SW_SHOWDEFAULT);
+			ShellExecute(hWnd, NULL, reinterpret_cast<LPCTSTR>(getWindowLongPtr(hWnd, GWL_USERDATA)),
+				NULL, NULL, SW_SHOWDEFAULT);
 			return 0;
 	}
 	
@@ -317,32 +318,32 @@ BOOL CALLBACK prcEnumFindWindowByName(HWND hWnd, LPARAM lParam) {
 }
 
 
-bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject) {
+bool matchWildcards(LPCTSTR pattern, LPCTSTR subject, LPCTSTR pattern_end) {
 	for (;;) {
-		TCHAR c = *pszPattern++;
-		switch (c) {
+		const TCHAR pattern_chr = (pattern == pattern_end) ? _T('\0') : *pattern++;
+		switch (pattern_chr) {
 			
 			case _T('\0'):
-				return !*pszSubject;
+				return !*subject;
 			
 			case _T('*'):
-				if (!*pszPattern) {
+				if (!*pattern || pattern == pattern_end) {
 					return true;  // Optimization
 				}
 				do {
-					if (matchWildcards(pszPattern, pszSubject)) {
+					if (matchWildcards(pattern, subject, pattern_end)) {
 						return true;
 					}
-				} while (*pszSubject++);
+				} while (*subject++);
 				return false;
 			
 			case _T('?'):
-				VERIF(*pszSubject);
-				pszSubject++;
+				VERIF(*subject);
+				subject++;
 				break;
 			
 			default:
-				VERIF((TCHAR)CharLower((LPTSTR)MAKELONG(*pszSubject++, 0)) == c);
+				VERIF(*subject++ == pattern_chr);
 				break;
 		}
 	}
@@ -495,7 +496,7 @@ void findFullPath(LPTSTR pszPath, LPTSTR pszFullPath) {
 			return;
 		}
 		
-		if (32 < (DWORD)FindExecutable(pszPath, NULL, pszFullPath)) {
+		if (32 < reinterpret_cast<UINT_PTR>(FindExecutable(pszPath, NULL, pszFullPath))) {
 			return;
 		}
 	}

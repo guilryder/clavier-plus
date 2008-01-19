@@ -94,7 +94,7 @@ void initializeCurrentLanguage() {
 }
 
 
-UINT showMainDialogModal(UINT initial_command) {
+INT_PTR showMainDialogModal(UINT initial_command) {
 	shortcut::GuardList guard;
 	return i18n::dialogBox(IDD_MAIN, NULL, prcMain, initial_command);
 }
@@ -753,7 +753,8 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				i18n::loadStringAuto(IDS_HELP, pszFile);
 				PathAppend(pszPath, pszFile);
 				
-				if (32 >= (DWORD)ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT)) {
+				if (32 >= reinterpret_cast<UINT_PTR>(
+						ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT))) {
 					lstrcpy(pszPath, pszHelpURL);
 					lstrcat(pszPath, pszFile);
 					ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT);
@@ -935,7 +936,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				
 				s_bProcessGuiEvents = false;
 				
-				s_prcProgramsTarget = SubclassWindow(GetDlgItem(hDlg, IDCIMG_PROGRAMS), prcProgramsTarget);
+				s_prcProgramsTarget = subclassWindow(GetDlgItem(hDlg, IDCIMG_PROGRAMS), prcProgramsTarget);
 				
 				s_hwnd_list = GetDlgItem(hDlg, IDCLST);
 				ListView_SetExtendedListViewStyle(s_hwnd_list, LVS_EX_FULLROWSELECT);
@@ -1061,7 +1062,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 					}
 					
 					ti.hwnd = hctl;
-					ti.uId = (UINT)hctl;
+					ti.uId = reinterpret_cast<UINT_PTR>(hctl);
 					ti.lpszText = pcText;
 					while (*pcText != _T(';')) {
 						pcText++;
@@ -1165,7 +1166,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				
 				const POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 				if (PtInRect(&rc, pt)) {
-					SetWindowLong(hDlg, DWL_MSGRESULT, HTBOTTOMRIGHT);
+					setWindowLongPtr(hDlg, DWL_MSGRESULT, HTBOTTOMRIGHT);
 					return TRUE;
 				}
 			}
@@ -1540,13 +1541,13 @@ INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			{
 				const int id = GetDlgCtrlID((HWND)lParam);
 				if (id == IDCLBL_EMAIL || id == IDCLBL_WEBSITE) {
-					HFONT hFont = (HFONT)GetWindowLong(hDlg, DWL_USER);
+					HFONT hFont = reinterpret_cast<HFONT>(getWindowLongPtr(hDlg, DWL_USER));
 					if (!hFont) {
 						LOGFONT lf;
 						GetObject((HFONT)SendMessage((HWND)lParam, WM_GETFONT, 0,0), sizeof(lf), &lf);
 						lf.lfUnderline = TRUE;
 						hFont = CreateFontIndirect(&lf);
-						SetWindowLong(hDlg, DWL_USER, (LONG)hFont);
+						setWindowLongPtr(hDlg, DWL_USER, reinterpret_cast<LONG_PTR>(hFont));
 					}
 					SelectFont((HDC)wParam, hFont);
 					SetTextColor((HDC)wParam, RGB(0,0,255));
@@ -1557,7 +1558,7 @@ INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 		
 		case WM_COMMAND:
-			DeleteFont((HFONT)GetWindowLong(hDlg, DWL_USER));
+			DeleteFont(reinterpret_cast<HFONT>(getWindowLongPtr(hDlg, DWL_USER)));
 			EndDialog(hDlg, IDOK);
 			break;
 	}

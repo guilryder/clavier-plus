@@ -16,24 +16,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #pragma once
 
-namespace dialogs {
+#ifndef _DEBUG
+#error TESTING mode is only available in _DEBUG mode.
+#endif  // !_DEBUG
 
-extern HWND e_hdlgMain;
+#define TESTING
 
-// Performs initialization for the current language. Should be called for each available language.
-void initializeCurrentLanguage();
+#include "../StdAfx.h"
 
-// Displays the main window as a modal dialog box.
-//
-// Args:
-//   initial_command: If not zero, the ID of the WM_COMMAND command to post initially. Used, for
-//     example, to open the "add shortcut" dialog box initially.
-//
-// Returns:
-//   The ID of the last clicked button: ID_OK, ID_CANCEL, IDCCMD_QUIT, IDCCMD_LANGUAGE.
-INT_PTR showMainDialogModal(UINT initial_command);
+#undef new
 
-}  // dialogs namespace
+#define CXXTEST_HAVE_EH
+
+#include <cxxtest/GlobalFixture.h>
+#include <cxxtest/TestSuite.h>

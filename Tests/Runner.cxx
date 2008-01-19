@@ -15,25 +15,20 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
-#pragma once
-
-namespace dialogs {
-
-extern HWND e_hdlgMain;
-
-// Performs initialization for the current language. Should be called for each available language.
-void initializeCurrentLanguage();
-
-// Displays the main window as a modal dialog box.
 //
-// Args:
-//   initial_command: If not zero, the ID of the WM_COMMAND command to post initially. Used, for
-//     example, to open the "add shortcut" dialog box initially.
-//
-// Returns:
-//   The ID of the last clicked button: ID_OK, ID_CANCEL, IDCCMD_QUIT, IDCCMD_LANGUAGE.
-INT_PTR showMainDialogModal(UINT initial_command);
+// Testing template for CxxUnit entry point, instantiated only once.
 
-}  // dialogs namespace
+<CxxTest preamble>
+#include <cxxtest/ParenPrinter.h>
+
+#include "../App.h"
+
+// Entry point
+int main() {
+	app::initialize();
+	const int exit_code = CxxTest::ParenPrinter().run();
+	app::terminate();
+	return exit_code;
+}
+
+<CxxTest world>

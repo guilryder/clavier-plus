@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="CxxTest"
+	Version="8,00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="CxxUnitTest"
+			DisplayName="CxxTest unit test"
+			CommandLine="$(ProjectDir)\cxxtest\cxxtestgen.py --part [AllOptions] [AdditionalOptions] [inputs]"
+			Outputs="[$OutputFile]"
+			AdditionalDependencies="[$TemplateFile]"
+			FileExtensions="*.hxx"
+			ExecutionDescription="Generating unit test code for $(InputName)..."
+			ShowOnlyRuleProperties="false"
+			>
+			<Properties>
+				<StringProperty
+					Name="TemplateFile"
+					DisplayName="Template file"
+					Description="The template file path"
+					Switch="&quot;--template=[value]&quot;"
+				/>
+				<StringProperty
+					Name="OutputFile"
+					DisplayName="Output file"
+					Description="The CPP output file path"
+					Switch="-o &quot;[value]&quot;"
+					DefaultValue="$(ProjectDir)\$(InputName).cpp"
+				/>
+			</Properties>
+		</CustomBuildRule>
+		<CustomBuildRule
+			Name="CxxTestRunner"
+			DisplayName="CxxTest runner"
+			CommandLine="$(ProjectDir)\cxxtest\cxxtestgen.py --root &quot;--template=$(InputPath)&quot; [AllOptions] [AdditionalOptions]"
+			Outputs="[$OutputFile]"
+			FileExtensions="*.cxx"
+			ExecutionDescription="Generating runner code for $(InputName)..."
+			ShowOnlyRuleProperties="false"
+			>
+			<Properties>
+				<StringProperty
+					Name="OutputFile"
+					DisplayName="Output file"
+					Description="The CPP output file path"
+					Switch="-o &quot;[value]&quot;"
+					DefaultValue="$(ProjectDir)\$(InputName).cpp"
+				/>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>

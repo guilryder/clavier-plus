@@ -45,6 +45,7 @@ public:
 	
 	Shortcut(const Shortcut& sh);
 	Shortcut(const Keystroke& ks);
+	
 	~Shortcut() {
 		resetIcons();
 	}
@@ -81,7 +82,21 @@ public:
 	
 	// Computes and return the matching level of the shortcut against a keystroke and environment.
 	// Does not store the matching level.
-	int computeMatchingLevel(const Keystroke& ks, LPCTSTR pszProgram) const;
+	//
+	// Args:
+	//   ks: The typed keystroke.
+	//   process_name: The basename of the process of the focused window, e.g. "notepad.exe";
+	//     never empty, null if no process detected.
+	//   window_title: The title of the focused window; never null, empty string if no focused window.
+	int computeMatchingLevel(const Keystroke& ks, LPCTSTR process_name, LPCTSTR window_title) const;
+	
+	// Tells if the shortcut programs conditions matches the given process name and window title.
+	//
+	// Args:
+	//   process_name: The basename of the process of the focused window, e.g. "notepad.exe";
+	//     never empty, null if no process detected.
+	//   window_title: The title of the focused window; never null, empty string if no focused window.
+	bool matchProgram(LPCTSTR process_name, LPCTSTR window_title) const;
 	
 	//------------------------------------------------------------------------
 	// GUI support
@@ -142,10 +157,6 @@ public:
 	
 private:
 	
-	bool containsProgram(LPCTSTR pszProgram) const;
-	
-private:
-	
 	Shortcut* m_next_shortcut;
 	
 	// The matching level of a shortcut against a multi-keystroke and its environment is not boolean,
@@ -169,7 +180,13 @@ extern MATCHING_RESULT e_matching_result;
 // Computes the matching level of all shortcuts against a keystroke and a program. Should not be
 // called while the main dialog box is displayed. Should not be called concurrently. Stores the
 // result in e_matching_result.
-void computeAllMatchingLevels(const Keystroke& ks, LPCTSTR pszProgram);
+//
+// Args:
+//   ks: The typed keystroke.
+//   process_name: The basename of the process of the focused window, e.g. "notepad.exe";
+//     can be null or empty.
+//   window_title: The title of the focused window; can be null or empty.
+void computeAllMatchingLevels(const Keystroke& ks, LPCTSTR process_name, LPCTSTR window_title);
 
 // Finds the first shortcut having at least a given matching level, starting from a given shortcut
 // in the linked list. Should not be called while the main dialog box is displayed.

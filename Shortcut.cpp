@@ -229,7 +229,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 			rpszCurrent = NULL;
 		}
 		
-		int len = (int)(pszLineEnd - pszLine);
+		INT_PTR len = pszLineEnd - pszLine;
 		
 		// If end of shortcut, stop
 		if (*pszLine == pszLineSeparator[0]) {
@@ -254,7 +254,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 			pcSep++;
 		}
 		const TCHAR cOldSel = *pcSep;
-		*pcSep = 0;
+		*pcSep = _T('\0');
 		
 		// Identify the key
 		const int tokKey = findToken(pszLine);
@@ -270,7 +270,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 		if (*pcSep) {
 			pcSep++;
 		}
-		len -= (pcSep - pszLine);
+		len -= pcSep - pszLine;
 		switch (tokKey) {
 			
 			// Language
@@ -472,7 +472,7 @@ bool Shortcut::execute(bool bFromHotkey) const {
 		// Send the text to the window
 		bool bBackslash = false;
 		LPCTSTR pszText = m_sText;
-		for (int i = 0; pszText[i]; i++) {
+		for (size_t i = 0; pszText[i]; i++) {
 			const UTCHAR c = (UTCHAR)pszText[i];
 			if (c == _T('\n')) {
 				continue;
@@ -828,33 +828,67 @@ void Shortcut::cleanPrograms() {
 }
 
 
-bool Shortcut::containsProgram(LPCTSTR pszProgram) const {
-	LPCTSTR pszPrograms = m_sPrograms;
-	VERIF(*pszPrograms);
+bool Shortcut::matchProgram(LPCTSTR process_name, LPCTSTR window_title) const {
+	const LPCTSTR programs = m_sPrograms;
+	VERIF(*programs);
 	
-	const TCHAR *pcStart = pszPrograms;
+	const TCHAR* current_program_begin = programs;
+	bool matches;
 	for (;;) {
-		const TCHAR *pc = pcStart;
-		while (*pc && *pc != _T(';')) {
-			pc++;
+		matches = true;
+		
+		// Compare process name, if not empty in the condition.
+		const TCHAR* const current_process_name_begin = current_program_begin;
+		const TCHAR* current_process_name_end = current_process_name_begin;
+		while (*current_process_name_end
+				&& *current_process_name_end != _T(';')
+				&& *current_process_name_end != _T(':')) {
+			current_process_name_end++;
 		}
 		
-		if (CSTR_EQUAL == CompareString(LOCALE_USER_DEFAULT, NORM_IGNORECASE,
-				pcStart, pc - pcStart, pszProgram, -1)) {
+		if (current_process_name_end != current_process_name_begin
+				&& process_name
+				&& CSTR_EQUAL != CompareString(LOCALE_USER_DEFAULT, NORM_IGNORECASE,
+					current_process_name_begin,
+					static_cast<int>(current_process_name_end - current_process_name_begin),
+					process_name, -1)) {
+			matches = false;
+		}
+		
+		if (!*current_process_name_end) {
+			break;
+		}
+		current_program_begin = current_process_name_end + 1;
+		
+		// Compare process name, if not empty in the condition.
+		if (*current_process_name_end == _T(':')) {
+			const TCHAR* const current_window_title_begin = current_program_begin;
+			const TCHAR* current_window_title_end = current_window_title_begin;
+			while (*current_window_title_end && *current_window_title_end != _T(';')) {
+				current_window_title_end++;
+			}
+			
+			if (!matchWildcards(current_window_title_begin, window_title, current_window_title_end)) {
+				matches = false;
+			}
+			
+			if (!*current_window_title_end) {
+				break;
+			}
+			current_program_begin = current_window_title_end + 1;
+		}
+		
+		if (matches) {
 			return true;
 		}
-		
-		if (!*pc) {
-			return false;
-		}
-		pcStart = pc + 1;
 	}
+	return matches;
 }
 
-int Shortcut::computeMatchingLevel(const Keystroke& ks, LPCTSTR pszProgram) const {
+int Shortcut::computeMatchingLevel(const Keystroke& ks, LPCTSTR process_name, LPCTSTR window_title) const {
 	if (Keystroke::match(ks)) {
-		if (pszProgram) {
-			if ((m_sPrograms.isSome() && containsProgram(pszProgram)) ^ (!m_bProgramsOnly)) {
+		if (process_name) {
+			if ((m_sPrograms.isSome() && matchProgram(process_name, window_title)) ^ (!m_bProgramsOnly)) {
 				return m_bProgramsOnly ? 2 : 1;
 			}
 		} else {
@@ -867,12 +901,19 @@ int Shortcut::computeMatchingLevel(const Keystroke& ks, LPCTSTR pszProgram) cons
 
 MATCHING_RESULT e_matching_result;
 
-void computeAllMatchingLevels(const Keystroke& ks, LPCTSTR pszProgram) {
+void computeAllMatchingLevels(const Keystroke& ks, LPCTSTR process_name, LPCTSTR window_title) {
+	if (strIsEmpty(process_name)) {
+		process_name = NULL;
+	}
+	if (strIsEmpty(window_title)) {
+		window_title = _T('\0');
+	}
+	
 	e_matching_result.matching_shortcuts_count = 0;
 	e_matching_result.max_matching_level = 0;
 	
 	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
-		const int matching_level = shortcut->computeMatchingLevel(ks, pszProgram);
+		const int matching_level = shortcut->computeMatchingLevel(ks, process_name, window_title);
 		shortcut->setMatchingLevel(matching_level);
 		if (matching_level == e_matching_result.max_matching_level) {
 			e_matching_result.matching_shortcuts_count++;

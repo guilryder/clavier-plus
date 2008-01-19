@@ -15,25 +15,13 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
-#pragma once
-
-namespace dialogs {
-
-extern HWND e_hdlgMain;
-
-// Performs initialization for the current language. Should be called for each available language.
-void initializeCurrentLanguage();
-
-// Displays the main window as a modal dialog box.
 //
-// Args:
-//   initial_command: If not zero, the ID of the WM_COMMAND command to post initially. Used, for
-//     example, to open the "add shortcut" dialog box initially.
-//
-// Returns:
-//   The ID of the last clicked button: ID_OK, ID_CANCEL, IDCCMD_QUIT, IDCCMD_LANGUAGE.
-INT_PTR showMainDialogModal(UINT initial_command);
+// Test template for CxxUnit, instantiated for each test file.
 
-}  // dialogs namespace
+
+#include "stdafx.h"
+
+<CxxTest preamble>
+#define new DEBUG_NEW
+
+<CxxTest world>

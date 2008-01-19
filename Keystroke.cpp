@@ -58,7 +58,7 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
 				
 				// Subclass the keystroke control. Display the initial keystroke name.
 				const HWND hwnd_keystroke = GetDlgItem(hDlg, IDCTXT);
-				s_prcKeystrokeCtl = SubclassWindow(hwnd_keystroke, prcKeystrokeCtl);
+				s_prcKeystrokeCtl = subclassWindow(hwnd_keystroke, prcKeystrokeCtl);
 				keyboard_hook::setCatchAllKeysWindow(hwnd_keystroke);
 				PostMessage(hwnd_keystroke, WM_KEYSTROKE, 0,0);
 				
@@ -161,7 +161,7 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		case WM_CLAVIER_KEYUP:
 			{
 				BYTE vk_typed = static_cast<BYTE>(wParam);
-				const DWORD special_keys_down_mask = lParam;
+				const DWORD special_keys_down_mask = static_cast<DWORD>(lParam);
 				
 				// Flags
 				DWORD vkFlags = s_ks.m_vkFlags;
@@ -513,7 +513,7 @@ INT_PTR CALLBACK Keystroke::prcSendKeys(HWND hDlg, UINT message, WPARAM wParam, 
 				centerParent(hDlg);
 				
 				const HWND hctl = GetDlgItem(hDlg, IDCTXT);
-				s_prcKeystrokeCtl = SubclassWindow(hctl, prcKeystrokeCtl);
+				s_prcKeystrokeCtl = subclassWindow(hctl, prcKeystrokeCtl);
 				PostMessage(hctl, WM_KEYSTROKE, 0,0);
 			}
 			return TRUE;

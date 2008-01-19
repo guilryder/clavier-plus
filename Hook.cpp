@@ -102,9 +102,9 @@ LRESULT CALLBACK keyboardHookCallback(int code, WPARAM wParam, LPARAM lParam) {
 	if (code >= 0) {
 		const KBDLLHOOKSTRUCT& data = *reinterpret_cast<const KBDLLHOOKSTRUCT*>(lParam);
 		if (s_hwnd_catch_all_keys) {
-			redirectHookMessage(wParam, data);
+			redirectHookMessage(static_cast<UINT>(wParam), data);
 			return TRUE;
-		} else if (!e_hdlgModal && processShortcutHookMessage(wParam, data)) {
+		} else if (!e_hdlgModal && processShortcutHookMessage(static_cast<UINT>(wParam), data)) {
 			return TRUE;
 		}
 	}
@@ -209,14 +209,17 @@ bool processShortcutHookMessage(UINT message, const KBDLLHOOKSTRUCT& data) {
 		ks.m_aCond[cond_type] = (GetKeyState(vk_by_cond_type[cond_type]) & 0x01) ? condYes : condNo;
 	}
 	
-	// Get the current program, for conditions checking
+	// Get the current window process name and title, for conditions checking
 	TCHAR process_name[MAX_PATH];
 	if (!getWindowExecutable(hwnd_focus, process_name)) {
 		*process_name = _T('\0');
 	}
-	const LPCTSTR process_name_nullable = (*process_name) ? process_name : NULL;
+	TCHAR window_title[bufWindowTitle];
+	if (!GetWindowText(hwnd_focus, window_title, nbArray(window_title))) {
+		*window_title = _T('\0');
+	}
 	
-	shortcut::computeAllMatchingLevels(ks, process_name_nullable);
+	shortcut::computeAllMatchingLevels(ks, process_name, window_title);
 	if (shortcut::e_matching_result.matching_shortcuts_count == 0) {
 		// No matching shortcut: perform default action for the keystroke.
 		return false;

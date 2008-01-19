@@ -71,7 +71,7 @@ void loadString(UINT id, LPTSTR strbuf, int buf_length);
 
 // Displays a modal dialog box loaded from a resource, for getLanguage() locale. Sets e_hdlgModal
 // before displaying the dialog box, restores it to its previous value when the dialog is closed.
-int dialogBox(UINT id, HWND hwnd_parent, DLGPROC window_proc, LPARAM lInitParam = 0);
+INT_PTR dialogBox(UINT id, HWND hwnd_parent, DLGPROC window_proc, LPARAM lInitParam = 0);
 
 // Loads a menu from a resource, for getLanguage() locale.
 HMENU loadMenu(UINT id);

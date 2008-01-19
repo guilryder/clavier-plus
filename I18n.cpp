@@ -100,12 +100,12 @@ void loadString(UINT id, LPTSTR strbuf, int buffer_length) {
 }
 
 
-int dialogBox(UINT id, HWND hwnd_parent, DLGPROC window_proc, LPARAM lInitParam) {
+INT_PTR dialogBox(UINT id, HWND hwnd_parent, DLGPROC window_proc, LPARAM lInitParam) {
 	const HWND hdlgModalOld = e_hdlgModal;
 	
-	const int iResult = DialogBoxIndirectParam(
+	const INT_PTR iResult = DialogBoxIndirectParam(
 		e_hInst,
-		(const DLGTEMPLATE*)loadResource(id, RT_DIALOG),
+		reinterpret_cast<const DLGTEMPLATE*>(loadResource(id, RT_DIALOG)),
 		hwnd_parent, window_proc, lInitParam);
 	
 	e_hdlgModal = hdlgModalOld;

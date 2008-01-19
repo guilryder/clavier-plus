@@ -34,6 +34,8 @@ const bool bUnicode = false;
 #endif
 
 
+namespace app {
+
 const LPCTSTR pszClavierWindow = _T("RyderClavierWindow");
 
 static UINT msgTaskbarCreated;
@@ -60,6 +62,7 @@ enum CMDLINE_OPTION {
 	cmdoptNone
 };
 
+static void entryPoint();
 static void initializeLanguages();
 static void runGui(CMDLINE_OPTION cmdoptAction);
 static CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch);
@@ -75,23 +78,30 @@ static void updateTrayIcon(DWORD dwMessage);
 //   The ID of the chosen command, 0 if the user cancelled.
 static UINT displayTrayIconMenu();
 
+}  // app namespace
+
 
 #ifdef _DEBUG
 static void WinMainCRTStartup();
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	WinMainCRTStartup();
+	app::entryPoint();
 	return 0;
 }
+
+#else
+
+void WinMainCRTStartup() {
+	app::entryPoint();
+}
+
 #endif  // _DEBUG
 
 
-// Entry point
-void WinMainCRTStartup() {
-	msgTaskbarCreated = RegisterWindowMessage(_T("TaskbarCreated"));
-	msgClavierNotifyIcon = RegisterWindowMessage(_T("RyderClavierOptions"));
-	
+namespace app {
+
+void entryPoint() {
 	const LPCTSTR pszCmdLine = GetCommandLine();
 	
 #ifndef ALLOW_MULTIPLE_INSTANCES
@@ -115,6 +125,23 @@ void WinMainCRTStartup() {
 	}
 #endif  // ALLOW_MULTIPLE_INSTANCES
 	
+	app::initialize();
+	
+	const CMDLINE_OPTION cmdoptAction = execCmdLine(pszCmdLine, true);
+	if (cmdoptAction != cmdoptQuit) {
+		runGui(cmdoptAction);
+	}
+	
+	app::terminate();
+#ifndef _DEBUG
+	ExitProcess(0);
+#endif  // _DEBUG
+}
+
+void initialize() {
+	msgTaskbarCreated = RegisterWindowMessage(_T("TaskbarCreated"));
+	msgClavierNotifyIcon = RegisterWindowMessage(_T("RyderClavierOptions"));
+	
 	CoInitialize(NULL);
 	shortcut::initialize();
 	
@@ -123,35 +150,30 @@ void WinMainCRTStartup() {
 	e_hdlgModal = NULL;
 	
 	initializeLanguages();
-	
-	const CMDLINE_OPTION cmdoptAction = execCmdLine(pszCmdLine, true);
-	if (cmdoptAction != cmdoptQuit) {
-		runGui(cmdoptAction);
-	}
-	
-	shortcut::terminate();
-	CoUninitialize();
-#ifndef _DEBUG
-	ExitProcess(0);
-#endif  // _DEBUG
 }
 
+void terminate() {
+	shortcut::terminate();
+	CoUninitialize();
+}
+
+
 void initializeLanguages() {
-	TCHAR pszTokens[512];
+	TCHAR tokens[512];
 	for (int lang = 0; lang < i18n::langCount; lang++) {
 		i18n::setLanguage(lang);
 		
 		// Load all tokens in the current language.
-		i18n::loadStringAuto(IDS_TOKENS, pszTokens);
-		TCHAR *pcStart = pszTokens;
-		for (int iToken = 0; iToken < tokNotFound; iToken++) {
-			TCHAR *pc = pcStart;
-			while (*pc != _T(';')) {
-				pc++;
+		i18n::loadStringAuto(IDS_TOKENS, tokens);
+		TCHAR* token_start = tokens;
+		for (int token_index = 0; token_index < tokNotFound; token_index++) {
+			TCHAR* token_end = token_start;
+			while (*token_end != _T(';')) {
+				token_end++;
 			}
-			*pc = _T('\0');
-			s_asToken[iToken].set(pcStart);
-			pcStart = pc + 1;
+			*token_end = _T('\0');
+			s_asToken[token_index].set(token_start);
+			token_start = token_end + 1;
 		}
 		
 		dialogs::initializeCurrentLanguage();
@@ -164,7 +186,7 @@ void runGui(CMDLINE_OPTION cmdoptAction) {
 	// Create the invisible window
 	e_hwndInvisible = CreateWindow(_T("STATIC"),
 		pszClavierWindow, 0, 0,0,0,0, NULL, NULL, e_hInst, NULL);
-	SubclassWindow(e_hwndInvisible, prcInvisible);
+	subclassWindow(e_hwndInvisible, prcInvisible);
 	
 	// Create the traybar icon
 	updateTrayIcon(NIM_ADD);
@@ -444,7 +466,7 @@ Destroy:
 			
 			for (;;) {
 				HeapCompact(e_hHeap, 0);
-				switch (dialogs::showMainDialogModal(wParam)) {
+				switch (dialogs::showMainDialogModal(static_cast<UINT>(wParam))) {
 					case IDCCMD_LANGUAGE:
 						break;
 					case IDCCMD_QUIT:
@@ -632,21 +654,23 @@ UINT displayTrayIconMenu() {
 	return id;
 }
 
+}  // app namespace
+
 
 
 LPCTSTR getToken(int tok) {
-	return s_asToken[tok].get();
+	return app::s_asToken[tok].get();
 }
 
 LPCTSTR getLanguageName(int lang) {
-	return s_asToken[tokLanguageName].get(lang);
+	return app::s_asToken[tokLanguageName].get(lang);
 }
 
 
-int findToken(LPCTSTR pszToken) {
-	for (int tok = 0; tok < nbArray(s_asToken); tok++) {
+int findToken(LPCTSTR token) {
+	for (int tok = 0; tok < nbArray(app::s_asToken); tok++) {
 		for (int lang = 0; lang < i18n::langCount; lang++) {
-			if (!lstrcmpi(pszToken, s_asToken[tok].get(lang))) {
+			if (!lstrcmpi(token, app::s_asToken[tok].get(lang))) {
 				return tok;
 			}
 		}

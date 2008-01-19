@@ -34,6 +34,7 @@ class String;
 const size_t bufString = 128;
 const size_t bufHotKey = 128;
 const size_t bufCode = 32;
+const size_t bufWindowTitle = 256;
 
 const int bufClipboardString = MAX_PATH * 10;
 
@@ -66,6 +67,22 @@ extern bool e_bIconVisible;
 	const LPCSTR to = from;
 #endif
 
+
+// Warning-free equivalents of macros GetWindowLongPtr, SetWindowLongPtr and SubclassWindow.
+#pragma warning(disable: 4244)
+inline LONG_PTR getWindowLongPtr(HWND hwnd, int index) {
+	return GetWindowLongPtr(hwnd, index);
+}
+
+inline LONG_PTR setWindowLongPtr(HWND hwnd, int index, LONG_PTR new_long) {
+	return SetWindowLongPtr(hwnd, index, new_long);
+}
+
+inline WNDPROC subclassWindow(HWND hwnd, WNDPROC new_window_proc) {
+	return reinterpret_cast<WNDPROC>(setWindowLongPtr(hwnd, GWLP_WNDPROC,
+		reinterpret_cast<LONG_PTR>(new_window_proc)));
+}
+#pragma warning(default: 4244)
 
 // Display a message box. The message is read from string resources.
 int messageBox(HWND hWnd, UINT idString, UINT uType = MB_ICONERROR, LPCTSTR pszArg = NULL);
@@ -133,13 +150,15 @@ HWND findWindowByName(LPCTSTR pszWindowSpec);
 // Determines if a string matches a wildcards pattern, by ignoring case.
 //
 // Args:
-//   pszPattern: The pattern to use for testing matching. Supports '*' and '?'.
+//   pattern: The pattern to use for testing matching. Supports '*' and '?'.
 //     This string must be given in lower case.
-//   pszSubject: The string to test against the pattern. The case does not matter.
+//   subject: The string to test against the pattern. The case does not matter.
+//   pattern_end: If not null, points to the successor of the last character of the pattern; if
+//     equals pattern, the pattern will be considered empty.
 //
 // Returns:
 //   True if the subject matches the pattern, false otherwise.
-bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject);
+bool matchWildcards(LPCTSTR pattern, LPCTSTR subject, LPCTSTR pattern_end = NULL);
 
 
 //------------------------------------------------------------------------
@@ -174,7 +193,7 @@ LPCTSTR getLanguageName(int lang);
 //
 // Returns:
 //   A tok* enum value, or tokNotFound if the token does not match any token.
-int findToken(LPCTSTR pszToken);
+int findToken(LPCTSTR token);
 
 // Increments a string pointer until the end of the string or a comma is encountered, then skips
 // spaces. The comma is replaced by a null character, so that the initial pointer (before being
