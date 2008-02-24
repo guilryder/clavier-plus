@@ -21,14 +21,9 @@
 
 #include "Resource.h"
 
+typedef ANSI_UNICODE(unsigned char, WORD) UTCHAR;
 
-#ifdef UNICODE
-typedef WORD UTCHAR;
-#else
-typedef unsigned char UTCHAR;
-#endif
-
-class String;
+#include "MyString.h"
 
 
 const size_t bufString = 128;
@@ -37,6 +32,9 @@ const size_t bufCode = 32;
 const size_t bufWindowTitle = 256;
 
 const int bufClipboardString = MAX_PATH * 10;
+
+// Name of the environment variable set by clipboardToEnvironment().
+const LPCTSTR clipboard_env_variable = _T("CLIPBOARD");
 
 
 const LPCTSTR pszApp = _T("Clavier+");
@@ -55,13 +53,13 @@ extern bool e_bIconVisible;
 #else
 #define strToW(buf, to, from) \
 	WCHAR to[buf]; \
-	MultiByteToWideChar(CP_ACP, 0, from, -1, to, nbArray(to));
+	MultiByteToWideChar(CP_ACP, 0, from, -1, to, arrayLength(to));
 #endif
 
 #ifdef UNICODE
 #define strToA(buf, to, from) \
 	char to[buf]; \
-	WideCharToMultiByte(CP_ACP, 0, from, -1, to, nbArray(to), NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, from, -1, to, arrayLength(to), NULL, NULL);
 #else
 #define strToA(buf, to, from) \
 	const LPCSTR to = from;
@@ -85,39 +83,39 @@ inline WNDPROC subclassWindow(HWND hwnd, WNDPROC new_window_proc) {
 #pragma warning(default: 4244)
 
 // Display a message box. The message is read from string resources.
-int messageBox(HWND hWnd, UINT idString, UINT uType = MB_ICONERROR, LPCTSTR pszArg = NULL);
+int messageBox(HWND hwnd, UINT idString, UINT uType = MB_ICONERROR, LPCTSTR pszArg = NULL);
 
 // Centers a window relatively to its parent.
-void centerParent(HWND hWnd);
+void centerParent(HWND hwnd);
 
 // Reads the text of a dialog box control.
-void getDlgItemText(HWND hDlg, UINT id, String& rs);
+void getDlgItemText(HWND hdlg, UINT id, String& str);
 
 // Setups a label control for displaying an URL.
 //
 // Args:
-//   hDlg: The handle of the dialog box containing the control to setup.
-//   idControl: The ID of the label control in the dialog box.
-//   pszLink: The URL to give to the control. It must be static buffer: the string will not
+//   hdlg: The handle of the dialog box containing the control to setup.
+//   control_id: The ID of the label control in the dialog box.
+//   link: The URL to give to the control. It must be static buffer: the string will not
 //     be copied to a buffer.
-void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink);
+void initializeWebLink(HWND hdlg, UINT control_id, LPCTSTR link);
 
 // Wrapper for CreateThread()
-void startThread(LPTHREAD_START_ROUTINE pfn, void* pParams);
+void startThread(LPTHREAD_START_ROUTINE pfn, void* params);
 
 // Writes a NULL-terminated string to a file.
-void writeFile(HANDLE hf, LPCTSTR psz);
+void writeFile(HANDLE hf, LPCTSTR strbuf);
 
-// Retrieves the executable name of the process associated to a window.
+// Retrieves the basename of the process that created a window.
 //
 // Args:
-//   hWnd: The window to get the executable of.
-//   pszExecutableName: The buffer where to put the executable name, without path.
-//     Should have a size of MAX_PATH.
+//   hwnd: The window to get the process name of.
+//   process_name: The buffer where to put the basename of the process that created the window,
+//     in lowercase. Should have a size of MAX_PATH.
 //
 // Returns:
-//   True on success (pszPath contains a path), false on failure.
-bool getWindowExecutable(HWND hWnd, LPTSTR pszExecutableName);
+//   True on success (process_name contains a valid name), false on failure.
+bool getWindowProcessName(HWND hwnd, LPTSTR process_name);
 
 // Sleeps in idle priority.
 //
@@ -127,25 +125,58 @@ void sleepBackground(DWORD dwDurationMS);
 
 // Wrapper for SHGetFileInfo() that does not call the function if the file belongs
 // to a slow device. If the call to SHGetFileInfo() fails and SHGFI_USEFILEATTRIBUTES was not
-// specified in uFlags, the flag is added and SHGetFileInfo() is called again.
+// specified in flags, the flag is added and SHGetFileInfo() is called again.
 //
 // Args:
-//   pszPath: The path of the file or directory to call SHGetFileInfo() on.
-//   dwFileAttributes: Given as argument to SHGetFileInfo().
+//   path: The path of the file or directory to call SHGetFileInfo() on.
+//   file_attributes: Given as argument to SHGetFileInfo().
 //   shfi: Where to save the result of SHGetFileInfo().
-//   uFlags: Given as argument to SHGetFileInfo(). If pszPath is on a slow device,
-//     according pathIsSlow(), SHGFI_USEFILEATTRIBUTES is added to uFlags before it is given
+//   flags: Given as argument to SHGetFileInfo(). If path is on a slow device,
+//     according pathIsSlow(), SHGFI_USEFILEATTRIBUTES is added to flags before it is given
 //     to SHGetFileInfo().
 //
 // Returns:
 //   True on success, false on failure.
-bool getFileInfo(LPCTSTR pszPath, DWORD dwFileAttributes, SHFILEINFO& shfi, UINT uFlags);
+bool getFileInfo(LPCTSTR path, DWORD file_attributes, SHFILEINFO& shfi, UINT flags);
 
+// Puts the text contents of the clipboard to the environment variable named clipboard_env_variable.
 void clipboardToEnvironment();
 
-HWND findVisibleChildWindow(HWND hwnd_parent, LPCTSTR pszClass, bool bPrefix);
-bool checkWindowClass(HWND hWnd, LPCTSTR pszClass, bool bPrefix);
-HWND findWindowByName(LPCTSTR pszWindowSpec);
+// Returns a visible child of a window matching the given window class name, if any.
+//
+// Args:
+//   hwnd_parent: The parent to consider the child window of.
+//   wnd_class: The window class the returned window should match.
+//   allow_same_prefix: If false, the returned window will have exactly wnd_class as class name.
+//     If true, it will have wnd_class only as prefix; full equality is not enforced.
+//
+// Returns:
+//   The handle of a matching window, with no particular priority if several windows match,
+//   or NULL if no matching window is found.
+HWND findVisibleChildWindow(HWND hwnd_parent, LPCTSTR wnd_class, bool allow_same_prefix);
+
+// Determines whether a window has a window class, or a prefix of it.
+//
+// Args:
+//   hwnd: The window to check the class of.
+//   wnd_class: The class the window should have.
+//   allow_same_prefix: If false, the window should have exactly wnd_class as class name to match.
+//     If true, it should only have wnd_class only as prefix; full equality is not enforced.
+//
+// Returns:
+//   True if the class of hwnd matches wnd_class.
+bool checkWindowClass(HWND hwnd, LPCTSTR wnd_class, bool allow_same_prefix);
+
+// Finds a top-level window whose title matches a regexp.
+//
+// Args:
+//   title_regexp: The regular expression the title of the returned window will match.
+//     The regular expression is evaluated by matchWildcards().
+//
+// Returns:
+//   The handle of a window matching the title regexp, with no particular priority if several
+//   windows match.
+HWND findWindowByName(LPCTSTR title_regexp);
 
 // Determines if a string matches a wildcards pattern, by ignoring case.
 //
@@ -168,15 +199,15 @@ bool matchWildcards(LPCTSTR pattern, LPCTSTR subject, LPCTSTR pattern_end = NULL
 // - return directory path instead of LPITEMIDLIST
 //------------------------------------------------------------------------
 
-bool browseForFolder(HWND hwnd_parent, LPCTSTR pszTitle, LPTSTR pszDirectory);
+bool browseForFolder(HWND hwnd_parent, LPCTSTR title, LPTSTR directory);
 
 
 //------------------------------------------------------------------------
 // Shell API tools
 //------------------------------------------------------------------------
 
-bool getSpecialFolderPath(int index, LPTSTR pszPath);
-bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath);
+bool getSpecialFolderPath(int index, LPTSTR path);
+bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path);
 
 
 //------------------------------------------------------------------------
@@ -200,11 +231,11 @@ int findToken(LPCTSTR token);
 // incremented) will point to the string before the comma.
 //
 // Args:
-//   rpc: A reference to the pointer to increment. The string initially pointed will be unescaped if
-//     bUnescape is true.
-//   bUnescape: If true, unescapes the string according to backslashes. The string is unescaped in
+//   chr_ptr: A reference to the pointer to increment. The string initially pointed will be
+//     unescaped if unescape is true.
+//   unescape: If true, unescapes the string according to backslashes. The string is unescaped in
 //     place, which is possible because the unescaping process can only reduce the string length.
-void skipUntilComma(TCHAR*& rpc, bool bUnescape = false);
+void skipUntilComma(TCHAR*& chr_ptr, bool unescape = false);
 
 
 //------------------------------------------------------------------------
@@ -223,8 +254,8 @@ public:
 	}
 	
 	// Sets the translation of the string for the current language.
-	void set(LPCTSTR psz) {
-		lstrcpy(m_translations[i18n::getLanguage()], psz);
+	void set(LPCTSTR strbuf) {
+		lstrcpy(m_translations[i18n::getLanguage()], strbuf);
 	}
 	
 	// Returns the translation of the string for a given language.
@@ -244,28 +275,25 @@ private:
 };
 
 
-#include "MyString.h"
-
-
 //------------------------------------------------------------------------
 // Command line parsing and executing
 //------------------------------------------------------------------------
 
-void findFullPath(LPTSTR pszPath, LPTSTR pszFullPath);
+void findFullPath(LPTSTR path, LPTSTR full_path);
 
-void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow);
+void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode);
 
 
 struct THREAD_SHELLEXECUTE {
-	THREAD_SHELLEXECUTE(const String& sCommand, const String& sDirectory, int nShow)
-		: sCommand(sCommand), sDirectory(sDirectory), nShow(nShow) {}
+	THREAD_SHELLEXECUTE(const String& command, const String& directory, int show_mode)
+		: command(command), directory(directory), show_mode(show_mode) {}
 	
-	String sCommand;
-	String sDirectory;
-	int nShow;
+	String command;
+	String directory;
+	int show_mode;
 };
 
-DWORD WINAPI threadShellExecute(void* pParams);
+DWORD WINAPI threadShellExecute(void* params);
 
 
 //------------------------------------------------------------------------
@@ -289,4 +317,4 @@ extern bool e_bMaximizeMainDialog;
 
 extern TCHAR e_pszIniFile[MAX_PATH];
 
-HKEY openAutoStartKey(LPTSTR pszPath);
+HKEY openAutoStartKey(LPTSTR path);

@@ -293,7 +293,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 				e_sizeMainDialog.cy = StrToInt(pcSep);
 				
 				skipUntilComma(pcSep);
-				e_bMaximizeMainDialog = ToBool(StrToInt(pcSep));
+				e_bMaximizeMainDialog = toBool(StrToInt(pcSep));
 				
 				skipUntilComma(pcSep);
 				e_bIconVisible = !StrToInt(pcSep);
@@ -339,7 +339,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 			
 			// Distinguish left/right
 			case tokDistinguishLeftRight:
-				m_bDistinguishLeftRight = ToBool(StrToInt(pcSep));
+				m_bDistinguishLeftRight = toBool(StrToInt(pcSep));
 				break;
 			
 			// Description
@@ -379,7 +379,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 			
 			// Folder
 			case tokSupportFileOpen:
-				m_bSupportFileOpen = ToBool(StrToInt(pcSep));
+				m_bSupportFileOpen = toBool(StrToInt(pcSep));
 				break;
 			
 			// Condition
@@ -397,7 +397,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 	}
 	
 	// Valid shortcut
-	return ToBool(m_vk);
+	return toBool(m_vk);
 }
 
 
@@ -432,7 +432,7 @@ bool Shortcut::execute(bool bFromHotkey) const {
 			abKeyboardNew[VK_CONTROL] = keyDownMask;
 		}
 		
-		for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+		for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
 			abKeyboardNew[e_aSpecialKey[i].vk] = 0;
 		}
 		abKeyboardNew[m_vk] = 0;
@@ -1018,6 +1018,8 @@ Error:
 
 
 void saveShortcuts() {
+	VERIFV(!app::e_bReadOnly);
+	
 	HANDLE hf;
 	for (;;) {
 		hf = CreateFile(e_pszIniFile,

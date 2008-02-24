@@ -22,6 +22,9 @@
 
 #include <intshcut.h>
 #include <tlhelp32.h>
+#include <psapi.h>
+
+const int kWindowClassBufferLength = 200;
 
 HANDLE e_hHeap;
 HINSTANCE e_hInst;
@@ -33,23 +36,23 @@ bool e_bIconVisible = true;
 	((PFN_##functionName)GetProcAddress(hDLL, (#functionName ANSI_UNICODE("A", "W"))))
 
 
-static bool pathIsSlow(LPCTSTR pszPath);
+static bool pathIsSlow(LPCTSTR path);
 
-static BOOL CALLBACK prcEnumFindWindowByName(HWND hWnd, LPARAM lParam);
+static BOOL CALLBACK prcEnumFindWindowByName(HWND hwnd, LPARAM lParam);
 
 
-int messageBox(HWND hWnd, UINT idString, UINT uType, LPCTSTR pszArg) {
+int messageBox(HWND hwnd, UINT idString, UINT uType, LPCTSTR pszArg) {
 	TCHAR pszFormat[256], pszText[1024];
 	i18n::loadStringAuto(idString, pszFormat);
 	wsprintf(pszText, pszFormat, pszArg);
-	return MessageBox(hWnd, pszText, pszApp, uType);
+	return MessageBox(hwnd, pszText, pszApp, uType);
 }
 
 
-void centerParent(HWND hWnd) {
+void centerParent(HWND hwnd) {
 	RECT rcParent, rcChild;
 	
-	const HWND hwnd_parent = GetParent(hWnd);
+	const HWND hwnd_parent = GetParent(hwnd);
 	MONITORINFO mi;
 	mi.cbSize = sizeof(mi);
 	if (hwnd_parent) {
@@ -59,39 +62,39 @@ void centerParent(HWND hWnd) {
 		GetWindowRect(hwnd_parent, &rcParent);
 		IntersectRect(&rcParent, &rcParent, &mi.rcWork);
 	} else {
-		const HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+		const HMONITOR hMonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
 		VERIFV(hMonitor);
 		GetMonitorInfo(hMonitor, &mi);
 		rcParent = mi.rcWork;
 	}
 	
-	GetWindowRect(hWnd, &rcChild);
-	SetWindowPos(hWnd, NULL,
+	GetWindowRect(hwnd, &rcChild);
+	SetWindowPos(hwnd, NULL,
 		(rcParent.left + rcParent.right + rcChild.left - rcChild.right) / 2,
 		(rcParent.top + rcParent.bottom + rcChild.top - rcChild.bottom) / 2,
 		0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 
-void getDlgItemText(HWND hDlg, UINT id, String& rs) {
-	const HWND hwnd = GetDlgItem(hDlg, id);
+void getDlgItemText(HWND hdlg, UINT id, String& rs) {
+	const HWND hwnd = GetDlgItem(hdlg, id);
 	const int buf = GetWindowTextLength(hwnd) + 1;
 	GetWindowText(hwnd, rs.getBuffer(buf), buf);
 }
 
 
 static WNDPROC s_prcLabel;
-static LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK prcWebLink(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink) {
-	const HWND hwnd = GetDlgItem(hDlg, idControl);
-	setWindowLongPtr(hwnd, GWL_USERDATA, reinterpret_cast<LONG_PTR>(pszLink));
+void initializeWebLink(HWND hdlg, UINT control_id, LPCTSTR link) {
+	const HWND hwnd = GetDlgItem(hdlg, control_id);
+	setWindowLongPtr(hwnd, GWL_USERDATA, reinterpret_cast<LONG_PTR>(link));
 	s_prcLabel = subclassWindow(hwnd, prcWebLink);
 }
 
 // Window procedure for dialog box controls displaying an URL.
 // The link itself is stored in GWL_USERDATA.
-LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK prcWebLink(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 		
 		case WM_SETCURSOR:
@@ -102,85 +105,43 @@ LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			return HTCLIENT;
 		
 		case WM_LBUTTONDOWN:
-			ShellExecute(hWnd, NULL, reinterpret_cast<LPCTSTR>(getWindowLongPtr(hWnd, GWL_USERDATA)),
+			ShellExecute(hwnd, NULL, reinterpret_cast<LPCTSTR>(getWindowLongPtr(hwnd, GWL_USERDATA)),
 				NULL, NULL, SW_SHOWDEFAULT);
 			return 0;
 	}
 	
-	return CallWindowProc(s_prcLabel, hWnd, uMsg, wParam, lParam);
+	return CallWindowProc(s_prcLabel, hwnd, uMsg, wParam, lParam);
 }
 
 
 // Wrapper for CreateThread().
-void startThread(LPTHREAD_START_ROUTINE pfn, void* pParams) {
+void startThread(LPTHREAD_START_ROUTINE pfn, void* params) {
 	DWORD idThread;
-	CloseHandle(CreateThread(NULL, 0, pfn, pParams, 0, &idThread));
+	CloseHandle(CreateThread(NULL, 0, pfn, params, 0, &idThread));
 }
 
 
-void writeFile(HANDLE hf, LPCTSTR psz) {
+void writeFile(HANDLE hf, LPCTSTR strbuf) {
 	DWORD len;
-	WriteFile(hf, psz, lstrlen(psz) * sizeof(TCHAR), &len, NULL);
+	WriteFile(hf, strbuf, lstrlen(strbuf) * sizeof(TCHAR), &len, NULL);
 }
 
 
-bool getWindowExecutable(HWND hWnd, LPTSTR pszExecutableName) {
-	DWORD idProcess;
-	GetWindowThreadProcessId(hWnd, &idProcess);
+bool getWindowProcessName(HWND hwnd, LPTSTR process_name) {
+	DWORD process_id;
+	GetWindowThreadProcessId(hwnd, &process_id);
 	
-	typedef DWORD (WINAPI* PFN_GetProcessImageFileName)(
-		HANDLE hProcess, LPTSTR lpImageFileName, DWORD nSize);
+	const HANDLE process_handle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, process_id);
+	VERIF(process_handle);
+	const bool ok = (GetProcessImageFileName(process_handle, process_name, MAX_PATH) > 0);
+	CloseHandle(process_handle);
 	
-	static bool bTryLoadPSAPI = true;
-	static PFN_GetProcessImageFileName pfnGetProcessImageFileName = NULL;
-	
-	if (!pfnGetProcessImageFileName && bTryLoadPSAPI) {
-		// Try to load NT function
-		
-		bTryLoadPSAPI = false;
-		const HMODULE hPSAPI = LoadLibrary(_T("PSAPI.dll"));
-		if (hPSAPI) {
-			pfnGetProcessImageFileName = myGetProcAddress(hPSAPI, GetProcessImageFileName);
-			if (!pfnGetProcessImageFileName) {
-				FreeLibrary(hPSAPI);
-			}
-		}
+	if (ok) {
+		PathStripPath(process_name);
+		CharLower(process_name);
 	}
 	
-	bool bOK = false;
-	if (pfnGetProcessImageFileName) {
-		// Use NT function
-		
-		const HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, idProcess);
-		VERIF(hProcess);
-		bOK = (pfnGetProcessImageFileName(hProcess, pszExecutableName, MAX_PATH) > 0);
-		CloseHandle(hProcess);
-		
-	} else {
-		// Use Win 9x helper functions
-		const HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-		VERIF(hSnapshot != INVALID_HANDLE_VALUE);
-		PROCESSENTRY32 pe;
-		pe.dwSize = sizeof(pe);
-		if (Process32First(hSnapshot, &pe)) {
-			do {
-				if (pe.th32ProcessID == idProcess) {
-					bOK = true;
-					lstrcpy(pszExecutableName, pe.szExeFile);
-					PathStripPath(pszExecutableName);
-					break;
-				}
-			} while (Process32Next(hSnapshot, &pe));
-		}
-		CloseHandle(hSnapshot);
-	}
-	
-	if (bOK) {
-		PathStripPath(pszExecutableName);
-		CharLower(pszExecutableName);
-	}
-	
-	return bOK;
+	return ok;
 }
 
 
@@ -194,123 +155,127 @@ void sleepBackground(DWORD dwDurationMS) {
 
 
 // Indicates if a file is located in a slow drive (network, removable, etc.).
-bool pathIsSlow(LPCTSTR pszPath) {
-	const int iDrive = PathGetDriveNumber(pszPath);
-	if (iDrive >= 0) {
-		TCHAR pszRoot[4];
-		PathBuildRoot(pszRoot, iDrive);
-		switch (GetDriveType(pszRoot)) {
+bool pathIsSlow(LPCTSTR path) {
+	const int drive_index = PathGetDriveNumber(path);
+	if (drive_index >= 0) {
+		// The path has a drive
+		TCHAR root[4];
+		PathBuildRoot(root, drive_index);
+		switch (GetDriveType(root)) {
 			case DRIVE_UNKNOWN:
 			case DRIVE_REMOVABLE:
 			case DRIVE_REMOTE:
 			case DRIVE_CDROM:
 				return true;
 		}
-	} else if (pszPath[0] == '\\' && pszPath[1] == '\\') {
+	} else if (path[0] == _T('\\') && path[1] == _T('\\')) {
+		// Network path
 		return true;
 	}
 	return false;
 }
 
 
-bool getFileInfo(LPCTSTR pszPath, DWORD dwFileAttributes, SHFILEINFO& shfi, UINT uFlags) {
+bool getFileInfo(LPCTSTR path, DWORD file_attributes, SHFILEINFO& shfi, UINT flags) {
 	TCHAR pszPathTemp[MAX_PATH];
 	
-	if (pathIsSlow(pszPath)) {
+	if (pathIsSlow(path)) {
 		// If UNC server or share, remove any trailing backslash
 		// If normal file, strip the path: extension-based icon
 		
-		uFlags |= SHGFI_USEFILEATTRIBUTES;
-		lstrcpy(pszPathTemp, pszPath);
+		flags |= SHGFI_USEFILEATTRIBUTES;
+		lstrcpy(pszPathTemp, path);
 		PathRemoveBackslash(pszPathTemp);
-		const LPCTSTR pszPathName = PathFindFileName(pszPath);
+		const LPCTSTR pszPathName = PathFindFileName(path);
 		if (PathIsUNCServer(pszPathTemp) || PathIsUNCServerShare(pszPathTemp)) {
-			pszPath = pszPathTemp;
+			path = pszPathTemp;
 		} else if (pszPathName) {
 			lstrcpy(pszPathTemp, pszPathName);
-			pszPath = pszPathTemp;
+			path = pszPathTemp;
 		}
 	}
 	
 	for (;;) {
-		const bool bOK = ToBool(SHGetFileInfo(pszPath, dwFileAttributes,
-				&shfi, sizeof(shfi), uFlags));
-		if (bOK || (uFlags & SHGFI_USEFILEATTRIBUTES)) {
+		const bool bOK = toBool(SHGetFileInfo(path, file_attributes,
+				&shfi, sizeof(shfi), flags));
+		if (bOK || (flags & SHGFI_USEFILEATTRIBUTES)) {
 			return bOK;
 		}
-		uFlags |= SHGFI_USEFILEATTRIBUTES;
+		flags |= SHGFI_USEFILEATTRIBUTES;
 	}
 }
 
 
 void clipboardToEnvironment() {
-	bool bOK = false;
+	bool ok = false;
 	
-	if (IsClipboardFormatAvailable(CF_TEXT) && OpenClipboard(NULL)) {
-		const HGLOBAL hMem = (HGLOBAL)GetClipboardData(CF_TEXT);
-		if (hMem) {
-			const LPSTR pszClipboard = (LPSTR)GlobalLock(hMem);
-			if (pszClipboard) {
-				if (lstrlenA(pszClipboard) < bufClipboardString) {
-					bOK = true;
-					SetEnvironmentVariableA("CLIPBOARD", pszClipboard);
+	const UINT clipboard_format = ANSI_UNICODE(CF_TEXT, CF_UNICODETEXT);
+	
+	if (IsClipboardFormatAvailable(clipboard_format) && OpenClipboard(NULL)) {
+		const HGLOBAL clipboard_mem = static_cast<HGLOBAL>(GetClipboardData(clipboard_format));
+		if (clipboard_mem) {
+			const LPTSTR clipboard_text = static_cast<LPTSTR>(GlobalLock(clipboard_mem));
+			if (clipboard_text) {
+				if (lstrlen(clipboard_text) < bufClipboardString) {
+					ok = true;
+					SetEnvironmentVariable(clipboard_env_variable, clipboard_text);
 				}
-				GlobalUnlock(hMem);
+				GlobalUnlock(clipboard_mem);
 			}
-			CloseClipboard();
 		}
+		CloseClipboard();
 	}
 	
-	if (!bOK) {
-		SetEnvironmentVariableA("CLIPBOARD", "");
+	if (!ok) {
+		SetEnvironmentVariable(clipboard_env_variable, _T(""));
 	}
 }
 
 
-HWND findVisibleChildWindow(HWND hwnd_parent, LPCTSTR pszClass, bool bPrefix) {
+HWND findVisibleChildWindow(HWND hwnd_parent, LPCTSTR wnd_class, bool allow_same_prefix) {
 	HWND hwndChild = NULL;
-	while (ToBool(hwndChild = FindWindowEx(hwnd_parent, hwndChild, NULL, NULL))) {
+	while (toBool(hwndChild = FindWindowEx(hwnd_parent, hwndChild, NULL, NULL))) {
 		if ((GetWindowStyle(hwndChild) & WS_VISIBLE) &&
-				checkWindowClass(hwndChild, pszClass, bPrefix)) {
+				checkWindowClass(hwndChild, wnd_class, allow_same_prefix)) {
 			return hwndChild;
 		}
 	}
 	return NULL;
 }
 
-bool checkWindowClass(HWND hWnd, LPCTSTR pszClass, bool bPrefix) {
-	TCHAR pszWindowClass[200];
-	VERIF(GetClassName(hWnd, pszWindowClass, nbArray(pszWindowClass)));
-	if (bPrefix) {
-		pszWindowClass[lstrlen(pszClass)] = _T('\0');
+bool checkWindowClass(HWND hwnd, LPCTSTR wnd_class, bool allow_same_prefix) {
+	TCHAR actual_wnd_class[kWindowClassBufferLength];
+	VERIF(GetClassName(hwnd, actual_wnd_class, arrayLength(actual_wnd_class)));
+	if (allow_same_prefix) {
+		actual_wnd_class[lstrlen(wnd_class)] = _T('\0');
 	}
-	return !StrCmp(pszWindowClass, pszClass);
+	return !lstrcmp(wnd_class, actual_wnd_class);
 }
 
-struct FINDWINDOWBYNAME {
-	LPCTSTR pszWindowSpec;
-	HWND hwndFound;
+struct FIND_WINDOW_BY_NAME {
+	LPCTSTR title_regexp;
+	HWND hwnd_found;
 };
 
-HWND findWindowByName(LPCTSTR pszWindowSpec) {
-	const LPTSTR pszWindowSpecLowercase = new TCHAR[lstrlen(pszWindowSpec) + 1];
-	lstrcpy(pszWindowSpecLowercase, pszWindowSpec);
+HWND findWindowByName(LPCTSTR title_regexp) {
+	const LPTSTR pszWindowSpecLowercase = new TCHAR[lstrlen(title_regexp) + 1];
+	lstrcpy(pszWindowSpecLowercase, title_regexp);
 	CharLower(pszWindowSpecLowercase);
 	
-	FINDWINDOWBYNAME fwbn;
-	fwbn.pszWindowSpec = pszWindowSpecLowercase;
-	fwbn.hwndFound = NULL;
+	FIND_WINDOW_BY_NAME fwbn;
+	fwbn.title_regexp = pszWindowSpecLowercase;
+	fwbn.hwnd_found = NULL;
 	EnumWindows(prcEnumFindWindowByName, (LPARAM)&fwbn);
 	delete [] pszWindowSpecLowercase;
-	return fwbn.hwndFound;
+	return fwbn.hwnd_found;
 }
 
-BOOL CALLBACK prcEnumFindWindowByName(HWND hWnd, LPARAM lParam) {
-	FINDWINDOWBYNAME &fwbn = *(FINDWINDOWBYNAME*)lParam;
-	TCHAR pszTitle[1024];
-	if (GetWindowText(hWnd, pszTitle, nbArray(pszTitle))) {
-		if (matchWildcards(fwbn.pszWindowSpec, pszTitle)) {
-			fwbn.hwndFound = hWnd;
+BOOL CALLBACK prcEnumFindWindowByName(HWND hwnd, LPARAM lParam) {
+	FIND_WINDOW_BY_NAME &fwbn = *(FIND_WINDOW_BY_NAME*)lParam;
+	TCHAR title[1024];
+	if (GetWindowText(hwnd, title, arrayLength(title))) {
+		if (matchWildcards(fwbn.title_regexp, title)) {
+			fwbn.hwnd_found = hwnd;
 			return FALSE;
 		}
 	}
@@ -338,8 +303,7 @@ bool matchWildcards(LPCTSTR pattern, LPCTSTR subject, LPCTSTR pattern_end) {
 				return false;
 			
 			case _T('?'):
-				VERIF(*subject);
-				subject++;
+				VERIF(*subject++);
 				break;
 			
 			default:
@@ -359,16 +323,16 @@ bool matchWildcards(LPCTSTR pattern, LPCTSTR subject, LPCTSTR pattern_end) {
 
 static int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 
-bool browseForFolder(HWND hwnd_parent, LPCTSTR pszTitle, LPTSTR pszDirectory) {
+bool browseForFolder(HWND hwnd_parent, LPCTSTR title, LPTSTR directory) {
 	BROWSEINFO bi;
 	ZeroMemory(&bi, sizeof(bi));
 	bi.hwndOwner = hwnd_parent;
-	bi.lpszTitle = pszTitle;
+	bi.lpszTitle = title;
 	bi.ulFlags = BIF_RETURNONLYFSDIRS;
 	bi.lpfn = prcBrowseForFolderCallback;
-	bi.lParam = (LPARAM)pszDirectory;
+	bi.lParam = (LPARAM)directory;
 	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
-	if (!pidl || !SHGetPathFromIDList(pidl, pszDirectory)) {
+	if (!pidl || !SHGetPathFromIDList(pidl, directory)) {
 		return false;
 	}
 	CoTaskMemFree(pidl);
@@ -388,8 +352,8 @@ int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM lpD
 //------------------------------------------------------------------------
 
 // Wrapper for SHGetSpecialFolderPath
-bool getSpecialFolderPath(int index, LPTSTR pszPath) {
-	return ToBool(SHGetSpecialFolderPath(NULL, pszPath, index, TRUE));
+bool getSpecialFolderPath(int index, LPTSTR path) {
+	return toBool(SHGetSpecialFolderPath(NULL, path, index, TRUE));
 }
 
 
@@ -399,8 +363,8 @@ bool getSpecialFolderPath(int index, LPTSTR pszPath) {
 // - IUniformResourceLocator shortcuts
 // - IShellLink shortcuts
 // If the file is a normal file, return its path unchanged
-bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath) {
-	*pszTargetPath = _T('\0');
+bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path) {
+	*target_path = _T('\0');
 	
 	// Resolve Installer shortcuts
 	// Use MSI API dynamically, because it is available only under NT-like
@@ -414,25 +378,25 @@ bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath) {
 		TCHAR pszProductCode[39];
 		TCHAR pszComponentCode[39];
 		if (pfnMsiGetShortcutTarget && ERROR_SUCCESS ==
-				pfnMsiGetShortcutTarget(pszLinkFile, pszProductCode, NULL, pszComponentCode)) {
+				pfnMsiGetShortcutTarget(link_file, pszProductCode, NULL, pszComponentCode)) {
 			typedef UINT (WINAPI *PFN_MsiGetComponentPath)(
 				LPCTSTR szProduct, LPCTSTR szComponent, LPTSTR lpPathBuf, DWORD* pcchBuf);
 			const PFN_MsiGetComponentPath pfnMsiGetComponentPath =
 				myGetProcAddress(hMSI, MsiGetComponentPath);
 			DWORD buf = MAX_PATH;
 			if (pfnMsiGetComponentPath) {
-				pfnMsiGetComponentPath(pszProductCode, pszComponentCode, pszTargetPath, &buf);
+				pfnMsiGetComponentPath(pszProductCode, pszComponentCode, target_path, &buf);
 			}
 		}
 		
 		FreeLibrary(hMSI);
 		
-		if (*pszTargetPath) {
+		if (*target_path) {
 			return true;
 		}
 	}
 	
-	strToW(MAX_PATH, wszLinkFile, pszLinkFile);
+	strToW(MAX_PATH, wszLinkFile, link_file);
 	
 	// Resolve the shortcut using the IUniformResourceLocator and IPersistFile interfaces
 	IUniformResourceLocator *purl;
@@ -444,14 +408,14 @@ bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath) {
 			HRESULT hr1, hr2;
 			if (SUCCEEDED(hr1 = ppf->Load(wszLinkFile, STGM_READ)) &&
 					SUCCEEDED(hr2 = purl->GetURL(&pszURL))) {
-				lstrcpyn(pszTargetPath, pszURL, MAX_PATH);
+				lstrcpyn(target_path, pszURL, MAX_PATH);
 				CoTaskMemFree(pszURL);
 			}
 			ppf->Release();
 		}
 		purl->Release();
 		
-		if (*pszTargetPath) {
+		if (*target_path) {
 			return true;
 		}
 	}
@@ -464,13 +428,13 @@ bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath) {
 		if (SUCCEEDED(psl->QueryInterface(IID_IPersistFile, (void**)&ppf))) {
 			if (SUCCEEDED(ppf->Load(wszLinkFile, STGM_READ)) &&
 					SUCCEEDED(psl->Resolve(NULL, MAKELONG(SLR_NO_UI | SLR_NOUPDATE, 1000)))) {
-				psl->GetPath(pszTargetPath, MAX_PATH, NULL, 0);
+				psl->GetPath(target_path, MAX_PATH, NULL, 0);
 			}
 			ppf->Release();
 		}
 		psl->Release();
 		
-		if (*pszTargetPath) {
+		if (*target_path) {
 			return true;
 		}
 	}
@@ -483,45 +447,45 @@ bool getShellLinkTarget(LPCTSTR pszLinkFile, LPTSTR pszTargetPath) {
 // Command line parsing and executing
 //------------------------------------------------------------------------
 
-void findFullPath(LPTSTR pszPath, LPTSTR pszFullPath) {
-	if (!pathIsSlow(pszPath)) {
-		PathUnquoteSpaces(pszPath);
-		if (SearchPath(NULL, pszPath, NULL, MAX_PATH, pszFullPath, NULL)) {
+void findFullPath(LPTSTR path, LPTSTR full_path) {
+	if (!pathIsSlow(path)) {
+		PathUnquoteSpaces(path);
+		if (SearchPath(NULL, path, NULL, MAX_PATH, full_path, NULL)) {
 			return;
 		}
 		
 		DWORD buf = MAX_PATH;
 		if (SUCCEEDED(AssocQueryString(ASSOCF_OPEN_BYEXENAME, ASSOCSTR_EXECUTABLE,
-				pszPath, _T("open"), pszFullPath, &buf))) {
+				path, _T("open"), full_path, &buf))) {
 			return;
 		}
 		
-		if (32 < reinterpret_cast<UINT_PTR>(FindExecutable(pszPath, NULL, pszFullPath))) {
+		if (32 < reinterpret_cast<UINT_PTR>(FindExecutable(path, NULL, full_path))) {
 			return;
 		}
 	}
 	
-	lstrcpy(pszFullPath, pszPath);
+	lstrcpy(full_path, path);
 }
 
 
-void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow) {
+void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 	// Expand the environment variables before splitting
 	TCHAR pszCommandExp[MAX_PATH + bufClipboardString];
-	ExpandEnvironmentStrings(pszCommand, pszCommandExp, nbArray(pszCommandExp));
+	ExpandEnvironmentStrings(command, pszCommandExp, arrayLength(pszCommandExp));
 	
 	// Split the command line: get the file and the arguments
-	TCHAR pszPath[MAX_PATH];
-	lstrcpyn(pszPath, pszCommandExp, nbArray(pszPath));
-	PathRemoveArgs(pszPath);
+	TCHAR path[MAX_PATH];
+	lstrcpyn(path, pszCommandExp, arrayLength(path));
+	PathRemoveArgs(path);
 	
 	// Get the directory
 	TCHAR pszDirectoryBuf[MAX_PATH];
-	if (!pszDirectory || !*pszDirectory) {
-		findFullPath(pszPath, pszDirectoryBuf);
+	if (!directory || !*directory) {
+		findFullPath(path, pszDirectoryBuf);
 		PathRemoveFileSpec(pszDirectoryBuf);
-		pszDirectory = pszDirectoryBuf;
-		PathQuoteSpaces(pszPath);
+		directory = pszDirectoryBuf;
+		PathQuoteSpaces(path);
 	}
 	
 	// Run the command line
@@ -529,18 +493,58 @@ void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow) {
 	sei.cbSize = sizeof(sei);
 	sei.fMask = SEE_MASK_FLAG_DDEWAIT;
 	sei.hwnd = e_hwndInvisible;
-	sei.lpFile = pszPath;
+	sei.lpFile = path;
 	sei.lpVerb = NULL;
 	sei.lpParameters = PathGetArgs(pszCommandExp);
-	sei.lpDirectory = pszDirectory;
-	sei.nShow = nShow;
+	sei.lpDirectory = directory;
+	sei.nShow = show_mode;
 	ShellExecuteEx(&sei);
 }
 
 
-DWORD WINAPI threadShellExecute(void* pParams) {
-	THREAD_SHELLEXECUTE &params = *(THREAD_SHELLEXECUTE*)pParams;
-	shellExecuteCmdLine(params.sCommand, params.sDirectory, params.nShow);
-	delete (THREAD_SHELLEXECUTE*)pParams;
+DWORD WINAPI threadShellExecute(void* params) {
+	THREAD_SHELLEXECUTE* const params_ptr = reinterpret_cast<THREAD_SHELLEXECUTE*>(params);
+	shellExecuteCmdLine(params_ptr->command, params_ptr->directory, params_ptr->show_mode);
+	delete params_ptr;
 	return 0;
+}
+
+
+void skipUntilComma(TCHAR*& chr_ptr, bool unescape) {
+	TCHAR* const start = chr_ptr;
+	bool escaping = false;
+	TCHAR* current = start;
+	while (*current) {
+		if (escaping) {
+			escaping = false;
+		} else if (*current == _T(',')) {
+			break;
+		} else if (unescape && *current == _T('\\')) {
+			escaping = true;
+		}
+		current++;
+	}
+	if (*current) {
+		*current++ = _T('\0');
+		while (*current == _T(' ')) {
+			current++;
+		}
+	}
+	chr_ptr = current;
+	
+	if (unescape) {
+		const TCHAR* input = start;
+		TCHAR* output = start;
+		bool escaping = false;
+		while (*input) {
+			if (*input == _T('\\') && !escaping) {
+				escaping = true;
+			} else{
+				escaping = false;
+				*output++ = *input;
+			}
+			input++;
+		}
+		*output = _T('\0');
+	}
 }

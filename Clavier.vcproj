@@ -67,7 +67,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
 				Version=""
 				LinkIncremental="2"
 				GenerateManifest="false"
@@ -154,7 +154,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
@@ -244,7 +244,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib chkstk.obj"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
@@ -332,7 +332,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
 				Version=""
 				LinkIncremental="2"
 				GenerateManifest="false"

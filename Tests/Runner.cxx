@@ -25,6 +25,8 @@
 
 // Entry point
 int main() {
+	testing::initialize();
+	testing::MemoryLeakChecker memory_leak_checker;
 	app::initialize();
 	const int exit_code = CxxTest::ParenPrinter().run();
 	app::terminate();

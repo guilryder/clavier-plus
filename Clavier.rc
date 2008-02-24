@@ -189,7 +189,7 @@ BEGIN
     PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
     LTEXT           "Verknüpfungen sind deaktiviert solange dieser Dialog angezeigt wird.",IDCLBL_HELP,90,114,123,17
-    LTEXT           "Anzhal der Verknüpfungen:",IDCLBL_SHORTCUTSCOUNT,228,114,88,8,SS_NOPREFIX
+    LTEXT           "Anzahl der Verknüpfungen:",IDCLBL_SHORTCUTSCOUNT,228,114,88,8,SS_NOPREFIX
     LTEXT           "",IDCTXT_SHORTCUTSCOUNT,320,114,8,8,SS_NOPREFIX
     CONTROL         "Beim Starten von &Windows Clavier+ ausführen",IDCCHK_AUTOSTART,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,165,10

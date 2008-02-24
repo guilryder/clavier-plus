@@ -23,12 +23,12 @@
 
 // Indicates if a key was down when the last thread message was received.
 inline bool isKeyDown(UINT vk) {
-	return ToBool(GetKeyState(vk) & 0x8000);
+	return toBool(GetKeyState(vk) & 0x8000);
 }
 
 // Indicates if a key is currently down.
 inline bool isAsyncKeyDown(UINT vk) {
-	return ToBool(GetAsyncKeyState(vk) & 0x8000);
+	return toBool(GetAsyncKeyState(vk) & 0x8000);
 }
 
 const BYTE keyDownMask = 0x80;

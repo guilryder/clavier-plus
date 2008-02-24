@@ -18,17 +18,10 @@
 
 #pragma once
 
-#ifndef _DEBUG
-#error TESTING mode is only available in _DEBUG mode.
-#endif  // !_DEBUG
-
 #define TESTING
 
 #include "../StdAfx.h"
 
 #undef new
 
-#define CXXTEST_HAVE_EH
-
-#include <cxxtest/GlobalFixture.h>
-#include <cxxtest/TestSuite.h>
+#include "Testing.h"

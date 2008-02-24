@@ -53,7 +53,7 @@ void setLanguage(int lang) {
 
 int getDefaultLanguage() {
 	const LANGID langID = PRIMARYLANGID(LANGIDFROMLCID(GetUserDefaultLCID()));
-	for (int lang = 0; lang < nbArray(s_aLangID); lang++) {
+	for (int lang = 0; lang < arrayLength(s_aLangID); lang++) {
 		if (PRIMARYLANGID(s_aLangID[lang]) == langID) {
 			return lang;
 		}

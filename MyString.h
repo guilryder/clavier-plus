@@ -25,6 +25,8 @@
 #include <stdarg.h>
 #include "I18n.h"
 
+class StringTest;
+
 extern HANDLE e_hHeap;
 
 
@@ -44,6 +46,8 @@ inline void strMove(LPTSTR dest, LPCTSTR src, int length) {
 
 
 class String {
+	friend class ::StringTest;
+	
 public:
 	
 	typedef TCHAR* STR;
@@ -51,6 +55,10 @@ public:
 	
 	operator CSTR () const {
 		return getSafe();
+	}
+	
+	int getBufferSize() const {
+		return m_buf_length;
 	}
 	
 	//----------------------------------------------------------------------
@@ -194,7 +202,7 @@ public:
 	bool loadString(UINT id) {
 		const i18n::STRING_RESOURCE *const resource = i18n::loadStringResource(id);
 		if (!resource) {
-			*m_strbuf = 0;
+			empty();
 			return false;
 		}
 		

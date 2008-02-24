@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
 				LinkIncremental="2"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
@@ -162,7 +162,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
 				LinkIncremental="2"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
@@ -261,6 +261,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\MyString.h"
+			>
+		</File>
+		<File
+			RelativePath=".\MyStringTest.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\MyStringTest.hxx"
+			>
+		</File>
+		<File
 			RelativePath=".\Runner.cpp"
 			>
 		</File>
@@ -330,6 +342,14 @@
 		</File>
 		<File
 			RelativePath=".\Test.tpl"
+			>
+		</File>
+		<File
+			RelativePath=".\Testing.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Testing.h"
 			>
 		</File>
 	</Files>

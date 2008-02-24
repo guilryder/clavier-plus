@@ -320,7 +320,7 @@ void FileMenuItem::populate(HMENU hMenu) {
 		} else if (iSource > 0) {
 			break;
 		} else {
-			lstrcpyn(pszFolder, m_sPath, nbArray(pszFolder));
+			lstrcpyn(pszFolder, m_sPath, arrayLength(pszFolder));
 		}
 		
 		TCHAR pszPath[MAX_PATH];
@@ -339,7 +339,7 @@ void FileMenuItem::populate(HMENU hMenu) {
 			TCHAR pszRelativeFolder[MAX_PATH];
 			LPTSTR pszItemPath;
 			
-			const bool bIsDir = ToBool(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+			const bool bIsDir = toBool(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 			
 			// Directories: submenus
 			// Files: only *.lnk files
@@ -350,7 +350,7 @@ void FileMenuItem::populate(HMENU hMenu) {
 					continue;
 				}
 				
-				lstrcpyn(pszRelativeFolder, m_sPath, nbArray(pszRelativeFolder));
+				lstrcpyn(pszRelativeFolder, m_sPath, arrayLength(pszRelativeFolder));
 				PathAppend(pszRelativeFolder, wfd.cFileName);
 				pszItemPath = pszRelativeFolder;
 				
@@ -498,7 +498,7 @@ bool browseForCommandLine(HWND hwnd_parent, LPTSTR pszFile, bool bForceExist) {
 
 bool browseForCommandLine(HWND hDlg) {
 	TCHAR pszFile[MAX_PATH];
-	GetDlgItemText(hDlg, IDCTXT_COMMAND, pszFile, nbArray(pszFile));
+	GetDlgItemText(hDlg, IDCTXT_COMMAND, pszFile, arrayLength(pszFile));
 	PathRemoveArgs(pszFile);
 	
 	VERIF(browseForCommandLine(hDlg, pszFile, true));
@@ -746,7 +746,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		case IDCCMD_HELP:
 			{
 				TCHAR pszPath[MAX_PATH];
-				GetModuleFileName(e_hInst, pszPath, nbArray(pszPath));
+				GetModuleFileName(e_hInst, pszPath, arrayLength(pszPath));
 				PathRemoveFileSpec(pszPath);
 				
 				TCHAR pszFile[MAX_PATH];
@@ -845,8 +845,9 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		
 		case IDCCBO_PROGRAMS:
 			if (wNotify == CBN_SELCHANGE) {
-				s_psh->m_bProgramsOnly = ToBool(SendDlgItemMessage(e_hdlgMain,
+				s_psh->m_bProgramsOnly = toBool(SendDlgItemMessage(e_hdlgMain,
 					IDCCBO_PROGRAMS, CB_GETCURSEL, 0, 0));
+				updateItem();
 			}
 			break;
 		
@@ -914,7 +915,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				String s;
 				escapeString(pszText, s);
 				appendText(s);
-			} else if (ID_TEXT_LOWLEVEL <= id && id < ID_TEXT_LOWLEVEL + nbArray(apszWrite)) {
+			} else if (ID_TEXT_LOWLEVEL <= id && id < ID_TEXT_LOWLEVEL + arrayLength(apszWrite)) {
 				appendText(apszWrite[id - ID_TEXT_LOWLEVEL]);
 			}
 			break;
@@ -948,7 +949,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				GetClientRect(hDlg, &rcClientOrig);
 				
 				// Get the initial position of controls
-				for (int i = 0; i < nbArray(aSizePos); i++) {
+				for (int i = 0; i < arrayLength(aSizePos); i++) {
 					SIZEPOS &sp = aSizePos[i];
 					sp.hctl = GetDlgItem(hDlg, sp.id);
 					RECT rc;
@@ -1079,7 +1080,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 					TCHAR pszPath[MAX_PATH];
 					
 					if (ERROR_SUCCESS == RegQueryValueEx(hKeyAutoStart, pszValueAutoStart, NULL,
-							&dwType, NULL, &dwLen) && dwType == REG_SZ && dwLen < nbArray(pszPath)) {
+							&dwType, NULL, &dwLen) && dwType == REG_SZ && dwLen < arrayLength(pszPath)) {
 						if (ERROR_SUCCESS == RegQueryValueEx(hKeyAutoStart, pszValueAutoStart, NULL,
 								NULL, (BYTE*)pszPath, &dwLen) && !lstrcmpi(pszPath, pszAutoStartPath)) {
 							CheckDlgButton(hDlg, IDCCHK_AUTOSTART, TRUE);
@@ -1234,7 +1235,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				int dx = rcClientNew.right - rcClientOrig.right;
 				int dy = rcClientNew.bottom - rcClientOrig.bottom;
 				
-				for (int i = 0; i < nbArray(aSizePos); i++) {
+				for (int i = 0; i < arrayLength(aSizePos); i++) {
 					aSizePos[i].updateGui(dx, dy);
 				}
 				
@@ -1351,7 +1352,7 @@ LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 				TCHAR pszPath[MAX_PATH];
 				if (GetWindowThreadProcessId(hWnd, &idProcess) &&
 						idProcess != GetCurrentProcessId() &&
-						getWindowExecutable(hWnd, pszPath)) {
+						getWindowProcessName(hWnd, pszPath)) {
 					if (rs.isSome()) {
 						rs += _T(';');
 					}
@@ -1397,7 +1398,7 @@ LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 
 // Command line shortcut settings
-INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUNUSED(lParam)) {
+INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MY_UNUSED(lParam)) {
 	switch (uMsg) {
 		
 		case WM_INITDIALOG:
@@ -1439,7 +1440,7 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUN
 					{
 						// Get the command line file (without arguments)
 						TCHAR pszDir[MAX_PATH];
-						GetDlgItemText(hDlg, IDCTXT_DIRECTORY, pszDir, nbArray(pszDir));
+						GetDlgItemText(hDlg, IDCTXT_DIRECTORY, pszDir, arrayLength(pszDir));
 						
 						TCHAR pszTitle[MAX_PATH];
 						i18n::loadStringAuto(IDS_BROWSEDIR, pszTitle);
@@ -1459,7 +1460,7 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MYUN
 					getDlgItemText(hDlg, IDCTXT_DIRECTORY, s_psh->m_sDirectory);
 					s_psh->m_nShow = shortcut::aiShowOption[
 						SendDlgItemMessage(hDlg, IDCCBO_SHOW, CB_GETCURSEL, 0,0)];
-					s_psh->m_bSupportFileOpen = ToBool(IsDlgButtonChecked(hDlg, IDCCHK_SUPPORTFILEOPEN));
+					s_psh->m_bSupportFileOpen = toBool(IsDlgButtonChecked(hDlg, IDCCHK_SUPPORTFILEOPEN));
 					s_psh->resetIcons();
 					// Fall-through
 					
@@ -1580,7 +1581,7 @@ void updateList() {
 	s_bProcessGuiEvents = false;
 	
 	Shortcut *const psh = getSelectedShortcut();
-	const bool bSel = ToBool(psh);
+	const bool bSel = toBool(psh);
 	
 	HICON hIcon = NULL;
 	
@@ -1604,7 +1605,7 @@ void updateList() {
 	
 	// Enable or disable shortcut controls and Delete button
 	
-	const bool bCommand = ToBool(IsDlgButtonChecked(e_hdlgMain, IDCOPT_COMMAND));
+	const bool bCommand = toBool(IsDlgButtonChecked(e_hdlgMain, IDCOPT_COMMAND));
 	static const UINT s_aid[] = {
 		IDCCMD_DELETE, IDCCMD_EDIT, IDCFRA_TEXT, IDCFRA_COMMAND,
 		IDCOPT_TEXT, IDCOPT_COMMAND,
@@ -1621,7 +1622,7 @@ void updateList() {
 		!bCommand, !bCommand,
 		bCommand, bCommand, bCommand, bCommand,
 	};
-	for (int i = 0; i < nbArray(s_aid); i++) {
+	for (int i = 0; i < arrayLength(s_aid); i++) {
 		EnableWindow(GetDlgItem(e_hdlgMain, s_aid[i]), bSel && abEnabled[i]);
 	}
 	
@@ -1648,7 +1649,7 @@ int addItem(Shortcut* psh, bool bSelected) {
 	lvi.iImage = I_IMAGECALLBACK;
 	lvi.iItem = ListView_InsertItem(s_hwnd_list, &lvi);
 	lvi.mask = LVIF_TEXT;
-	for (lvi.iSubItem = 1; lvi.iSubItem < nbArray(e_acxCol); lvi.iSubItem++) {
+	for (lvi.iSubItem = 1; lvi.iSubItem < arrayLength(e_acxCol); lvi.iSubItem++) {
 		ListView_SetItem(s_hwnd_list, &lvi);
 	}
 	
@@ -1721,7 +1722,7 @@ DWORD WINAPI threadGetFileIcon(GETFILEICON& gfi) {
 
 void Shortcut::findExecutable(LPTSTR pszExecutable) {
 	TCHAR pszFile[MAX_PATH];
-	StrCpyN(pszFile, m_sCommand, nbArray(pszFile));
+	StrCpyN(pszFile, m_sCommand, arrayLength(pszFile));
 	PathRemoveArgs(pszFile);
 	findFullPath(pszFile, pszExecutable);
 }
@@ -1887,7 +1888,7 @@ int CALLBACK Shortcut::compare(const Shortcut* psh1, const Shortcut* psh2, LPARA
 				const int vkFlags1 = psh1->m_vkFlags;
 				const int vkFlags2 = psh2->m_vkFlags;
 				if (vkFlags1 != vkFlags2) {
-					for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+					for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
 						int vkFlags = e_aSpecialKey[i].vkFlags;
 						int diff = (int)(vkFlags1 & vkFlags) - (int)(vkFlags2 & vkFlags);
 						if (diff) {
@@ -1925,7 +1926,7 @@ bool Shortcut::tryChangeDirectory(HWND hdlg, LPCTSTR pszDirectory) {
 	bool bDone = false;
 	
 	TCHAR pszDirectoryNoQuotes[MAX_PATH];
-	lstrcpyn(pszDirectoryNoQuotes, pszDirectory, nbArray(pszDirectoryNoQuotes));
+	lstrcpyn(pszDirectoryNoQuotes, pszDirectory, arrayLength(pszDirectoryNoQuotes));
 	PathUnquoteSpaces(pszDirectoryNoQuotes);
 	
 	LockWindowUpdate(hdlg);
@@ -1974,7 +1975,7 @@ bool Shortcut::tryChangeDirectory(HWND hdlg, LPCTSTR pszDirectory) {
 				(checkWindowClass(hctl, _T("Edit"), false) ||
 				checkWindowClass(hctl, _T("RichEdit20W"), false))) {
 			TCHAR pszPathSave[MAX_PATH];
-			SendMessage(hctl, WM_GETTEXT, nbArray(pszPathSave), (LPARAM)pszPathSave);
+			SendMessage(hctl, WM_GETTEXT, arrayLength(pszPathSave), (LPARAM)pszPathSave);
 			if (SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszDirectoryNoQuotes)) {
 				PostMessage(hctl, WM_KEYDOWN, VK_RETURN, 0);
 				PostMessage(hctl, WM_KEYUP, VK_RETURN, 0);
@@ -1991,13 +1992,13 @@ bool Shortcut::tryChangeDirectory(HWND hdlg, LPCTSTR pszDirectory) {
 	// - Must answer to CDM_GETSPEC message
 	if (SendMessage(hdlg, CDM_GETSPEC, 0, NULL) > 0) {
 		static const UINT aid[] = { cmb13, edt1 };
-		for (size_t control = 0; control < nbArray(aid); control++) {
+		for (size_t control = 0; control < arrayLength(aid); control++) {
 			const HWND hctl = GetDlgItem(hdlg, aid[control]);
 			if (!hctl) {
 				continue;
 			}
 			TCHAR pszPathSave[MAX_PATH];
-			SendMessage(hctl, WM_GETTEXT, nbArray(pszPathSave), (LPARAM)pszPathSave);
+			SendMessage(hctl, WM_GETTEXT, arrayLength(pszPathSave), (LPARAM)pszPathSave);
 			if (SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszDirectoryNoQuotes)) {
 				sleepBackground(0);
 				SendMessage(hdlg, WM_COMMAND, IDOK, 0);

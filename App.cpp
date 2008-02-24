@@ -45,6 +45,8 @@ const int maxIniFile = 20;
 
 static TranslatedString s_asToken[tokNotFound];
 
+bool e_bReadOnly;
+
 
 enum CMDLINE_OPTION {
 	cmdoptLaunch,
@@ -53,6 +55,7 @@ enum CMDLINE_OPTION {
 	cmdoptQuit,
 	cmdoptAddText,
 	cmdoptAddCommand,
+	cmdoptReadOnly,
 	
 	cmdoptWithArg,
 	cmdoptLoad = cmdoptWithArg,
@@ -124,6 +127,8 @@ void entryPoint() {
 		}
 	}
 #endif  // ALLOW_MULTIPLE_INSTANCES
+	
+	e_bReadOnly = false;
 	
 	app::initialize();
 	
@@ -220,6 +225,7 @@ static const LPCTSTR apszCmdOpt[] = {
 	_T("quit"),
 	_T("addtext"),
 	_T("addcommand"),
+	_T("readonly"),
 	_T("load"),
 	_T("merge"),
 	_T("sendkeys"),
@@ -331,17 +337,22 @@ CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch) {
 			
 			switch (cmdopt) {
 				
+				// Set read-only mode
+				case cmdoptReadOnly:
+					e_bReadOnly = true;
+					break;
+				
 				// Set INI filename
 				case cmdoptLoad:
 					bAutoQuit = false;
 					bNewIniFile = true;
-					lstrcpyn(e_pszIniFile, pszArg, nbArray(e_pszIniFile));
+					lstrcpyn(e_pszIniFile, pszArg, arrayLength(e_pszIniFile));
 					break;
 				
 				// Merge an INI file
 				case cmdoptMerge:
 					bAutoQuit = false;
-					if (nbIniFileMerge < nbArray(apszIniFileMerge)) {
+					if (nbIniFileMerge < arrayLength(apszIniFileMerge)) {
 						const LPTSTR pszIniFile = new TCHAR[lstrlen(pszArg) + 1];
 						lstrcpy(pszIniFile, pszArg);
 						apszIniFileMerge[nbIniFileMerge++] = pszIniFile;
@@ -376,7 +387,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch) {
 	// Default INI file
 	if (bNormalLaunch && !bNewIniFile && !bAutoQuit) {
 		bNewIniFile = true;
-		GetModuleFileName(e_hInst, e_pszIniFile, nbArray(e_pszIniFile));
+		GetModuleFileName(e_hInst, e_pszIniFile, arrayLength(e_pszIniFile));
 		PathRemoveFileSpec(e_pszIniFile);
 		PathAppend(e_pszIniFile, _T("Clavier.ini"));
 	}
@@ -539,7 +550,7 @@ UINT displayTrayIconMenu() {
 	
 	// 2) List INI files in Clavier+ directory
 	TCHAR pszIniFileSpec[MAX_PATH];
-	GetModuleFileName(e_hInst, pszIniFileSpec, nbArray(pszIniFileSpec));
+	GetModuleFileName(e_hInst, pszIniFileSpec, arrayLength(pszIniFileSpec));
 	PathRemoveFileSpec(pszIniFileSpec);
 	PathAppend(pszIniFileSpec, _T("*.ini"));
 	WIN32_FIND_DATA wfd;
@@ -607,7 +618,7 @@ UINT displayTrayIconMenu() {
 					}
 				}
 				
-				TCHAR pszIniFile[nbArray(e_pszIniFile)];
+				TCHAR pszIniFile[arrayLength(e_pszIniFile)];
 				lstrcpy(pszIniFile, e_pszIniFile);
 				
 				OPENFILENAME ofn;
@@ -615,7 +626,7 @@ UINT displayTrayIconMenu() {
 				ofn.lStructSize = OPENFILENAME_SIZE_VERSION_400;
 				ofn.hwndOwner = hwnd;
 				ofn.lpstrFile = pszIniFile;
-				ofn.nMaxFile = nbArray(pszIniFile);
+				ofn.nMaxFile = arrayLength(pszIniFile);
 				ofn.lpstrFilter = psz;
 				if (id == ID_TRAY_INI_SAVE) {
 					ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
@@ -668,7 +679,7 @@ LPCTSTR getLanguageName(int lang) {
 
 
 int findToken(LPCTSTR token) {
-	for (int tok = 0; tok < nbArray(app::s_asToken); tok++) {
+	for (int tok = 0; tok < arrayLength(app::s_asToken); tok++) {
 		for (int lang = 0; lang < i18n::langCount; lang++) {
 			if (!lstrcmpi(token, app::s_asToken[tok].get(lang))) {
 				return tok;
@@ -676,44 +687,4 @@ int findToken(LPCTSTR token) {
 		}
 	}
 	return tokNotFound;
-}
-
-
-void skipUntilComma(TCHAR*& rpc, bool bUnescape) {
-	TCHAR *const pcStart = rpc;
-	bool bEscaping = false;
-	TCHAR *pc = pcStart;
-	while (*pc) {
-		if (bEscaping) {
-			bEscaping = false;
-		} else if (*pc == _T(',')) {
-			break;
-		} else if (bUnescape && *pc == _T('\\')) {
-			bEscaping = true;
-		}
-		pc++;
-	}
-	if (*pc) {
-		*pc++ = _T('\0');
-		while (*pc == _T(' ')) {
-			pc++;
-		}
-	}
-	rpc = pc;
-	
-	if (bUnescape) {
-		const TCHAR *pcIn = pcStart;
-		TCHAR *pcOut = pcStart;
-		bool bEscaping = false;
-		while (*pcIn) {
-			if (*pcIn == _T('\\') && !bEscaping) {
-				bEscaping = true;
-			} else{
-				bEscaping = false;
-				*pcOut++ = *pcIn;
-			}
-			pcIn++;
-		}
-		*pcOut = _T('\0');
-	}
 }

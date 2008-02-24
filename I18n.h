@@ -67,7 +67,7 @@ void loadString(UINT id, LPTSTR strbuf, int buf_length);
 // Loads a string for getLanguage() locale. Copies it to the supplied statically allocated string
 // buffer. Should not be used on dynamically allocated string buffers.
 #define loadStringAuto(id, strbuf) \
-	loadString(id, strbuf, nbArray(strbuf))
+	loadString(id, strbuf, arrayLength(strbuf))
 
 // Displays a modal dialog box loaded from a resource, for getLanguage() locale. Sets e_hdlgModal
 // before displaying the dialog box, restores it to its previous value when the dialog is closed.

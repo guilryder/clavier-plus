@@ -93,7 +93,7 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
 				
 				case IDCCHK_DISTINGUISH_LEFT_RIGHT:
 					s_ks.m_bDistinguishLeftRight =
-						ToBool(IsDlgButtonChecked(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT));
+						toBool(IsDlgButtonChecked(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT));
 					PostMessage(GetDlgItem(hDlg, IDCTXT), WM_KEYSTROKE, 0,0);
 					break;
 				
@@ -166,7 +166,7 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 				// Flags
 				DWORD vkFlags = s_ks.m_vkFlags;
 				bool bIsSpecial = false;
-				for (int special_key = 0; special_key < nbArray(e_aSpecialKey); special_key++) {
+				for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
 					const BYTE vk = e_aSpecialKey[special_key].vk;
 					const BYTE vk_left = e_aSpecialKey[special_key].vkLeft;
 					const BYTE vk_right = (BYTE)(vk_left + 1);
@@ -251,7 +251,7 @@ void Keystroke::getKeyName(LPTSTR pszHotKey) const {
 	*pszHotKey = _T('\0');
 	
 	// Special keys
-	for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+	for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
 		const int vkFlagsLeft = e_aSpecialKey[i].vkFlags;
 		const int vkFlagsRight = vkFlagsLeft << vkFlagsRightOffset;
 		if (m_vkFlags & (vkFlagsLeft | vkFlagsRight)) {
@@ -340,7 +340,7 @@ void Keystroke::serialize(LPTSTR psz) {
 			// Special key token
 			
 			vkFlagsLast = 0;
-			for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+			for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
 				if (e_aSpecialKey[i].tok == tok) {
 					vkFlagsLast = e_aSpecialKey[i].vkFlags;
 					m_vkFlags |= vkFlagsLast;
@@ -405,12 +405,12 @@ void Keystroke::keybdEvent(UINT vk, bool bUp) {
 
 
 // Simulate the typing of the keystroke
-void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bSpecialKeys) const {
+void Keystroke::simulateTyping(HWND MY_UNUSED(hwndFocus), bool bSpecialKeys) const {
 	const DWORD vkFlags = getVkFlagsNoSide();
 	
 	// Press the special keys
 	if (bSpecialKeys) {
-		for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+		for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
 			if (vkFlags & e_aSpecialKey[i].vkFlags) {
 				keybdEvent(e_aSpecialKey[i].vk, false);
 			}
@@ -424,7 +424,7 @@ void Keystroke::simulateTyping(HWND MYUNUSED(hwndFocus), bool bSpecialKeys) cons
 	
 	// Release the special keys
 	if (bSpecialKeys) {
-		for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+		for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
 			if (vkFlags & e_aSpecialKey[i].vkFlags) {
 				keybdEvent(e_aSpecialKey[i].vk, true);
 			}
@@ -456,7 +456,7 @@ void Keystroke::detachKeyboardFocus(DWORD idThread) {
 }
 
 void Keystroke::releaseSpecialKeys(BYTE abKeyboard[]) {
-	for (int i = 0; i < nbArray(e_aSpecialKey); i++) {
+	for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
 		const BYTE vk = e_aSpecialKey[i].vk;
 		if (abKeyboard[vk] & keyDownMask) {
 			abKeyboard[vk] = 0;

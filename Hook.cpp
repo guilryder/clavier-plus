@@ -132,7 +132,7 @@ void redirectHookMessage(UINT message, const KBDLLHOOKSTRUCT& data) {
 	}
 	
 	// Updates s_special_keys_down_mask if the current key is a special key.
-	for (int special_key = 0; special_key < nbArray(e_aSpecialKey); special_key++) {
+	for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
 		const BYTE vk_left = e_aSpecialKey[special_key].vkLeft;
 		const BYTE vk_right = (BYTE)(vk_left + 1);
 		
@@ -179,7 +179,7 @@ bool processShortcutHookMessage(UINT message, const KBDLLHOOKSTRUCT& data) {
 	ks.m_bDistinguishLeftRight = true;
 	
 	// Test for right special keys
-	for (int special_key = 0; special_key < nbArray(e_aSpecialKey); special_key++) {
+	for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
 		const DWORD vk_flags = e_aSpecialKey[special_key].vkFlags;
 		const BYTE vk_left = e_aSpecialKey[special_key].vkLeft;
 		const BYTE vk_right = (BYTE)(vk_left + 1);
@@ -211,11 +211,11 @@ bool processShortcutHookMessage(UINT message, const KBDLLHOOKSTRUCT& data) {
 	
 	// Get the current window process name and title, for conditions checking
 	TCHAR process_name[MAX_PATH];
-	if (!getWindowExecutable(hwnd_focus, process_name)) {
+	if (!getWindowProcessName(hwnd_focus, process_name)) {
 		*process_name = _T('\0');
 	}
 	TCHAR window_title[bufWindowTitle];
-	if (!GetWindowText(hwnd_focus, window_title, nbArray(window_title))) {
+	if (!GetWindowText(hwnd_focus, window_title, arrayLength(window_title))) {
 		*window_title = _T('\0');
 	}
 	
@@ -233,7 +233,7 @@ bool processShortcutHookMessage(UINT message, const KBDLLHOOKSTRUCT& data) {
 	return true;
 }
 
-DWORD WINAPI shortcutExecutingThread(void* MYUNUSED(param)) {
+DWORD WINAPI shortcutExecutingThread(void* MY_UNUSED(param)) {
 	for (;;) {
 		WaitForSingleObject(s_shortcut_executing_thread_event, INFINITE);
 		if (s_want_quit) {

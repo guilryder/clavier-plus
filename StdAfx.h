@@ -83,13 +83,13 @@
 #endif
 
 
-#define ToBool(f)  ((f) != 0)
-#define nbArray(a)  (sizeof(a)/sizeof(a[0]))
-#define MYUNUSED(param)
+#define toBool(value)  ((value) != 0)
+#define arrayLength(static_array)  (sizeof(static_array) / sizeof(static_array[0]))
+#define MY_UNUSED(ignored)
 
-#define VERIFP(f,value)  { if (!(f))  return (value); }
+#define VERIFP(f, value)  { if (!(f))  return (value); }
 #define VERIF(f)  VERIFP(f,false)
 #define VERIFV(f)  { if (!(f))  return; }
 
-#define min(a,b)  (((a) < (b)) ? (a) : (b))
-#define max(a,b)  (((a) > (b)) ? (a) : (b))
+#define min(a, b)  (((a) < (b)) ? (a) : (b))
+#define max(a, b)  (((b) < (a)) ? (a) : (b))
