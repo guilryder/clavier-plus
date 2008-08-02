@@ -33,7 +33,7 @@ inline bool isAsyncKeyDown(UINT vk) {
 
 const BYTE keyDownMask = 0x80;
 
-const int vkFlagsRightOffset = 16;
+const int kRightModCodeOffset = 16;
 
 
 enum {
@@ -54,10 +54,20 @@ enum {
 class Keystroke {
 public:
 	
+	// Virtual key code of the keystroke
 	BYTE m_vk;
-	DWORD m_vkFlags;
+	
+	// Bitmask of the special keys mode codes of this shortcut.
+	// Bits 0..kRightModCodeOffset-1 are for the left special keys.
+	// Bits kRightModCodeOffset..2*kRightModCodeOffset-1 are for the right special keys.
+	// If m_sided is false, left and right special keys are not distinguished and only bits
+	// 0..kRightModCodeOffset-1 are taken into account.
+	DWORD m_sided_mod_code;
+	
 	int m_aCond[condTypeCount];
-	bool m_bDistinguishLeftRight;
+	
+	// True if m_sided_mod_code distinguishes between left and right special keys.
+	bool m_sided;
 	
 public:
 	
@@ -67,20 +77,20 @@ public:
 	
 	void reset() {
 		m_vk = 0;
-		m_vkFlags = 0;
+		m_sided_mod_code = 0;
 	}
 	
 	void resetAll() {
 		reset();
-		m_bDistinguishLeftRight = false;
+		m_sided = false;
 		for (int i = 0; i < condTypeCount; i++) {
 			m_aCond[i] = condIgnore;
 		}
 	}
 	
 	
-	WORD getVkFlagsNoSide() const {
-		return (WORD)m_vkFlags | (WORD)(m_vkFlags >> vkFlagsRightOffset);
+	WORD getUnsidedModCode() const {
+		return (WORD)m_sided_mod_code | (WORD)(m_sided_mod_code >> kRightModCodeOffset);
 	}
 	
 	void getKeyName(LPTSTR pszHotKey) const;
@@ -108,6 +118,27 @@ public:
 	static void detachKeyboardFocus(DWORD idThread);
 	static void releaseSpecialKeys(BYTE abKeyboard[]);
 	
+	// Compares two keystrokes.
+	//
+	// Returns:
+	//   A < 0 integer if keystroke1 is before keystroke2, > 0 if keystroke1 is after keystroke2,
+	//   0 if the keystrokes are equal.
+	static int compare(const Keystroke& keystroke1, const Keystroke& keystroke2);
+	
+	// Returns an integer between 0 and 3 inclusive to be used for comparing the mode codes of two
+	// keystrokes for a given special key. Mod codes order: none < unsided < left < right.
+	//
+	// Args:
+	//   mod_code: Unsided MOD_* constant identifying the special key.
+	//   if_none: Value to return if the keystroke does not use the given special key.
+	//
+	// Returns:
+	//   - if_none if the keystroke does not use the special key.
+	//   - 1 if the keystroke is unsided and uses the given special key.
+	//   - 2 if the keystroke is sided and uses the given special key as left.
+	//   - 3 if the keystroke is sided and uses the given special key as right.
+	int getComparableSpecialKey(int mod_code, int if_none) const;
+	
 private:
 	
 	static INT_PTR CALLBACK prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -115,14 +146,20 @@ private:
 
 
 struct SPECIALKEY {
-	BYTE vk;
-	BYTE vkLeft;
-	DWORD vkFlags;
-	int tok;
+	BYTE vk;  // Virtual key code, undistinguishable from left and right if possible
+	BYTE vk_left;  // Virtual code of the left key
+	DWORD mod_code;  // MOD_* code of the key (e.g. MOD_CONTROL), not sided
+	int tok;  // Token index of the name of the key
 };
 
 const int nbSpecialKey = 4;
 extern const SPECIALKEY e_aSpecialKey[nbSpecialKey];
+
+// Returns the virtual code of a right key from the virtual code of a left key.
+// For instance, returns VK_RWIN if vk_left_key is VK_LWIN.
+inline BYTE getRightVkFromLeft(BYTE vk_left_key) {
+	return (BYTE)(vk_left_key + 1);
+}
 
 
 bool askKeystroke(HWND hwnd_parent, Keystroke* pksEdited, Keystroke& rksResult);

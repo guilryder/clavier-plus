@@ -126,8 +126,15 @@ public:
 	
 	void getColumnText(int iColumn, String& rs) const;
 	
+	// The column to sort the shortcuts list against. See col* enum defined in Global.h.
 	static int s_iSortColumn;
-	static int CALLBACK compare(const Shortcut* psh1, const Shortcut* psh2, LPARAM lParamSort);
+	
+	// Compares two shortcuts according to s_iSortColumn.
+	//
+	// Returns:
+	//   A < 0 integer if shortcut1 is before shortcut2, > 0 if shortcut1 is after shortcut2,
+	//   0 if the shortcuts are equal for the column.
+	static int CALLBACK compare(const Shortcut* shortcut1, const Shortcut* shortcut2, LPARAM);
 	
 private:
 	

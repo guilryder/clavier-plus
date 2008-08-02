@@ -261,6 +261,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\KeystrokeTest.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\KeystrokeTest.hxx"
+			>
+		</File>
+		<File
 			RelativePath="..\MyString.h"
 			>
 		</File>

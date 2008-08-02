@@ -57,4 +57,15 @@ bool MemoryLeakChecker::tearDown() {
 	return true;
 }
 
+
+int normalizeCompareResult(int compare_result) {
+	if (compare_result < 0) {
+		return -1;
+	} else if (compare_result > 0) {
+		return +1;
+	} else {
+		return 0;
+	}
+}
+
 }  // testing namespace

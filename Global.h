@@ -320,7 +320,7 @@ DWORD WINAPI threadShellExecute(void* params);
 
 enum {
 	colContents,
-	colShortcut,
+	colKeystroke,
 	colCond,
 	colDescription,
 	colCount

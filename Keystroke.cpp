@@ -62,7 +62,7 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
 				keyboard_hook::setCatchAllKeysWindow(hwnd_keystroke);
 				PostMessage(hwnd_keystroke, WM_KEYSTROKE, 0,0);
 				
-				CheckDlgButton(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT, s_ks.m_bDistinguishLeftRight);
+				CheckDlgButton(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT, s_ks.m_sided);
 				
 				// Load condition names
 				TCHAR pszConds[bufString];
@@ -92,8 +92,7 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
 			switch (LOWORD(wParam)) {
 				
 				case IDCCHK_DISTINGUISH_LEFT_RIGHT:
-					s_ks.m_bDistinguishLeftRight =
-						toBool(IsDlgButtonChecked(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT));
+					s_ks.m_sided = toBool(IsDlgButtonChecked(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT));
 					PostMessage(GetDlgItem(hDlg, IDCTXT), WM_KEYSTROKE, 0,0);
 					break;
 				
@@ -164,31 +163,31 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 				const DWORD special_keys_down_mask = static_cast<DWORD>(lParam);
 				
 				// Flags
-				DWORD vkFlags = s_ks.m_vkFlags;
+				DWORD sided_mod_code = s_ks.m_sided_mod_code;
 				bool bIsSpecial = false;
 				for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
-					const BYTE vk = e_aSpecialKey[special_key].vk;
-					const BYTE vk_left = e_aSpecialKey[special_key].vkLeft;
-					const BYTE vk_right = (BYTE)(vk_left + 1);
-					if (vk_typed == vk || vk_typed == vk_left || vk_typed == vk_right) {
-						vk_typed = vk;
+					const SPECIALKEY& rspecial_key = e_aSpecialKey[special_key];
+					
+					if (vk_typed == rspecial_key.vk || vk_typed == rspecial_key.vk_left
+							|| vk_typed == getRightVkFromLeft(rspecial_key.vk_left)) {
+						vk_typed = rspecial_key.vk;
 						bIsSpecial = true;
 					}
 					
-					const DWORD vkKeyFlags = e_aSpecialKey[special_key].vkFlags;
+					const DWORD mod_code = rspecial_key.mod_code;
 					if (special_keys_down_mask & (1L << (special_key * 2))) {
-						vkFlags |= vkKeyFlags;
+						sided_mod_code |= mod_code;
 					} else if (special_keys_down_mask & (1L << (special_key * 2 + 1))) {
-						vkFlags |= (DWORD)vkKeyFlags << vkFlagsRightOffset;
+						sided_mod_code |= mod_code << kRightModCodeOffset;
 					} else {
-						vkFlags &= ~vkKeyFlags;
+						sided_mod_code &= ~mod_code;
 					}
 				}
 				
 				// Key
 				// If key is pressed, update the flags
 				// If key is released, update the flags only if no key has been set
-				bool bUpdateFlags = true;
+				bool update_mode_code = true;
 				if (bIsDown) {
 					s_ksReset = false;
 					if (!bIsSpecial) {
@@ -196,10 +195,10 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 					}
 				} else {
 					s_ksReset |= !bIsSpecial;
-					bUpdateFlags &= !s_ks.m_vk;
+					update_mode_code &= !s_ks.m_vk;
 				}
-				if (bUpdateFlags) {
-					s_ks.m_vkFlags = vkFlags;
+				if (update_mode_code) {
+					s_ks.m_sided_mod_code = sided_mod_code;
 				}
 			}
 			// Fall-through
@@ -252,13 +251,14 @@ void Keystroke::getKeyName(LPTSTR pszHotKey) const {
 	
 	// Special keys
 	for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
-		const int vkFlagsLeft = e_aSpecialKey[i].vkFlags;
-		const int vkFlagsRight = vkFlagsLeft << vkFlagsRightOffset;
-		if (m_vkFlags & (vkFlagsLeft | vkFlagsRight)) {
+		const int mod_code_left = e_aSpecialKey[i].mod_code;
+		const int mod_code_right = mod_code_left << kRightModCodeOffset;
+		if (m_sided_mod_code & (mod_code_left | mod_code_right)) {
 			StrNCat(pszHotKey, getToken(e_aSpecialKey[i].tok), bufHotKey);
-			if (m_bDistinguishLeftRight) {
+			if (m_sided) {
 				StrNCat(pszHotKey, _T(" "), bufHotKey);
-				StrNCat(pszHotKey, getToken((m_vkFlags & vkFlagsLeft) ? tokLeft : tokRight), bufHotKey);
+				StrNCat(pszHotKey, getToken((m_sided_mod_code & mod_code_left) ? tokLeft : tokRight),
+						bufHotKey);
 			}
 			StrNCat(pszHotKey, _T(" + "), bufHotKey);
 		}
@@ -292,10 +292,10 @@ void Keystroke::getKeyName(UINT vk, LPTSTR pszHotKey) {
 bool Keystroke::match(const Keystroke& ks) const {
 	VERIF(m_vk == ks.m_vk);
 	
-	if (m_bDistinguishLeftRight) {
-		VERIF(ks.m_bDistinguishLeftRight && m_vkFlags == ks.m_vkFlags);
+	if (m_sided) {
+		VERIF(ks.m_sided && m_sided_mod_code == ks.m_sided_mod_code);
 	} else {
-		VERIF(getVkFlagsNoSide() == ks.getVkFlagsNoSide());
+		VERIF(getUnsidedModCode() == ks.getUnsidedModCode());
 	}
 	
 	for (int i = 0; i < condTypeCount; i++) {
@@ -308,14 +308,14 @@ bool Keystroke::match(const Keystroke& ks) const {
 // Serialize the shortcut itself (the key name)
 void Keystroke::serialize(LPTSTR psz) {
 	bool bSkipPlus = false;
-	int vkFlagsLast = 0;
+	int mod_code_last = 0;
 	
 	for (;;) {
 		
 		// Skip spaces and '+'
 		while (*psz == _T(' ') || (*psz == _T('+') && bSkipPlus)) {
 			if (*psz == _T('+')) {
-				vkFlagsLast = 0;
+				mod_code_last = 0;
 				bSkipPlus = false;
 			}
 			psz++;
@@ -339,22 +339,22 @@ void Keystroke::serialize(LPTSTR psz) {
 		if (tokWin <= tok && tok <= tokAlt) {
 			// Special key token
 			
-			vkFlagsLast = 0;
-			for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
-				if (e_aSpecialKey[i].tok == tok) {
-					vkFlagsLast = e_aSpecialKey[i].vkFlags;
-					m_vkFlags |= vkFlagsLast;
+			mod_code_last = 0;
+			for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
+				if (e_aSpecialKey[special_key].tok == tok) {
+					mod_code_last = e_aSpecialKey[special_key].mod_code;
+					m_sided_mod_code |= mod_code_last;
 					break;
 				}
 			}
 			
-		} else if (vkFlagsLast && (tok == tokLeft || tok == tokRight)) {
+		} else if (mod_code_last && (tok == tokLeft || tok == tokRight)) {
 			// Key side
 			
 			if (tok == tokRight) {
-				m_vkFlags &= ~vkFlagsLast;
-				m_vkFlags |= vkFlagsLast << vkFlagsRightOffset;
-				vkFlagsLast = 0;
+				m_sided_mod_code &= ~mod_code_last;
+				m_sided_mod_code |= mod_code_last << kRightModCodeOffset;
+				mod_code_last = 0;
 			}
 			
 		} else {
@@ -406,13 +406,13 @@ void Keystroke::keybdEvent(UINT vk, bool bUp) {
 
 // Simulate the typing of the keystroke
 void Keystroke::simulateTyping(HWND MY_UNUSED(hwndFocus), bool bSpecialKeys) const {
-	const DWORD vkFlags = getVkFlagsNoSide();
+	const DWORD mod_code = getUnsidedModCode();
 	
 	// Press the special keys
 	if (bSpecialKeys) {
-		for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
-			if (vkFlags & e_aSpecialKey[i].vkFlags) {
-				keybdEvent(e_aSpecialKey[i].vk, false);
+		for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
+			if (mod_code & e_aSpecialKey[special_key].mod_code) {
+				keybdEvent(e_aSpecialKey[special_key].vk, false);
 			}
 		}
 	}
@@ -424,9 +424,9 @@ void Keystroke::simulateTyping(HWND MY_UNUSED(hwndFocus), bool bSpecialKeys) con
 	
 	// Release the special keys
 	if (bSpecialKeys) {
-		for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
-			if (vkFlags & e_aSpecialKey[i].vkFlags) {
-				keybdEvent(e_aSpecialKey[i].vk, true);
+		for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
+			if (mod_code & e_aSpecialKey[special_key].mod_code) {
+				keybdEvent(e_aSpecialKey[special_key].vk, true);
 			}
 		}
 	}
@@ -456,11 +456,86 @@ void Keystroke::detachKeyboardFocus(DWORD idThread) {
 }
 
 void Keystroke::releaseSpecialKeys(BYTE abKeyboard[]) {
-	for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
-		const BYTE vk = e_aSpecialKey[i].vk;
+	for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
+		const BYTE vk = e_aSpecialKey[special_key].vk;
 		if (abKeyboard[vk] & keyDownMask) {
 			abKeyboard[vk] = 0;
 			keybdEvent(vk, true);
+		}
+	}
+}
+
+
+//------------------------------------------------------------------------
+// Comparison
+//------------------------------------------------------------------------
+
+int Keystroke::compare(const Keystroke& keystroke1, const Keystroke& keystroke2) {
+	
+	// Compare special keys, applying the following order:
+	// X
+	// Win + X
+	// Win + Ctrl + X
+	// Win Left + Shift Left + X
+	// Win Left + Shift Right + X
+	// Win Right + Shift Left + X
+	// Win Right + Shift Right + X
+	// Ctrl + X
+	// Ctrl + Shift + X
+	// Ctrl + Shift + Alt + X
+	// Ctrl + Alt + X
+	// Ctrl Left + X
+	int index1 = 0;
+	int index2 = 0;
+	int inherited1 = 0;
+	int inherited2 = 0;
+	int offset = 0;
+	for (int special_key = arrayLength(e_aSpecialKey) - 1; special_key >= 0; special_key--) {
+		const int mod_code = e_aSpecialKey[special_key].mod_code;
+		const int value1 = keystroke1.getComparableSpecialKey(mod_code, inherited1);
+		const int value2 = keystroke2.getComparableSpecialKey(mod_code, inherited2);
+		
+		if (value1) {
+			inherited1 = 7;
+		}
+		if (value2) {
+			inherited2 = 7;
+		}
+		
+		index1 += value1 << offset;
+		index2 += value2 << offset;
+		offset += 3;
+	}
+	
+	const int diff = index1 - index2;
+	if (diff) {
+		return diff;
+	}
+	
+	// Compare virtual key codes
+	return static_cast<int>(keystroke1.m_vk) - static_cast<int>(keystroke2.m_vk);
+}
+
+
+int Keystroke::getComparableSpecialKey(int mod_code, int if_none) const {
+	if (m_sided) {
+		if (m_sided_mod_code & mod_code) {
+			// Left
+			return 2;
+		} else if (m_sided_mod_code & (mod_code << kRightModCodeOffset)) {
+			// Right
+			return 3;
+		} else {
+			// Sided, none
+			return if_none;
+		}
+	} else {
+		if (m_sided_mod_code & mod_code) {
+			// Unsided
+			return 1;
+		} else {
+			// Unsided, none
+			return if_none;
 		}
 	}
 }
@@ -494,7 +569,7 @@ HKEY openAutoStartKey(LPTSTR pszPath) {
 
 bool Keystroke::askSendKeys(HWND hwnd_parent, Keystroke& rks) {
 	s_ks.reset();
-	s_ks.m_bDistinguishLeftRight = false;
+	s_ks.m_sided = false;
 	
 	VERIF(IDOK == i18n::dialogBox(IDD_SENDKEYS, hwnd_parent, prcSendKeys));
 	

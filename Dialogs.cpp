@@ -716,7 +716,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				if (askKeystroke(e_hdlgMain, s_psh, ks)) {
 					(Keystroke&)*s_psh = ks;
 					updateItem();
-					onItemUpdated((1 << colShortcut) | (1 << colCond));
+					onItemUpdated((1 << colKeystroke) | (1 << colCond));
 					updateList();
 				}
 			}
@@ -1837,7 +1837,7 @@ void Shortcut::getColumnText(int iColumn, String& rs) const {
 			rs = (m_bCommand) ? m_sCommand : m_sText;
 			break;
 		
-		case colShortcut:
+		case colKeystroke:
 			getKeyName(rs.getBuffer(bufHotKey));
 			break;
 		
@@ -1870,44 +1870,26 @@ void Shortcut::getColumnText(int iColumn, String& rs) const {
 
 int Shortcut::s_iSortColumn = colContents;
 
-// Compare two shortcuts by shortcut name
-int CALLBACK Shortcut::compare(const Shortcut* psh1, const Shortcut* psh2, LPARAM) {
+int CALLBACK Shortcut::compare(const Shortcut* shortcut1, const Shortcut* shortcut2, LPARAM) {
+	
+	// Some columns needing a special treatment
 	switch (s_iSortColumn) {
 		case colContents:
-			if (psh1->m_bCommand != psh2->m_bCommand) {
-				return (!psh1->m_bCommand || psh2->m_bCommand) ? +1 : -1;
+			if (shortcut1->m_bCommand != shortcut2->m_bCommand) {
+				// Type has precedence over contents.
+				return static_cast<int>(shortcut1->m_bCommand) - static_cast<int>(shortcut2->m_bCommand);
 			}
 			break;
 		
-		case colShortcut:
-			{
-				const int vkFlags1 = psh1->m_vkFlags;
-				const int vkFlags2 = psh2->m_vkFlags;
-				if (vkFlags1 != vkFlags2) {
-					for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
-						int vkFlags = e_aSpecialKey[i].vkFlags;
-						int diff = (int)(vkFlags1 & vkFlags) - (int)(vkFlags2 & vkFlags);
-						if (diff) {
-							return diff;
-						}
-						vkFlags <<= vkFlagsRightOffset;
-						diff = (int)(vkFlags1 & vkFlags) - (int)(vkFlags2 & vkFlags);
-						if (diff) {
-							return diff;
-						}
-					}
-				}
-				
-				return (int)psh1->m_vk - (int)psh2->m_vk;
-			}
-			break;
+		case colKeystroke:
+			return Keystroke::compare(*shortcut1, *shortcut2);
 	}
 	
-	String s1, s2;
-	psh1->getColumnText(s_iSortColumn, s1);
-	psh2->getColumnText(s_iSortColumn, s2);
-	
-	return lstrcmpi(s1, s2);
+	// Other columns: sort alphabetically.
+	String text1, text2;
+	shortcut1->getColumnText(s_iSortColumn, text1);
+	shortcut2->getColumnText(s_iSortColumn, text2);
+	return lstrcmpi(text1, text2);
 }
 
 }  // shortcut namespace

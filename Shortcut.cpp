@@ -106,7 +106,7 @@ void Shortcut::save(HANDLE hf) {
 	
 	TCHAR pszHotKey[bufHotKey], pszCode[bufCode];
 	getKeyName(pszHotKey);
-	wsprintf(pszCode, _T("%lu"), ((DWORD)m_vk) | (((DWORD)m_vkFlags) << 8));
+	wsprintf(pszCode, _T("%lu"), ((DWORD)m_vk) | (m_sided_mod_code << 8));
 	
 	struct LINE {
 		int tokKey;
@@ -119,7 +119,7 @@ void Shortcut::save(HANDLE hf) {
 	aLine[1].pszValue = pszCode;
 	int nbLine = 2;
 	
-	if (m_bDistinguishLeftRight) {
+	if (m_sided) {
 		aLine[nbLine].tokKey = tokDistinguishLeftRight;
 		aLine[nbLine].pszValue = _T("1");
 		nbLine++;
@@ -210,7 +210,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 	// Read
 	
 	m_vk = 0;
-	m_vkFlags = 0;
+	m_sided_mod_code = 0;
 	for (;;) {
 		
 		// Read the line
@@ -332,14 +332,14 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 					const DWORD dwCode = (DWORD)StrToInt(pcSep);
 					if (dwCode) {
 						m_vk = filterVK(LOBYTE(dwCode));
-						m_vkFlags = HIBYTE(dwCode);
+						m_sided_mod_code = HIBYTE(dwCode);
 					}
 				}
 				break;
 			
 			// Distinguish left/right
 			case tokDistinguishLeftRight:
-				m_bDistinguishLeftRight = toBool(StrToInt(pcSep));
+				m_sided = toBool(StrToInt(pcSep));
 				break;
 			
 			// Description
@@ -432,10 +432,12 @@ bool Shortcut::execute(bool bFromHotkey) const {
 			abKeyboardNew[VK_CONTROL] = keyDownMask;
 		}
 		
-		for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
-			abKeyboardNew[e_aSpecialKey[i].vk] = 0;
+		for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
+			const SPECIALKEY& rspecial_key = e_aSpecialKey[special_key];
+			abKeyboardNew[rspecial_key.vk] =
+			abKeyboardNew[rspecial_key.vk_left] =
+			abKeyboardNew[getRightVkFromLeft(rspecial_key.vk_left)] = 0;
 		}
-		abKeyboardNew[m_vk] = 0;
 		SetKeyboardState(abKeyboardNew);
 		
 		if (bReleaseControl) {
@@ -599,7 +601,7 @@ bool Shortcut::execute(bool bFromHotkey) const {
 								keybd_event(VK_MENU, scanCodeAlt, 0, 0);
 								
 								Keystroke ksDigit;
-								ks.m_vkFlags = MOD_ALT;
+								ks.m_sided_mod_code = MOD_ALT;
 								for (size_t i = 0; pszCode[i]; i++) {
 									ks.m_vk = VK_NUMPAD0 + (BYTE)(pszCode[i] - _T('0'));
 									ks.simulateTyping(hwndFocus, false);
@@ -610,15 +612,15 @@ bool Shortcut::execute(bool bFromHotkey) const {
 							} else {
 								const BYTE bFlags = HIBYTE(wKey);
 								ks.m_vk = LOBYTE(wKey);
-								ks.m_vkFlags = 0;
+								ks.m_sided_mod_code = 0;
 								if (bFlags & (1 << 0)) {
-									ks.m_vkFlags |= MOD_SHIFT;
+									ks.m_sided_mod_code |= MOD_SHIFT;
 								}
 								if (bFlags & (1 << 1)) {
-									ks.m_vkFlags |= MOD_CONTROL;
+									ks.m_sided_mod_code |= MOD_CONTROL;
 								}
 								if (bFlags & (1 << 2)) {
-									ks.m_vkFlags |= MOD_ALT;
+									ks.m_sided_mod_code |= MOD_ALT;
 								}
 								
 								ks.simulateTyping(hwndFocus);

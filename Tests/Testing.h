@@ -78,4 +78,11 @@ public:
 	bool tearDown();
 };
 
+
+// Normalizes a strcmp()-like comparison result to -1, 0, +1.
+//
+// Returns:
+//   -1 if compare_result < 0, 0 if compare_result == 0, +1 if compare_result > 0
+int normalizeCompareResult(int compare_result);
+
 }  // testing namespace

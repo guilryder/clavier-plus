@@ -133,7 +133,7 @@ void redirectHookMessage(UINT message, const KBDLLHOOKSTRUCT& data) {
 	
 	// Updates s_special_keys_down_mask if the current key is a special key.
 	for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
-		const BYTE vk_left = e_aSpecialKey[special_key].vkLeft;
+		const BYTE vk_left = e_aSpecialKey[special_key].vk_left;
 		const BYTE vk_right = (BYTE)(vk_left + 1);
 		
 		DWORD special_key_mask;
@@ -175,27 +175,30 @@ bool processShortcutHookMessage(UINT message, const KBDLLHOOKSTRUCT& data) {
 	
 	Keystroke ks;
 	ks.m_vk = Keystroke::filterVK((BYTE)data.vkCode);
-	ks.m_vkFlags = 0;
-	ks.m_bDistinguishLeftRight = true;
+	ks.m_sided_mod_code = 0;
+	ks.m_sided = true;
+	
+	BYTE keyboard_state[256];
+	GetKeyboardState(keyboard_state);
 	
 	// Test for right special keys
 	for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
-		const DWORD vk_flags = e_aSpecialKey[special_key].vkFlags;
-		const BYTE vk_left = e_aSpecialKey[special_key].vkLeft;
-		const BYTE vk_right = (BYTE)(vk_left + 1);
-		if (isKeyDown(vk_right)) {
+		const DWORD mod_code = e_aSpecialKey[special_key].mod_code;
+		const BYTE vk_left = e_aSpecialKey[special_key].vk_left;
+		const BYTE vk_right = getRightVkFromLeft(vk_left);
+		if (keyboard_state[vk_right] & keyDownMask) {
 			// Test for right key first, since left special key codes are the same as "unsided" key codes.
 #ifdef _DEBUG
-			wsprintf(log_line, _T("  Right key down: %lu\n"), vk_left);
+			wsprintf(log_line, _T("  Right key down: %lu\n"), vk_right);
 			OutputDebugString(log_line);
 #endif  // _DEBUG
-			ks.m_vkFlags |= vk_flags << vkFlagsRightOffset;
-		} else if (isKeyDown(vk_left)) {
+			ks.m_sided_mod_code |= mod_code << kRightModCodeOffset;
+		} else if (keyboard_state[vk_left] & keyDownMask) {
 #ifdef _DEBUG
 			wsprintf(log_line, _T("  Left key down: %lu\n"), vk_left);
 			OutputDebugString(log_line);
 #endif  // _DEBUG
-			ks.m_vkFlags |= vk_flags;
+			ks.m_sided_mod_code |= mod_code;
 		}
 	}
 	
