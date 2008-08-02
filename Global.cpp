@@ -24,6 +24,10 @@
 #include <tlhelp32.h>
 #include <psapi.h>
 
+#include <dlgs.h>
+#undef psh1
+#undef psh2
+
 const int kWindowClassBufferLength = 200;
 
 HANDLE e_hHeap;
@@ -344,6 +348,215 @@ int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM lpD
 		SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
 	}
 	return 0;
+}
+
+
+//------------------------------------------------------------------------
+// Changes the current directory in the given dialog box.
+// Supported dialog boxes:
+// - Standard Windows File/Open and similar: GetOpenFileName, GetSaveFileName
+// - MS Office File/Open and similar
+// - Standard Windows folder selection: SHBrowseForFolder
+//------------------------------------------------------------------------
+
+// Helper class used by setDialogBoxDirectory().
+// Should be instantiated every time setDialogBoxDirectory() is called.
+class SetDialogBoxDirectory {
+public:
+	
+	// Changes the current directory in the given dialog box.
+	//
+	// Args:
+	//   hwnd: The window handle of the dialog box or one of its controls.
+	//   directory: The directory to set in the dialog box.
+	//
+	// Returns:
+	//   True if the dialog box is supported and the current directory has been changed.
+	bool doit(HWND hwnd, LPCTSTR directory);
+	
+private:
+	
+	// One method per supported dialog box.
+	// Sets m_success to true if the directory has been successfully changed.
+	//
+	// Returns:
+	//   True on success, false to continue to the next method.
+	bool tryBrowseForFolder();
+	bool tryMsOfficeFileOpen();
+	bool tryWindowsFileOpen();
+	
+	void lockWindowUpdate() {
+		m_unlock_window_update_needed = true;
+		LockWindowUpdate(m_hwnd);
+	}
+	
+	// The dialog box handle, is never a control.
+	HWND m_hwnd;
+	
+	// Directory to set the dialog box to, without any quotes.
+	TCHAR m_directory_no_quotes[MAX_PATH];
+	
+	// Set to true by the set*() methods if LockWindowUpdate(NULL) should be called before returning.
+	bool m_unlock_window_update_needed;
+};
+
+
+bool setDialogBoxDirectory(HWND hwnd, LPCTSTR directory) {
+	return SetDialogBoxDirectory().doit(hwnd, directory);
+}
+
+
+bool SetDialogBoxDirectory::doit(HWND hwnd, LPCTSTR directory) {
+	
+	// Retrieves the dialog box handle, supports the case where hwnd is a control.
+	while (hwnd && (GetWindowStyle(hwnd) & WS_CHILD)) {
+		hwnd = GetParent(hwnd);
+	}
+	if (!hwnd) {
+		return false;
+	}
+	m_hwnd = hwnd;
+	
+	lstrcpyn(m_directory_no_quotes, directory, arrayLength(m_directory_no_quotes));
+	PathUnquoteSpaces(m_directory_no_quotes);
+	
+	m_unlock_window_update_needed = false;
+	
+	// Try all supported dialog boxes until one method returns false.
+	bool success = tryBrowseForFolder() || tryMsOfficeFileOpen() || tryWindowsFileOpen();
+	
+	if (m_unlock_window_update_needed) {
+		LockWindowUpdate(NULL);
+	}
+	
+	return success;
+}
+
+
+bool SetDialogBoxDirectory::tryBrowseForFolder() {
+	
+	// Check for SHBrowseForFolder dialog box:
+	// - Must contain a control having a class name containing "SHBrowseForFolder"
+	if (!findVisibleChildWindow(m_hwnd, _T("SHBrowseForFolder"), true)) {
+		return false;
+	}
+	
+	// Send a BFFM_SETSELECTION message to the dialog box to change the current directory.
+	// The messages requires the directory string to be a valid string in the dialog box process:
+	// we need to use VirtualAllocEx() and WriteProcessMemory().
+	
+	// 1) Retrieve a handle to the dialog box process
+	DWORD process_id;
+	GetWindowThreadProcessId(m_hwnd, &process_id);
+	const HANDLE process_handle = OpenProcess(
+			PROCESS_VM_OPERATION | PROCESS_VM_WRITE, FALSE, process_id);
+	if (!process_handle) {
+		return false;
+	}
+	
+	// 2) Allocate a buffer in the process space for the directory path
+	const DWORD size = (lstrlen(m_directory_no_quotes) + 1) * sizeof(TCHAR);
+	void *const remote_buf = VirtualAllocEx(process_handle, NULL, size, MEM_COMMIT, PAGE_READWRITE);
+	bool success = false;
+	if (remote_buf) {
+		
+		// 3) Fill the buffer
+		WriteProcessMemory(process_handle, remote_buf, m_directory_no_quotes, size, NULL);
+		
+		// 4) Send the message using the buffer
+		SendMessage(m_hwnd, BFFM_SETSELECTION, TRUE, reinterpret_cast<LPARAM>(remote_buf));
+		
+		// 5) Free the buffer
+		VirtualFreeEx(process_handle, remote_buf, 0, MEM_RELEASE);
+		success = true;
+	}
+	CloseHandle(process_handle);
+	return success;
+}
+
+
+bool SetDialogBoxDirectory::tryMsOfficeFileOpen() {
+	
+	// Check for MS Office File/Open dialog box
+	// - Check that the dialog box class contains "bosa_sdm_"
+	// - Find the first visible edit box (Edit or RichEdit)
+	if (!checkWindowClass(m_hwnd, _T("bosa_sdm_"), true)) {
+		return false;
+	}
+	
+	// The file path edit box control ID depends on MS Office version
+	const DWORD style = GetWindowStyle(m_hwnd);
+	UINT id = 0;
+	if (style == 0x96CC0000) {
+		id = 0x36;
+	} else if (style == 0x94C80000) {
+		id = 0x30;
+	}
+	
+	const HWND hwnd_control = GetDlgItem(m_hwnd, id);
+	if (!(id && hwnd_control &&
+			(checkWindowClass(hwnd_control, _T("Edit"), false) ||
+			checkWindowClass(hwnd_control, _T("RichEdit20W"), false)))) {
+		return false;
+	}
+	
+	lockWindowUpdate();
+	
+	// The control is an edit box: save its contents to path_save, then set it to the directory.
+	TCHAR path_save[MAX_PATH];
+	SendMessage(hwnd_control, WM_GETTEXT, arrayLength(path_save),
+			reinterpret_cast<LPARAM>(path_save));
+	lockWindowUpdate();
+	if (!SendMessage(hwnd_control, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(m_directory_no_quotes))) {
+		return false;
+	}
+	
+	// Simulate a press to ENTER to switch to the new directory and wait a bit.
+	PostMessage(hwnd_control, WM_KEYDOWN, VK_RETURN, 0);
+	PostMessage(hwnd_control, WM_KEYUP, VK_RETURN, 0);
+	sleepBackground(100);
+	
+	// Restore the saved path.
+	SendMessage(hwnd_control, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(path_save));
+	return true;
+}
+
+
+bool SetDialogBoxDirectory::tryWindowsFileOpen() {
+	
+	// Check for standard Get(Open|Save)FileName dialog box
+	// - Must answer to CDM_GETSPEC message
+	if (SendMessage(m_hwnd, CDM_GETSPEC, 0, NULL) <= 0) {
+		return false;
+	}
+	
+	// Two possible controls: file path edit box or combo box
+	static const UINT control_ids[] = { cmb13, edt1 };
+	for (size_t control = 0; control < arrayLength(control_ids); control++) {
+		const HWND hwnd_control = GetDlgItem(m_hwnd, control_ids[control]);
+		if (!hwnd_control) {
+			continue;
+		}
+		
+		// The control is valid: save its contents to path_save, then set it to the directory.
+		TCHAR path_save[MAX_PATH];
+		SendMessage(hwnd_control, WM_GETTEXT, arrayLength(path_save),
+				reinterpret_cast<LPARAM>(path_save));
+		lockWindowUpdate();
+		if (SendMessage(hwnd_control, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(m_directory_no_quotes))) {
+			
+			// Simulate a click on the OK button.
+			sleepBackground(0);
+			SendMessage(m_hwnd, WM_COMMAND, IDOK, 0);
+			sleepBackground(0);
+			
+			// Restore the saved path.
+			SendMessage(hwnd_control, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(path_save));
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 

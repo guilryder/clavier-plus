@@ -22,10 +22,6 @@
 #include "Dialogs.h"
 #include "Shortcut.h"
 
-#include <dlgs.h>
-#undef psh1
-#undef psh2
-
 #ifndef OPENFILENAME_SIZE_VERSION_400
 #define OPENFILENAME_SIZE_VERSION_400  sizeof(OPENFILENAME)
 #endif
@@ -1912,108 +1908,6 @@ int CALLBACK Shortcut::compare(const Shortcut* psh1, const Shortcut* psh2, LPARA
 	psh2->getColumnText(s_iSortColumn, s2);
 	
 	return lstrcmpi(s1, s2);
-}
-
-
-bool Shortcut::tryChangeDirectory(HWND hdlg, LPCTSTR pszDirectory) {
-	// Get the active dialog box
-	while (hdlg && (GetWindowStyle(hdlg) & WS_CHILD)) {
-		hdlg = GetParent(hdlg);
-	}
-	
-	VERIF(hdlg);
-	
-	bool bDone = false;
-	
-	TCHAR pszDirectoryNoQuotes[MAX_PATH];
-	lstrcpyn(pszDirectoryNoQuotes, pszDirectory, arrayLength(pszDirectoryNoQuotes));
-	PathUnquoteSpaces(pszDirectoryNoQuotes);
-	
-	LockWindowUpdate(hdlg);
-	
-	// Check for SHBrowseForFolder dialog box:
-	// - Must contain a control having a class name containing "SHBrowseForFolder"
-	if (findVisibleChildWindow(hdlg, _T("SHBrowseForFolder"), true)) {
-		
-		// Send a BFFM_SETSELECTION message to the dialog box
-		// to change the current directory. The messages requires
-		// the directory string to be a valid string in the dialog box process:
-		// we need to use VirtualAllocEx() and WriteProcessMemory().
-		DWORD idProcess;
-		GetWindowThreadProcessId(hdlg, &idProcess);
-		const HANDLE hProcess = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE,
-			FALSE, idProcess);
-		if (hProcess) {
-			const DWORD size = (lstrlen(pszDirectoryNoQuotes) + 1) * sizeof(TCHAR);
-			void *const pvRemote = VirtualAllocEx(hProcess, NULL, size, MEM_COMMIT, PAGE_READWRITE);
-			if (pvRemote) {
-				WriteProcessMemory(hProcess, pvRemote, pszDirectoryNoQuotes, size, NULL);
-				SendMessage(hdlg, BFFM_SETSELECTION, TRUE, (LPARAM)pvRemote);
-				VirtualFreeEx(hProcess, pvRemote, 0, MEM_RELEASE);
-			}
-			CloseHandle(hProcess);
-			bDone = true;
-		}
-		
-		goto Done;
-	}
-	
-	// Check for MS Office File/Open dialog box
-	// - Check that the dialog box class contains "bosa_sdm_"
-	// - Find the first visible edit box (Edit or RichEdit)
-	if (checkWindowClass(hdlg, _T("bosa_sdm_"), true)) {
-		const DWORD dwStyle = GetWindowStyle(hdlg);
-		UINT id = 0;
-		if (dwStyle == 0x96CC0000) {
-			id = 0x36;
-		} else if (dwStyle == 0x94C80000) {
-			id = 0x30;
-		}
-		
-		const HWND hctl = GetDlgItem(hdlg, id);
-		if (id && hctl &&
-				(checkWindowClass(hctl, _T("Edit"), false) ||
-				checkWindowClass(hctl, _T("RichEdit20W"), false))) {
-			TCHAR pszPathSave[MAX_PATH];
-			SendMessage(hctl, WM_GETTEXT, arrayLength(pszPathSave), (LPARAM)pszPathSave);
-			if (SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszDirectoryNoQuotes)) {
-				PostMessage(hctl, WM_KEYDOWN, VK_RETURN, 0);
-				PostMessage(hctl, WM_KEYUP, VK_RETURN, 0);
-				sleepBackground(100);
-				SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszPathSave);
-				bDone = true;
-			}
-		}
-		
-		goto Done;
-	}
-	
-	// Check for standard Get(Open|Save)FileName dialog box
-	// - Must answer to CDM_GETSPEC message
-	if (SendMessage(hdlg, CDM_GETSPEC, 0, NULL) > 0) {
-		static const UINT aid[] = { cmb13, edt1 };
-		for (size_t control = 0; control < arrayLength(aid); control++) {
-			const HWND hctl = GetDlgItem(hdlg, aid[control]);
-			if (!hctl) {
-				continue;
-			}
-			TCHAR pszPathSave[MAX_PATH];
-			SendMessage(hctl, WM_GETTEXT, arrayLength(pszPathSave), (LPARAM)pszPathSave);
-			if (SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszDirectoryNoQuotes)) {
-				sleepBackground(0);
-				SendMessage(hdlg, WM_COMMAND, IDOK, 0);
-				sleepBackground(0);
-				SendMessage(hctl, WM_SETTEXT, 0, (LPARAM)pszPathSave);
-				bDone = true;
-				goto Done;
-			}
-		}
-	}
-	
-Done:
-	LockWindowUpdate(NULL);
-	
-	return bDone;
 }
 
 }  // shortcut namespace

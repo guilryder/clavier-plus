@@ -452,7 +452,7 @@ bool Shortcut::execute(bool bFromHotkey) const {
 			releaseSpecialKeys(abKeyboard);
 		}
 		
-		if (!m_bSupportFileOpen || !tryChangeDirectory(hwndFocus, m_sCommand)) {
+		if (!m_bSupportFileOpen || !setDialogBoxDirectory(hwndFocus, m_sCommand)) {
 			clipboardToEnvironment();
 			THREAD_SHELLEXECUTE *const pParams = new THREAD_SHELLEXECUTE(
 				m_sCommand, m_sDirectory, m_nShow);
@@ -860,7 +860,7 @@ bool Shortcut::matchProgram(LPCTSTR process_name, LPCTSTR window_title) const {
 		}
 		current_program_begin = current_process_name_end + 1;
 		
-		// Compare process name, if not empty in the condition.
+		// Compare window name, if not empty in the condition.
 		if (*current_process_name_end == _T(':')) {
 			const TCHAR* const current_window_title_begin = current_program_begin;
 			const TCHAR* current_window_title_end = current_window_title_begin;

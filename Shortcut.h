@@ -129,8 +129,6 @@ public:
 	static int s_iSortColumn;
 	static int CALLBACK compare(const Shortcut* psh1, const Shortcut* psh2, LPARAM lParamSort);
 	
-	static bool tryChangeDirectory(HWND hdlg, LPCTSTR pszDirectory);
-	
 private:
 	
 	enum {
@@ -146,13 +144,30 @@ public:
 	
 	bool m_bCommand;
 	int m_nShow;
+	
+	// If true, the program conditions (see m_sPrograms below) are positive: the shortcut must match
+	// the condition to be executed. If false, the program conditions are negative: the shortcut must
+	// match none of the conditions to be executed.
 	bool m_bProgramsOnly;
+	
+	// Indicates whether the shortcut can change the current directory in File/Open
 	bool m_bSupportFileOpen;
 	
 	String m_sDescription;
 	String m_sText;
 	String m_sCommand;
 	String m_sDirectory;
+	
+	// The list of program conditions, as a ';' separated string. The whole condition is satisfied if
+	// any of the sub-conditions matches. The matching result is reversed if m_bProgramsOnly is false.
+	//
+	// Each condition has the following format: "process_name" or "process_name:window_title".
+	// "process_name" is a process executable basename, such as explorer.exe. If empty, all processes
+	// match. "window_title" is a wildcards expression (see matchWildcards function) matching the
+	// window title. If empty, all windows match.
+	//
+	// Example: "explorer.exe;Test*;firefox.exe" matches Explorer windows whose title starts with
+	// "Test" and all Firefox windows.
 	String m_sPrograms;
 	
 private:

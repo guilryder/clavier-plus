@@ -203,6 +203,24 @@ bool browseForFolder(HWND hwnd_parent, LPCTSTR title, LPTSTR directory);
 
 
 //------------------------------------------------------------------------
+// Changes the current directory in the given dialog box.
+// Supported dialog boxes:
+// - Standard Windows File/Open and similar: GetOpenFileName, GetSaveFileName
+// - MS Office File/Open and similar
+// - Standard Windows folder selection: SHBrowseForFolder
+//
+// Args:
+//   hwnd: The window handle of the dialog box or one of its controls.
+//   directory: The directory to set in the dialog box.
+//
+// Returns:
+//   True if the dialog box is supported and the current directory has been changed.
+//------------------------------------------------------------------------
+
+bool setDialogBoxDirectory(HWND hwnd, LPCTSTR directory);
+
+
+//------------------------------------------------------------------------
 // Shell API tools
 //------------------------------------------------------------------------
 
