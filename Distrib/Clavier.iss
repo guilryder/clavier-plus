@@ -25,7 +25,7 @@ AppPublisher={#AppPublisher}
 AppPublisherURL={#AppURL}
 AppSupportURL={#AppURL}
 AppUpdatesURL={#AppURL}
-DefaultDirName={pf}\{#AppName}
+DefaultDirName={localappdata}\{#AppName}
 DefaultGroupName={#AppName}
 VersionInfoVersion={#AppVersion}
 VersionInfoCompany={#GetFileCompany(VersionFile)}
@@ -33,6 +33,7 @@ VersionInfoCopyright={#GetFileCopyright(VersionFile)}
 Compression=lzma/ultra
 SolidCompression=true
 InternalCompressLevel=ultra
+PrivilegesRequired=none
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
