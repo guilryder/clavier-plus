@@ -433,12 +433,12 @@
 			Name="Distrib"
 			>
 			<File
-				RelativePath=".\Distrib\Aide.htm"
+				RelativePath=".\Distrib\Aide.html"
 				DeploymentContent="true"
 				>
 			</File>
 			<File
-				RelativePath=".\Distrib\Ajuda.htm"
+				RelativePath=".\Distrib\Ajuda.html"
 				DeploymentContent="true"
 				>
 			</File>
@@ -463,12 +463,12 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Distrib\Help.htm"
+				RelativePath=".\Distrib\Help.html"
 				DeploymentContent="true"
 				>
 			</File>
 			<File
-				RelativePath=".\Distrib\Hilfe.htm"
+				RelativePath=".\Distrib\Hilfe.html"
 				DeploymentContent="true"
 				>
 			</File>

@@ -384,7 +384,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "Deutsch;Verknüpfung;Code;LinksRechtsUnterscheiden;Beschreibung;Befehl;Text;Ordner;Fenster;DateiÖffnenStützen;Programme;AlleProgrammeAber;Kein;Sprache;Grösse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Links;Rechts;Feststell;Num;Rollen;Ja;Nein;"
     IDS_COLUMNS             "Inhalt;Verknüpfung;Bedingung;Beschreibung;"
-    IDS_HELP                "Hilfe.htm"
+    IDS_HELP                "Hilfe.html"
     IDS_CONDITIONS          "ohne Bedingung;eingeschaltet;ausgeschaltet;"
     IDS_CONDITION_KEYS      "FNR"
     IDS_INI_FILTER          "INI Dateien|*.ini|"
@@ -658,7 +658,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "English;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;"
     IDS_COLUMNS             "Contents;Shortcut;Conditions;Description;"
-    IDS_HELP                "Help.htm"
+    IDS_HELP                "Help.html"
     IDS_CONDITIONS          "no condition;must be on;must be off;"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "INI files|*.ini|"
@@ -958,7 +958,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "Français;Raccourci;Code;DistinguerGaucheDroite;Description;Commande;Texte;Répertoire;Fenêtre;GérerFichierOuvrir;Programmes;TousProgrammesSauf;Aucun;Langue;Taille;Colonnes;Tri;Normale;Réduite;Agrandie;Win;Ctrl;Maj;Alt;Gauche;Droite;VerrMaj;VerrNum;ArrêtDéfil;Oui;Non;"
     IDS_COLUMNS             "Contenu;Raccourci;Conditions;Description;"
-    IDS_HELP                "Aide.htm"
+    IDS_HELP                "Aide.html"
     IDS_CONDITIONS          "pas de condition;doit être activé;doit être désactivé;"
     IDS_CONDITION_KEYS      "MND"
     IDS_INI_FILTER          "Fichiers INI|*.ini|"
@@ -1226,7 +1226,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "Português brasileiro;Atalho;Código;DistinguirEsquerdaDireita;Descrição;Comando;Texto;Pasta;Janela;SuportaAberturaArquivo;Programas;TodosProgramasExceto;Nenhum;Idioma;Tamanho;Colunas;Ordenação;Normal;Minimizada;Maximizada;Win;Ctrl;Shift;Alt;Esquerda;Direita;CapsLock;NumLock;ScrollLock;Sim;Não;"
     IDS_COLUMNS             "Conteúdo;Atalho;Condições;Descrição;"
-    IDS_HELP                "Ajuda.htm"
+    IDS_HELP                "Ajuda.html"
     IDS_CONDITIONS          "nenhuma condição;deve estar ativada;deve estar desativada;"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "Arquivos INI|*.ini|"
