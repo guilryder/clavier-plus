@@ -432,8 +432,8 @@ bool Shortcut::execute(bool bFromHotkey) const {
 			abKeyboardNew[VK_CONTROL] = keyDownMask;
 		}
 		
-		for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
-			const SPECIALKEY& rspecial_key = e_aSpecialKey[special_key];
+		for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
+			const SPECIALKEY& rspecial_key = e_special_keys[special_key];
 			abKeyboardNew[rspecial_key.vk] =
 			abKeyboardNew[rspecial_key.vk_left] =
 			abKeyboardNew[getRightVkFromLeft(rspecial_key.vk_left)] = 0;
@@ -456,9 +456,9 @@ bool Shortcut::execute(bool bFromHotkey) const {
 		
 		if (!m_bSupportFileOpen || !setDialogBoxDirectory(hwndFocus, m_sCommand)) {
 			clipboardToEnvironment();
-			THREAD_SHELLEXECUTE *const pParams = new THREAD_SHELLEXECUTE(
+			ShellExecuteThread* const shell_execute_thread = new ShellExecuteThread(
 				m_sCommand, m_sDirectory, m_nShow);
-			startThread(threadShellExecute, pParams);
+			startThread(shell_execute_thread->thread, shell_execute_thread);
 		}
 		
 	} else {

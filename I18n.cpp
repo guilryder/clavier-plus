@@ -28,9 +28,9 @@ namespace i18n {
 static int s_lang;
 
 
-static LANGID s_langID;
+static LANGID s_lang_id;
 
-static const LANGID s_aLangID[] = {
+static const LANGID s_lang_ids[] = {
 	MAKELANGID(LANG_FRENCH, SUBLANG_FRENCH),
 	MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US),
 	MAKELANGID(LANG_GERMAN, SUBLANG_GERMAN),
@@ -38,7 +38,7 @@ static const LANGID s_aLangID[] = {
 };
 
 
-static void* loadResource(UINT id, LPCTSTR pszType);
+static void* loadResource(UINT id, LPCTSTR type);
 
 
 int getLanguage() {
@@ -47,14 +47,14 @@ int getLanguage() {
 
 void setLanguage(int lang) {
 	s_lang = lang;
-	s_langID = s_aLangID[lang];
+	s_lang_id = s_lang_ids[lang];
 }
 
 
 int getDefaultLanguage() {
-	const LANGID langID = PRIMARYLANGID(LANGIDFROMLCID(GetUserDefaultLCID()));
-	for (int lang = 0; lang < arrayLength(s_aLangID); lang++) {
-		if (PRIMARYLANGID(s_aLangID[lang]) == langID) {
+	const LANGID lang_id = PRIMARYLANGID(LANGIDFROMLCID(GetUserDefaultLCID()));
+	for (int lang = 0; lang < arrayLength(s_lang_ids); lang++) {
+		if (PRIMARYLANGID(s_lang_ids[lang]) == lang_id) {
 			return lang;
 		}
 	}
@@ -62,8 +62,8 @@ int getDefaultLanguage() {
 }
 
 
-void* loadResource(UINT id, LPCTSTR pszType) {
-	const HRSRC hResource = FindResourceEx(e_hInst, pszType, MAKEINTRESOURCE(id), s_langID);
+void* loadResource(UINT id, LPCTSTR type) {
+	const HRSRC hResource = FindResourceEx(e_hInst, type, MAKEINTRESOURCE(id), s_lang_id);
 	VERIFP(hResource, NULL);
 	
 	const HGLOBAL hGlobal = LoadResource(e_hInst, hResource);
@@ -74,12 +74,12 @@ void* loadResource(UINT id, LPCTSTR pszType) {
 
 
 const STRING_RESOURCE* loadStringResource(UINT id) {
-	const STRING_RESOURCE *resource =
-		(const STRING_RESOURCE*)loadResource(id / 16 + 1, RT_STRING);
+	const STRING_RESOURCE* resource =
+		reinterpret_cast<const STRING_RESOURCE*>(loadResource(id / 16 + 1, RT_STRING));
 	VERIFP(resource, NULL);
 	
 	for (id &= 15; id > 0; id--) {
-		resource = (STRING_RESOURCE*)(resource->strbuf + resource->length);
+		resource = reinterpret_cast<const STRING_RESOURCE*>(resource->strbuf + resource->length);
 	}
 	
 	return resource;
@@ -87,7 +87,7 @@ const STRING_RESOURCE* loadStringResource(UINT id) {
 
 
 void loadString(UINT id, LPTSTR strbuf, int buffer_length) {
-	const STRING_RESOURCE *const resource = loadStringResource(id);
+	const STRING_RESOURCE* const resource = loadStringResource(id);
 	if (buffer_length > resource->length) {
 		buffer_length = resource->length + 1;
 	}
@@ -100,13 +100,13 @@ void loadString(UINT id, LPTSTR strbuf, int buffer_length) {
 }
 
 
-INT_PTR dialogBox(UINT id, HWND hwnd_parent, DLGPROC window_proc, LPARAM lInitParam) {
+INT_PTR dialogBox(UINT id, HWND hwnd_parent, DLGPROC window_proc, LPARAM init_param) {
 	const HWND hdlgModalOld = e_hdlgModal;
 	
 	const INT_PTR iResult = DialogBoxIndirectParam(
 		e_hInst,
 		reinterpret_cast<const DLGTEMPLATE*>(loadResource(id, RT_DIALOG)),
-		hwnd_parent, window_proc, lInitParam);
+		hwnd_parent, window_proc, init_param);
 	
 	e_hdlgModal = hdlgModalOld;
 	return iResult;
@@ -114,12 +114,12 @@ INT_PTR dialogBox(UINT id, HWND hwnd_parent, DLGPROC window_proc, LPARAM lInitPa
 
 
 HMENU loadMenu(UINT id) {
-	return LoadMenuIndirect((const MENUTEMPLATE*)loadResource(id, RT_MENU));
+	return LoadMenuIndirect(reinterpret_cast<const MENUTEMPLATE*>(loadResource(id, RT_MENU)));
 }
 
 
 HBITMAP loadBitmap(UINT id) {
-	BITMAPINFO *const pbi = (BITMAPINFO*)loadResource(id, RT_BITMAP);
+	BITMAPINFO *const pbi = reinterpret_cast<BITMAPINFO*>(loadResource(id, RT_BITMAP));
 	VERIFP(pbi, NULL);
 	
 	const HDC hdc = GetDC(NULL);

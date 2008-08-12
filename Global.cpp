@@ -715,9 +715,9 @@ void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 }
 
 
-DWORD WINAPI threadShellExecute(void* params) {
-	THREAD_SHELLEXECUTE* const params_ptr = reinterpret_cast<THREAD_SHELLEXECUTE*>(params);
-	shellExecuteCmdLine(params_ptr->command, params_ptr->directory, params_ptr->show_mode);
+DWORD WINAPI ShellExecuteThread::thread(void* params) {
+	ShellExecuteThread* const params_ptr = reinterpret_cast<ShellExecuteThread*>(params);
+	shellExecuteCmdLine(params_ptr->m_command, params_ptr->m_directory, params_ptr->m_show_mode);
 	delete params_ptr;
 	return 0;
 }

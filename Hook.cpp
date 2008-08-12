@@ -132,8 +132,8 @@ void redirectHookMessage(UINT message, const KBDLLHOOKSTRUCT& data) {
 	}
 	
 	// Updates s_special_keys_down_mask if the current key is a special key.
-	for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
-		const BYTE vk_left = e_aSpecialKey[special_key].vk_left;
+	for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
+		const BYTE vk_left = e_special_keys[special_key].vk_left;
 		const BYTE vk_right = (BYTE)(vk_left + 1);
 		
 		DWORD special_key_mask;
@@ -182,9 +182,9 @@ bool processShortcutHookMessage(UINT message, const KBDLLHOOKSTRUCT& data) {
 	GetKeyboardState(keyboard_state);
 	
 	// Test for right special keys
-	for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
-		const DWORD mod_code = e_aSpecialKey[special_key].mod_code;
-		const BYTE vk_left = e_aSpecialKey[special_key].vk_left;
+	for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
+		const DWORD mod_code = e_special_keys[special_key].mod_code;
+		const BYTE vk_left = e_special_keys[special_key].vk_left;
 		const BYTE vk_right = getRightVkFromLeft(vk_left);
 		if (keyboard_state[vk_right] & keyDownMask) {
 			// Test for right key first, since left special key codes are the same as "unsided" key codes.

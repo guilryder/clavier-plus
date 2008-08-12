@@ -152,14 +152,14 @@ struct SPECIALKEY {
 	int tok;  // Token index of the name of the key
 };
 
-const int nbSpecialKey = 4;
-extern const SPECIALKEY e_aSpecialKey[nbSpecialKey];
+const int kSpecialKeysCount = 4;
+extern const SPECIALKEY e_special_keys[kSpecialKeysCount];
 
 // Returns the virtual code of a right key from the virtual code of a left key.
 // For instance, returns VK_RWIN if vk_left_key is VK_LWIN.
 inline BYTE getRightVkFromLeft(BYTE vk_left_key) {
-	return (BYTE)(vk_left_key + 1);
+	return static_cast<BYTE>(vk_left_key + 1);
 }
 
 
-bool askKeystroke(HWND hwnd_parent, Keystroke* pksEdited, Keystroke& rksResult);
+bool askKeystroke(HWND hwnd_parent, Keystroke* edited_keystroke, Keystroke& result_keystroke);

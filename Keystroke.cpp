@@ -22,7 +22,7 @@
 #include "Keystroke.h"
 
 
-const SPECIALKEY e_aSpecialKey[nbSpecialKey] = {
+const SPECIALKEY e_special_keys[kSpecialKeysCount] = {
 	{ VK_LWIN, VK_LWIN, MOD_WIN, tokWin },
 	{ VK_CONTROL, VK_LCONTROL, MOD_CONTROL, tokCtrl },
 	{ VK_SHIFT, VK_LSHIFT, MOD_SHIFT, tokShift },
@@ -31,13 +31,14 @@ const SPECIALKEY e_aSpecialKey[nbSpecialKey] = {
 
 
 // Pointer to the old value of the currently edited keystroke
-static Keystroke *s_pksEditedOld;
+static Keystroke *s_old_edited_keystroke;
 
-// TRUE if we should reset the keystroke textbox ASAP
-static bool s_ksReset;
+// True if the currently edited keystroke should be reset ASAP.
+// The keystroke is reset when new keys are pressed after all special keys have been released.
+static bool s_reset_keystroke;
 
-// Currently edited keystroke value
-static Keystroke s_ks;
+// Currently edited keystroke
+static Keystroke s_keystroke;
 
 // Default window proc of edit controls. Used by prcKeystrokeCtl.
 static WNDPROC s_prcKeystrokeCtl;
@@ -62,27 +63,28 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
 				keyboard_hook::setCatchAllKeysWindow(hwnd_keystroke);
 				PostMessage(hwnd_keystroke, WM_KEYSTROKE, 0,0);
 				
-				CheckDlgButton(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT, s_ks.m_sided);
+				CheckDlgButton(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT, s_keystroke.m_sided);
 				
-				// Load condition names
-				TCHAR pszConds[bufString];
-				i18n::loadStringAuto(IDS_CONDITIONS, pszConds);
-				TCHAR *pc = pszConds;
-				for (int iCond = 0; iCond < condCount; iCond++) {
-					while (*pc != _T(';')) {
-						pc++;
+				// Load ';'-separated condition names. Make them null-terminated strings.
+				TCHAR conditions[bufString];
+				i18n::loadStringAuto(IDS_CONDITIONS, conditions);
+				TCHAR* current_condition = conditions;
+				for (int cond = 0; cond < condCount; cond++) {
+					while (*current_condition != _T(';')) {
+						current_condition++;
 					}
-					*pc++ = _T('\0');
+					*current_condition++ = _T('\0');
 				}
 				
-				for (int i = 0; i < condTypeCount; i++) {
-					const HWND hcbo = GetDlgItem(hDlg, IDCCBO_CAPSLOCK + i);
-					pc = pszConds;
-					for (int j = 0; j < condCount; j++) {
-						ComboBox_AddString(hcbo, pc);
-						pc += lstrlen(pc) + 1;
+				// Initialize the condition combo-boxes
+				for (int cond_type = 0; cond_type < condTypeCount; cond_type++) {
+					const HWND hwnd_cond_type = GetDlgItem(hDlg, IDCCBO_CAPSLOCK + cond_type);
+					current_condition = conditions;
+					for (int cond = 0; cond < condCount; cond++) {
+						ComboBox_AddString(hwnd_cond_type, current_condition);
+						current_condition += lstrlen(current_condition) + 1;
 					}
-					ComboBox_SetCurSel(hcbo, s_ks.m_aCond[i]);
+					ComboBox_SetCurSel(hwnd_cond_type, s_keystroke.m_aCond[cond_type]);
 				}
 			}
 			return TRUE;
@@ -92,7 +94,7 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
 			switch (LOWORD(wParam)) {
 				
 				case IDCCHK_DISTINGUISH_LEFT_RIGHT:
-					s_ks.m_sided = toBool(IsDlgButtonChecked(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT));
+					s_keystroke.m_sided = toBool(IsDlgButtonChecked(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT));
 					PostMessage(GetDlgItem(hDlg, IDCTXT), WM_KEYSTROKE, 0,0);
 					break;
 				
@@ -100,7 +102,7 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
 					{
 						UINT idErrorString;
 						
-						if (!s_ks.m_vk) {
+						if (!s_keystroke.m_vk) {
 							idErrorString = ERR_INVALID_SHORTCUT;
 							messageBox(hDlg, idErrorString, MB_ICONEXCLAMATION);
 							SetFocus(GetDlgItem(hDlg, IDCTXT));
@@ -108,7 +110,7 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
 						}
 						
 						for (int i = 0; i < condTypeCount; i++) {
-							s_ks.m_aCond[i] = ComboBox_GetCurSel(GetDlgItem(hDlg, IDCCBO_CAPSLOCK + i));
+							s_keystroke.m_aCond[i] = ComboBox_GetCurSel(GetDlgItem(hDlg, IDCCBO_CAPSLOCK + i));
 						}
 					}
 					// Fall-through
@@ -151,8 +153,8 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		//   special_key_index * 2: "left key is down" bit
 		//   special_key_index * 2 + 1: "right key is down" bit
 		case WM_CLAVIER_KEYDOWN:
-			if (s_ksReset) {
-				s_ks.reset();
+			if (s_reset_keystroke) {
+				s_keystroke.reset();
 			}
 			bIsDown = true;
 			// Fall-through
@@ -163,15 +165,15 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 				const DWORD special_keys_down_mask = static_cast<DWORD>(lParam);
 				
 				// Flags
-				DWORD sided_mod_code = s_ks.m_sided_mod_code;
-				bool bIsSpecial = false;
-				for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
-					const SPECIALKEY& rspecial_key = e_aSpecialKey[special_key];
+				DWORD sided_mod_code = s_keystroke.m_sided_mod_code;
+				bool is_special = false;
+				for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
+					const SPECIALKEY& rspecial_key = e_special_keys[special_key];
 					
 					if (vk_typed == rspecial_key.vk || vk_typed == rspecial_key.vk_left
 							|| vk_typed == getRightVkFromLeft(rspecial_key.vk_left)) {
 						vk_typed = rspecial_key.vk;
-						bIsSpecial = true;
+						is_special = true;
 					}
 					
 					const DWORD mod_code = rspecial_key.mod_code;
@@ -189,16 +191,16 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 				// If key is released, update the flags only if no key has been set
 				bool update_mode_code = true;
 				if (bIsDown) {
-					s_ksReset = false;
-					if (!bIsSpecial) {
-						s_ks.m_vk = Keystroke::filterVK(vk_typed);
+					s_reset_keystroke = false;
+					if (!is_special) {
+						s_keystroke.m_vk = Keystroke::filterVK(vk_typed);
 					}
 				} else {
-					s_ksReset |= !bIsSpecial;
-					update_mode_code &= !s_ks.m_vk;
+					s_reset_keystroke |= !is_special;
+					update_mode_code &= !s_keystroke.m_vk;
 				}
 				if (update_mode_code) {
-					s_ks.m_sided_mod_code = sided_mod_code;
+					s_keystroke.m_sided_mod_code = sided_mod_code;
 				}
 			}
 			// Fall-through
@@ -207,7 +209,7 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		case WM_KEYSTROKE:
 			{
 				TCHAR pszHotKey[bufHotKey];
-				s_ks.getKeyName(pszHotKey);
+				s_keystroke.getKeyName(pszHotKey);
 				if (!*pszHotKey) {
 					lstrcpy(pszHotKey, getToken(tokNone));
 				}
@@ -229,14 +231,14 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 }
 
 
-bool askKeystroke(HWND hwnd_parent, Keystroke* pksEdited, Keystroke& rksResult) {
-	s_pksEditedOld = pksEdited;
-	s_ksReset = true;
+bool askKeystroke(HWND hwnd_parent, Keystroke* edited_keystroke, Keystroke& result_keystroke) {
+	s_old_edited_keystroke = edited_keystroke;
+	s_reset_keystroke = true;
 	
-	s_ks = rksResult;
+	s_keystroke = result_keystroke;
 	VERIF(IDOK == i18n::dialogBox(IDD_KEYSTROKE, hwnd_parent, prcKeystroke));
 	
-	rksResult = s_ks;
+	result_keystroke = s_keystroke;
 	return true;
 }
 
@@ -250,11 +252,11 @@ void Keystroke::getKeyName(LPTSTR pszHotKey) const {
 	*pszHotKey = _T('\0');
 	
 	// Special keys
-	for (int i = 0; i < arrayLength(e_aSpecialKey); i++) {
-		const int mod_code_left = e_aSpecialKey[i].mod_code;
+	for (int i = 0; i < arrayLength(e_special_keys); i++) {
+		const int mod_code_left = e_special_keys[i].mod_code;
 		const int mod_code_right = mod_code_left << kRightModCodeOffset;
 		if (m_sided_mod_code & (mod_code_left | mod_code_right)) {
-			StrNCat(pszHotKey, getToken(e_aSpecialKey[i].tok), bufHotKey);
+			StrNCat(pszHotKey, getToken(e_special_keys[i].tok), bufHotKey);
 			if (m_sided) {
 				StrNCat(pszHotKey, _T(" "), bufHotKey);
 				StrNCat(pszHotKey, getToken((m_sided_mod_code & mod_code_left) ? tokLeft : tokRight),
@@ -340,9 +342,9 @@ void Keystroke::serialize(LPTSTR psz) {
 			// Special key token
 			
 			mod_code_last = 0;
-			for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
-				if (e_aSpecialKey[special_key].tok == tok) {
-					mod_code_last = e_aSpecialKey[special_key].mod_code;
+			for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
+				if (e_special_keys[special_key].tok == tok) {
+					mod_code_last = e_special_keys[special_key].mod_code;
 					m_sided_mod_code |= mod_code_last;
 					break;
 				}
@@ -410,9 +412,9 @@ void Keystroke::simulateTyping(HWND MY_UNUSED(hwndFocus), bool bSpecialKeys) con
 	
 	// Press the special keys
 	if (bSpecialKeys) {
-		for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
-			if (mod_code & e_aSpecialKey[special_key].mod_code) {
-				keybdEvent(e_aSpecialKey[special_key].vk, false);
+		for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
+			if (mod_code & e_special_keys[special_key].mod_code) {
+				keybdEvent(e_special_keys[special_key].vk, false);
 			}
 		}
 	}
@@ -424,9 +426,9 @@ void Keystroke::simulateTyping(HWND MY_UNUSED(hwndFocus), bool bSpecialKeys) con
 	
 	// Release the special keys
 	if (bSpecialKeys) {
-		for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
-			if (mod_code & e_aSpecialKey[special_key].mod_code) {
-				keybdEvent(e_aSpecialKey[special_key].vk, true);
+		for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
+			if (mod_code & e_special_keys[special_key].mod_code) {
+				keybdEvent(e_special_keys[special_key].vk, true);
 			}
 		}
 	}
@@ -456,8 +458,8 @@ void Keystroke::detachKeyboardFocus(DWORD idThread) {
 }
 
 void Keystroke::releaseSpecialKeys(BYTE abKeyboard[]) {
-	for (int special_key = 0; special_key < arrayLength(e_aSpecialKey); special_key++) {
-		const BYTE vk = e_aSpecialKey[special_key].vk;
+	for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
+		const BYTE vk = e_special_keys[special_key].vk;
 		if (abKeyboard[vk] & keyDownMask) {
 			abKeyboard[vk] = 0;
 			keybdEvent(vk, true);
@@ -490,8 +492,8 @@ int Keystroke::compare(const Keystroke& keystroke1, const Keystroke& keystroke2)
 	int inherited1 = 0;
 	int inherited2 = 0;
 	int offset = 0;
-	for (int special_key = arrayLength(e_aSpecialKey) - 1; special_key >= 0; special_key--) {
-		const int mod_code = e_aSpecialKey[special_key].mod_code;
+	for (int special_key = arrayLength(e_special_keys) - 1; special_key >= 0; special_key--) {
+		const int mod_code = e_special_keys[special_key].mod_code;
 		const int value1 = keystroke1.getComparableSpecialKey(mod_code, inherited1);
 		const int value2 = keystroke2.getComparableSpecialKey(mod_code, inherited2);
 		
@@ -568,12 +570,12 @@ HKEY openAutoStartKey(LPTSTR pszPath) {
 
 
 bool Keystroke::askSendKeys(HWND hwnd_parent, Keystroke& rks) {
-	s_ks.reset();
-	s_ks.m_sided = false;
+	s_keystroke.reset();
+	s_keystroke.m_sided = false;
 	
 	VERIF(IDOK == i18n::dialogBox(IDD_SENDKEYS, hwnd_parent, prcSendKeys));
 	
-	rks = s_ks;
+	rks = s_keystroke;
 	return true;
 }
 

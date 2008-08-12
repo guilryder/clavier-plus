@@ -28,15 +28,15 @@
 #endif
 
 #ifdef UNICODE
-const bool bUnicode = true;
+const bool is_unicode = true;
 #else
-const bool bUnicode = false;
+const bool is_unicode = false;
 #endif
 
 
 namespace app {
 
-const LPCTSTR pszClavierWindow = _T("RyderClavierWindow");
+const LPCTSTR kClavierWindowClass = _T("RyderClavierWindow");
 
 static UINT msgTaskbarCreated;
 static UINT msgClavierNotifyIcon;
@@ -67,13 +67,13 @@ enum CMDLINE_OPTION {
 
 static void entryPoint();
 static void initializeLanguages();
-static void runGui(CMDLINE_OPTION cmdoptAction);
-static CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch);
-static void processCmdLineAction(CMDLINE_OPTION cmdoptAction);
+static void runGui(CMDLINE_OPTION cmdopt);
+static CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch);
+static void processCmdLineAction(CMDLINE_OPTION cmdopt);
 
-static LRESULT CALLBACK prcInvisible(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK prcInvisible(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-static void updateTrayIcon(DWORD dwMessage);
+static void updateTrayIcon(DWORD message);
 
 // Displays the tray icon menu, as a child of the invisible window.
 //
@@ -105,19 +105,19 @@ void WinMainCRTStartup() {
 namespace app {
 
 void entryPoint() {
-	const LPCTSTR pszCmdLine = GetCommandLine();
+	const LPCTSTR cmdline = GetCommandLine();
 	
 #ifndef ALLOW_MULTIPLE_INSTANCES
 	// Avoid multiple launching
 	// Transmit the command line to the previous instance, if any
 	{
-		const HWND hwnd = FindWindow(_T("STATIC"), pszClavierWindow);
+		const HWND hwnd = FindWindow(_T("STATIC"), kClavierWindowClass);
 		if (hwnd) {
 			COPYDATASTRUCT cds;
-			cds.dwData = bUnicode;
-			cds.cbData = (lstrlen(pszCmdLine) + 1) * sizeof(TCHAR);
-			cds.lpData = (void*)pszCmdLine;
-			SendMessage(hwnd, WM_COPYDATA, 0, (LPARAM)&cds);
+			cds.dwData = is_unicode;
+			cds.cbData = (lstrlen(cmdline) + 1) * sizeof(TCHAR);
+			cds.lpData = const_cast<LPTSTR>(cmdline);
+			SendMessage(hwnd, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cds));
 			
 #ifdef _DEBUG
 			return;
@@ -132,9 +132,9 @@ void entryPoint() {
 	
 	app::initialize();
 	
-	const CMDLINE_OPTION cmdoptAction = execCmdLine(pszCmdLine, true);
-	if (cmdoptAction != cmdoptQuit) {
-		runGui(cmdoptAction);
+	const CMDLINE_OPTION cmdopt = execCmdLine(cmdline, true);
+	if (cmdopt != cmdoptQuit) {
+		runGui(cmdopt);
 	}
 	
 	app::terminate();
@@ -150,7 +150,7 @@ void initialize() {
 	CoInitialize(NULL);
 	shortcut::initialize();
 	
-	e_hInst = (HINSTANCE)GetModuleHandle(NULL);
+	e_hInst = static_cast<HINSTANCE>(GetModuleHandle(NULL));
 	e_hHeap = GetProcessHeap();
 	e_hdlgModal = NULL;
 	
@@ -187,10 +187,10 @@ void initializeLanguages() {
 	i18n::setLanguage(i18n::getDefaultLanguage());
 }
 
-void runGui(CMDLINE_OPTION cmdoptAction) {
+void runGui(CMDLINE_OPTION cmdopt) {
 	// Create the invisible window
 	e_hwndInvisible = CreateWindow(_T("STATIC"),
-		pszClavierWindow, 0, 0,0,0,0, NULL, NULL, e_hInst, NULL);
+		kClavierWindowClass, 0, 0,0,0,0, NULL, NULL, e_hInst, NULL);
 	subclassWindow(e_hwndInvisible, prcInvisible);
 	
 	// Create the traybar icon
@@ -198,7 +198,7 @@ void runGui(CMDLINE_OPTION cmdoptAction) {
 	
 	keyboard_hook::install();
 	
-	processCmdLineAction(cmdoptAction);
+	processCmdLineAction(cmdopt);
 	
 	// Message loop
 	MSG msg;
@@ -218,7 +218,8 @@ void runGui(CMDLINE_OPTION cmdoptAction) {
 }
 
 
-static const LPCTSTR apszCmdOpt[] = {
+// Name of the command-line options. The array is indexed by CMDLINE_OPTION.
+static const LPCTSTR cmdline_options[] = {
 	_T("launch"),
 	_T("settings"),
 	_T("menu"),
@@ -235,96 +236,96 @@ static const LPCTSTR apszCmdOpt[] = {
 
 // bLaunching is FALSE if the command line is sent by WM_COPYDATA.
 // Return the action to execute.
-CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch) {
-	bool bNewIniFile = false;
+CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
+	bool new_ini_file = false;  // True if loading a new INI file is asked
 	
-	bool bInQuote;
-	const TCHAR *pc = pszCmdLine;
+	bool in_quote;
+	const TCHAR* pstr = cmdline;
 	TCHAR chr;
 	
 	// Skip program name
-	bInQuote = false;
+	in_quote = false;
 	do {
-		chr = *pc++;
+		chr = *pstr++;
 		if (chr == _T('"')) {
-			bInQuote ^= true;
+			in_quote ^= true;
 		}
-	} while (chr && (bInQuote || (chr != _T(' ') && chr != _T('\t'))));
+	} while (chr && (in_quote || (chr != _T(' ') && chr != _T('\t'))));
 	
-	bInQuote = false;
+	in_quote = false;
 	
-	CMDLINE_OPTION cmdoptAction = cmdoptNone;
-	bool bAutoQuit = false;
-	LPTSTR apszIniFileMerge[maxIniFile];
-	int nbIniFileMerge = 0;
+	CMDLINE_OPTION cmdopt = cmdoptNone;
+	bool auto_quit = false;
+	LPTSTR mergeable_ini_files[maxIniFile];
+	int mergeable_ini_files_count = 0;
 	
-	int nbArg = 0;
+	int args_count = 0;
 	if (chr) {
 		// Parse arguments
 		
 		CMDLINE_OPTION cmdopt = cmdoptNone;
 		
-		const LPTSTR pszArg = new TCHAR[lstrlen(pszCmdLine) + 1];
+		const LPTSTR strbuf_arg = new TCHAR[lstrlen(cmdline) + 1];
 		
 		for (;;) {
 			
 			// Skip argument separator
-			while (*pc == _T(' ') || *pc == '\t') {
-				pc++;
+			while (*pstr == _T(' ') || *pstr == '\t') {
+				pstr++;
 			}
-			if (!*pc) {
+			if (!*pstr) {
 				break;
 			}
 			
-			nbArg++;
-			TCHAR *pcArg = pszArg;
+			args_count++;
+			TCHAR* str_arg = strbuf_arg;
 			for (;;) {
-				bool bCopyChar = true;
+				bool copy_char = true;  // True to copy the character to strbuf_arg
 				
 				// Count backslashes
-				int nbBackslash = 0;
-				while (*pc == _T('\\')) {
-					pc++;
-					nbBackslash++;
+				int backslash_count = 0;
+				while (*pstr == _T('\\')) {
+					pstr++;
+					backslash_count++;
 				}
 				
 				// Process quoting
-				if (*pc == _T('"')) {
-					if (nbBackslash % 2 == 0) {
-						if (bInQuote && pc[1] == _T('"')) {
-							pc++;
+				if (*pstr == _T('"')) {
+					if (backslash_count % 2 == 0) {
+						if (in_quote && pstr[1] == _T('"')) {
+							pstr++;
 						} else {
-							bCopyChar = false;
-							bInQuote ^= true;
+							copy_char = false;
+							in_quote ^= true;
 						}
 					}
-					nbBackslash /= 2;
+					backslash_count /= 2;
 				}
 				
-				while (nbBackslash--) {
-					*pcArg++ = _T('\\');
+				while (backslash_count--) {
+					*str_arg++ = _T('\\');
 				}
 				
 				// Stop on spaces
-				chr = *pc;
-				if (!chr || (!bInQuote && (chr == _T(' ') || chr == _T('\t')))) {
+				chr = *pstr;
+				if (!chr || (!in_quote && (chr == _T(' ') || chr == _T('\t')))) {
 					break;
 				}
 				
-				if (bCopyChar) {
-					*pcArg++ = chr;
+				if (copy_char) {
+					*str_arg++ = chr;
 				}
-				pc++;
+				pstr++;
 			}
-			*pcArg = _T('\0');
+			*str_arg = _T('\0');
 			
 			if (cmdopt == cmdoptNone) {
 				// Test for command line option
-				if (*pszArg == _T('/')) {
-					const LPCTSTR pszOption = pszArg + 1;
-					for (cmdopt = (CMDLINE_OPTION)0; cmdopt < cmdoptNone;
-							cmdopt = (CMDLINE_OPTION)(cmdopt + 1)) {
-						if (!lstrcmpi(pszOption, apszCmdOpt[cmdopt])) {
+				if (*strbuf_arg == _T('/')) {
+					const LPCTSTR pszOption = strbuf_arg + 1;
+					for (cmdopt = static_cast<CMDLINE_OPTION>(0); cmdopt < cmdoptNone;
+							cmdopt = static_cast<CMDLINE_OPTION>(cmdopt + 1)) {
+						if (!lstrcmpi(pszOption, cmdline_options[cmdopt])) {
 							break;
 						}
 					}
@@ -344,80 +345,80 @@ CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch) {
 				
 				// Set INI filename
 				case cmdoptLoad:
-					bAutoQuit = false;
-					bNewIniFile = true;
-					lstrcpyn(e_pszIniFile, pszArg, arrayLength(e_pszIniFile));
+					auto_quit = false;
+					new_ini_file = true;
+					lstrcpyn(e_pszIniFile, strbuf_arg, arrayLength(e_pszIniFile));
 					break;
 				
 				// Merge an INI file
 				case cmdoptMerge:
-					bAutoQuit = false;
-					if (nbIniFileMerge < arrayLength(apszIniFileMerge)) {
-						const LPTSTR pszIniFile = new TCHAR[lstrlen(pszArg) + 1];
-						lstrcpy(pszIniFile, pszArg);
-						apszIniFileMerge[nbIniFileMerge++] = pszIniFile;
+					auto_quit = false;
+					if (mergeable_ini_files_count < arrayLength(mergeable_ini_files)) {
+						const LPTSTR ini_file = new TCHAR[lstrlen(strbuf_arg) + 1];
+						lstrcpy(ini_file, strbuf_arg);
+						mergeable_ini_files[mergeable_ini_files_count++] = ini_file;
 					}
 					break;
 				
 				// Send keys
 				case cmdoptSendKeys:
-					bAutoQuit = true;
+					auto_quit = true;
 					{
 						Keystroke ks;
 						Shortcut sh(ks);
 						sh.m_bCommand = false;
-						sh.m_sText = pszArg;
+						sh.m_sText = strbuf_arg;
 						sh.execute(false);
 					}
 					break;
 				
 				// Other action
 				default:
-					cmdoptAction = cmdopt;
-					bAutoQuit = false;
+					cmdopt = cmdopt;
+					auto_quit = false;
 					break;
 			}
 			
 			cmdopt = cmdoptNone;
 		}
 		
-		delete [] pszArg;
+		delete [] strbuf_arg;
 	}
 	
 	// Default INI file
-	if (bNormalLaunch && !bNewIniFile && !bAutoQuit) {
-		bNewIniFile = true;
+	if (normal_launch && !new_ini_file && !auto_quit) {
+		new_ini_file = true;
 		GetModuleFileName(e_hInst, e_pszIniFile, arrayLength(e_pszIniFile));
 		PathRemoveFileSpec(e_pszIniFile);
 		PathAppend(e_pszIniFile, _T("Clavier.ini"));
 	}
 	
 	if (!e_hdlgModal) {
-		if (bNewIniFile) {
+		if (new_ini_file) {
 			shortcut::loadShortcuts();
 		}
 		
-		for (int i = 0; i < nbIniFileMerge; i++) {
-			shortcut::mergeShortcuts(apszIniFileMerge[i]);
-			delete [] apszIniFileMerge[i];
+		for (int ini_file = 0; ini_file < mergeable_ini_files_count; ini_file++) {
+			shortcut::mergeShortcuts(mergeable_ini_files[ini_file]);
+			delete [] mergeable_ini_files[ini_file];
 		}
 		
 		shortcut::saveShortcuts();
 	}
 	
-	if (cmdoptAction == cmdoptNone) {
-		cmdoptAction = (bNormalLaunch)
-			? ((bAutoQuit) ? cmdoptQuit : cmdoptLaunch)
-			: ((bAutoQuit) ? cmdoptLaunch : cmdoptSettings);
+	if (cmdopt == cmdoptNone) {
+		cmdopt = (normal_launch)
+			? ((auto_quit) ? cmdoptQuit : cmdoptLaunch)
+			: ((auto_quit) ? cmdoptLaunch : cmdoptSettings);
 	}
 	
-	return cmdoptAction;
+	return cmdopt;
 }
 
 
-void processCmdLineAction(CMDLINE_OPTION cmdoptAction) {
+void processCmdLineAction(CMDLINE_OPTION cmdopt) {
 	UINT command;
-	switch (cmdoptAction) {
+	switch (cmdopt) {
 		
 		case cmdoptSettings:
 			command = 0;
@@ -450,12 +451,12 @@ void processCmdLineAction(CMDLINE_OPTION cmdoptAction) {
 // Invisible window:
 // - quit when destroyed
 // - handle traybar icon notifications
-LRESULT CALLBACK prcInvisible(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	if (uMsg == WM_DESTROY) {
+LRESULT CALLBACK prcInvisible(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	if (message == WM_DESTROY) {
 Destroy:
 		PostQuitMessage(0);
 		
-	} else if (uMsg == msgClavierNotifyIcon) {
+	} else if (message == msgClavierNotifyIcon) {
 		if (wParam == 1 || wParam == IDCCMD_QUIT) {
 			goto Destroy;
 		}
@@ -496,27 +497,27 @@ Destroy:
 			}
 		}
 		
-	} else if (uMsg == msgTaskbarCreated) {
+	} else if (message == msgTaskbarCreated) {
 		updateTrayIcon(NIM_ADD);
 	
-	} else if (uMsg == WM_COPYDATA) {
+	} else if (message == WM_COPYDATA) {
 		// Execute command line
 		
 		shortcut::GuardList guard;
-		const COPYDATASTRUCT &cds = *(const COPYDATASTRUCT*)lParam;
-		if (cds.dwData == (ULONG_PTR)bUnicode) {
+		const COPYDATASTRUCT& cds = *reinterpret_cast<const COPYDATASTRUCT*>(lParam);
+		if (cds.dwData == static_cast<ULONG_PTR>(is_unicode)) {
 			processCmdLineAction(execCmdLine((LPCTSTR)cds.lpData, false));
 		}
 		return TRUE;
 	}
 	
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
 
 
 // Handle the tray icon
-void updateTrayIcon(DWORD dwMessage) {
+void updateTrayIcon(DWORD message) {
 	VERIFV(e_bIconVisible);
 	
 	NOTIFYICONDATA nid;
@@ -525,11 +526,11 @@ void updateTrayIcon(DWORD dwMessage) {
 	nid.hWnd = e_hwndInvisible;
 	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	nid.uCallbackMessage = msgClavierNotifyIcon;
-	if (dwMessage != NIM_DELETE) {
+	if (message != NIM_DELETE) {
 		nid.hIcon = (HICON)LoadImage(e_hInst, MAKEINTRESOURCE(IDI_APP), IMAGE_ICON, 16,16, 0);
 		lstrcpy(nid.szTip, pszApp);
 	}
-	Shell_NotifyIcon(dwMessage, &nid);
+	Shell_NotifyIcon(message, &nid);
 }
 
 
@@ -537,37 +538,37 @@ UINT displayTrayIconMenu() {
 	shortcut::GuardList guard;
 	const HWND hwnd = e_hwndInvisible;
 	
-	const HMENU hAllMenus = i18n::loadMenu(IDM_CONTEXT);
-	const HMENU hMenu = GetSubMenu(hAllMenus, 2);
-	SetMenuDefaultItem(hMenu, ID_TRAY_SETTINGS, MF_BYCOMMAND);
+	const HMENU all_menus = i18n::loadMenu(IDM_CONTEXT);
+	const HMENU menu = GetSubMenu(all_menus, 2);
+	SetMenuDefaultItem(menu, ID_TRAY_SETTINGS, MF_BYCOMMAND);
 	
 	// Append INI file items
 	
-	// 1) List current INI file
-	LPTSTR apszIniFile[maxIniFile];
-	apszIniFile[0] = e_pszIniFile;
-	UINT nbIniFile = 1;
+	// 1) Add current INI file
+	LPTSTR ini_files[maxIniFile];
+	ini_files[0] = e_pszIniFile;
+	UINT ini_files_count = 1;
 	
-	// 2) List INI files in Clavier+ directory
-	TCHAR pszIniFileSpec[MAX_PATH];
-	GetModuleFileName(e_hInst, pszIniFileSpec, arrayLength(pszIniFileSpec));
-	PathRemoveFileSpec(pszIniFileSpec);
-	PathAppend(pszIniFileSpec, _T("*.ini"));
+	// 2) Ad INI files from Clavier+ directory
+	TCHAR ini_files_spec[MAX_PATH];
+	GetModuleFileName(e_hInst, ini_files_spec, arrayLength(ini_files_spec));
+	PathRemoveFileSpec(ini_files_spec);
+	PathAppend(ini_files_spec, _T("*.ini"));
 	WIN32_FIND_DATA wfd;
-	const HANDLE hff = FindFirstFile(pszIniFileSpec, &wfd);
-	PathRemoveFileSpec(pszIniFileSpec);
+	const HANDLE hff = FindFirstFile(ini_files_spec, &wfd);
+	PathRemoveFileSpec(ini_files_spec);
 	if (hff != INVALID_HANDLE_VALUE) {
 		do {
 			if (!(wfd.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_HIDDEN))) {
-				const LPTSTR pszPath = new TCHAR[MAX_PATH];
-				PathCombine(pszPath, pszIniFileSpec, wfd.cFileName);
-				if (lstrcmpi(pszPath, e_pszIniFile)) {
-					apszIniFile[nbIniFile++] = pszPath;
-					if (nbIniFile == maxIniFile) {
+				const LPTSTR path = new TCHAR[MAX_PATH];
+				PathCombine(path, ini_files_spec, wfd.cFileName);
+				if (lstrcmpi(path, e_pszIniFile)) {
+					ini_files[ini_files_count++] = path;
+					if (ini_files_count == maxIniFile) {
 						break;
 					}
 				} else {
-					delete [] pszPath;
+					delete [] path;
 				}
 			}
 		} while (FindNextFile(hff, &wfd));
@@ -575,21 +576,21 @@ UINT displayTrayIconMenu() {
 	}
 	
 	// 2) Append INI files to menu
-	for (UINT iIniFile = 0; iIniFile < nbIniFile; iIniFile++) {
-		InsertMenu(hMenu, iIniFile, MF_BYPOSITION | MF_STRING, ID_TRAY_INI_FIRSTFILE + iIniFile,
-				PathFindFileName(apszIniFile[iIniFile]));
+	for (UINT ini_file = 0; ini_file < ini_files_count; ini_file++) {
+		InsertMenu(menu, ini_file, MF_BYPOSITION | MF_STRING, ID_TRAY_INI_FIRSTFILE + ini_file,
+				PathFindFileName(ini_files[ini_file]));
 	}
-	CheckMenuRadioItem(hMenu, ID_TRAY_INI_FIRSTFILE, ID_TRAY_INI_FIRSTFILE + nbIniFile - 1,
+	CheckMenuRadioItem(menu, ID_TRAY_INI_FIRSTFILE, ID_TRAY_INI_FIRSTFILE + ini_files_count - 1,
 		ID_TRAY_INI_FIRSTFILE, MF_BYCOMMAND);
 	
 	// Show the popup menu
-	POINT ptCursor;
-	GetCursorPos(&ptCursor);
+	POINT cursor_pos;
+	GetCursorPos(&cursor_pos);
 	SetForegroundWindow(hwnd);
-	UINT id = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_NONOTIFY,
-		ptCursor.x, ptCursor.y, 0, hwnd, NULL);
+	UINT id = TrackPopupMenu(menu, TPM_RETURNCMD | TPM_NONOTIFY,
+		cursor_pos.x, cursor_pos.y, 0, hwnd, NULL);
 	PostMessage(hwnd, WM_NULL, 0, 0);
-	DestroyMenu(hAllMenus);
+	DestroyMenu(all_menus);
 	
 	switch (id) {
 		case ID_TRAY_SETTINGS:
@@ -598,11 +599,12 @@ UINT displayTrayIconMenu() {
 		
 		case ID_TRAY_COPYLIST:
 			{
-				String s;
-				for (const Shortcut *psh = shortcut::getFirst(); psh; psh = psh->getNext()) {
-					psh->appendCsvLineToString(s);
+				String str;
+				for (const Shortcut* shortcut = shortcut::getFirst(); shortcut;
+						shortcut = shortcut->getNext()) {
+					shortcut->appendCsvLineToString(str);
 				}
-				shortcut::copyShortcutsToClipboard(s);
+				shortcut::copyShortcutsToClipboard(str);
 			}
 			break;
 		
@@ -610,38 +612,39 @@ UINT displayTrayIconMenu() {
 		case ID_TRAY_INI_MERGE:
 		case ID_TRAY_INI_SAVE:
 			{
-				TCHAR psz[bufString];
-				i18n::loadStringAuto(IDS_INI_FILTER, psz);
-				for (UINT i = 0; psz[i]; i++) {
-					if (psz[i] == _T('|')) {
-						psz[i] = _T('\0');
+				// Load the filters, replace '|' with '\0'
+				TCHAR filters[bufString];
+				i18n::loadStringAuto(IDS_INI_FILTER, filters);
+				for (UINT chr_index = 0; filters[chr_index]; chr_index++) {
+					if (filters[chr_index] == _T('|')) {
+						filters[chr_index] = _T('\0');
 					}
 				}
 				
-				TCHAR pszIniFile[arrayLength(e_pszIniFile)];
-				lstrcpy(pszIniFile, e_pszIniFile);
+				TCHAR ini_file[arrayLength(e_pszIniFile)];
+				lstrcpy(ini_file, e_pszIniFile);
 				
 				OPENFILENAME ofn;
 				ZeroMemory(&ofn, OPENFILENAME_SIZE_VERSION_400);
 				ofn.lStructSize = OPENFILENAME_SIZE_VERSION_400;
 				ofn.hwndOwner = hwnd;
-				ofn.lpstrFile = pszIniFile;
-				ofn.nMaxFile = arrayLength(pszIniFile);
-				ofn.lpstrFilter = psz;
+				ofn.lpstrFile = ini_file;
+				ofn.nMaxFile = arrayLength(ini_file);
+				ofn.lpstrFilter = filters;
 				if (id == ID_TRAY_INI_SAVE) {
 					ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
 					if (GetSaveFileName(&ofn)) {
-						lstrcpy(e_pszIniFile, pszIniFile);
+						lstrcpy(e_pszIniFile, ini_file);
 						shortcut::saveShortcuts();
 					}
 				} else {
 					ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 					if (GetOpenFileName(&ofn)) {
 						if (id == ID_TRAY_INI_LOAD) {
-							lstrcpy(e_pszIniFile, pszIniFile);
+							lstrcpy(e_pszIniFile, ini_file);
 							shortcut::loadShortcuts();
 						} else {
-							shortcut::mergeShortcuts(pszIniFile);
+							shortcut::mergeShortcuts(ini_file);
 						}
 						shortcut::saveShortcuts();
 					}
@@ -652,14 +655,14 @@ UINT displayTrayIconMenu() {
 		default:
 			if (id > ID_TRAY_INI_FIRSTFILE) {
 				// INI file different than the current one
-				lstrcpy(e_pszIniFile, apszIniFile[id - ID_TRAY_INI_FIRSTFILE]);
+				lstrcpy(e_pszIniFile, ini_files[id - ID_TRAY_INI_FIRSTFILE]);
 				shortcut::loadShortcuts();
 			}
 			break;
 	}
 	
-	for (UINT iIniFile = 1; iIniFile < nbIniFile; iIniFile++) {
-		delete [] apszIniFile[iIniFile];
+	for (UINT ini_file = 1; ini_file < ini_files_count; ini_file++) {
+		delete [] ini_files[ini_file];
 	}
 	
 	return id;

@@ -302,16 +302,20 @@ void findFullPath(LPTSTR path, LPTSTR full_path);
 void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode);
 
 
-struct THREAD_SHELLEXECUTE {
-	THREAD_SHELLEXECUTE(const String& command, const String& directory, int show_mode)
-		: command(command), directory(directory), show_mode(show_mode) {}
+class ShellExecuteThread {
+public:
 	
-	String command;
-	String directory;
-	int show_mode;
+	ShellExecuteThread(const String& command, const String& directory, int show_mode)
+		: m_command(command), m_directory(directory), m_show_mode(show_mode) {}
+	
+	static DWORD WINAPI thread(void* params);
+	
+private:
+	
+	String m_command;
+	String m_directory;
+	int m_show_mode;
 };
-
-DWORD WINAPI threadShellExecute(void* params);
 
 
 //------------------------------------------------------------------------
