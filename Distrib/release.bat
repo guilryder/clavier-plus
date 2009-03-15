@@ -1,10 +1,10 @@
 @echo off
-cd /d E:\Docs\Programmes\Clavier
+cd /d %~dp0\..
 call CopyCode
 cd Distrib
 
 echo Copying help files...
-for %%i in (*.htm) do copy /y %%i E:\Web\utilfr\util\Clavier%%i >nul
+call release-help.bat
 
 echo Generating Clavier.zip...
 mystart /wait Clavier.mus

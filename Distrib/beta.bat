@@ -1,5 +1,5 @@
 @echo off
-cd /d E:\Docs\Programmes\Clavier
+cd /d %~dp0\..
 call CopyCode
 cd Distrib
 
