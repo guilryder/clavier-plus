@@ -20,15 +20,12 @@
 //
 // Testing template for CxxUnit entry point, instantiated only once.
 
-#ifndef CXXTEST_RUNNING
-#define CXXTEST_RUNNING
-#endif
-
 #include "stdafx.h"
 #include <cxxtest/TestListener.h>
 #include <cxxtest/TestTracker.h>
 #include <cxxtest/TestRunner.h>
 #include <cxxtest/RealDescriptions.h>
+#include <cxxtest/ParenPrinter.h>
 
 #include <cxxtest/ParenPrinter.h>
 

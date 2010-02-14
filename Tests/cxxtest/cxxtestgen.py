@@ -399,10 +399,6 @@ def writePreamble( output ):
     '''Write the CxxTest header (#includes and #defines)'''
     global wrotePreamble, headers, longlong
     if wrotePreamble: return
-    output.write( "#ifndef CXXTEST_RUNNING\n" )
-    output.write( "#define CXXTEST_RUNNING\n" )
-    output.write( "#endif\n" )
-    output.write( "\n" )
     if haveStandardLibrary:
         output.write( "#define _CXXTEST_HAVE_STD\n" )
     if haveExceptionHandling:

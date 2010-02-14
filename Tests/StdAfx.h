@@ -18,6 +18,10 @@
 
 #pragma once
 
+#ifndef CXXTEST_RUNNING
+#define CXXTEST_RUNNING
+#endif
+
 #define TESTING
 
 #include "../StdAfx.h"
