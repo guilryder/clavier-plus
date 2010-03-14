@@ -31,6 +31,7 @@
 // Disable some Microsoft standard library extensions.
 #define __STDC_WANT_SECURE_LIB__  0
 #define _CRT_DISABLE_PERFCRIT_LOCKS
+#define _STRALIGN_USE_SECURE_CRT  0
 
 // Do not include some Windows APIs we don't need.
 #define VC_EXTRALEAN

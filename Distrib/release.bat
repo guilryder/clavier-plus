@@ -9,17 +9,19 @@ call release-help.bat
 echo Generating Clavier.zip...
 mystart /wait Clavier.mus
 
+echo Generating Clavier64.zip...
+mystart /wait Clavier64.mus
+
 echo Generating ClavierSrc.zip...
 mystart /wait ClavierSrc.mus
 
 echo Generating ClavierSetup.exe...
 mystart /wait /verb CompileWithIS Clavier.iss
 
-for %%i in (Clavier.zip ClavierSrc.zip ClavierSetup.exe) do move /y %%i E:\Web\utilfr\dn || echo Error: %%i
+echo Generating ClavierSetup64.exe...
+mystart /wait /verb CompileWithIS Clavier64.iss
 
-for %%i in (1 2 3) do C:\Soft\Tools\Clavier.exe /quit
-copy /y ..\release\Clavier.exe C:\Soft\Tools\Clavier.exe >nul
-start C:\Soft\Tools\Clavier.exe
+for %%i in (Clavier.zip Clavier64.zip ClavierSrc.zip ClavierSetup.exe ClavierSetup64.exe) do move /y %%i E:\Web\utilfr\dn || echo Error: %%i
 
 rd /s /q Sources
 

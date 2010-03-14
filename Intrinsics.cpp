@@ -23,6 +23,8 @@
 extern "C" void* memset(void* dest, int value, size_t size);
 extern "C" void* memcpy(void* dest, const void* src, size_t size);
 
+#ifndef _DEBUG
+
 #pragma function(memset)
 #pragma function(memcpy)
 
@@ -48,8 +50,6 @@ void* memcpy(void* dst, const void* src, size_t size) {
 	
 	return dst;
 }
-
-#ifndef _DEBUG
 
 extern "C" int atexit(void (__cdecl*)()) {
 	return 0;

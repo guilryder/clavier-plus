@@ -92,7 +92,7 @@ static LRESULT CALLBACK prcWebLink(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 void initializeWebLink(HWND hdlg, UINT control_id, LPCTSTR link) {
 	const HWND hwnd = GetDlgItem(hdlg, control_id);
-	setWindowLongPtr(hwnd, GWL_USERDATA, reinterpret_cast<LONG_PTR>(link));
+	setWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(link));
 	s_prcLabel = subclassWindow(hwnd, prcWebLink);
 }
 
@@ -109,7 +109,7 @@ LRESULT CALLBACK prcWebLink(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			return HTCLIENT;
 		
 		case WM_LBUTTONDOWN:
-			ShellExecute(hwnd, NULL, reinterpret_cast<LPCTSTR>(getWindowLongPtr(hwnd, GWL_USERDATA)),
+			ShellExecute(hwnd, NULL, reinterpret_cast<LPCTSTR>(getWindowLongPtr(hwnd, GWLP_USERDATA)),
 				NULL, NULL, SW_SHOWDEFAULT);
 			return 0;
 	}

@@ -1,10 +1,21 @@
+#ifdef IS_X64
+#define Platform "x64"
+#define PlatformName "64"
+#define Charset "Unicode"
+#else
+#define Platform "Win32"
+#define PlatformName ""
+#define Charset ""
+#endif
+
 #define RootDir "."
 #define BinDir "."
+#define CompilOutputDir "..\output\" + Platform + "_Release" + Charset + "\"
 
 #define AppName "Clavier+"
 #define AppExeName "Clavier.exe"
-#define InstallerFileName Copy(AppExeName, 1, RPos(".", AppExeName) - 1) + "Setup"
-#define VersionFile AddBackslash(RootDir) + AddBackslash(BinDir) + "..\release\" + AppExeName
+#define InstallerFileName Copy(AppExeName, 1, RPos(".", AppExeName) - 1) + "Setup" + PlatformName
+#define VersionFile AddBackslash(RootDir) + AddBackslash(BinDir) + CompilOutputDir + AppExeName
 
 #define AppVersion GetFileProductVersion(VersionFile)
 #define AppVerName AppName + " " + AppVersion
@@ -34,6 +45,10 @@ Compression=lzma/ultra
 SolidCompression=true
 InternalCompressLevel=ultra
 PrivilegesRequired=none
+#ifdef IS_X64
+ArchitecturesInstallIn64BitMode=x64
+ArchitecturesAllowed=x64
+#endif
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
@@ -42,22 +57,22 @@ Name: german; MessagesFile: compiler:Languages\German.isl
 Name: portuguese; MessagesFile: compiler:Languages\BrazilianPortuguese.isl
 
 [Files]
-Source: {#BinDir}\..\release\Clavier.exe; DestDir: {app}; Flags: ignoreversion
+Source: {#BinDir}\{#CompilOutputDir}{#AppExeName}; DestDir: {app}; Flags: ignoreversion
 Source: {#BinDir}\ClavierEnglish.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: english german
 Source: {#BinDir}\ClavierFrench.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: french
 Source: {#BinDir}\ClavierGerman.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: german
 Source: {#BinDir}\ClavierPortuguese.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: portuguese
-Source: {#BinDir}\Help.htm; DestDir: {app}; Flags: ignoreversion; Languages: english german
-Source: {#BinDir}\Aide.htm; DestDir: {app}; Flags: ignoreversion; Languages: french
-Source: {#BinDir}\Hilfe.htm; DestDir: {app}; Flags: ignoreversion; Languages: german
-Source: {#BinDir}\Ajuda.htm; DestDir: {app}; Flags: ignoreversion; Languages: portuguese
+Source: {#BinDir}\Help.html; DestDir: {app}; Flags: ignoreversion; Languages: english german
+Source: {#BinDir}\Aide.html; DestDir: {app}; Flags: ignoreversion; Languages: french
+Source: {#BinDir}\Hilfe.html; DestDir: {app}; Flags: ignoreversion; Languages: german
+Source: {#BinDir}\Ajuda.html; DestDir: {app}; Flags: ignoreversion; Languages: portuguese
 
 [Icons]
 Name: {group}\{#AppName}; Filename: {app}\{#AppExeName}
-Name: {group}\Help; Filename: {app}\Help.htm; Languages: english
-Name: {group}\Aide; Filename: {app}\Aide.htm; Languages: french
-Name: {group}\Hilfe; Filename: {app}\Hilfe.htm; Languages: german
-Name: {group}\Ajuda; Filename: {app}\Ajuda.htm; Languages: portuguese
+Name: {group}\Help; Filename: {app}\Help.html; Languages: english
+Name: {group}\Aide; Filename: {app}\Aide.html; Languages: french
+Name: {group}\Hilfe; Filename: {app}\Hilfe.html; Languages: german
+Name: {group}\Ajuda; Filename: {app}\Ajuda.html; Languages: portuguese
 Name: {group}\{cm:ProgramOnTheWeb,{#AppName}}; Filename: {#AppURL}
 Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}
 

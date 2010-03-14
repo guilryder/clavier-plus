@@ -427,7 +427,7 @@ private:
 	
 	HWND m_hdlgSendKeys;
 	
-	static BOOL CALLBACK dialogProc(HWND MY_UNUSED(hdlg), UINT MY_UNUSED(message),
+	static INT_PTR CALLBACK dialogProc(HWND MY_UNUSED(hdlg), UINT MY_UNUSED(message),
 			WPARAM MY_UNUSED(wParam), LPARAM MY_UNUSED(lParam)) {
 		return FALSE;
 	}
