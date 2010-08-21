@@ -47,6 +47,8 @@ static void commandMouseButton(LPTSTR pszArg);
 static void commandMouseMove(POINT ptOrigin, LPTSTR pszArg);
 static void commandMouseWheel(LPTSTR pszArg);
 
+static void copyToClipboard(LPCTSTR pszText, int length);
+
 
 const LPCTSTR pszLineSeparator = _T("-\r\n");
 
@@ -696,20 +698,7 @@ bool commandFocus(DWORD& ridThread, HWND& rhwndFocus, LPTSTR pszArg) {
 // [{Copy,text}]
 // Copy the text argument to the clipboard.
 void commandCopy(LPTSTR pszArg) {
-	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE,
-		(lstrlen(pszArg) + 1) * sizeof(*pszArg));
-	VERIFV(hMem);
-	
-	const LPTSTR pszMem = (LPTSTR)GlobalLock(hMem);
-	if (pszMem) {
-		lstrcpy(pszMem, pszArg);
-	}
-	GlobalUnlock(hMem);
-	
-	OpenClipboard(NULL);
-	EmptyClipboard();
-	SetClipboardData(CF_TEXT, hMem);
-	CloseClipboard();
+	copyToClipboard(pszArg, lstrlen(pszArg));
 }
 
 
@@ -1072,19 +1061,26 @@ void clearShortcuts() {
 
 
 void copyShortcutsToClipboard(const String& rs) {
+	copyToClipboard(rs, rs.getLength());
+}
+
+
+void copyToClipboard(LPCTSTR pszText, int length) {
 	if (!OpenClipboard(NULL)) {
 		return;
 	}
-	EmptyClipboard();
 	
 	// Allocate and fill shared buffer
-	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (rs.getLength() + 1) * sizeof(TCHAR));
-	LPTSTR psz = (LPTSTR)GlobalLock(hMem);
-	lstrcpy(psz, rs);
-	GlobalUnlock(hMem);
-	
-	// Copy buffer to clipboard
-	SetClipboardData(CF_TEXT, hMem);
+	const HGLOBAL hGlobalMem = GlobalAlloc(GMEM_MOVEABLE, (length + 1) * sizeof(TCHAR));
+	if (hGlobalMem) {
+		LPTSTR pszGlobalMem = (LPTSTR)GlobalLock(hGlobalMem);
+		lstrcpy(pszGlobalMem, pszText);
+		GlobalUnlock(hGlobalMem);
+		
+		// Copy buffer to clipboard
+		EmptyClipboard();
+		SetClipboardData(ANSI_UNICODE(CF_TEXT, CF_UNICODETEXT), hGlobalMem);
+	}
 	CloseClipboard();
 }
 
