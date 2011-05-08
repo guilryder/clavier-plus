@@ -263,7 +263,7 @@ E-mail: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kbd></a>
 <p>If your shortcut executes several actions, it may be necessary to let each of them enough time to be executed. To make a pause, write a pair of brackets: <kbd>[]</kbd>. Clavier+ will wait for 100 milliseconds, then detect the new focused window. You can also use the command <a href="#focus"><kbd>[{Focus}]</kbd></a> to specify the delay.</p>
 
 <p>This last point is crucial. If you simulate a keystroke that displays a new window (for example <kbd>Ctrl + O</kbd> which pops out the <i>File/Open</i> dialog box), then write some text (for example a filename), you must indicate to Clavier+ that the text should be typed in the <em>new</em> window:<br />
-<kbd>[Ctrl+O][]MyFile.txt[RETURN]</kbd></p>
+<kbd>[Ctrl+O][]MyFile.txt[ENTER]</kbd></p>
 
 <p>Do the same if you launch a program that displays a window: you should indicate to Clavier+ to detect the new active window.<br />
 <kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd><br />
@@ -580,7 +580,7 @@ Pause
 <div id="hideicon" class="faq-question">11. How to remove Clavier+ icon from the traybar?</div>
 <div class="faq-answer"><p>Launch Clavier+ then quit it. Double-click on the <kbd>Clavier.ini</kbd> file located in the same directory than Clavier+. In the second line, that begins with <kbd>Size=</kbd>, replace the <i>last</i> zero by the digit one. For example: <kbd>Size=923,501,0,0</kbd> should become <kbd>Size=923,501,0,1</kbd>.</p><p>As Clavier+ icon will no more be visible, you will have to launch Clavier+ twice to display its configuration window (once to launch it, once to display the window).</p></div>
 <div id="linereturn" class="faq-question">12. How to write a line return with a shortcut?</div>
-<div class="faq-answer"><p>Two solutions:</p><ul><li>insert a line return in the edit box, by pressing the <kbd>Return</kbd> key,</li><li>if the previous solution doesn’t work, write the code <kbd>[RETURN]</kbd><br />The shortcut will probably have to pause for a short time to let the return key be processed: <kbd>[][RETURN]</kbd></li></ul></div>
+<div class="faq-answer"><p>Two solutions:</p><ul><li>insert a line return in the edit box, by pressing the <kbd>Return</kbd> key,</li><li>if the previous solution doesn’t work, write the code <kbd>[ENTER]</kbd><br />The shortcut will probably have to pause for a short time to let the return key be processed: <kbd>[][ENTER]</kbd></li></ul></div>
 <div id="simulkey" class="faq-question">13. How to simulate the key <i>XYZ</i></div>
 <div class="faq-answer"><p>Click the arrow-shape button, choose the command <i>Simulate a Keystroke</i>.</p></div>
 <div id="soundvolume" class="faq-question">14. How to change the sound volume?</div>
@@ -605,7 +605,7 @@ Pause
 <h2 id="examples">Shortcuts examples</h2>
 
 <ul>
-<li>Create a new folder in Windows Explorer<br />text <kbd>[#93][N][RETURN]</kbd> with the program condition <kbd>explorer.exe</kbd></li>
+<li>Create a new folder in Windows Explorer<br />text <kbd>[#93][N][ENTER]</kbd> with the program condition <kbd>explorer.exe</kbd></li>
 <li>Execute the <i>File</i>/<i>Quit</i> menu command<br />text <kbd>[Alt+F4]</kbd> or text <kbd>[Alt+F][Q]</kbd></li>
 <li>Translate to French the selected word with an online dictionary<br />text <kbd>[Ctrl+C][[http://www.wordreference.com/enfr/%CLIPBOARD%]]</kbd></li>
 <li>Write an e-mail<br />command <kbd>mailto:</kbd> or <kbd>mailto:somebody@domain.com&amp;subject=Subject</kbd></li>
