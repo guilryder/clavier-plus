@@ -1,12 +1,12 @@
 // Clavier+
 // Keyboard shortcuts manager
 //
-// Copyright (C) 2000-2008 Guillaume Ryder
+// Copyright (C) 2000-2007 Guillaume Ryder
 //
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,294 +14,285 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
-// String: wrapper for a TCHAR character buffer.
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 #pragma once
 
 #include <stdarg.h>
-#include "I18n.h"
-
-class StringTest;
+#include "Lang.h"
 
 extern HANDLE e_hHeap;
 
 
-// Indicates whether a character buffer is null or empty.
-inline bool strIsEmpty(LPCTSTR src) {
-	return !src || !*src;
-}
+inline bool strIsEmpty(LPCTSTR src) { return !src || !*src; }
+inline bool strIsSome(LPCTSTR  src) { return  src &&  *src; }
 
-// Copies a given number of character from a string to a character buffer.
-// The destination character buffer can overlap with the source one.
-inline void strMove(LPTSTR dest, LPCTSTR src, int length) {
-	while (length > 0) {
-		length--;
+inline void strMove(LPTSTR dest, LPCTSTR src, int len)
+{
+	while (len > 0) {
+		len--;
 		*dest++ = *src++;
 	}
 }
 
 
-class String {
-	friend class ::StringTest;
-	
+class String
+{
 public:
 	
-	typedef TCHAR* STR;
-	typedef const TCHAR* CSTR;
+	typedef TCHAR *STR;
+	typedef const TCHAR *CSTR;
 	
-	operator CSTR () const {
-		return getSafe();
-	}
 	
-	int getBufferSize() const {
-		return m_buf_length;
-	}
+	operator CSTR () const { return getSafe(); }
+	
 	
 	//----------------------------------------------------------------------
 	// Constructors, destructor
 	//----------------------------------------------------------------------
 	
-	String() : m_strbuf(NULL), m_buf_length(0) {
+	String() : m_psz(NULL), m_buf(0) {}
+	
+	String(CSTR psz) { affectInit(psz); }
+	
+	String(const String& s) { affectInit((CSTR)s); }
+	
+	String(int idResource) : m_psz(NULL), m_buf(0)
+	{
+		loadString(idResource);
 	}
 	
-	String(CSTR strbuf) {
-		affectInit(strbuf);
-	}
+	~String() { destroy(); }
 	
-	String(const String& str) {
-		affectInit((CSTR)str);
-	}
-	
-	String(int resource_id) : m_strbuf(NULL), m_buf_length(0) {
-		loadString(resource_id);
-	}
-	
-	~String() {
-		destroy();
-	}
 	
 	//----------------------------------------------------------------------
 	// Affectation
 	//----------------------------------------------------------------------
 	
-	String& operator = (const String& str) {
-		if (&str != this) {
-			affect((CSTR)str);
+	String& operator = (const String& s)
+	{
+		if (&s != this) {
+			affect((CSTR)s);
 		}
 		return *this;
 	}
 	
-	String& operator = (CSTR strbuf) {
-		if (strIsEmpty(strbuf)) {
+	String& operator = (CSTR psz)
+	{
+		if (strIsEmpty(psz)) {
 			empty();
-		} else if (isOverlapping(strbuf)) {
-			const int buf_length = lstrlen(strbuf) + 1;
-			if (m_buf_length < buf_length) {
-				const STR strbuf_new = allocNew(buf_length);
-				lstrcpy(strbuf_new, strbuf);
+		} else if (isOverlapping(psz)) {
+			const int buf = lstrlen(psz) + 1;
+			if (m_buf < buf) {
+				const STR pszNew = allocNew(buf);
+				lstrcpy(pszNew, psz);
 				destroy();
-				m_strbuf = strbuf_new;
+				m_psz = pszNew;
 			} else {
-				strMove(m_strbuf, strbuf, buf_length);
+				strMove(m_psz, psz, buf);
 			}
 		} else {
-			affect(strbuf);
+			affect(psz);
 		}
 		return *this;
 	}
+	
 	
 	//----------------------------------------------------------------------
 	// Appending
 	//----------------------------------------------------------------------
 	
-	String& operator += (const String& str) {
-		if (this == &str) {
+	String& operator += (const String& s)
+	{
+		if (this == &s) {
 			if (isSome()) {
-				const int old_length = getLength();
-				const int new_length = old_length + old_length;
-				if (new_length >= m_buf_length) {
-					const STR strbuf_new = allocNew(new_length + 1);
-					lstrcpy(strbuf_new, m_strbuf);
-					lstrcpy(strbuf_new + old_length, m_strbuf);
+				const int len = getLength();
+				const int lenAll = len + len;
+				if (lenAll >= m_buf) {
+					const STR pszNew = allocNew(lenAll + 1);
+					lstrcpy(pszNew,       m_psz);
+					lstrcpy(pszNew + len, m_psz);
 				} else {
-					for (int i = 0; i < old_length; i++) {
-						m_strbuf[old_length + i] = m_strbuf[i];
+					for (int i = 0; i < len; i++) {
+						m_psz[len + i] = m_psz[i];
 					}
-					m_strbuf[new_length] = 0;
+					m_psz[lenAll] = 0;
 				}
 			}
 		} else {
-			append((CSTR)str);
+			append((CSTR)s);
 		}
 		return *this;
 	}
 	
-	String& operator += (CSTR strbuf) {
-		append(strbuf);
+	String& operator += (CSTR psz)
+	{
+		append(psz);
 		return *this;
 	}
 	
-	String& operator += (TCHAR c) {
+	String& operator += (TCHAR c)
+	{
 		appendChar(c);
 		return *this;
 	}
+	
 	
 	//----------------------------------------------------------------------
 	// Get
 	//----------------------------------------------------------------------
 	
-	STR get() {
-		return m_strbuf;
-	}
+	STR get() { return m_psz; }
 	
-	CSTR getSafe() const {
+	CSTR getSafe() const
+	{
 		static const TCHAR pszEmpty[] = { 0 };
-		return (m_strbuf) ? m_strbuf : pszEmpty;
+		return (m_psz) ? m_psz : pszEmpty;
 	}
 	
-	TCHAR& operator [] (int offset) {
-		return m_strbuf[offset];
-	}
+	TCHAR  operator [] (int    offset) const { return getSafe()[offset]; }
+	TCHAR  operator [] (size_t offset) const { return getSafe()[offset]; }
+	TCHAR& operator [] (int    offset)       { return m_psz[offset]; }
+	TCHAR& operator [] (size_t offset)       { return m_psz[offset]; }
 	
-	TCHAR& operator [] (size_t offset) {
-		return m_strbuf[offset];
-	}
+	int getLength() const { return lstrlen(m_psz); }
 	
-	int getLength() const {
-		return lstrlen(m_strbuf);
-	}
+	bool isEmpty() const { return strIsEmpty(m_psz); }
+	bool isSome() const { return strIsSome(m_psz); }
 	
-	bool isEmpty() const {
-		return strIsEmpty(m_strbuf);
-	}
-	
-	bool isSome() const {
-		return m_strbuf && *m_strbuf;
-	}
 	
 	//----------------------------------------------------------------------
 	// Operations
 	//----------------------------------------------------------------------
 	
-	STR getBuffer(int buf_length) {
-		reallocIfNeeded(buf_length);
-		return m_strbuf;
+	STR getBuffer(int buf)
+	{
+		reallocIfNeeded(buf);
+		return m_psz;
 	}
 	
-	void empty() {
+	void empty()
+	{
 		destroy();
-		m_strbuf = NULL;
-		m_buf_length = 0;
+		m_psz = NULL;
+		m_buf = 0;
 	}
 	
 	
-	bool loadString(UINT id) {
-		const i18n::STRING_RESOURCE *const resource = i18n::loadStringResource(id);
-		if (!resource) {
-			empty();
+	bool loadString(UINT id)
+	{
+		const STRING_RESOURCE *const pResource = ::loadStringResource(id);
+		if (!pResource) {
+			*m_psz = 0;
 			return false;
 		}
 		
-		resource->copy(getBuffer(resource->length), resource->length);
+		pResource->copy(getBuffer(pResource->len), pResource->len);
 		return true;
 	}
 	
-private:
 	
-	STR m_strbuf;
-	int m_buf_length;
+protected:
 	
-	inline void alloc(int buf_length) {
-		m_strbuf = allocNew(buf_length);
+	STR m_psz;
+	int m_buf;
+	
+	
+	inline void alloc(int buf) { m_psz = allocNew(buf); }
+	
+	inline STR allocNew(int buf)
+	{
+		m_buf = buf | 15;
+		return bufferAlloc(m_buf);
 	}
 	
-	inline STR allocNew(int buf_length) {
-		m_buf_length = buf_length | 15;  // Allocate up to 15 bytes more than requested.
-		return bufferAlloc(m_buf_length);
-	}
-	
-	void reallocIfNeeded(int buf_length) {
-		if (buf_length > m_buf_length) {
-			buf_length *= 2;
-			m_strbuf = bufferRealloc(m_strbuf, buf_length);
-			if (!m_buf_length) {
-				*m_strbuf = 0;
+	void reallocIfNeeded(int buf)
+	{
+		if (buf > m_buf) {
+			buf *= 2;
+			m_psz = bufferRealloc(m_psz, buf);
+			if (!m_buf) {
+				*m_psz = _T('\0');
 			}
-			m_buf_length = buf_length;
+			m_buf = buf;
 		}
 	}
 	
-	inline void destroy() {
-		bufferFree(m_strbuf);
-	}
+	inline void destroy() { bufferFree(m_psz); }
 	
-	void affectInit(CSTR strbuf) {
-		affectInit(strbuf, lstrlen(strbuf));
-	}
+	void affectInit(CSTR psz) { affectInit(psz, lstrlen(psz)); }
 	
-	void affectInit(CSTR strbuf, int length) {
-		if (length <= 0) {
-			m_strbuf = NULL;
-			m_buf_length = 0;
+	void affectInit(CSTR psz, int len)
+	{
+		if (len <= 0) {
+			m_psz = NULL;
+			m_buf = 0;
 		} else {
-			length++;
-			alloc(length);
-			lstrcpyn(m_strbuf, strbuf, length);
+			len++;
+			alloc(len);
+			lstrcpyn(m_psz, psz, len);
 		}
 	}
 	
-	void affect(CSTR strbuf) {
-		if (strIsEmpty(strbuf)) {
+	void affect(CSTR psz)
+	{
+		if (strIsEmpty(psz)) {
 			empty();
 		} else {
-			const int buf_length = lstrlen(strbuf) + 1;
-			if (m_buf_length < buf_length) {
+			const int buf = lstrlen(psz) + 1;
+			if (m_buf < buf) {
 				destroy();
-				alloc(buf_length);
+				alloc(buf);
 			}
-			lstrcpyn(m_strbuf, strbuf, m_buf_length);
+			lstrcpyn(m_psz, psz, m_buf);
 		}
 	}
 	
-	void append(CSTR strbuf) {
+	void append(CSTR psz)
+	{
 		if (isEmpty()) {
-			*this = strbuf;
-		} else if (!strIsEmpty(strbuf)) {
-			const int length = getLength();
-			const int appended_buf_length = lstrlen(strbuf) + 1;
-			reallocIfNeeded(length + appended_buf_length);
-			lstrcpyn(m_strbuf + length, strbuf, appended_buf_length);
+			*this = psz;
+		} else if (!strIsEmpty(psz)) {
+			const int len  = getLength();
+			const int buf2 = lstrlen(psz) + 2;
+			reallocIfNeeded(len + buf2);
+			lstrcpyn(m_psz + len, psz, buf2);
 		}
 	}
 	
-	inline void appendChar(TCHAR chr) {
-		const int length = getLength();
-		reallocIfNeeded(length + 2);
-		m_strbuf[length] = chr;
-		m_strbuf[length + 1] = 0;
+	inline void appendChar(TCHAR c)
+	{
+		const int len = getLength();
+		reallocIfNeeded(len + 2);
+		m_psz[len]     = c;
+		m_psz[len + 1] = 0;
 	}
 	
-	inline bool isOverlapping(CSTR strbuf) const {
-		return m_strbuf <= strbuf && strbuf < m_strbuf + m_buf_length;
+	
+	inline bool isOverlapping(CSTR psz) const
+	{
+		return m_psz <= psz && psz < m_psz + m_buf;
 	}
 	
-private:
 	
-	static STR bufferAlloc(int buf_length) {
-		return (STR)HeapAlloc(e_hHeap, 0, buf_length * sizeof(TCHAR));
+protected:
+	
+	static STR bufferAlloc(int buf)
+	{
+		return (STR)HeapAlloc(e_hHeap, 0, buf * sizeof(TCHAR));
 	}
 	
-	static void bufferFree(STR strbuf) {
-		HeapFree(e_hHeap, 0, strbuf);
+	static void bufferFree(STR psz)
+	{
+		HeapFree(e_hHeap, 0, psz);
 	}
 	
-	static STR bufferRealloc(STR strbuf, int buf_length) {
-		return (strbuf)
-			? (STR)HeapReAlloc(e_hHeap, 0, strbuf, buf_length * sizeof(TCHAR))
-			: bufferAlloc(buf_length);
+	static STR bufferRealloc(STR psz, int buf)
+	{
+		return (psz)
+			? (STR)HeapReAlloc(e_hHeap, 0, psz, buf * sizeof(TCHAR))
+			: bufferAlloc(buf);
 	}
 };

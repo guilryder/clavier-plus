@@ -436,6 +436,18 @@ bool Shortcut::execute(bool bFromHotkey) const {
 		
 		for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
 			const SPECIALKEY& rspecial_key = e_special_keys[special_key];
+#ifdef _DEBUG
+			TCHAR log_line[1024];
+			wsprintf(log_line, _T("special key state: %d - 0x%4x 0x%4x 0x%4x - 0x%4x 0x%4x 0x%4x\n"),
+				rspecial_key.vk,
+				abKeyboardNew[rspecial_key.vk],
+				abKeyboardNew[rspecial_key.vk_left],
+				abKeyboardNew[getRightVkFromLeft(rspecial_key.vk_left)],
+				GetAsyncKeyState(rspecial_key.vk),
+				GetAsyncKeyState(rspecial_key.vk_left),
+				GetAsyncKeyState(getRightVkFromLeft(rspecial_key.vk_left)));
+			OutputDebugString(log_line);
+#endif  // _DEBUG
 			abKeyboardNew[rspecial_key.vk] =
 			abKeyboardNew[rspecial_key.vk_left] =
 			abKeyboardNew[getRightVkFromLeft(rspecial_key.vk_left)] = 0;

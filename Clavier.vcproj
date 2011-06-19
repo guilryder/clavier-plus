@@ -70,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib"
 				Version=""
 				LinkIncremental="2"
 				GenerateManifest="false"
@@ -152,7 +152,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib"
 				Version=""
 				LinkIncremental="2"
 				GenerateManifest="false"
@@ -236,7 +236,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib chkstk.obj"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
@@ -322,7 +322,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib chkstk.obj"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
@@ -408,7 +408,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib chkstk.obj"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
@@ -494,7 +494,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib chkstk.obj"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
@@ -578,7 +578,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib"
 				Version=""
 				LinkIncremental="2"
 				GenerateManifest="false"
@@ -660,7 +660,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib"
 				Version=""
 				LinkIncremental="2"
 				GenerateManifest="false"
@@ -808,35 +808,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Dialogs.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Dialogs.h"
-			>
-		</File>
-		<File
 			RelativePath=".\Global.cpp"
 			>
 		</File>
 		<File
 			RelativePath=".\Global.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Hook.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Hook.h"
-			>
-		</File>
-		<File
-			RelativePath=".\I18n.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\I18n.h"
 			>
 		</File>
 		<File
@@ -912,23 +888,23 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath=".\Keystroke.cpp"
+			RelativePath=".\Keyboard.cpp"
 			>
 		</File>
 		<File
-			RelativePath=".\Keystroke.h"
+			RelativePath=".\Keyboard.h"
+			>
+		</File>
+		<File
+			RelativePath=".\Lang.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Lang.h"
 			>
 		</File>
 		<File
 			RelativePath=".\MyString.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Shortcut.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Shortcut.h"
 			>
 		</File>
 		<File
