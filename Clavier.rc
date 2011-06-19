@@ -12,6 +12,323 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Russian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+#ifdef _WIN32
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
+#if defined(APSTUDIO_INVOKED)
+IDD_SENDKEYS$(UNICODE) DIALOGEX 0, 0, 238, 50
+#else
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Имитация нажатия клавиш"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Нажатие клавиш:",IDC_STATIC,7,8,61,8
+    EDITTEXT        IDCTXT,78,6,155,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Отмена",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
+#if defined(APSTUDIO_INVOKED)
+IDD_MAIN$(UNICODE) DIALOGEX 0, 0, 414, 246
+#else
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+#endif
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "Помните, что все ярлыки отключены, если это окно видимое.",IDCLBL_HELP,90,114,131,17
+    LTEXT           "Счетчик ярлыков:",IDCLBL_SHORTCUTSCOUNT,228,114,68,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,301,114,30,8,SS_NOPREFIX
+    CONTROL         "З&апуск программы при старте Windows",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,149,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
+    CONTROL         "&Введите текст",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,63,10
+    CONTROL         "&Запустить программу или показать веб-сайт",IDCOPT_COMMAND,
+                    "Button",BS_AUTORADIOBUTTON,216,138,166,10
+    EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
+    ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
+    PUSHBUTTON      "Ра&сширенные настройки...",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "&Тест",IDCCMD_TEST,354,168,48,14
+    LTEXT           "&Включить для:",IDCLBL_PROGRAMS,6,194,51,8
+    COMBOBOX        IDCCBO_PROGRAMS,62,192,90,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,154,192,236,12,ES_AUTOHSCROLL
+    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    LTEXT           "&Описание:",IDCLBL_DESCRIPTION,6,210,38,8
+    EDITTEXT        IDCTXT_DESCRIPTION,62,208,346,12,ES_AUTOHSCROLL
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "&Помощь",IDCCMD_HELP,60,227,40,14
+    PUSHBUTTON      "К&опировать список",IDCCMD_COPYLIST,102,227,72,14
+    PUSHBUTTON      "Язы&к...",IDCCMD_LANGUAGE,176,227,36,14
+    PUSHBUTTON      "О &программе...",IDCCMD_ABOUT,214,227,56,14
+    PUSHBUTTON      "&Выход",IDCCMD_QUIT,272,227,36,14
+    PUSHBUTTON      "Отмена",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
+#if defined(APSTUDIO_INVOKED)
+IDD_KEYSTROKE$(UNICODE) DIALOGEX 0, 0, 226, 178
+#else
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Ярлык"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Ярлык:",IDC_STATIC,7,8,25,8
+    EDITTEXT        IDCTXT,42,6,178,12,ES_AUTOHSCROLL
+    CONTROL         "&Различие между левой и правой специальными клавишами",IDCCHK_DISTINGUISH_LEFT_RIGHT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,218,10
+    LTEXT           "Заметки:\n- вы можете использовать клавишу Windows\n- некоторые специальные ярлыки недоступны",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    PUSHBUTTON      "Отмена",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
+    GROUPBOX        "Условие активации",IDC_STATIC,6,84,214,66
+    LTEXT           "&Caps Lock состояние:",IDC_STATIC,12,98,73,8
+    COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Num Lock состояние:",IDC_STATIC,12,116,72,8
+    COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Scr&oll Lock состояние:",IDC_STATIC,12,134,75,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
+#if defined(APSTUDIO_INVOKED)
+IDD_CMDSETTINGS$(UNICODE) DIALOGEX 0, 0, 268, 113
+#else
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Программа для запуска"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Строка команды:",IDC_STATIC,6,8,59,8
+    EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
+    LTEXT           "&Папка:",IDC_STATIC,6,26,24,8
+    EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
+    LTEXT           "&Вид окна:",IDC_STATIC,6,44,34,8
+    COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "С&мена папки в окне диалога Файл/Открыть (строка команды должна быть в папке)",IDCCHK_SUPPORTFILEOPEN,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,167,18
+    PUSHBUTTON      "Отмена",IDCANCEL,78,93,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
+#if defined(APSTUDIO_INVOKED)
+IDD_ABOUT$(UNICODE) DIALOGEX 0, 0, 157, 144
+#else
+IDD_ABOUT DIALOGEX 0, 0, 157, 144
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "О программе Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    CONTROL         "Clavier+ 10.6.3",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    LTEXT           "Правообладатель © 2000-2011\nGuillaume Ryder\nПрограмма под GPL лицензией",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    GROUPBOX        "Автор",IDC_STATIC,6,48,145,44
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,64,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,68,8,SS_NOPREFIX
+    CONTROL         "Перевод: Валерий Романовский",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,120,8
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,46,16
+    DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    "IDD_SENDKEYS$(UNICODE)", DIALOG
+    BEGIN
+        RIGHTMARGIN, 179
+    END
+
+    "IDD_KEYSTROKE$(UNICODE)", DIALOG
+    BEGIN
+        RIGHTMARGIN, 190
+    END
+
+    "IDD_CMDSETTINGS$(UNICODE)", DIALOG
+    BEGIN
+        BOTTOMMARGIN, 93
+    END
+
+    "IDD_ABOUT$(UNICODE)", DIALOG
+    BEGIN
+        RIGHTMARGIN, 157
+        BOTTOMMARGIN, 139
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
+#if defined(APSTUDIO_INVOKED)
+IDB_DONATE$(UNICODE)    BITMAP                  "DonateRU.bmp"
+#else
+IDB_DONATE              BITMAP                  "DonateRU.bmp"
+#endif
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
+#if defined(APSTUDIO_INVOKED)
+IDM_CONTEXT$(UNICODE) MENU 
+#else
+IDM_CONTEXT MENU 
+#endif
+BEGIN
+    POPUP " "
+    BEGIN
+        POPUP "&Программы"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Избранное интернета"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Спецсимволы"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Открыть &папку...",           ID_ADD_FOLDER
+        MENUITEM "&Написать текст...",          ID_ADD_TEXT
+        MENUITEM "&Запустить программу...",     ID_ADD_COMMAND
+        MENUITEM "&Показать веб-сайт...",       ID_ADD_WEBSITE
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM "&Симулировать нажатие клавиш: [...]", ID_TEXT_SENDKEYS
+        MENUITEM "&Запустить программу: [[...]]", ID_TEXT_COMMAND
+        MENUITEM "&Ждать 100 мс до обнаружения фокуса: []", ID_TEXT_WAIT
+        MENUITEM "&Написать текст в режиме нижнего уровня", ID_TEXT_LOWLEVEL
+        MENUITEM SEPARATOR
+        POPUP "&Написать символ"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Написать спецсимвол"
+        BEGIN
+            MENUITEM "Черта с обратным наклоном: \\\\", ID_TEXT_BACKSLASH
+            MENUITEM "Открывающая &скобка: \\[",    ID_TEXT_BRACKET_OPEN
+            MENUITEM "Закрывающая скоб&ка: \\]",    ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Открывающая фигурная ск&обка: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Закрывающая фигурная ск&обка: \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Вертикальная &черта: \\|",    ID_TEXT_PIPE
+        END
+        POPUP "Выполнить специальную к&оманду"
+        BEGIN
+            MENUITEM "&Ожидать: [{Wait,<длительность>}]", ID_TEXT_CMD_WAIT
+            MENUITEM "&Обнаруживать сфокусированное окно: [{Focus,<задержка>,<имя окна>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Копировать в буфер: [{Copy,<текст>}]", ID_TEXT_CMD_COPY
+            MENUITEM "&Кнопка мыши: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "Двигать мы&шь к (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "Дви&гать мышь в фокус (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Двигать мышь н&а: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "Колесико м&ыши: [{MouseWheel,<+/- ticks count>}]", ID_TEXT_CMD_MOUSE_WHEEL
+        END
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Настройки...",               ID_TRAY_SETTINGS
+        MENUITEM "&Копировать список",          ID_TRAY_COPYLIST
+        MENUITEM "&Загрузить конфигурацию...",  ID_TRAY_INI_LOAD
+        MENUITEM "С&равнить конфигурацию с...", ID_TRAY_INI_MERGE
+        MENUITEM "&Сохранить конфигурацию...",  ID_TRAY_INI_SAVE
+        MENUITEM "&Выход",                      ID_TRAY_QUIT
+    END
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
+STRINGTABLE 
+BEGIN
+    ERR_INVALID_SHORTCUT    "Нужен действительный ярлык."
+    ERR_SHORTCUT_DUPLICATE  "Комбинации дублируются: %s.\nИзмените или удалите один из дубликатов."
+    ERR_SAVING_INI          "Не удается сохранить настройки."
+    ERR_LOADING_INI         "Не удается загрузить настройки."
+    ERR_TARGET              "Ни одна программа не выбрана.\nПожалуйста, нажмите кнопку мыши и перетащите курсор\nв окно программы для выбора."
+    ASK_QUIT                "Хотите выйти из программы?\nЭто отключит все ваши ярлыки.\n\n(Нажмите клавишу Shift когда щелкните на кнопку\nдля пропуска этого сообщения.)"
+    ASK_DELETE              "Точно хотите удалить этот ярлык?\n\n(Нажмите клавишу Shift когда щелкните на кнопку\nдля пропуска этого сообщения.)"
+    MSG_COPYLIST            "Список ярлыков был скопирован в буфер.\n\nВы можете вставить его через Ctrl+V в текстовый документ."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TOKENS              "Русский;Ярлык;Код;РазличатьЛеваяПравая;Описание;Команда;Текст;Директория;Окно;ПоддержкаОткрытияФайла;Программы;ВсехПрограммКроме;Нет;Язык;Размер;Столбцы;Сортировка;Нормально;Свернуто;Развернуто;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Да;Нет;"
+    IDS_COLUMNS             "Содержимое;Ярлык;Условия;Описание;"
+    IDS_HELP                "HelpRU.html"
+    IDS_CONDITIONS          "нет условий;должно быть вкл.;должно быть выкл.;"
+    IDS_CONDITION_KEYS      "CNS"
+    IDS_INI_FILTER          "INI файлы|*.ini|"
+    IDS_BROWSEDIR           "Выберите папку запуска команды."
+    IDS_PROGRAMS            "всех программ кроме;только этих программ;"
+    IDS_TOOLTIPS            "Добавить новый ярлык;Удалить выбранный ярлык;Изменить выбранный ярлык;Нажмите и перетяните для выбора окна программы;"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&no_shipping=1&tax=0&currency_code=USD"
+END
+#endif
+
+#endif    // Russian resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // Neutral resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
@@ -76,13 +393,13 @@ END
 // Dialog
 //
 
-IDD_LANGUAGE DIALOGEX 0, 0, 114, 73
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTERMOUSE | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_LANGUAGE DIALOGEX 0, 0, 115, 82
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTERMOUSE | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Language"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LISTBOX         IDCLST_LANGUAGE,6,6,102,41,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,32,54,50,14
+    LISTBOX         IDCLST_LANGUAGE,6,6,102,49,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,32,62,50,14
 END
 
 
@@ -97,9 +414,9 @@ BEGIN
     IDD_LANGUAGE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 107
+        RIGHTMARGIN, 108
         TOPMARGIN, 7
-        BOTTOMMARGIN, 66
+        BOTTOMMARGIN, 76
     END
 END
 #endif    // APSTUDIO_INVOKED

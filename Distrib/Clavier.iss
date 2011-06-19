@@ -55,6 +55,7 @@ Name: english; MessagesFile: compiler:Default.isl
 Name: french; MessagesFile: compiler:Languages\French.isl
 Name: german; MessagesFile: compiler:Languages\German.isl
 Name: portuguese; MessagesFile: compiler:Languages\BrazilianPortuguese.isl
+Name: russian; MessagesFile: compiler:Languages\Russian.isl
 
 [Files]
 Source: {#BinDir}\{#CompilOutputDir}{#AppExeName}; DestDir: {app}; Flags: ignoreversion
@@ -62,10 +63,12 @@ Source: {#BinDir}\ClavierEnglish.ini; DestDir: {app}; Flags: ignoreversion onlyi
 Source: {#BinDir}\ClavierFrench.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: french
 Source: {#BinDir}\ClavierGerman.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: german
 Source: {#BinDir}\ClavierPortuguese.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: portuguese
+Source: {#BinDir}\ClavierRussian.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: russian
 Source: {#BinDir}\Help.html; DestDir: {app}; Flags: ignoreversion; Languages: english german
 Source: {#BinDir}\Aide.html; DestDir: {app}; Flags: ignoreversion; Languages: french
 Source: {#BinDir}\Hilfe.html; DestDir: {app}; Flags: ignoreversion; Languages: german
 Source: {#BinDir}\Ajuda.html; DestDir: {app}; Flags: ignoreversion; Languages: portuguese
+Source: {#BinDir}\HelpRU.html; DestDir: {app}; Flags: ignoreversion; Languages: russian
 
 [Icons]
 Name: {group}\{#AppName}; Filename: {app}\{#AppExeName}
@@ -73,6 +76,7 @@ Name: {group}\Help; Filename: {app}\Help.html; Languages: english
 Name: {group}\Aide; Filename: {app}\Aide.html; Languages: french
 Name: {group}\Hilfe; Filename: {app}\Hilfe.html; Languages: german
 Name: {group}\Ajuda; Filename: {app}\Ajuda.html; Languages: portuguese
+Name: {group}\Помощь; Filename: {app}\HelpRU.html; Languages: russian
 Name: {group}\{cm:ProgramOnTheWeb,{#AppName}}; Filename: {#AppURL}
 Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}
 
