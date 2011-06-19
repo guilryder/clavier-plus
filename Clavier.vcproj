@@ -408,7 +408,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
@@ -494,7 +494,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
+				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
