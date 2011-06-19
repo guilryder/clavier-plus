@@ -31,6 +31,9 @@ enum {
 	langEN,
 	langDE,
 	langPT,
+#ifdef UNICODE
+	langRU,
+#endif
 	langCount
 };
 

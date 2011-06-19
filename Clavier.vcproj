@@ -401,7 +401,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
+				PreprocessorDefinitions="NDEBUG,UNICODE"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -487,7 +487,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
+				PreprocessorDefinitions="NDEBUG,UNICODE"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -571,7 +571,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
+				PreprocessorDefinitions="_DEBUG,UNICODE"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -653,7 +653,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
+				PreprocessorDefinitions="_DEBUG,UNICODE"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -728,6 +728,10 @@
 			</File>
 			<File
 				RelativePath=".\DonatePT.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\DonateRU.bmp"
 				>
 			</File>
 			<File
