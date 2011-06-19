@@ -1,11 +1,11 @@
-#ifdef IS_X64
+﻿#ifdef IS_X64
 #define Platform "x64"
 #define PlatformName "64"
 #define Charset "Unicode"
 #else
 #define Platform "Win32"
 #define PlatformName ""
-#define Charset ""
+#define Charset "Unicode"
 #endif
 
 #define RootDir "."
@@ -108,3 +108,4 @@ begin
 		Sleep(200);
 	end
 end;
+
