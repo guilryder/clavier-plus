@@ -66,21 +66,11 @@ extern bool e_bIconVisible;
 #endif
 
 
-// Warning-free equivalents of macros GetWindowLongPtr, SetWindowLongPtr and SubclassWindow.
-#pragma warning(disable: 4244)
-inline LONG_PTR getWindowLongPtr(HWND hwnd, int index) {
-	return GetWindowLongPtr(hwnd, index);
-}
-
-inline LONG_PTR setWindowLongPtr(HWND hwnd, int index, LONG_PTR new_long) {
-	return SetWindowLongPtr(hwnd, index, new_long);
-}
-
 inline WNDPROC subclassWindow(HWND hwnd, WNDPROC new_window_proc) {
-	return reinterpret_cast<WNDPROC>(setWindowLongPtr(hwnd, GWLP_WNDPROC,
+	return reinterpret_cast<WNDPROC>(SetWindowLongPtr(hwnd, GWLP_WNDPROC,
 		reinterpret_cast<LONG_PTR>(new_window_proc)));
 }
-#pragma warning(default: 4244)
+
 
 // Display a message box. The message is read from string resources.
 int messageBox(HWND hwnd, UINT idString, UINT uType = MB_ICONERROR, LPCTSTR pszArg = NULL);

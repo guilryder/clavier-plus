@@ -1157,7 +1157,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				
 				const POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 				if (PtInRect(&rc, pt)) {
-					setWindowLongPtr(hDlg, DWLP_MSGRESULT, HTBOTTOMRIGHT);
+					SetWindowLongPtr(hDlg, DWLP_MSGRESULT, HTBOTTOMRIGHT);
 					return TRUE;
 				}
 			}
@@ -1532,13 +1532,13 @@ INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			{
 				const int id = GetDlgCtrlID((HWND)lParam);
 				if (id == IDCLBL_EMAIL || id == IDCLBL_WEBSITE) {
-					HFONT hFont = reinterpret_cast<HFONT>(getWindowLongPtr(hDlg, DWLP_USER));
+					HFONT hFont = reinterpret_cast<HFONT>(GetWindowLongPtr(hDlg, DWLP_USER));
 					if (!hFont) {
 						LOGFONT lf;
 						GetObject((HFONT)SendMessage((HWND)lParam, WM_GETFONT, 0,0), sizeof(lf), &lf);
 						lf.lfUnderline = TRUE;
 						hFont = CreateFontIndirect(&lf);
-						setWindowLongPtr(hDlg, DWLP_USER, reinterpret_cast<LONG_PTR>(hFont));
+						SetWindowLongPtr(hDlg, DWLP_USER, reinterpret_cast<LONG_PTR>(hFont));
 					}
 					SelectFont((HDC)wParam, hFont);
 					SetTextColor((HDC)wParam, RGB(0,0,255));
@@ -1549,7 +1549,7 @@ INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 		
 		case WM_COMMAND:
-			DeleteFont(reinterpret_cast<HFONT>(getWindowLongPtr(hDlg, DWLP_USER)));
+			DeleteFont(reinterpret_cast<HFONT>(GetWindowLongPtr(hDlg, DWLP_USER)));
 			EndDialog(hDlg, IDOK);
 			break;
 	}
