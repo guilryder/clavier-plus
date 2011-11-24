@@ -684,21 +684,22 @@ void findFullPath(LPTSTR path, LPTSTR full_path) {
 
 void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 	// Expand the environment variables before splitting
-	TCHAR pszCommandExp[MAX_PATH + bufClipboardString];
-	ExpandEnvironmentStrings(command, pszCommandExp, arrayLength(pszCommandExp));
+	TCHAR command_exp[MAX_PATH + bufClipboardString];
+	ExpandEnvironmentStrings(command, command_exp, arrayLength(command_exp));
 	
 	// Split the command line: get the file and the arguments
 	TCHAR path[MAX_PATH];
-	lstrcpyn(path, pszCommandExp, arrayLength(path));
+	lstrcpyn(path, command_exp, arrayLength(path));
 	PathRemoveArgs(path);
 	
-	// Get the directory
-	TCHAR pszDirectoryBuf[MAX_PATH];
+	// If the directory is empty, get it from the file
+	TCHAR real_directory[MAX_PATH];
 	if (!directory || !*directory) {
-		findFullPath(path, pszDirectoryBuf);
-		PathRemoveFileSpec(pszDirectoryBuf);
-		directory = pszDirectoryBuf;
+		findFullPath(path, real_directory);
+		PathRemoveFileSpec(real_directory);
 		PathQuoteSpaces(path);
+	} else {
+		ExpandEnvironmentStrings(directory, real_directory, arrayLength(real_directory));
 	}
 	
 	// Run the command line
@@ -708,8 +709,8 @@ void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 	sei.hwnd = e_hwndInvisible;
 	sei.lpFile = path;
 	sei.lpVerb = NULL;
-	sei.lpParameters = PathGetArgs(pszCommandExp);
-	sei.lpDirectory = directory;
+	sei.lpParameters = PathGetArgs(command_exp);
+	sei.lpDirectory = real_directory;
 	sei.nShow = show_mode;
 	ShellExecuteEx(&sei);
 }
