@@ -1,0 +1,53 @@
+body {
+	font-family: sans-serif;
+}
+
+a:hover {
+	color: red;
+	text-decoration: underline;
+}
+
+dt kbd {
+	font-weight: bold;
+}
+
+dt {
+	margin-top: 1em;
+}
+
+p {
+	margin: .5em 0;
+}
+
+.toc {
+	float: left;
+}
+
+.toc a {
+	color: blue;
+	text-decoration: none;
+	display: block;
+	padding: .1em 0;
+}
+
+.ipt {
+	font-weight: bold;
+	color: red;
+}
+
+.faq-question {
+	margin-top: 1.5em;
+	border-top: .1em solid #888;
+	padding-top: .1em;
+	padding-left: .5em;
+	font-weight: bold;
+}
+
+.faq-answer {
+	margin-left: 2em;
+}
+
+.faq-answer ul {
+	margin-top: 0;
+	margin-bottom: 0;
+}

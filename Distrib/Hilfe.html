@@ -1,48 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252"/>
 <title>Clavier+</title>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
-<style type="text/css">
-body {
-font-family: verdana, arial, sans-serif;
-}
-
-dt kbd {
-font-weight: bold;
-}
-
-dt {
-margin-top: 1em;
-}
-
-.toc {
-float: left;
-}
-
-.toc a {
-color: blue;
-text-decoration: none;
-display: block;
-padding: 2px 0px;
-}
-a:hover {
-color: red;
-text-decoration: underline;
-}
-
-.ipt {
-font-weight: bold;
-color: red;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="ClavierHelp.css"/>
 </head>
 
 <body>
 
 <h1>Clavier+</h1>
 
-<p style="font-weight: bold; color: red">The German help file is not up-to-date, please refer to the <a href="http://utilfr42.free.fr/util/ClavierHelp.html">English help file</a> if you can read English. Volonteer translators are welcome!</p>
+<p class="ipt">The German help file is not up-to-date, please refer to the <a href="http://utilfr42.free.fr/util/ClavierHelp.html">English help file</a> if you can read English. Volonteer translators are welcome!</p>
 
 <p class="toc">
 <a href="#name">Warum so ein seltsamer Name?</a>
@@ -68,15 +36,14 @@ color: red;
 
 <h2 id="author">Autor</h2>
 
-<p>
-Guillaume Ryder<br />
-Webseite: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br />
+<p>Guillaume Ryder<br/>
+Webseite: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br/>
 Email: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 </p>
 
-<p><b>Deutsche Übersetzung</b><br />
-Dietmar Vogel<br />
-Webseite: <a href="http://www.verdrahtet.net/"><kbd>http://www.verdrahtet.net</kbd></a><br />
+<p><b>Deutsche Übersetzung</b><br/>
+Dietmar Vogel<br/>
+Webseite: <a href="http://www.verdrahtet.net/"><kbd>http://www.verdrahtet.net</kbd></a><br/>
 Email: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a>
 </p>
 
@@ -87,9 +54,9 @@ Email: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a>
 
 <p>Für dieses Programm wird keinerlei Gewährleistung übernommen. Ich bin für keinerlei Schäden verantwortlich zu machen, die mit der Benutzung dieses Programmes auftreten.</p>
 
-<p><b>Bezugsquellen</b><br />
-Software <b>mit</b> Installationsprogramm: <a href="http://utilfr42.free.fr/dn/ClavierSetup.exe"><kbd>http://utilfr42.free.fr/dn/ClavierSetup.exe</kbd></a><br />
-Software <b>ohne</b> Installationsprogramm: <a href="http://utilfr42.free.fr/dn/Clavier.zip"><kbd>http://utilfr42.free.fr/dn/Clavier.zip</kbd></a><br />
+<p><b>Bezugsquellen</b><br/>
+Software <b>mit</b> Installationsprogramm: <a href="http://utilfr42.free.fr/dn/ClavierSetup.exe"><kbd>http://utilfr42.free.fr/dn/ClavierSetup.exe</kbd></a><br/>
+Software <b>ohne</b> Installationsprogramm: <a href="http://utilfr42.free.fr/dn/Clavier.zip"><kbd>http://utilfr42.free.fr/dn/Clavier.zip</kbd></a><br/>
 Quellcode: <a href="https://code.google.com/p/clavier-plus/source/browse/"><kbd>https://code.google.com/p/clavier-plus/source/browse/</kbd></a>
 </p>
 
@@ -136,21 +103,21 @@ Quellcode: <a href="https://code.google.com/p/clavier-plus/source/browse/"><kbd>
 
 <h2 id="text">Text-Format</h2>
 
-<p>Im Textfeld <kbd>Schreiben</kbd> können Clavier+ weitere Verknüpfungen zum Ausführen übergeben werden. Dazu ist der Verknüpfungsname lediglich in eckigen Klammern zu schreiben. Zum Beispiel:<br />
+<p>Im Textfeld <kbd>Schreiben</kbd> können Clavier+ weitere Verknüpfungen zum Ausführen übergeben werden. Dazu ist der Verknüpfungsname lediglich in eckigen Klammern zu schreiben. Zum Beispiel:<br/>
 <kbd>[Strg + O]</kbd></p>
 
 <p>Um den Namen von Sondertasten herauszufinden, kann jener Name kopiert werden, der im Hinzufügen Dialog angezeigt wird. Um z.B. den Tastennamen für den <i>*</i> im Nummerblock herauszufinden, Schaltfläche „+” klicken und anschliessend die „*”-Taste drücken: der Tastenname wird angezeigt. Diesen Namen in Klammern exakt in das Textfeld <kbd>Schreiben</kbd> eingeben. Klammern und Punkte im Verknüpfungsnamen bitte beachten.</p>
 
-<p>Soll die eckige Klammer verwendet werden <kbd>[</kbd>, muss diese durch einen „Backslash” „escaped” werden. Z.B.: <br />
+<p>Soll die eckige Klammer verwendet werden <kbd>[</kbd>, muss diese durch einen „Backslash” „escaped” werden. Z.B.: <br/>
 <kbd>Dies ist ein Klammer: \[</kbd></p>
 
 <p>Um einen „Backslash” zu schreiben, muss dieser doppelt eingegeben werden: <kbd>dies ist ein "Backslash": \\</kbd></p>
 
-<p>Clavier+ schickt alle Verknüpfungen in das selbe Fenster. Sofern eine Verknüpfung ein neues Fenster öffnet (z.B. <kbd>[Strg + O]</kbd>), muss Clavier+ angewiesen werden die Verknüpfung in das neue aktive Fenster zu senden. Hierzu muss ein leerer Verknüpfungsname eingegeben werden: <kbd>[]</kbd>. Clavier+ wartet 100 Millisekunden und setzt anschliessend den Fokus auf das neue aktive Fenster. Beispiel:<br />
+<p>Clavier+ schickt alle Verknüpfungen in das selbe Fenster. Sofern eine Verknüpfung ein neues Fenster öffnet (z.B. <kbd>[Strg + O]</kbd>), muss Clavier+ angewiesen werden die Verknüpfung in das neue aktive Fenster zu senden. Hierzu muss ein leerer Verknüpfungsname eingegeben werden: <kbd>[]</kbd>. Clavier+ wartet 100 Millisekunden und setzt anschliessend den Fokus auf das neue aktive Fenster. Beispiel:<br/>
 <kbd>[Strg + O][][][]MeineDatei.txt</kbd></p>
 
-<p>Um ein Programm während einer Textausgabe zu starten, wird der Befehl in doppelte Klammern gesetzti<br />
-<kbd>[Strg+C][[notepad.exe]][][Strg+V]</kbd><br />
+<p>Um ein Programm während einer Textausgabe zu starten, wird der Befehl in doppelte Klammern gesetzti<br/>
+<kbd>[Strg+C][[notepad.exe]][][Strg+V]</kbd><br/>
 Diese Verknüpfung kopiert den ausgewählten Text in die Zwischenablage, öffnet den Windows Editor und fügt den Text dort ein. Die Klammer <kbd>[]</kbd> ist sehr wicktig; sie bestimmt, dass Clavier+ den Text in das <em>neue</em> aktive Fenster (des Editors) einfügt.</p>
 
 
@@ -195,7 +162,7 @@ Rollen-Feststell=<i>Bedingung</i>
 
 <p>Die Optionen <kbd>Text</kbd> einerseits und <kbd>Befehl</kbd> sowie <kbd>Fenster</kbd> andererseits schliessen sich gegenseitig aus. Verknüpfungen können keinen Text ausgeben und gleichzeitig ein Programm ausführen.</p>
 
-<p>Der Name des Tastendrucks folgt dem gleichen Format wie in der Liste in Clavier+.<br />
+<p>Der Name des Tastendrucks folgt dem gleichen Format wie in der Liste in Clavier+.<br/>
 Beispiel: <kbd>Win + Umschalt + A</kbd></p>
 
 <p>Die Option <kbd>Ordner</kbd> bestimmt den Startordner für den Befehl. Falls kein Ordner angegeben ist, benutzt Clavier+ den eigenen Programmordner.</p>
@@ -217,7 +184,7 @@ Pause
 
 <p>Standardverknüpfungen von Windows können nicht verändert werden. Nachfolgend einige davon:</p>
 
-<table><colgroup><col width="30%" /><col/></colgroup>
+<table><colgroup><col width="30%"/><col/></colgroup>
 <tr><td><kbd>Strg + Alt + Entf</kbd></td><td>„Task Manager” anzeigen</td></tr>
 <tr><td><kbd>F12</kbd></td><td>Reserviert für den Debugger</td></tr>
 <tr><td><kbd>Alt + Tab</kbd></td><td>Nächste Anwendung aktivieren</td></tr>
