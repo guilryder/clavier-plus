@@ -213,6 +213,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 	
 	m_vk = 0;
 	m_sided_mod_code = 0;
+	int tokKey = tokNotFound;
 	for (;;) {
 		
 		// Read the line
@@ -244,7 +245,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 		}
 		
 		// If next line of text, get it
-		if (*pszLine == _T('>') && !m_bCommand && *m_sText) {
+		if (*pszLine == _T('>') && tokKey == tokText) {
 			m_sText += _T("\r\n");
 			m_sText += pszLine + 1;
 			continue;
@@ -259,7 +260,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 		*pcSep = _T('\0');
 		
 		// Identify the key
-		const int tokKey = findToken(pszLine);
+		tokKey = findToken(pszLine);
 		if (tokKey == tokNotFound) {
 			continue;
 		}
