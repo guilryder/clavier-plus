@@ -181,6 +181,9 @@ HWND findWindowByName(LPCTSTR title_regexp);
 //   True if the subject matches the pattern, false otherwise.
 bool matchWildcards(LPCTSTR pattern, LPCTSTR subject, LPCTSTR pattern_end = NULL);
 
+// Copies text into the clipboard.
+void setClipboardText(LPCTSTR text);
+
 
 //------------------------------------------------------------------------
 // SHBrowseForFolder wrapper:

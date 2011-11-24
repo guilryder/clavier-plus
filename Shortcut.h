@@ -235,7 +235,6 @@ void loadShortcuts();
 void mergeShortcuts(LPCTSTR pszIniFile);
 void saveShortcuts();
 void clearShortcuts();
-void copyShortcutsToClipboard(const String& rs);
 
 }  // shortcut namespace
 

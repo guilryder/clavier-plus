@@ -318,6 +318,24 @@ bool matchWildcards(LPCTSTR pattern, LPCTSTR subject, LPCTSTR pattern_end) {
 }
 
 
+void setClipboardText(LPCTSTR text) {
+	if (!OpenClipboard(NULL)) {
+		return;
+	}
+	EmptyClipboard();
+	
+	// Allocate and fill a global buffer.
+	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (lstrlen(text) + 1) * sizeof(TCHAR));
+	const LPTSTR mem_text = reinterpret_cast<LPTSTR>(GlobalLock(hMem));
+	lstrcpy(mem_text, text);
+	GlobalUnlock(hMem);
+	
+	// Pass the buffer to the clipboard.
+	SetClipboardData(ANSI_UNICODE(CF_TEXT, CF_UNICODETEXT), hMem);
+	CloseClipboard();
+}
+
+
 //------------------------------------------------------------------------
 // SHBrowseForFolder wrapper:
 // - use given title

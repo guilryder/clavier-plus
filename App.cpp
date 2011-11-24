@@ -604,7 +604,7 @@ UINT displayTrayIconMenu() {
 						shortcut = shortcut->getNext()) {
 					shortcut->appendCsvLineToString(str);
 				}
-				shortcut::copyShortcutsToClipboard(str);
+				setClipboardText(str);
 			}
 			break;
 		

@@ -769,7 +769,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 					}
 					reinterpret_cast<const Shortcut*>(lvi.lParam)->appendCsvLineToString(s);
 				}
-				shortcut::copyShortcutsToClipboard(s);
+				setClipboardText(s);
 				
 				messageBox(e_hdlgMain, MSG_COPYLIST, MB_ICONINFORMATION);
 			}
