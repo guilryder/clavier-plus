@@ -742,19 +742,13 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		case IDCCMD_HELP:
 			{
 				TCHAR pszPath[MAX_PATH];
-				GetModuleFileName(e_hInst, pszPath, arrayLength(pszPath));
-				PathRemoveFileSpec(pszPath);
+				lstrcpy(pszPath, pszHelpURL);
 				
 				TCHAR pszFile[MAX_PATH];
 				i18n::loadStringAuto(IDS_HELP, pszFile);
-				PathAppend(pszPath, pszFile);
+				lstrcat(pszPath, pszFile);
 				
-				if (32 >= reinterpret_cast<UINT_PTR>(
-						ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT))) {
-					lstrcpy(pszPath, pszHelpURL);
-					lstrcat(pszPath, pszFile);
-					ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT);
-				}
+				ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT);
 			}
 			break;
 		
