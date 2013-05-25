@@ -441,7 +441,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR pszCmdLine, bool bNormalLaunch)
 				case cmdoptLoad:
 					bAutoQuit   = false;
 					bNewIniFile = true;
-					lstrcpyn(e_pszIniFile, pszArg, nbArray(e_pszIniFile));
+					GetFullPathName(pszArg, nbArray(e_pszIniFile), e_pszIniFile, NULL);
 					break;
 				
 				// Merge an INI file
@@ -659,7 +659,7 @@ Destroy:
 						for (const Shortcut *psh = e_pshFirst; psh; psh = psh->m_pNext) {
 							psh->appendItemToString(s);
 						}
-						shortcutsCopyToClipboard(s);
+						setClipboardText(s);
 					}
 					break;
 				
@@ -1414,18 +1414,13 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 		case IDCCMD_HELP:
 			{
 				TCHAR pszPath[MAX_PATH];
-				GetModuleFileName(e_hInst, pszPath, nbArray(pszPath));
-				PathRemoveFileSpec(pszPath);
+				lstrcpy(pszPath, pszHelpURL);
 				
 				TCHAR pszFile[MAX_PATH];
 				loadStringAuto(IDS_HELP, pszFile);
-				PathAppend(pszPath, pszFile);
+				lstrcat(pszPath, pszFile);
 				
-				if (32 >= (DWORD)ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT)) {
-					lstrcpy(pszPath, pszHelpURL);
-					lstrcat(pszPath, pszFile);
-					ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT);
-				}
+				ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT);
 			}
 			break;
 		
@@ -1446,7 +1441,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd)
 					}
 					((const Shortcut*)lvi.lParam)->appendItemToString(s);
 				}
-				shortcutsCopyToClipboard(s);
+				setClipboardText(s);
 				
 				messageBox(s_hdlgMain, MSG_COPYLIST, MB_ICONINFORMATION);
 			}
@@ -2586,8 +2581,9 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 {
 	// Read
 	
-	m_vk      = 0;
+	m_vk = 0;
 	m_vkFlags = 0;
+	int tokKey = tokNotFound;
 	for (;;) {
 		
 		// Read the line
@@ -2619,7 +2615,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 		}
 		
 		// If next line of text, get it
-		if (*pszLine == _T('>') && !m_bCommand && *m_sText) {
+		if (*pszLine == _T('>') && tokKey == tokText) {
 			m_sText += _T("\r\n");
 			m_sText += pszLine + 1;
 			continue;
@@ -2634,7 +2630,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent)
 		*pcSep = 0;
 		
 		// Identify the key
-		const int tokKey = findToken(pszLine);
+		tokKey = findToken(pszLine);
 		if (tokKey == tokNotFound) {
 			continue;
 		}
@@ -3443,19 +3439,7 @@ bool commandFocus(DWORD& ridThread, HWND& rhwndFocus, LPTSTR pszArg)
 // Copy the text argument to the clipboard.
 void commandCopy(LPTSTR pszArg)
 {
-	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, getStringSize(pszArg));
-	VERIFV(hMem);
-	
-	const LPTSTR pszMem = (LPTSTR)GlobalLock(hMem);
-	if (pszMem) {
-		lstrcpy(pszMem, pszArg);
-	}
-	GlobalUnlock(hMem);
-	
-	OpenClipboard(NULL);
-	EmptyClipboard();
-	SetClipboardData(CF_TEXT, hMem);
-	CloseClipboard();
+	setClipboardText(pszArg);
 }
 
 

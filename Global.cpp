@@ -87,16 +87,15 @@ void getDlgItemText(HWND hDlg, UINT id, String& rs)
 static WNDPROC s_prcLabel;
 static LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink)
-{
-	const HWND hwnd = GetDlgItem(hDlg, idControl);
-	SetWindowLong(hwnd, GWLP_USERDATA, (LONG)pszLink);
+void initializeWebLink(HWND hdlg, UINT control_id, LPCTSTR link) {
+	const HWND hwnd = GetDlgItem(hdlg, control_id);
+	SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(link));
 	s_prcLabel = SubclassWindow(hwnd, prcWebLink);
 }
 
 // Window procedure for dialog box controls displaying an URL.
 // The link itself is stored in GWL_USERDATA.
-LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK prcWebLink(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg) {
 		
@@ -108,11 +107,12 @@ LRESULT CALLBACK prcWebLink(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			return HTCLIENT;
 		
 		case WM_LBUTTONDOWN:
-			ShellExecute(hWnd, NULL, (LPCTSTR)GetWindowLong(hWnd, GWLP_USERDATA), NULL, NULL, SW_SHOWDEFAULT);
+			ShellExecute(hwnd, NULL, reinterpret_cast<LPCTSTR>(GetWindowLongPtr(hwnd, GWLP_USERDATA)),
+				NULL, NULL, SW_SHOWDEFAULT);
 			return 0;
 	}
 	
-	return CallWindowProc(s_prcLabel, hWnd, uMsg, wParam, lParam);
+	return CallWindowProc(s_prcLabel, hwnd, uMsg, wParam, lParam);
 }
 
 
@@ -368,6 +368,23 @@ bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject)
 }
 
 
+void setClipboardText(LPCTSTR text) {
+	if (!OpenClipboard(NULL)) {
+		return;
+	}
+	EmptyClipboard();
+	
+	// Allocate and fill a global buffer.
+	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, getStringSize(text));
+	const LPTSTR mem_text = reinterpret_cast<LPTSTR>(GlobalLock(hMem));
+	lstrcpy(mem_text, text);
+	GlobalUnlock(hMem);
+	
+	// Pass the buffer to the clipboard.
+	SetClipboardData(ANSI_UNICODE(CF_TEXT, CF_UNICODETEXT), hMem);
+	CloseClipboard();
+}
+
 
 //------------------------------------------------------------------------
 // SHBrowseForFolder wrapper:
@@ -529,36 +546,36 @@ void findFullPath(LPTSTR pszPath, LPTSTR pszFullPath)
 }
 
 
-void shellExecuteCmdLine(LPCTSTR pszCommand, LPCTSTR pszDirectory, int nShow)
-{
+void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 	// Expand the environment variables before splitting
-	TCHAR pszCommandExp[MAX_PATH + bufClipboardString];
-	ExpandEnvironmentStrings(pszCommand, pszCommandExp, nbArray(pszCommandExp));
+	TCHAR command_exp[MAX_PATH + bufClipboardString];
+	ExpandEnvironmentStrings(command, command_exp, nbArray(command_exp));
 	
 	// Split the command line: get the file and the arguments
-	TCHAR pszPath[MAX_PATH];
-	lstrcpyn(pszPath, pszCommandExp, nbArray(pszPath));
-	PathRemoveArgs(pszPath);
+	TCHAR path[MAX_PATH];
+	lstrcpyn(path, command_exp, nbArray(path));
+	PathRemoveArgs(path);
 	
-	// Get the directory
-	TCHAR pszDirectoryBuf[MAX_PATH];
-	if (!pszDirectory || !*pszDirectory) {
-		findFullPath(pszPath, pszDirectoryBuf);
-		PathRemoveFileSpec(pszDirectoryBuf);
-		pszDirectory = pszDirectoryBuf;
-		PathQuoteSpaces(pszPath);
+	// If the directory is empty, get it from the file
+	TCHAR real_directory[MAX_PATH];
+	if (!directory || !*directory) {
+		findFullPath(path, real_directory);
+		PathRemoveFileSpec(real_directory);
+		PathQuoteSpaces(path);
+	} else {
+		ExpandEnvironmentStrings(directory, real_directory, nbArray(real_directory));
 	}
 	
 	// Run the command line
 	SHELLEXECUTEINFO sei;
-	sei.cbSize       = sizeof(sei);
-	sei.fMask        = SEE_MASK_FLAG_DDEWAIT;
-	sei.hwnd         = e_hwndInvisible;
-	sei.lpFile       = pszPath;
-	sei.lpVerb       = NULL;
-	sei.lpParameters = PathGetArgs(pszCommandExp);
-	sei.lpDirectory  = pszDirectory;
-	sei.nShow        = nShow;
+	sei.cbSize = sizeof(sei);
+	sei.fMask = SEE_MASK_FLAG_DDEWAIT;
+	sei.hwnd = e_hwndInvisible;
+	sei.lpFile = path;
+	sei.lpVerb = NULL;
+	sei.lpParameters = PathGetArgs(command_exp);
+	sei.lpDirectory = real_directory;
+	sei.nShow = show_mode;
 	ShellExecuteEx(&sei);
 }
 

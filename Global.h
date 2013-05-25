@@ -73,6 +73,12 @@ inline int getStringSize(LPCTSTR str) {
 }
 
 
+inline WNDPROC subclassWindow(HWND hwnd, WNDPROC new_window_proc) {
+	return reinterpret_cast<WNDPROC>(SetWindowLongPtr(hwnd, GWLP_WNDPROC,
+		reinterpret_cast<LONG_PTR>(new_window_proc)));
+}
+
+
 // Display a message box. The message is read from string resources.
 int messageBox(HWND hWnd, UINT idString, UINT uType = MB_ICONERROR, LPCTSTR pszArg = NULL);
 
@@ -85,11 +91,11 @@ void getDlgItemText(HWND hDlg, UINT id, String& rs);
 // Setups a label control for displaying an URL.
 //
 // Args:
-//   hDlg: The handle of the dialog box containing the control to setup.
-//   idControl: The ID of the label control in the dialog box.
-//   pszLink: The URL to give to the control. It must be static buffer: the string will not
+//   hdlg: The handle of the dialog box containing the control to setup.
+//   control_id: The ID of the label control in the dialog box.
+//   link: The URL to give to the control. It must be static buffer: the string will not
 //     be copied to a buffer.
-void initializeWebLink(HWND hDlg, UINT idControl, LPCTSTR pszLink);
+void initializeWebLink(HWND hdlg, UINT control_id, LPCTSTR link);
 
 // Wrapper for CreateThread()
 void startThread(LPTHREAD_START_ROUTINE pfn, void* pParams);
@@ -146,6 +152,9 @@ HWND findWindowByName(LPCTSTR pszWindowSpec);
 // Returns:
 //   True if the subject matches the pattern, false otherwise.
 bool matchWildcards(LPCTSTR pszPattern, LPCTSTR pszSubject);
+
+// Copies text into the clipboard.
+void setClipboardText(LPCTSTR text);
 
 
 //------------------------------------------------------------------------
