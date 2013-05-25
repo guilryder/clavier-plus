@@ -91,7 +91,10 @@ UseAbsolutePaths=false
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
 	if CurStep = ssInstall then
-		SendBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0)
+	begin
+		PostBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0);
+		Sleep(1000)
+	end
 	else if CurStep = ssDone then
 	begin
 		Sleep(200);
@@ -104,8 +107,7 @@ procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
 	if CurUninstallStep = usUninstall then
 	begin
-		SendBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0)
-		Sleep(200);
+		PostBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0)
+		Sleep(1000);
 	end
 end;
-
