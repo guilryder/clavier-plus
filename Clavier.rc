@@ -963,7 +963,7 @@ BEGIN
     ERR_TARGET              "No program has been chosen.\nPlease keep the mouse button down and drag the cursor\nto a window of the program to choose."
     ASK_QUIT                "Do you really want to exit Clavier+?\nThis will disable all your shortcuts.\n\n(Press the Shift key while clicking the button\nto skip this message.)"
     ASK_DELETE              "Do you really want to delete this shortcut?\n\n(Press the Shift key while clicking the button\nto skip this message.)"
-    MSG_COPYLIST            "The shortcuts list has been copied to the clipboard.\n\nYou can paste it with Ctrl+V to a word processor or a spreadsheet."
+    MSG_COPYLIST            "The shortcuts list has been copied to the clipboard.\n\nYou can paste it with Ctrl+V to a text processor or a spreadsheet."
 END
 
 STRINGTABLE 
