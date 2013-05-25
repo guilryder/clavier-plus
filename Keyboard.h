@@ -231,4 +231,3 @@ void shortcutsLoad();
 void shortcutsMerge(LPCTSTR pszIniFile);
 void shortcutsSave();
 void shortcutsClear();
-void shortcutsCopyToClipboard(const String& rs);

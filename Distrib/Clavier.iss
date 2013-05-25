@@ -21,6 +21,7 @@
 #define AppVerName AppName + " " + AppVersion
 #define AppPublisher "Guillaume Ryder"
 #define AppURL "http://utilfr42.free.fr"
+#define HelpFileBaseUrl "http://utilfr42.free.fr/util/Clavier"
 
 #define IniFile "Clavier.ini"
 
@@ -64,19 +65,14 @@ Source: {#BinDir}\ClavierFrench.ini; DestDir: {app}; Flags: ignoreversion onlyif
 Source: {#BinDir}\ClavierGerman.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: german
 Source: {#BinDir}\ClavierPortuguese.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: portuguese
 Source: {#BinDir}\ClavierRussian.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: russian
-Source: {#BinDir}\Help.html; DestDir: {app}; Flags: ignoreversion; Languages: english german
-Source: {#BinDir}\Aide.html; DestDir: {app}; Flags: ignoreversion; Languages: french
-Source: {#BinDir}\Hilfe.html; DestDir: {app}; Flags: ignoreversion; Languages: german
-Source: {#BinDir}\Ajuda.html; DestDir: {app}; Flags: ignoreversion; Languages: portuguese
-Source: {#BinDir}\HelpRU.html; DestDir: {app}; Flags: ignoreversion; Languages: russian
 
 [Icons]
 Name: {group}\{#AppName}; Filename: {app}\{#AppExeName}
-Name: {group}\Help; Filename: {app}\Help.html; Languages: english
-Name: {group}\Aide; Filename: {app}\Aide.html; Languages: french
-Name: {group}\Hilfe; Filename: {app}\Hilfe.html; Languages: german
-Name: {group}\Ajuda; Filename: {app}\Ajuda.html; Languages: portuguese
-Name: {group}\Помощь; Filename: {app}\HelpRU.html; Languages: russian
+Name: {group}\Help; Filename: {#HelpFileBaseUrl}Help.html; Languages: english
+Name: {group}\Aide; Filename: {#HelpFileBaseUrl}Aide.html; Languages: french
+Name: {group}\Hilfe; Filename: {#HelpFileBaseUrl}Hilfe.html; Languages: german
+Name: {group}\Ajuda; Filename: {#HelpFileBaseUrl}Ajuda.html; Languages: portuguese
+Name: {group}\Помощь; Filename: {#HelpFileBaseUrl}HelpRU.html; Languages: russian
 Name: {group}\{cm:ProgramOnTheWeb,{#AppName}}; Filename: {#AppURL}
 Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}
 

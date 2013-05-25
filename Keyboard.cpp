@@ -635,25 +635,6 @@ void shortcutsClear()
 }
 
 
-void shortcutsCopyToClipboard(const String& rs)
-{
-	if (!OpenClipboard(NULL)) {
-		return;
-	}
-	EmptyClipboard();
-	
-	// Allocate and fill shared buffer
-	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (rs.getLength() + 1) * sizeof(TCHAR));
-	LPTSTR psz = (LPTSTR)GlobalLock(hMem);
-	lstrcpy(psz, rs);
-	GlobalUnlock(hMem);
-	
-	// Copy buffer to clipboard
-	SetClipboardData(ANSI_UNICODE(CF_TEXT, CF_UNICODETEXT), hMem);
-	CloseClipboard();
-}
-
-
 
 //------------------------------------------------------------------------
 // Shortcut
