@@ -347,7 +347,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
 				case cmdoptLoad:
 					auto_quit = false;
 					new_ini_file = true;
-					lstrcpyn(e_pszIniFile, strbuf_arg, arrayLength(e_pszIniFile));
+					GetFullPathName(strbuf_arg, arrayLength(e_pszIniFile), e_pszIniFile, NULL);
 					break;
 				
 				// Merge an INI file
