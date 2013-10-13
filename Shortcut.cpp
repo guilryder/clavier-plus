@@ -710,13 +710,17 @@ void commandMouseButton(LPTSTR pszArg) {
 	DWORD dwFlags = 0;
 	switch (lstrlen(pszArg)) {
 		case 2:
-			switch (*(const WORD*)pszArg) {
-				case 'DL':  dwFlags = MOUSEEVENTF_LEFTDOWN;  break;
-				case 'UL':  dwFlags = MOUSEEVENTF_LEFTUP;  break;
-				case 'DM':  dwFlags = MOUSEEVENTF_MIDDLEDOWN;  break;
-				case 'UM':  dwFlags = MOUSEEVENTF_MIDDLEUP;  break;
-				case 'DR':  dwFlags = MOUSEEVENTF_RIGHTDOWN;  break;
-				case 'UR':  dwFlags = MOUSEEVENTF_RIGHTUP;  break;
+#ifdef UNICODE
+			switch (*reinterpret_cast<const DWORD*>(pszArg)) {
+#else
+			switch (MAKELONG(pszArg[1], pszArg[0])) {
+#endif
+				case 'D\0L':  dwFlags = MOUSEEVENTF_LEFTDOWN;  break;
+				case 'U\0L':  dwFlags = MOUSEEVENTF_LEFTUP;  break;
+				case 'D\0M':  dwFlags = MOUSEEVENTF_MIDDLEDOWN;  break;
+				case 'U\0M':  dwFlags = MOUSEEVENTF_MIDDLEUP;  break;
+				case 'D\0R':  dwFlags = MOUSEEVENTF_RIGHTDOWN;  break;
+				case 'U\0R':  dwFlags = MOUSEEVENTF_RIGHTUP;  break;
 			}
 			if (dwFlags) {
 				mouse_event(dwFlags, 0, 0, 0, 0);
