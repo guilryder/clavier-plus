@@ -23,7 +23,7 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="DebugUnicode|Win32"
+			Name="Debug|Win32"
 			OutputDirectory="$(ProjectDir)output\$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory="output\$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
@@ -108,7 +108,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="DebugUnicode|x64"
+			Name="Debug|x64"
 			OutputDirectory="$(ProjectDir)output\$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory="output\$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
@@ -285,7 +285,7 @@
 			RelativePath=".\Runner.cxx"
 			>
 			<FileConfiguration
-				Name="DebugUnicode|Win32"
+				Name="Debug|Win32"
 				>
 				<Tool
 					Name="VCCustomBuildTool"
@@ -295,7 +295,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="DebugUnicode|x64"
+				Name="Debug|x64"
 				>
 				<Tool
 					Name="VCCustomBuildTool"
@@ -325,7 +325,7 @@
 			RelativePath=".\StdAfx.cpp"
 			>
 			<FileConfiguration
-				Name="DebugUnicode|Win32"
+				Name="Debug|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
@@ -333,7 +333,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="DebugUnicode|x64"
+				Name="Debug|x64"
 				>
 				<Tool
 					Name="VCCLCompilerTool"

@@ -19,7 +19,7 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="ReleaseUnicode|Win32"
+			Name="Release|Win32"
 			OutputDirectory="$(ProjectDir)output\$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory="output\$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
@@ -105,7 +105,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="ReleaseUnicode|x64"
+			Name="Release|x64"
 			OutputDirectory="$(ProjectDir)output\$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory="output\$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
@@ -191,7 +191,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="DebugUnicode|Win32"
+			Name="Debug|Win32"
 			OutputDirectory="$(ProjectDir)output\$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory="output\$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
@@ -273,7 +273,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="DebugUnicode|x64"
+			Name="Debug|x64"
 			OutputDirectory="$(ProjectDir)output\$(PlatformName)_$(ConfigurationName)"
 			IntermediateDirectory="output\$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
@@ -511,7 +511,7 @@
 			RelativePath=".\Intrinsics.cpp"
 			>
 			<FileConfiguration
-				Name="ReleaseUnicode|Win32"
+				Name="Release|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
@@ -520,7 +520,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="ReleaseUnicode|x64"
+				Name="Release|x64"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
@@ -529,7 +529,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="DebugUnicode|Win32"
+				Name="Debug|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
@@ -537,7 +537,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="DebugUnicode|x64"
+				Name="Debug|x64"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
@@ -569,7 +569,7 @@
 			RelativePath=".\StdAfx.cpp"
 			>
 			<FileConfiguration
-				Name="ReleaseUnicode|Win32"
+				Name="Release|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
@@ -577,7 +577,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="ReleaseUnicode|x64"
+				Name="Release|x64"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
@@ -585,7 +585,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="DebugUnicode|Win32"
+				Name="Debug|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
@@ -593,7 +593,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="DebugUnicode|x64"
+				Name="Debug|x64"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
