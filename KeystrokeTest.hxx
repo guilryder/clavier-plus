@@ -18,8 +18,6 @@
 
 #include "Keystroke.h"
 
-#define T_FORMAT ANSI_UNICODE("s", "ws")
-
 
 class KeystrokeCompareTest : public CxxTest::TestSuite {
 private:
@@ -39,7 +37,7 @@ private:
 		TCHAR name1[bufHotKey], name2[bufHotKey];
 		keystroke1.getKeyName(name1);
 		keystroke2.getKeyName(name2);
-		wsprintfA(message, "Comparing %"T_FORMAT" and %"T_FORMAT" -- expected %d",
+		wsprintfA(message, "Comparing %ws and %ws -- expected %d",
 				name1, name2, expected_result);
 		
 		TSM_ASSERT_EQUALS(message, expected_result,

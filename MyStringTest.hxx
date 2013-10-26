@@ -18,8 +18,6 @@
 
 #include "MyString.h"
 
-#define T_FORMAT ANSI_UNICODE("s", "ws")
-
 class StringTest : public CxxTest::TestSuite {
 private:
 	
@@ -60,7 +58,7 @@ public:
 	
 	void checkStringEqual(LPCTSTR expected, LPCTSTR got) {
 		char error_message[1024];
-		wsprintfA(error_message, "Expected: \"%"T_FORMAT"\", found: \"%"T_FORMAT"\"", expected, got);
+		wsprintfA(error_message, "Expected: \"%ws\", found: \"%ws\"", expected, got);
 		TSM_ASSERT_EQUALS(error_message, 0, lstrcmp(expected, got));
 	}
 	

@@ -25,7 +25,6 @@
 #include <cxxtest/TestTracker.h>
 #include <cxxtest/TestRunner.h>
 #include <cxxtest/RealDescriptions.h>
-#include <cxxtest/ParenPrinter.h>
 
 #include <cxxtest/ParenPrinter.h>
 

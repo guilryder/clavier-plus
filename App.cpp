@@ -27,12 +27,6 @@
 // #define ALLOW_MULTIPLE_INSTANCES
 #endif
 
-#ifdef UNICODE
-const bool is_unicode = true;
-#else
-const bool is_unicode = false;
-#endif
-
 
 namespace app {
 
@@ -114,7 +108,7 @@ void entryPoint() {
 		const HWND hwnd = FindWindow(_T("STATIC"), kClavierWindowClass);
 		if (hwnd) {
 			COPYDATASTRUCT cds;
-			cds.dwData = is_unicode;
+			cds.dwData = TRUE;
 			cds.cbData = (lstrlen(cmdline) + 1) * sizeof(TCHAR);
 			cds.lpData = const_cast<LPTSTR>(cmdline);
 			SendMessage(hwnd, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cds));
@@ -505,7 +499,7 @@ Destroy:
 		
 		shortcut::GuardList guard;
 		const COPYDATASTRUCT& cds = *reinterpret_cast<const COPYDATASTRUCT*>(lParam);
-		if (cds.dwData == static_cast<ULONG_PTR>(is_unicode)) {
+		if (cds.dwData) {
 			processCmdLineAction(execCmdLine((LPCTSTR)cds.lpData, false));
 		}
 		return TRUE;

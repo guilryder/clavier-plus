@@ -76,11 +76,8 @@
 #define new DEBUG_NEW
 
 
-// ANSI_UNICODE(ansi, unicode) evaluates to ansi in ASCII mode, else to unicode.
-#ifdef UNICODE
-#define ANSI_UNICODE(ansi, unicode)  unicode
-#else
-#define ANSI_UNICODE(ansi, unicode)  ansi
+#ifndef UNICODE
+#error Non-Unicode is no longer supported
 #endif
 
 

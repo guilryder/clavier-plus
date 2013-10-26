@@ -476,7 +476,7 @@ bool Shortcut::execute(bool bFromHotkey) const {
 		bool bBackslash = false;
 		LPCTSTR pszText = m_sText;
 		for (size_t i = 0; pszText[i]; i++) {
-			const UTCHAR c = (UTCHAR)pszText[i];
+			const WORD c = (WORD)pszText[i];
 			if (c == _T('\n')) {
 				continue;
 			}
@@ -596,7 +596,7 @@ bool Shortcut::execute(bool bFromHotkey) const {
 							const WORD wKey = VkKeyScan(*psz);
 							if (wKey == (WORD)-1) {
 								TCHAR pszCode[5];
-								wsprintf(pszCode, _T("0%u"), (UTCHAR)*psz);
+								wsprintf(pszCode, _T("0%u"), (WORD)*psz);
 								
 								const BYTE scanCodeAlt = (BYTE)MapVirtualKey(VK_MENU, 0);
 								keybd_event(VK_MENU, scanCodeAlt, 0, 0);
@@ -710,11 +710,7 @@ void commandMouseButton(LPTSTR pszArg) {
 	DWORD dwFlags = 0;
 	switch (lstrlen(pszArg)) {
 		case 2:
-#ifdef UNICODE
-			switch (*reinterpret_cast<const DWORD*>(pszArg)) {
-#else
 			switch (MAKELONG(pszArg[1], pszArg[0])) {
-#endif
 				case 'D\0L':  dwFlags = MOUSEEVENTF_LEFTDOWN;  break;
 				case 'U\0L':  dwFlags = MOUSEEVENTF_LEFTUP;  break;
 				case 'D\0M':  dwFlags = MOUSEEVENTF_MIDDLEDOWN;  break;
@@ -975,25 +971,13 @@ Error:
 	pbBuffer[size] = pbBuffer[size + 1] = 0;
 	LPTSTR pszCurrent;
 	if (IsTextUnicode(pbBuffer, size, NULL)) {
-#ifdef UNICODE
-		pszCurrent = (LPTSTR)pbBuffer;
-#else
-		LPWSTR wsz = (LPWSTR)pbBuffer;
-		const int buf = lstrlenW(wsz) + 1;
-		pszCurrent = new TCHAR[buf];
-		WideCharToMultiByte(CP_ACP, 0, wsz, -1, pszCurrent, buf, NULL, NULL);
-		pbBuffer = (BYTE*)pszCurrent;
-#endif
+		pszCurrent = reinterpret_cast<LPTSTR>(pbBuffer);
 	} else {
-#ifdef UNICODE
-		LPSTR asz = (LPSTR)pbBuffer;
+		LPSTR asz = reinterpret_cast<LPSTR>(pbBuffer);
 		const int buf = lstrlenA(asz) + 1;
 		pszCurrent = new TCHAR[buf];
 		MultiByteToWideChar(CP_ACP, 0, asz, -1, pszCurrent, buf);
-		pbBuffer = (BYTE*)pszCurrent;
-#else
-		pszCurrent = (LPTSTR)pbBuffer;
-#endif
+		pbBuffer = reinterpret_cast<BYTE*>(pszCurrent);
 	}
 	
 	Keystroke ks;

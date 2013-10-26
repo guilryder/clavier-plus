@@ -31,9 +31,7 @@ enum {
 	langEN,
 	langDE,
 	langPT,
-#ifdef UNICODE
 	langRU,
-#endif
 	langCount
 };
 
@@ -51,12 +49,7 @@ struct STRING_RESOURCE {
 	WCHAR strbuf[];
 	
 	void copy(LPTSTR dest_strbuf, int buf_length) const {
-#ifdef UNICODE
 		lstrcpyn(dest_strbuf, strbuf, buf_length);
-#else
-		WideCharToMultiByte(CP_ACP, 0, strbuf, length, dest_strbuf, buf_length, NULL, NULL);
-		dest_strbuf[(length < buf_length) ? length : buf_length - 1] = _T('\0');
-#endif
 	}
 };
 #pragma warning(default: 4200)

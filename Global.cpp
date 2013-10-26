@@ -37,7 +37,7 @@ HWND e_hdlgModal;
 bool e_bIconVisible = true;
 
 #define myGetProcAddress(hDLL, functionName) \
-	((PFN_##functionName)GetProcAddress(hDLL, (#functionName ANSI_UNICODE("A", "W"))))
+	((PFN_##functionName)GetProcAddress(hDLL, (#functionName "W")))
 
 
 static bool pathIsSlow(LPCTSTR path);
@@ -213,10 +213,8 @@ bool getFileInfo(LPCTSTR path, DWORD file_attributes, SHFILEINFO& shfi, UINT fla
 void clipboardToEnvironment() {
 	bool ok = false;
 	
-	const UINT clipboard_format = ANSI_UNICODE(CF_TEXT, CF_UNICODETEXT);
-	
-	if (IsClipboardFormatAvailable(clipboard_format) && OpenClipboard(NULL)) {
-		const HGLOBAL clipboard_mem = static_cast<HGLOBAL>(GetClipboardData(clipboard_format));
+	if (IsClipboardFormatAvailable(CF_UNICODETEXT) && OpenClipboard(NULL)) {
+		const HGLOBAL clipboard_mem = static_cast<HGLOBAL>(GetClipboardData(CF_UNICODETEXT));
 		if (clipboard_mem) {
 			const LPTSTR clipboard_text = static_cast<LPTSTR>(GlobalLock(clipboard_mem));
 			if (clipboard_text) {
@@ -331,7 +329,7 @@ void setClipboardText(LPCTSTR text) {
 	GlobalUnlock(hMem);
 	
 	// Pass the buffer to the clipboard.
-	SetClipboardData(ANSI_UNICODE(CF_TEXT, CF_UNICODETEXT), hMem);
+	SetClipboardData(CF_UNICODETEXT, hMem);
 	CloseClipboard();
 }
 
@@ -627,8 +625,6 @@ bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path) {
 		}
 	}
 	
-	strToW(MAX_PATH, wszLinkFile, link_file);
-	
 	// Resolve the shortcut using the IUniformResourceLocator and IPersistFile interfaces
 	IUniformResourceLocator *purl;
 	if (SUCCEEDED(CoCreateInstance(CLSID_InternetShortcut, NULL, CLSCTX_INPROC_SERVER,
@@ -637,7 +633,7 @@ bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path) {
 		if (SUCCEEDED(purl->QueryInterface(IID_IPersistFile, (void**)&ppf))) {
 			LPTSTR pszURL;
 			HRESULT hr1, hr2;
-			if (SUCCEEDED(hr1 = ppf->Load(wszLinkFile, STGM_READ)) &&
+			if (SUCCEEDED(hr1 = ppf->Load(link_file, STGM_READ)) &&
 					SUCCEEDED(hr2 = purl->GetURL(&pszURL))) {
 				lstrcpyn(target_path, pszURL, MAX_PATH);
 				CoTaskMemFree(pszURL);
@@ -657,7 +653,7 @@ bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path) {
 			IID_IShellLink, (LPVOID*)&psl))) {
 		IPersistFile *ppf;
 		if (SUCCEEDED(psl->QueryInterface(IID_IPersistFile, (void**)&ppf))) {
-			if (SUCCEEDED(ppf->Load(wszLinkFile, STGM_READ)) &&
+			if (SUCCEEDED(ppf->Load(link_file, STGM_READ)) &&
 					SUCCEEDED(psl->Resolve(NULL, MAKELONG(SLR_NO_UI | SLR_NOUPDATE, 1000)))) {
 				psl->GetPath(target_path, MAX_PATH, NULL, 0);
 			}

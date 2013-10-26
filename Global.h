@@ -21,8 +21,6 @@
 
 #include "Resource.h"
 
-typedef ANSI_UNICODE(unsigned char, WORD) UTCHAR;
-
 #include "MyString.h"
 
 
@@ -45,25 +43,6 @@ extern HINSTANCE e_hInst;
 extern HWND e_hwndInvisible;  // Invisible background window
 extern HWND e_hdlgModal;
 extern bool e_bIconVisible;
-
-
-#ifdef UNICODE
-#define strToW(buf, to, from) \
-	const LPCWSTR to = from;
-#else
-#define strToW(buf, to, from) \
-	WCHAR to[buf]; \
-	MultiByteToWideChar(CP_ACP, 0, from, -1, to, arrayLength(to));
-#endif
-
-#ifdef UNICODE
-#define strToA(buf, to, from) \
-	char to[buf]; \
-	WideCharToMultiByte(CP_ACP, 0, from, -1, to, arrayLength(to), NULL, NULL);
-#else
-#define strToA(buf, to, from) \
-	const LPCSTR to = from;
-#endif
 
 
 inline WNDPROC subclassWindow(HWND hwnd, WNDPROC new_window_proc) {
