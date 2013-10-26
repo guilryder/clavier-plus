@@ -73,8 +73,6 @@ enum {
 
 
 namespace app {
-	extern bool e_bReadOnly;
-	
 	void initialize();
 	void terminate();
 }  // app namespace

@@ -996,8 +996,6 @@ Error:
 
 
 void saveShortcuts() {
-	VERIFV(!app::e_bReadOnly);
-	
 	HANDLE hf;
 	for (;;) {
 		hf = CreateFile(e_pszIniFile,

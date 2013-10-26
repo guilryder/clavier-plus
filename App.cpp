@@ -39,8 +39,6 @@ const int maxIniFile = 20;
 
 static TranslatedString s_asToken[tokNotFound];
 
-bool e_bReadOnly;
-
 
 enum CMDLINE_OPTION {
 	cmdoptLaunch,
@@ -49,7 +47,6 @@ enum CMDLINE_OPTION {
 	cmdoptQuit,
 	cmdoptAddText,
 	cmdoptAddCommand,
-	cmdoptReadOnly,
 	
 	cmdoptWithArg,
 	cmdoptLoad = cmdoptWithArg,
@@ -121,8 +118,6 @@ void entryPoint() {
 		}
 	}
 #endif  // ALLOW_MULTIPLE_INSTANCES
-	
-	e_bReadOnly = false;
 	
 	app::initialize();
 	
@@ -220,7 +215,6 @@ static const LPCTSTR cmdline_options[] = {
 	_T("quit"),
 	_T("addtext"),
 	_T("addcommand"),
-	_T("readonly"),
 	_T("load"),
 	_T("merge"),
 	_T("sendkeys"),
@@ -331,11 +325,6 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
 			}
 			
 			switch (cmdopt) {
-				
-				// Set read-only mode
-				case cmdoptReadOnly:
-					e_bReadOnly = true;
-					break;
 				
 				// Set INI filename
 				case cmdoptLoad:
