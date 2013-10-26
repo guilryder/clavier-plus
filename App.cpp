@@ -59,7 +59,7 @@ enum CMDLINE_OPTION {
 static void entryPoint();
 static void initializeLanguages();
 static void runGui(CMDLINE_OPTION cmdopt);
-static CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch);
+static CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch);
 static void processCmdLineAction(CMDLINE_OPTION cmdopt);
 
 static LRESULT CALLBACK prcInvisible(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -222,9 +222,9 @@ static const LPCTSTR cmdline_options[] = {
 
 
 
-// bLaunching is FALSE if the command line is sent by WM_COPYDATA.
+// initial_launch is FALSE if the command line is sent by WM_COPYDATA.
 // Return the action to execute.
-CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
+CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 	bool new_ini_file = false;  // True if loading a new INI file is asked
 	
 	bool in_quote;
@@ -243,7 +243,9 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
 	in_quote = false;
 	
 	CMDLINE_OPTION cmdoptAction = cmdoptNone;
-	bool auto_quit = false;
+	bool can_auto_quit = true;
+	bool try_auto_quit = false;
+	bool default_action = true;
 	LPTSTR mergeable_ini_files[maxIniFile];
 	int mergeable_ini_files_count = 0;
 	
@@ -324,18 +326,19 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
 				}
 			}
 			
+			default_action = false;
 			switch (cmdopt) {
 				
 				// Set INI filename
 				case cmdoptLoad:
-					auto_quit = false;
+					can_auto_quit = false;
 					new_ini_file = true;
 					GetFullPathName(strbuf_arg, arrayLength(e_pszIniFile), e_pszIniFile, NULL);
 					break;
 				
 				// Merge an INI file
 				case cmdoptMerge:
-					auto_quit = false;
+					can_auto_quit = false;
 					if (mergeable_ini_files_count < arrayLength(mergeable_ini_files)) {
 						const LPTSTR ini_file = new TCHAR[lstrlen(strbuf_arg) + 1];
 						lstrcpy(ini_file, strbuf_arg);
@@ -345,7 +348,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
 				
 				// Send keys
 				case cmdoptSendKeys:
-					auto_quit = true;
+					try_auto_quit = true;
 					{
 						Keystroke ks;
 						Shortcut sh(ks);
@@ -358,7 +361,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
 				// Other action
 				default:
 					cmdoptAction = cmdopt;
-					auto_quit = false;
+					can_auto_quit = false;
 					break;
 			}
 			
@@ -368,8 +371,10 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
 		delete [] strbuf_arg;
 	}
 	
+	bool auto_quit = can_auto_quit && try_auto_quit;
+	
 	// Default INI file
-	if (normal_launch && !new_ini_file && !auto_quit) {
+	if (initial_launch && !new_ini_file && !auto_quit) {
 		new_ini_file = true;
 		GetModuleFileName(e_hInst, e_pszIniFile, arrayLength(e_pszIniFile));
 		PathRemoveFileSpec(e_pszIniFile);
@@ -377,22 +382,29 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
 	}
 	
 	if (!e_hdlgModal) {
+		bool config_changed = false;
 		if (new_ini_file) {
 			shortcut::loadShortcuts();
+			config_changed = true;
 		}
 		
 		for (int ini_file = 0; ini_file < mergeable_ini_files_count; ini_file++) {
 			shortcut::mergeShortcuts(mergeable_ini_files[ini_file]);
 			delete [] mergeable_ini_files[ini_file];
+			config_changed = true;
 		}
 		
-		shortcut::saveShortcuts();
+		if (config_changed) {
+			shortcut::saveShortcuts();
+		}
 	}
 	
 	if (cmdoptAction == cmdoptNone) {
-		cmdoptAction = (normal_launch)
-			? ((auto_quit) ? cmdoptQuit : cmdoptLaunch)
-			: ((auto_quit) ? cmdoptLaunch : cmdoptSettings);
+		if (initial_launch) {
+			cmdoptAction = (auto_quit) ? cmdoptQuit : cmdoptLaunch;
+		} else {
+			cmdoptAction = (default_action) ? cmdoptSettings : cmdoptLaunch;
+		}
 	}
 	
 	return cmdoptAction;
