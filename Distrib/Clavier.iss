@@ -1,16 +1,14 @@
 ﻿#ifdef IS_X64
 #define Platform "x64"
 #define PlatformName "64"
-#define Charset "Unicode"
 #else
 #define Platform "Win32"
-#define PlatformName ""
-#define Charset "Unicode"
+#define PlatformName "32"
 #endif
 
 #define RootDir "."
 #define BinDir "."
-#define CompilOutputDir "..\output\" + Platform + "_Release" + Charset + "\"
+#define CompilOutputDir "..\output\" + Platform + "_Release\"
 
 #define AppName "Clavier+"
 #define AppExeName "Clavier.exe"
