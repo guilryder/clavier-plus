@@ -320,7 +320,7 @@ BEGIN
     IDS_BROWSEDIR           "Выберите папку запуска команды."
     IDS_PROGRAMS            "всех программ кроме;только этих программ;"
     IDS_TOOLTIPS            "Добавить новый ярлык;Удалить выбранный ярлык;Изменить выбранный ярлык;Нажмите и перетяните для выбора окна программы;"
-    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&no_shipping=1&tax=0&currency_code=USD"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
 END
 #endif
 
@@ -705,7 +705,7 @@ BEGIN
     IDS_BROWSEDIR           "Startordner zum Ausfьhren des Befehls auswдhlen."
     IDS_PROGRAMS            "alle Programme aber;nur diese Programme;"
     IDS_TOOLTIPS            "Hinzufьgen;Lцschen;Дndern;Programm wдhlen;"
-    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&no_shipping=1&tax=0&currency_code=EUR"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
 END
 
 #endif    // German (Germany) resources
@@ -977,7 +977,7 @@ BEGIN
     IDS_BROWSEDIR           "Choose the startup directory of the command."
     IDS_PROGRAMS            "all programs but;only those programs;"
     IDS_TOOLTIPS            "Add a new shortcut;Delete the selected shortcut;Edit the selected shortcut;Click and drag-drop to select the window of a program;"
-    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&no_shipping=1&tax=0&currency_code=USD"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
 END
 
 #endif    // English (U.S.) resources
@@ -1274,7 +1274,7 @@ BEGIN
     IDS_BROWSEDIR           "Choisissez le rйpertoire de dйmarrage de la commande."
     IDS_PROGRAMS            "tous les programmes sauf;seulement ces programmes;"
     IDS_TOOLTIPS            "Ajouter un nouveau raccourci;Supprimer le raccourci sйlectionnй;Йditer le raccourci sйlectionnй;Cliquer et faire glisser le curseur pour sйlectionner la fenкtre d'un programme;"
-    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&no_shipping=1&tax=0&currency_code=EUR"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
 END
 
 #endif    // French (France) resources
@@ -1540,7 +1540,7 @@ BEGIN
     IDS_BROWSEDIR           "Especifique a pasta de abertura do comando."
     IDS_PROGRAMS            "com qualquer programa, exceto;sу com estes;"
     IDS_TOOLTIPS            "Criar atalho;Apagar o atalho selecionado;Editar o atalho selecionado;Clique, arraste e solte para escolher a janela de um programa;"
-    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&no_shipping=1&tax=0&currency_code=USD"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
 END
 
 #endif    // Portuguese (Brazil) resources
