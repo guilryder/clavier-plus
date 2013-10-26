@@ -18,7 +18,6 @@
 
 
 #include "StdAfx.h"
-#include "Hook.h"
 #include "Keystroke.h"
 
 
@@ -60,7 +59,6 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
 				// Subclass the keystroke control. Display the initial keystroke name.
 				const HWND hwnd_keystroke = GetDlgItem(hDlg, IDCTXT);
 				s_prcKeystrokeCtl = subclassWindow(hwnd_keystroke, prcKeystrokeCtl);
-				keyboard_hook::setCatchAllKeysWindow(hwnd_keystroke);
 				PostMessage(hwnd_keystroke, WM_KEYSTROKE, 0,0);
 				
 				CheckDlgButton(hDlg, IDCCHK_DISTINGUISH_LEFT_RIGHT, s_keystroke.m_sided);
@@ -132,10 +130,6 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	
 	switch (message) {
 		
-		case WM_DESTROY:
-			keyboard_hook::setCatchAllKeysWindow(NULL);
-			break;
-		
 		case WM_LBUTTONDOWN:
 			SetFocus(hWnd);
 			break;
@@ -147,39 +141,34 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		case WM_GETDLGCODE:
 			return DLGC_WANTALLKEYS;
 		
-		// These messages are sent by the keyboard hook. Arguments:
-		// wParam: the virtual key code
-		// lParam: the special keys bitmask
-		//   special_key_index * 2: "left key is down" bit
-		//   special_key_index * 2 + 1: "right key is down" bit
-		case WM_CLAVIER_KEYDOWN:
+		case WM_KEYDOWN:
+		case WM_SYSKEYDOWN:
 			if (s_reset_keystroke) {
 				s_keystroke.reset();
 			}
 			bIsDown = true;
 			// Fall-through
 		
-		case WM_CLAVIER_KEYUP:
+		case WM_KEYUP:
+		case WM_SYSKEYUP:
 			{
 				BYTE vk_typed = static_cast<BYTE>(wParam);
-				const DWORD special_keys_down_mask = static_cast<DWORD>(lParam);
-				
 				// Flags
 				DWORD sided_mod_code = s_keystroke.m_sided_mod_code;
 				bool is_special = false;
 				for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
 					const SPECIALKEY& rspecial_key = e_special_keys[special_key];
-					
+					const BYTE special_vk_right = getRightVkFromLeft(rspecial_key.vk_left);
 					if (vk_typed == rspecial_key.vk || vk_typed == rspecial_key.vk_left
-							|| vk_typed == getRightVkFromLeft(rspecial_key.vk_left)) {
+							|| vk_typed == special_vk_right) {
 						vk_typed = rspecial_key.vk;
 						is_special = true;
 					}
 					
 					const DWORD mod_code = rspecial_key.mod_code;
-					if (special_keys_down_mask & (1L << (special_key * 2))) {
+					if (isKeyDown(rspecial_key.vk_left)) {
 						sided_mod_code |= mod_code;
-					} else if (special_keys_down_mask & (1L << (special_key * 2 + 1))) {
+					} else if (isKeyDown(special_vk_right)) {
 						sided_mod_code |= mod_code << kRightModCodeOffset;
 					} else {
 						sided_mod_code &= ~mod_code;
@@ -304,6 +293,23 @@ bool Keystroke::match(const Keystroke& ks) const {
 		VERIF(m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
 	}
 	return true;
+}
+
+
+void Keystroke::registerHotKey() {
+	const WORD mod_code = getUnsidedModCode();
+	if (m_vk == VK_NUMPAD5) {
+		RegisterHotKey(NULL, MAKEWORD(VK_CLEAR, mod_code), mod_code, VK_CLEAR);
+	}
+	RegisterHotKey(NULL, MAKEWORD(m_vk, mod_code), mod_code, m_vk);
+}
+
+bool Keystroke::unregisterHotKey() {
+	const WORD mod_code = getUnsidedModCode();
+	if (m_vk == VK_NUMPAD5) {
+		UnregisterHotKey(NULL, MAKEWORD(VK_CLEAR, mod_code));
+	}
+	return toBool(UnregisterHotKey(NULL, MAKEWORD(m_vk, mod_code)));
 }
 
 

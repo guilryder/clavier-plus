@@ -25,21 +25,6 @@ struct GETFILEICON;
 
 namespace shortcut {
 
-class Shortcut;
-
-class GuardList {
-public:
-	GuardList() {
-		EnterCriticalSection(&s_critical_section);
-	}
-	
-	~GuardList() {
-		LeaveCriticalSection(&s_critical_section);
-	}
-	
-	static CRITICAL_SECTION s_critical_section;
-};
-
 class Shortcut : public Keystroke {
 public:
 	
@@ -72,31 +57,13 @@ public:
 	String* getPrograms() const;
 	void cleanPrograms();
 	
-	int getMatchingLevel() const {
-		return m_matching_level;
-	}
+	bool match(const Keystroke& ks, LPCTSTR pszProgram) const;
+	bool testConflict(const Keystroke& ks, const String asProgram[], bool bProgramsOnly) const;
 	
-	void setMatchingLevel(int level) {
-		m_matching_level = level;
-	}
 	
-	// Computes and return the matching level of the shortcut against a keystroke and environment.
-	// Does not store the matching level.
-	//
-	// Args:
-	//   ks: The typed keystroke.
-	//   process_name: The basename of the process of the focused window, e.g. "notepad.exe";
-	//     never empty, null if no process detected.
-	//   window_title: The title of the focused window; never null, empty string if no focused window.
-	int computeMatchingLevel(const Keystroke& ks, LPCTSTR process_name, LPCTSTR window_title) const;
+protected:
 	
-	// Tells if the shortcut programs conditions matches the given process name and window title.
-	//
-	// Args:
-	//   process_name: The basename of the process of the focused window, e.g. "notepad.exe";
-	//     never empty, null if no process detected.
-	//   window_title: The title of the focused window; never null, empty string if no focused window.
-	bool matchProgram(LPCTSTR process_name, LPCTSTR window_title) const;
+	bool containsProgram(LPCTSTR pszProgram) const;
 	
 	//------------------------------------------------------------------------
 	// GUI support
@@ -180,47 +147,10 @@ public:
 private:
 	
 	Shortcut* m_next_shortcut;
-	
-	// The matching level of a shortcut against a multi-keystroke and its environment is not boolean,
-	// because of inheritance. For example, when matching against "match.exe", a keystroke with
-	// "these programs: match.exe" will have a higher matching level than a keystroke with only
-	// "all programs but: none". The matching level is zero if the shortcut does not match, strictly
-	// positive if it matches.
-	int m_matching_level;
 };
 
 const int nbShowOption = 3;
 extern const int aiShowOption[nbShowOption];
-
-struct MATCHING_RESULT {
-	int matching_shortcuts_count;
-	int max_matching_level;  // < 0 of no shortcut matches
-};
-
-extern MATCHING_RESULT e_matching_result;
-
-// Computes the matching level of all shortcuts against a keystroke and a program. Should not be
-// called while the main dialog box is displayed. Should not be called concurrently. Stores the
-// result in e_matching_result.
-//
-// Args:
-//   ks: The typed keystroke.
-//   process_name: The basename of the process of the focused window, e.g. "notepad.exe";
-//     can be null or empty.
-//   window_title: The title of the focused window; can be null or empty.
-void computeAllMatchingLevels(const Keystroke& ks, LPCTSTR process_name, LPCTSTR window_title);
-
-// Finds the first shortcut having at least a given matching level, starting from a given shortcut
-// in the linked list. Should not be called while the main dialog box is displayed.
-//
-// Args:
-//   from_this: The shortcut from which to start the search. If it is marked, it will be returned.
-//     Returns NULL if from_this is NULL.
-//   min_matching_level: The minimum matching level of the shortcuts to return.
-//
-// Returns:
-//   The first suitable shortcut from from_this, NULL if none is found.
-Shortcut* getNextMatching(Shortcut* from_this, int min_matching_level);
 
 // Initializes the namespace variables. Should be called once.
 void initialize();
@@ -230,6 +160,10 @@ void terminate();
 
 // Returns the first shortcut of the linked list.
 Shortcut* getFirst();
+
+// Find a shortcut in the linked list
+// Should not be called while the main dialog box is displayed
+Shortcut* find(const Keystroke& ks, LPCTSTR program);
 
 void loadShortcuts();
 void mergeShortcuts(LPCTSTR pszIniFile);

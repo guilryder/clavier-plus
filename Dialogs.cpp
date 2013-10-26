@@ -91,7 +91,6 @@ void initializeCurrentLanguage() {
 
 
 INT_PTR showMainDialogModal(UINT initial_command) {
-	shortcut::GuardList guard;
 	return i18n::dialogBox(IDD_MAIN, NULL, prcMain, initial_command);
 }
 
@@ -539,6 +538,11 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 					delete (Shortcut*)lvi.lParam;
 				}
 				ListView_DeleteAllItems(s_hwnd_list);
+				
+				for (Shortcut* psh = shortcut::getFirst(); psh; psh = psh->getNext()) {
+					psh->registerHotKey();
+				}
+				
 				EndDialog(e_hdlgMain, IDCANCEL);
 			}
 			break;
@@ -559,14 +563,26 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 					}
 				}
 				
-				// Get all shortcuts from the list.
+				// Get all shortcuts from the list, check unicity
 				const int nbItem = ListView_GetItemCount(s_hwnd_list);
 				Shortcut **const ash = new Shortcut*[nbItem];
 				LVITEM lvi;
 				lvi.mask = LVIF_PARAM;
 				for (lvi.iItem = 0; lvi.iItem < nbItem; lvi.iItem++) {
 					ListView_GetItem(s_hwnd_list, &lvi);
-					ash[lvi.iItem] = reinterpret_cast<Shortcut*>(lvi.lParam);
+					Shortcut *const psh = ash[lvi.iItem] = reinterpret_cast<Shortcut*>(lvi.lParam);
+					String* const asProgram = psh->getPrograms();
+					for (int i = 0; i < lvi.iItem; i++) {
+						if (ash[i]->testConflict(*psh, asProgram, psh->m_bProgramsOnly)) {
+							TCHAR pszHotKey[bufHotKey];
+							psh->getKeyName(pszHotKey);
+							messageBox(e_hdlgMain, ERR_SHORTCUT_DUPLICATE, MB_ICONERROR, pszHotKey);
+							delete [] asProgram;
+							delete [] ash;
+							return;
+						}
+					}
+					delete [] asProgram;
 				}
 				
 				// Create a valid linked list from the list box
@@ -575,6 +591,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				for (int i = nbItem; --i >= 0;) {
 					Shortcut *const psh = ash[i];
 					psh->resetIcons();
+					psh->registerHotKey();
 					psh->addToList();
 				}
 				delete [] ash;
@@ -683,7 +700,9 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 					
 					// Delete item, hotkey, and shortcut object
 					ListView_DeleteItem(s_hwnd_list, lvi.iItem);
-					delete (Shortcut*)lvi.lParam;
+					Shortcut *const psh = reinterpret_cast<Shortcut*>(lvi.lParam);
+					psh->unregisterHotKey();
+					delete psh;
 				}
 				
 				// Select an other item and update
@@ -974,6 +993,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				int nbShortcut = 0, nbShortcutIcon = 0;
 				for (Shortcut *psh = shortcut::getFirst(); psh; psh = psh->getNext()) {
 					Shortcut *const pshCopy = new Shortcut(*psh);
+					pshCopy->unregisterHotKey();
 					addItem(pshCopy, (s_psh == psh));
 					nbShortcut++;
 					if (pshCopy->m_bCommand) {

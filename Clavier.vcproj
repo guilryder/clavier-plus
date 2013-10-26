@@ -495,14 +495,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Hook.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Hook.h"
-			>
-		</File>
-		<File
 			RelativePath=".\I18n.cpp"
 			>
 		</File>

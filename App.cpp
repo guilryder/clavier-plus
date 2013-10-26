@@ -20,7 +20,6 @@
 #include "StdAfx.h"
 #include "App.h"
 #include "Dialogs.h"
-#include "Hook.h"
 #include "Shortcut.h"
 
 #ifdef _DEBUG
@@ -185,18 +184,81 @@ void runGui(CMDLINE_OPTION cmdopt) {
 	// Create the traybar icon
 	updateTrayIcon(NIM_ADD);
 	
-	keyboard_hook::install();
-	
 	processCmdLineAction(cmdopt);
 	
 	// Message loop
+	DWORD timeMinimum = 0;
+	DWORD timeLast = GetTickCount();
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0)) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		if (msg.message == WM_HOTKEY) {
+			// Shortcut
+			
+			if (msg.time < timeLast) {
+				timeMinimum = 0;
+			}
+			if (msg.time < timeMinimum) {
+				goto Next;
+			}
+			
+			Keystroke ks;
+			ks.m_vk = Keystroke::filterVK((BYTE)HIWORD(msg.lParam));
+			ks.m_sided_mod_code = LOWORD(msg.lParam);
+			ks.m_sided = true;
+			const HWND hwndFocus = Keystroke::getKeyboardFocus();
+			
+			// Test for right special keys
+			for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
+				const DWORD mod_code = e_special_keys[special_key].mod_code;
+				const BYTE vk_left = e_special_keys[special_key].vk_left;
+				const BYTE vk_right = getRightVkFromLeft(vk_left);
+				if (ks.m_sided_mod_code & mod_code) {
+					if (isKeyDown(vk_right)) {
+						ks.m_sided_mod_code &= ~mod_code;
+						ks.m_sided_mod_code |= mod_code << kRightModCodeOffset;
+					}
+				}
+			}
+			
+			// Get the toggle keys state, for conditions checking
+			static const int avkCond[] =
+			{
+				VK_CAPITAL, VK_NUMLOCK, VK_SCROLL,
+			};
+			for (int i = 0; i < condTypeCount; i++) {
+				ks.m_aCond[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
+			}
+			
+			// Get the current program, for conditions checking
+			TCHAR pszProcess[MAX_PATH];
+			if (!getWindowProcessName(hwndFocus, pszProcess)) {
+				*pszProcess = _T('\0');
+			}
+			
+			Shortcut *const psh = shortcut::find(ks, (*pszProcess) ? pszProcess : NULL);
+			
+			if (psh) {
+				if (psh->execute(true)) {
+					timeMinimum = GetTickCount();
+				}
+			} else {
+				// No matching shortcut found: simulate the keystroke
+				// without catching it with an hotkey, to perform default processing
+				ks.unregisterHotKey();
+				ks.simulateTyping(hwndFocus, false);
+				ks.registerHotKey();
+			}
+			
+		} else {
+			// Other message
+			
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		
+	Next:
+		timeLast = msg.time;
 	}
-	
-	keyboard_hook::uninstall();
 	
 	// Delete traybar icon
 	updateTrayIcon(NIM_DELETE);
@@ -498,7 +560,6 @@ Destroy:
 	} else if (message == WM_COPYDATA) {
 		// Execute command line
 		
-		shortcut::GuardList guard;
 		const COPYDATASTRUCT& cds = *reinterpret_cast<const COPYDATASTRUCT*>(lParam);
 		if (cds.dwData) {
 			processCmdLineAction(execCmdLine((LPCTSTR)cds.lpData, false));
@@ -530,7 +591,6 @@ void updateTrayIcon(DWORD message) {
 
 
 UINT displayTrayIconMenu() {
-	shortcut::GuardList guard;
 	const HWND hwnd = e_hwndInvisible;
 	
 	const HMENU all_menus = i18n::loadMenu(IDM_CONTEXT);

@@ -98,6 +98,9 @@ public:
 	void serialize(LPTSTR psz);
 	void simulateTyping(HWND hwndFocus, bool bSpecialKeys = true) const;
 	
+	void registerHotKey();
+	bool unregisterHotKey();
+	
 	bool match(const Keystroke& ks) const;
 	
 	bool canReleaseSpecialKeys() const {

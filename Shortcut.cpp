@@ -24,8 +24,6 @@ namespace shortcut {
 
 static Shortcut* s_first_shortcut;
 
-CRITICAL_SECTION GuardList::s_critical_section;
-
 const int aiShowOption[nbShowOption] = {
 	SW_NORMAL, SW_MINIMIZE, SW_MAXIMIZE,
 };
@@ -53,15 +51,25 @@ const LPCTSTR pszLineSeparator = _T("-\r\n");
 
 void initialize() {
 	s_first_shortcut = NULL;
-	InitializeCriticalSection(&GuardList::s_critical_section);
 }
 
 void terminate() {
-	DeleteCriticalSection(&GuardList::s_critical_section);
 }
 
 Shortcut* getFirst() {
 	return s_first_shortcut;
+}
+
+Shortcut* find(const Keystroke& ks, LPCTSTR program) {
+	Shortcut *best_shortcut = NULL;
+	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
+		if (shortcut->match(ks, program)) {
+			if (!best_shortcut || !best_shortcut->m_bProgramsOnly) {
+				best_shortcut = shortcut;
+			}
+		}
+	}
+	return best_shortcut;
 }
 
 
@@ -398,7 +406,22 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 	}
 	
 	// Valid shortcut
-	return toBool(m_vk);
+	VERIF(m_vk);
+	
+	// No conflict between shortcuts, except concerning programs:
+	// there can be one programs-conditions-less shortcut
+	// and any count of shortcuts having different programs conditions
+	String *const asProgram = getPrograms();
+	bool ok = true;
+	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
+		if (shortcut->testConflict(*this, asProgram, m_bProgramsOnly)) {
+			ok = false;
+			break;
+		}
+	}
+	delete [] asProgram;
+	
+	return ok;
 }
 
 
@@ -439,6 +462,7 @@ bool Shortcut::execute(bool bFromHotkey) const {
 			abKeyboardNew[rspecial_key.vk_left] =
 			abKeyboardNew[getRightVkFromLeft(rspecial_key.vk_left)] = 0;
 		}
+		abKeyboardNew[m_vk] = 0;
 		SetKeyboardState(abKeyboardNew);
 		
 		if (bReleaseControl) {
@@ -598,6 +622,9 @@ bool Shortcut::execute(bool bFromHotkey) const {
 								TCHAR pszCode[5];
 								wsprintf(pszCode, _T("0%u"), (WORD)*psz);
 								
+								ks.m_vk = VK_MENU;
+								ks.m_sided_mod_code = 0;
+								const bool bAltIsHotKey = ks.unregisterHotKey();
 								const BYTE scanCodeAlt = (BYTE)MapVirtualKey(VK_MENU, 0);
 								keybd_event(VK_MENU, scanCodeAlt, 0, 0);
 								
@@ -609,6 +636,9 @@ bool Shortcut::execute(bool bFromHotkey) const {
 								}
 								
 								keybd_event(VK_MENU, scanCodeAlt, KEYEVENTF_KEYUP, 0);
+								if (bAltIsHotKey) {
+									ks.registerHotKey();
+								}
 								
 							} else {
 								const BYTE bFlags = HIBYTE(wKey);
@@ -624,7 +654,11 @@ bool Shortcut::execute(bool bFromHotkey) const {
 									ks.m_sided_mod_code |= MOD_ALT;
 								}
 								
+								const bool bWasRegistered = ks.unregisterHotKey();
 								ks.simulateTyping(hwndFocus);
+								if (bWasRegistered) {
+									ks.registerHotKey();
+								}
 							}
 						}
 						
@@ -632,7 +666,11 @@ bool Shortcut::execute(bool bFromHotkey) const {
 						// Simple brackets: [keystroke]
 						
 						ks.serialize(sInside.get());
+						const bool bWasRegistered = ks.unregisterHotKey();
 						ks.simulateTyping(hwndFocus);
+						if (bWasRegistered) {
+							ks.registerHotKey();
+						}
 					}
 				}
 				
@@ -767,6 +805,42 @@ void commandMouseWheel(LPTSTR pszArg) {
 // Matching
 //------------------------------------------------------------------------
 
+// Test for inclusion
+bool Shortcut::match(const Keystroke& ks, LPCTSTR pszProgram) const {
+	VERIF(Keystroke::match(ks));
+	
+	return (pszProgram && m_sPrograms.isSome() && containsProgram(pszProgram)) ^ (!m_bProgramsOnly);
+}
+
+// Test for intersection
+bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[], bool bProgramsOnly) const {
+	VERIF(bProgramsOnly == m_bProgramsOnly);
+	
+	VERIF(m_vk == ks.m_vk);
+	
+	if (m_sided && ks.m_sided) {
+		VERIF(m_sided_mod_code == ks.m_sided_mod_code);
+	} else {
+		VERIF(getUnsidedModCode() == ks.getUnsidedModCode());
+	}
+	
+	for (int i = 0; i < condTypeCount; i++) {
+		VERIF(m_aCond[i] == condIgnore || ks.m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
+	}
+	
+	if (!m_bProgramsOnly || !bProgramsOnly) {
+		return true;
+	}
+	
+	VERIF(asProgram && m_sPrograms.isSome());
+	for (int i = 0; asProgram[i].isSome(); i++) {
+		if (containsProgram(asProgram[i])) {
+			return true;
+		}
+	}
+	return false;
+}
+
 // Get programs array, NULL if no program.
 String* Shortcut::getPrograms() const {
 	VERIFP(m_sPrograms.isSome(), NULL);
@@ -817,115 +891,28 @@ void Shortcut::cleanPrograms() {
 	delete [] asProgram;
 }
 
-
-bool Shortcut::matchProgram(LPCTSTR process_name, LPCTSTR window_title) const {
-	const LPCTSTR programs = m_sPrograms;
+bool Shortcut::containsProgram(LPCTSTR pszProgram) const {
+	LPCTSTR programs = m_sPrograms;
 	VERIF(*programs);
 	
 	const TCHAR* current_program_begin = programs;
-	bool matches;
 	for (;;) {
-		matches = true;
-		
-		// Compare process name, if not empty in the condition.
-		const TCHAR* const current_process_name_begin = current_program_begin;
-		const TCHAR* current_process_name_end = current_process_name_begin;
-		while (*current_process_name_end
-				&& *current_process_name_end != _T(';')
-				&& *current_process_name_end != _T(':')) {
-			current_process_name_end++;
+		const TCHAR *current_process_end = current_program_begin;
+		while (*current_process_end && *current_process_end != _T(';')) {
+			current_process_end++;
 		}
 		
-		if (current_process_name_end != current_process_name_begin
-				&& process_name
-				&& CSTR_EQUAL != CompareString(LOCALE_USER_DEFAULT, NORM_IGNORECASE,
-					current_process_name_begin,
-					static_cast<int>(current_process_name_end - current_process_name_begin),
-					process_name, -1)) {
-			matches = false;
-		}
-		
-		if (!*current_process_name_end) {
-			break;
-		}
-		current_program_begin = current_process_name_end + 1;
-		
-		// Compare window name, if not empty in the condition.
-		if (*current_process_name_end == _T(':')) {
-			const TCHAR* const current_window_title_begin = current_program_begin;
-			const TCHAR* current_window_title_end = current_window_title_begin;
-			while (*current_window_title_end && *current_window_title_end != _T(';')) {
-				current_window_title_end++;
-			}
-			
-			if (!matchWildcards(current_window_title_begin, window_title, current_window_title_end)) {
-				matches = false;
-			}
-			
-			if (!*current_window_title_end) {
-				break;
-			}
-			current_program_begin = current_window_title_end + 1;
-		}
-		
-		if (matches) {
+		if (CSTR_EQUAL == CompareString(LOCALE_USER_DEFAULT, NORM_IGNORECASE,
+				current_program_begin,
+				static_cast<int>(current_process_end - current_program_begin), pszProgram, -1)) {
 			return true;
 		}
-	}
-	return matches;
-}
-
-int Shortcut::computeMatchingLevel(const Keystroke& ks, LPCTSTR process_name, LPCTSTR window_title) const {
-	if (Keystroke::match(ks)) {
-		if (process_name) {
-			if ((m_sPrograms.isSome() && matchProgram(process_name, window_title)) ^ (!m_bProgramsOnly)) {
-				return m_bProgramsOnly ? 2 : 1;
-			}
-		} else {
-			// No program in the environment: always match.
-			return 1;
+		
+		if (!*current_process_end) {
+			return false;
 		}
+		current_program_begin = current_process_end + 1;
 	}
-	return 0;
-}
-
-MATCHING_RESULT e_matching_result;
-
-void computeAllMatchingLevels(const Keystroke& ks, LPCTSTR process_name, LPCTSTR window_title) {
-	if (strIsEmpty(process_name)) {
-		process_name = NULL;
-	}
-	if (strIsEmpty(window_title)) {
-		window_title = _T('\0');
-	}
-	
-	e_matching_result.matching_shortcuts_count = 0;
-	e_matching_result.max_matching_level = 0;
-	
-	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
-		const int matching_level = shortcut->computeMatchingLevel(ks, process_name, window_title);
-		shortcut->setMatchingLevel(matching_level);
-		if (matching_level == e_matching_result.max_matching_level) {
-			e_matching_result.matching_shortcuts_count++;
-		} else if (matching_level > e_matching_result.max_matching_level) {
-			e_matching_result.max_matching_level = matching_level;
-			e_matching_result.matching_shortcuts_count = 1;
-		}
-	}
-	
-	if (e_matching_result.max_matching_level <= 0) {
-		e_matching_result.matching_shortcuts_count = 0;
-	}
-}
-
-Shortcut* getNextMatching(Shortcut* from_this, int min_matching_level) {
-	while (from_this) {
-		if (from_this->getMatchingLevel() >= min_matching_level) {
-			return from_this;
-		}
-		from_this = from_this->getNext();
-	}
-	return NULL;
 }
 
 
@@ -985,6 +972,7 @@ Error:
 		Shortcut *const psh = new Shortcut(ks);
 		if (psh->load(pszCurrent)) {
 			psh->addToList();
+			psh->registerHotKey();
 		} else {
 			delete psh;
 		}
