@@ -21,12 +21,14 @@
 
 #pragma warning (disable: 4710 4711)
 
-// Require compatibility with Windows 95/NT4 and IE4 only
-#define _WIN32_IE       0x0400
-#define _WIN32_WINNT    0x0400
+// Require compatibility with Windows 2000 or later.
+#define NTDDI_VERSION NTDDI_WIN2K
+#define _WIN32_IE       0x0600
+#define _WIN32_WINNT    0x0500
 #define _WIN32_WINDOWS  0x0500
 #define WINVER          0x0500
 #define STRICT  1
+#include <sdkddkver.h>
 
 // Disable some Microsoft standard library extensions.
 #define __STDC_WANT_SECURE_LIB__  0

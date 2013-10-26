@@ -76,7 +76,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
+				AdditionalDependencies="advapi32.lib comctl32.lib comdlg32.lib msi.lib psapi.lib shell32.lib shlwapi.lib"
 				LinkIncremental="2"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
@@ -162,7 +162,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
+				AdditionalDependencies="advapi32.lib comctl32.lib comdlg32.lib msi.lib psapi.lib shell32.lib shlwapi.lib"
 				LinkIncremental="2"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"

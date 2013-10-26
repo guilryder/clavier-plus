@@ -72,11 +72,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
+				AdditionalDependencies="advapi32.lib comctl32.lib comdlg32.lib msi.lib psapi.lib shell32.lib shlwapi.lib chkstk.obj"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
-				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -158,11 +157,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib chkstk.obj"
+				AdditionalDependencies="advapi32.lib comctl32.lib comdlg32.lib msi.lib psapi.lib shell32.lib shlwapi.lib chkstk.obj"
 				LinkIncremental="1"
 				GenerateManifest="false"
 				IgnoreAllDefaultLibraries="true"
-				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -242,7 +240,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
+				AdditionalDependencies="advapi32.lib comctl32.lib comdlg32.lib msi.lib psapi.lib shell32.lib shlwapi.lib"
 				Version=""
 				LinkIncremental="2"
 				GenerateManifest="false"
@@ -324,7 +322,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comdlg32.lib comctl32.lib shlwapi.lib shell32.lib advapi32.lib psapi.lib"
+				AdditionalDependencies="advapi32.lib comctl32.lib comdlg32.lib msi.lib psapi.lib shell32.lib shlwapi.lib"
 				Version=""
 				LinkIncremental="2"
 				GenerateManifest="false"
@@ -458,6 +456,11 @@
 			</File>
 			<File
 				RelativePath=".\Distrib\Help.html"
+				DeploymentContent="true"
+				>
+			</File>
+			<File
+				RelativePath=".\Distrib\HelpRU.html"
 				DeploymentContent="true"
 				>
 			</File>

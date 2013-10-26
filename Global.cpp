@@ -21,6 +21,7 @@
 #include "Global.h"
 
 #include <intshcut.h>
+#include <msi.h>
 #include <tlhelp32.h>
 #include <psapi.h>
 
@@ -35,9 +36,6 @@ HINSTANCE e_hInst;
 HWND e_hwndInvisible;
 HWND e_hdlgModal;
 bool e_bIconVisible = true;
-
-#define myGetProcAddress(hDLL, functionName) \
-	((PFN_##functionName)GetProcAddress(hDLL, (#functionName "W")))
 
 
 static bool pathIsSlow(LPCTSTR path);
@@ -595,30 +593,11 @@ bool getSpecialFolderPath(int index, LPTSTR path) {
 bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path) {
 	*target_path = _T('\0');
 	
-	// Resolve Installer shortcuts
-	// Use MSI API dynamically, because it is available only under NT-like
-	const HMODULE hMSI = LoadLibrary(_T("Msi.dll"));
-	if (hMSI) {
-		typedef UINT (WINAPI *PFN_MsiGetShortcutTarget)(
-			LPCTSTR szShortcutTarget, LPTSTR szProductCode, LPTSTR szFeatureId, LPTSTR szComponentCode);
-		const PFN_MsiGetShortcutTarget pfnMsiGetShortcutTarget =
-			myGetProcAddress(hMSI, MsiGetShortcutTarget);
-		
-		TCHAR pszProductCode[39];
-		TCHAR pszComponentCode[39];
-		if (pfnMsiGetShortcutTarget && ERROR_SUCCESS ==
-				pfnMsiGetShortcutTarget(link_file, pszProductCode, NULL, pszComponentCode)) {
-			typedef UINT (WINAPI *PFN_MsiGetComponentPath)(
-				LPCTSTR szProduct, LPCTSTR szComponent, LPTSTR lpPathBuf, DWORD* pcchBuf);
-			const PFN_MsiGetComponentPath pfnMsiGetComponentPath =
-				myGetProcAddress(hMSI, MsiGetComponentPath);
-			DWORD buf = MAX_PATH;
-			if (pfnMsiGetComponentPath) {
-				pfnMsiGetComponentPath(pszProductCode, pszComponentCode, target_path, &buf);
-			}
-		}
-		
-		FreeLibrary(hMSI);
+	TCHAR pszProductCode[39];
+	TCHAR pszComponentCode[39];
+	if (MsiGetShortcutTarget(link_file, pszProductCode, NULL, pszComponentCode)) {
+		DWORD buf = MAX_PATH;
+		MsiGetComponentPath(pszProductCode, pszComponentCode, target_path, &buf);
 		
 		if (*target_path) {
 			return true;
