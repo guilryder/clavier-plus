@@ -583,18 +583,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 					shortcut::saveShortcuts();
 				}
 				
-				// Create/delete the auto start key
-				TCHAR pszAutoStartPath[MAX_PATH];
-				const HKEY hKeyAutoStart = openAutoStartKey(pszAutoStartPath);
-				if (hKeyAutoStart) {
-					if (IsDlgButtonChecked(e_hdlgMain, IDCCHK_AUTOSTART)) {
-						RegSetValueEx(hKeyAutoStart, pszValueAutoStart, NULL, REG_SZ,
-							(const BYTE*)pszAutoStartPath, lstrlen(pszAutoStartPath) + 1);
-					} else {
-						RegDeleteValue(hKeyAutoStart, pszValueAutoStart);
-					}
-					RegCloseKey(hKeyAutoStart);
-				}
+				setAutoStartEnabled(toBool(IsDlgButtonChecked(e_hdlgMain, IDCCHK_AUTOSTART)));
 			}
 			
 			EndDialog(e_hdlgMain, id);
@@ -1063,22 +1052,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				}
 				
 				// Auto start
-				TCHAR pszAutoStartPath[MAX_PATH];
-				const HKEY hKeyAutoStart = openAutoStartKey(pszAutoStartPath);
-				if (hKeyAutoStart) {
-					DWORD dwType, dwLen;
-					TCHAR pszPath[MAX_PATH];
-					
-					if (ERROR_SUCCESS == RegQueryValueEx(hKeyAutoStart, pszValueAutoStart, NULL,
-							&dwType, NULL, &dwLen) && dwType == REG_SZ && dwLen < arrayLength(pszPath)) {
-						if (ERROR_SUCCESS == RegQueryValueEx(hKeyAutoStart, pszValueAutoStart, NULL,
-								NULL, (BYTE*)pszPath, &dwLen) && !lstrcmpi(pszPath, pszAutoStartPath)) {
-							CheckDlgButton(hDlg, IDCCHK_AUTOSTART, TRUE);
-						}
-					}
-					
-					RegCloseKey(hKeyAutoStart);
-				}
+				CheckDlgButton(hDlg, IDCCHK_AUTOSTART, isAutoStartEnabled());
 				
 				s_bProcessGuiEvents = true;
 				

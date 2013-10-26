@@ -555,20 +555,6 @@ bool e_bMaximizeMainDialog = false;
 TCHAR e_pszIniFile[MAX_PATH];
 
 
-// Open the key for Clavier+ launching at Windows startup
-HKEY openAutoStartKey(LPTSTR pszPath) {
-	if (!GetModuleFileName(NULL, pszPath, MAX_PATH)) {
-		*pszPath = 0;
-	}
-	HKEY hKey;
-	if (ERROR_SUCCESS != RegOpenKey(HKEY_CURRENT_USER,
-			_T("Software\\Microsoft\\Windows\\CurrentVersion\\Run"), &hKey)) {
-		hKey = NULL;
-	}
-	return hKey;
-}
-
-
 bool Keystroke::askSendKeys(HWND hwnd_parent, Keystroke& rks) {
 	s_keystroke.reset();
 	s_keystroke.m_sided = false;

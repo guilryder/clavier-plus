@@ -332,4 +332,10 @@ extern bool e_bMaximizeMainDialog;
 
 extern TCHAR e_pszIniFile[MAX_PATH];
 
-HKEY openAutoStartKey(LPTSTR path);
+
+//------------------------------------------------------------------------
+// Autostart setting
+//------------------------------------------------------------------------
+
+bool isAutoStartEnabled();
+void setAutoStartEnabled(bool enabled);

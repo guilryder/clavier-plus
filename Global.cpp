@@ -780,3 +780,75 @@ void skipUntilComma(TCHAR*& chr_ptr, bool unescape) {
 		*output = _T('\0');
 	}
 }
+
+
+//------------------------------------------------------------------------
+// Autostart setting
+// Persisted in the Registry under the key autostart_key, in a value
+// named autostart_value.
+//------------------------------------------------------------------------
+
+static const TCHAR autostart_key[] = _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
+static const LPCTSTR autostart_value = pszApp;
+
+static HKEY openAutoStartKey(LPTSTR pszPath);
+
+// Open the Registry key for the auto-start setting.
+//
+// Also stores in autostart_path_buf the string to store under the key for the value named
+// autostart_value to enable auto-start, that is the path of the Clavier+ executable.
+// Expected to have a capacity >= MAX_PATH, set to empty string on error.
+//
+// Returns the opened key, NULL on error.
+// The caller is responsible for closing the key with RegCloseKey().
+HKEY openAutoStartKey(LPTSTR autostart_path_buf) {
+	if (!GetModuleFileName(NULL, autostart_path_buf, MAX_PATH)) {
+		*autostart_path_buf = _T('\0');
+	}
+	HKEY hKey;
+	if (ERROR_SUCCESS != RegOpenKey(HKEY_CURRENT_USER, autostart_key, &hKey)) {
+		hKey = NULL;
+	}
+	return hKey;
+}
+
+bool isAutoStartEnabled() {
+	bool enabled = false;
+	
+	TCHAR autostart_path_buf[MAX_PATH];
+	const HKEY autostart_hKey = openAutoStartKey(autostart_path_buf);
+	if (!autostart_hKey) {
+		return enabled;
+	}
+	
+	DWORD type, size;
+	TCHAR current_path[MAX_PATH];
+	
+	if (ERROR_SUCCESS == RegQueryValueEx(autostart_hKey, autostart_value, NULL,
+			&type, NULL, &size) && type == REG_SZ && size < sizeof(current_path)) {
+		if (ERROR_SUCCESS == RegQueryValueEx(autostart_hKey, autostart_value, NULL,
+					NULL, (BYTE*)current_path, &size) &&
+				!lstrcmpi(current_path, autostart_path_buf)) {
+			enabled = true;
+		}
+	}
+	
+	RegCloseKey(autostart_hKey);
+	return enabled;
+}
+
+void setAutoStartEnabled(bool enabled) {
+	TCHAR autostart_path_buf[MAX_PATH];
+	const HKEY autostart_hKey = openAutoStartKey(autostart_path_buf);
+	if (!autostart_hKey) {
+		return;
+	}
+	
+	if (enabled) {
+		RegSetValueEx(autostart_hKey, autostart_value, NULL, REG_SZ,
+				(const BYTE*)autostart_path_buf, (lstrlen(autostart_path_buf) + 1) * sizeof(TCHAR));
+	} else {
+		RegDeleteValue(autostart_hKey, autostart_value);
+	}
+	RegCloseKey(autostart_hKey);
+}
