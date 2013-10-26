@@ -242,7 +242,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
 	
 	in_quote = false;
 	
-	CMDLINE_OPTION cmdopt = cmdoptNone;
+	CMDLINE_OPTION cmdoptAction = cmdoptNone;
 	bool auto_quit = false;
 	LPTSTR mergeable_ini_files[maxIniFile];
 	int mergeable_ini_files_count = 0;
@@ -357,7 +357,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
 				
 				// Other action
 				default:
-					cmdopt = cmdopt;
+					cmdoptAction = cmdopt;
 					auto_quit = false;
 					break;
 			}
@@ -389,13 +389,13 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool normal_launch) {
 		shortcut::saveShortcuts();
 	}
 	
-	if (cmdopt == cmdoptNone) {
-		cmdopt = (normal_launch)
+	if (cmdoptAction == cmdoptNone) {
+		cmdoptAction = (normal_launch)
 			? ((auto_quit) ? cmdoptQuit : cmdoptLaunch)
 			: ((auto_quit) ? cmdoptLaunch : cmdoptSettings);
 	}
 	
-	return cmdopt;
+	return cmdoptAction;
 }
 
 
