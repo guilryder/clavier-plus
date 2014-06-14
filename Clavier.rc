@@ -1492,7 +1492,7 @@ BEGIN
             MENUITEM "&Esperar: [{Wait,<duração>}]", ID_TEXT_CMD_WAIT
             MENUITEM "&Selecionar janela: [{Focus,<duração>,<janela>}]", ID_TEXT_CMD_FOCUS
             MENUITEM "&Copiar na Área de Armazenagem: [{Copy,<texto>}]", ID_TEXT_CMD_COPY
-            MENUITEM "&Botão do mouse: [{MouseButton,E/M/D(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "&Botão do mouse: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "M&ueve el mouse (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Mue&ve el mouse (rel.): [{MouseMoveToFocus,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Mueve el &mouse: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
