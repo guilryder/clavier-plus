@@ -30,6 +30,8 @@ const int aiShowOption[nbShowOption] = {
 
 static const int s_acxColOrig[] = { 40, 20, 20 };
 
+static const WCHAR kUtf16LittleEndianBom = 0xFEFF;
+
 
 enum MOUSEMOVE_TYPE {
 	mouseMoveAbsolute,
@@ -959,6 +961,8 @@ Error:
 	LPTSTR pszCurrent;
 	if (IsTextUnicode(pbBuffer, size, NULL)) {
 		pszCurrent = reinterpret_cast<LPTSTR>(pbBuffer);
+		if (*pszCurrent == kUtf16LittleEndianBom)
+			pszCurrent++;
 	} else {
 		LPSTR asz = reinterpret_cast<LPSTR>(pbBuffer);
 		const int buf = lstrlenA(asz) + 1;
@@ -996,8 +1000,8 @@ void saveShortcuts() {
 	
 	TCHAR psz[1024];
 	
-	wsprintf(psz, _T("%s=%s\r\n"),
-		getToken(tokLanguage), getToken(tokLanguageName));
+	wsprintf(psz, _T("%c%s=%s\r\n"),
+		kUtf16LittleEndianBom, getToken(tokLanguage), getToken(tokLanguageName));
 	writeFile(hf, psz);
 	
 	wsprintf(psz, _T("%s=%d,%d,%d,%d\r\n"),
