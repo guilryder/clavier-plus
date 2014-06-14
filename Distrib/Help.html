@@ -480,47 +480,45 @@ Pause
 
 <p>You can access the last version of this FAQ in <a href="http://utilfr42.free.fr/util/Clavier.php#faq">Clavier+ page</a>.</p>
 
-<div id="windows" class="faq-question">1. Is Clavier+ compatible with Windows Vista and Windows 7?</div>
-<div class="faq-answer"><p>Yes. The new setup program does not require any administrative rights and will put Clavier+ files into your user account directory.</p></div>
+<div id="windows" class="faq-question">1. Which Windows versions is Clavier+ compatible with?</div>
+<div class="faq-answer"><p>The latest Clavier+ version is compatible with all NT family Windows versions: 2000, NT, XP, Vista, 7, 8. The <a href="#old">older Clavier+ versions</a> are compatible with Windows 95/98/ME too.</p></div>
 <div id="incompatprog" class="faq-question">2. Clavier+ can’t write text in <i>MyFavoriteProgram</i>!</div>
 <div class="faq-answer"><p>Some programs handle the keyboard in a non-standard way, preventing Clavier+ from writing text. To get around this problem, surround your text with <kbd>[|</kbd> and <kbd>|]</kbd>, as below:</p><p><kbd>[|My text|]</kbd></p></div>
-<div id="unicode" class="faq-question">3. How to write Unicode or UTF-8 characters (Arabic, Chinese, Greek, etc.)?</div>
-<div class="faq-answer"><p>Download the <a href="http://utilfr42.free.fr/dn/ClavierUnicode.zip">Unicode version of Clavier+</a>. This version is experimental, not as up-to-date as the standard version, and available only as a Zip archive (no setup program).</p></div>
-<div id="games" class="faq-question">4. Does Clavier+ work with games?</div>
+<div id="games" class="faq-question">3. Does Clavier+ work with games?</div>
 <div class="faq-answer"><p>Most of the time, no. Games access the keyboard in low-level, for various raisons: speed, cheat protection.</p></div>
-<div id="textformat" class="faq-question">5. How to write formatted text, e.g. bold, hyperlinks?</div>
+<div id="textformat" class="faq-question">4. How to write formatted text, e.g. bold, hyperlinks?</div>
 <div class="faq-answer"><p>There is no standard way to format text: the exact procedure depends on which program you want to write text in (Word, Excel, OpenOffice).</p><p>The AutoText feature of Word allows to insert any formatted text block. With other programs, you can use keyboard shortcuts. For example, <kbd>Ctrl+B</kbd> often toggles the bold attribute. To make a word bold, one can write:</p><p><kbd>A [Ctrl+B]bold[Ctrl+B] word</kbd></p><p>Again, formatting hotkeys depend on the program you are using. Please refer to its documentation for more details.</p></div>
-<div id="maclinux" class="faq-question">6. Is Clavier+ available on Mac, Linux, or any other non-Windows OS?</div>
+<div id="maclinux" class="faq-question">5. Is Clavier+ available on Mac, Linux, or any other non-Windows OS?</div>
 <div class="faq-answer"><p>No, Clavier+ is for Windows only. In particular, there is no Mac or Linux version, and I don’t know if software equivalent to Clavier+ exists for these systems.</p></div>
-<div id="password" class="faq-question">7. How to protect Clavier+ with a password?</div>
+<div id="password" class="faq-question">6. How to protect Clavier+ with a password?</div>
 <div class="faq-answer"><p>Acess to Clavier+ shortcut list cannot be password protected. Indeed, storing data in a secure fashion is both difficult and restrictive in terms of available features. I strongly recommend using software specialized in passwords storage, such as <a href="http://keepass.sourceforge.net/">KeePass</a>, <a href="http://passwordsafe.sourceforge.net/">Password Safe</a> or <a href="http://www.roboform.com/fr/">RoboForm</a>.</p></div>
-<div id="numpadcomma" class="faq-question">8. How to make the numpad dot key write a comma?</div>
+<div id="numpadcomma" class="faq-question">7. How to make the numpad dot key write a comma?</div>
 <div class="faq-answer"><p>Click the plus shaped button, choose <i>Write Text</i>, press the numpad dot key, then click the <i>OK</i> button. Write a comma in the <i>Write text</i> area.</p></div>
-<div id="specialfolder" class="faq-question">9. How to create a shortcut to a special folder: My computer, Control panel, …?</div>
+<div id="specialfolder" class="faq-question">8. How to create a shortcut to a special folder: My computer, Control panel, …?</div>
 <div class="faq-answer"><p>In Windows Explorer, create a Windows shortcut to the special folder: press the right mouse button on the special folder, drag the mouse to another folder (for example <kbd>C:\</kbd>), release the buton and choose <i>Create shortcut here</i> in the popup menu.</p><p>Then, in Clavier+, create a <i>Launch a program</i> keyboard shortcut that executes the Windows shortcut you have just created. You have to write the full path manually, and to append the <kbd>.lnk</kbd> extension. For example: <kbd>C:\My computer.lnk</kbd> if you have created a shortcut named <kbd>My computer</kbd> in the folder <kbd>C:\</kbd>.</p><p>Some special folders can be opened without the need for a shortcut. For instance, <kbd>::{20d04fe0-3aea-1069-a2d8-08002b30309d}</kbd> opens My computer. The CLSIDs marked as <i>supported by Run</i> in <a href="http://www.autohotkey.com/docs/misc/CLSID-List.htm">this list</a> are also available.</p></div>
-<div id="explorertreepane" class="faq-question">10. How to open a folder in Explorer and display the tree pane?</div>
+<div id="explorertreepane" class="faq-question">9. How to open a folder in Explorer and display the tree pane?</div>
 <div class="faq-answer"><p>In the shortcut command line, insert <kbd>explorer /e,</kbd> before the folder path; make sure to write a comma after <kbd>/e</kbd>. For example: <kbd>explorer /e, C:\</kbd></p></div>
-<div id="hideicon" class="faq-question">11. How to remove Clavier+ icon from the traybar?</div>
+<div id="hideicon" class="faq-question">10. How to remove Clavier+ icon from the traybar?</div>
 <div class="faq-answer"><p>Launch Clavier+ then quit it. Double-click on the <kbd>Clavier.ini</kbd> file located in the same directory than Clavier+. In the second line, that begins with <kbd>Size=</kbd>, replace the <i>last</i> zero by the digit one. For example: <kbd>Size=923,501,0,0</kbd> should become <kbd>Size=923,501,0,1</kbd>.</p><p>As Clavier+ icon will no more be visible, you will have to launch Clavier+ twice to display its configuration window (once to launch it, once to display the window).</p></div>
-<div id="linereturn" class="faq-question">12. How to write a line return with a shortcut?</div>
+<div id="linereturn" class="faq-question">11. How to write a line return with a shortcut?</div>
 <div class="faq-answer"><p>Two solutions:</p><ul><li>insert a line return in the edit box, by pressing the <kbd>Return</kbd> key,</li><li>if the previous solution doesn’t work, write the code <kbd>[ENTER]</kbd><br/>The shortcut will probably have to pause for a short time to let the return key be processed: <kbd>[][ENTER]</kbd></li></ul></div>
-<div id="simulkey" class="faq-question">13. How to simulate the key <i>XYZ</i></div>
+<div id="simulkey" class="faq-question">12. How to simulate the key <i>XYZ</i></div>
 <div class="faq-answer"><p>Click the arrow-shape button, choose the command <i>Simulate a Keystroke</i>.</p></div>
-<div id="soundvolume" class="faq-question">14. How to change the sound volume?</div>
+<div id="soundvolume" class="faq-question">13. How to change the sound volume?</div>
 <div class="faq-answer"><p>There are three keys related to sound volume:</p><ul><li>mute: code <kbd>[#173]</kbd></li><li>higher volume: code <kbd>[#175]</kbd></li><li>lower volume: code <kbd>[#174]</kbd></li></ul><p>To simulate those keys and change the volume with your keyboard, create a shortcut with Clavier+ in text mode, then write the key code in the <i>Write text</i> area, between brackets.</p><p>You can use the program <a href="http://utilfr42.free.fr/dn/VolumeManager.exe">VolumeManager</a> to adjust the volume finely.</p></div>
-<div id="musicplayer" class="faq-question">15. How to control a music player: next track, pause, etc.?</div>
+<div id="musicplayer" class="faq-question">14. How to control a music player: next track, pause, etc.?</div>
 <div class="faq-answer"><p>There are four keys related to music players:</p><ul><li>next track: code <kbd>[#176]</kbd></li><li>previous track: code <kbd>[#177]</kbd></li><li>stop: code <kbd>[#178]</kbd></li><li>play/pause: code <kbd>[#179]</kbd></li></ul><p>These keys work even if the music player in not the active application. To use them, create a shortcut with Clavier+ in text mode, then write the key code in the <i>Write text</i> area, between brackets.</p></div>
-<div id="browseractions" class="faq-question">16. How to control the Internet browser: previous page, favorites, etc.?</div>
+<div id="browseractions" class="faq-question">15. How to control the Internet browser: previous page, favorites, etc.?</div>
 <div class="faq-answer"><p>There are several keys related to Internet browsers:</p><ul><li>back: code <kbd>[#166]</kbd></li><li>forward: code <kbd>[#167]</kbd></li><li>refresh: code <kbd>[#168]</kbd></li><li>stop: code <kbd>[#169]</kbd></li><li>search: code <kbd>[#170]</kbd></li><li>favorites: code <kbd>[#171]</kbd></li><li>home: code <kbd>[#172]</kbd></li><li>e-mail: code <kbd>[#180]</kbd></li><li>media player: code <kbd>[#181]</kbd></li><li>application 1: code <kbd>[#182]</kbd></li><li>application 2: code <kbd>[#183]</kbd></li></ul><p>These keys work only if the Internet browser is active.</p></div>
-<div id="autostartup" class="faq-question">17. The checkbox <i>Launch Clavier+ at Windows startup</i> doesn’t work!</div>
+<div id="autostartup" class="faq-question">16. The checkbox <i>Launch Clavier+ at Windows startup</i> doesn’t work!</div>
 <div class="faq-answer"><p>Create a shortcut to <kbd>Clavier.exe</kbd> in <i>Start Menu/Programs/Startup</i>. To do this, click with the right button on <kbd>Clavier.exe</kbd>, keep the button down and drag the mouse to the Start menu, then <i>Programs</i>, then <i>Startup</i>, and release the mouse button. Choose <i>Create a shortcut here</i>.</p></div>
-<div id="twoprograms" class="faq-question">18. How to launch two programs at once?</div>
+<div id="twoprograms" class="faq-question">17. How to launch two programs at once?</div>
 <div class="faq-answer"><p>The solution is to enclose the path of the two programs in double brackets, in the <kbd>Write text</kbd> area. For example, to launch notepad and the calculator:</p><pre>[[notepad.exe]][[calc.exe]]</pre></div>
-<div id="mouse" class="faq-question">19. How to simulate a mouse click, a double-click, a right click?</div>
+<div id="mouse" class="faq-question">18. How to simulate a mouse click, a double-click, a right click?</div>
 <div class="faq-answer"><p>You need to create a shortcut of type <i>Write text</i> and use the <kbd>[{MouseButton,<i>code</i>}]</kbd> special command. For example, to simulate a left click: <kbd>[{MouseButton,L}]</kbd>. For a double-click, execute two left clicks: <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>. For a right click, use the <kbd>R</kbd> code: <kbd>[{MouseButton,R}]</kbd>.</p></div>
-<div id="complicatedactions" class="faq-question">20. How to do more complicated things, like writing the current date</div>
+<div id="complicatedactions" class="faq-question">19. How to do more complicated things, like writing the current date</div>
 <div class="faq-answer"><p>You can create a VBScript program and ask Clavier+ to execute it. The generic procedure is the following: launch Notepad, write the text of your script, save it with the <kbd>.VBS</kbd> file extension, then associate a shortcut to it with Clavier+.</p><p>An example: write the current date in the active program.</p><pre>set shell = WScript.CreateObject("WScript.Shell")<br/>shell.SendKeys Date()</pre><p>If you want to write the date in another format, you can use the <a href="http://www.google.com/search?hl=en&amp;q=vbscript+date+functions+-ASP">VBScript date functions</a>.</p></div>
-<div id="transferparams" class="faq-question">21. How to transfer Clavier+ settings to a new computer?</div>
+<div id="transferparams" class="faq-question">20. How to transfer Clavier+ settings to a new computer?</div>
 <div class="faq-answer"><p>To keep your Clavier+ shortcuts after upgrading or reformatting your computer, you can transfer the <kbd>Clavier.ini</kbd> configuration file, located in Clavier+ directory. Detailed procedure:</p><ol><li>On the new computer: install Clavier+.</li><li>On the new computer: click on <i>Quit</i> in Clavier+ configuration window, then confirm.</li><li>Copy the <kbd>Clavier.ini</kbd> file located in Clavier+ directory from the old to the new computer.</li><li>On the new computer: restart Clavier+.</li></ol></div>
 
 
