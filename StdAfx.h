@@ -23,10 +23,8 @@
 
 // Require compatibility with Windows 2000 or later.
 #define NTDDI_VERSION NTDDI_WIN2K
-#define _WIN32_IE       0x0600
-#define _WIN32_WINNT    0x0500
-#define _WIN32_WINDOWS  0x0500
-#define WINVER          0x0500
+#define _WIN32_IE       _WIN32_IE_IE60
+#define _WIN32_WINNT    _WIN32_WINNT_WIN2K
 #define STRICT  1
 #include <sdkddkver.h>
 

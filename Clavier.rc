@@ -57,7 +57,7 @@ BEGIN
     PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Помните, что все ярлыки отключены, если это окно видимое.",IDCLBL_HELP,90,114,131,17
+    LTEXT           "Помните, что все ярлыки отключены, если это окно видимое.",IDCLBL_HELP,90,114,131,17,0,WS_EX_STATICEDGE
     LTEXT           "Счетчик ярлыков:",IDCLBL_SHORTCUTSCOUNT,228,114,68,8,SS_NOPREFIX
     LTEXT           "",IDCTXT_SHORTCUTSCOUNT,301,114,30,8,SS_NOPREFIX
     CONTROL         "З&апуск программы при старте Windows",IDCCHK_AUTOSTART,
@@ -106,8 +106,6 @@ BEGIN
     CONTROL         "&Различие между левой и правой специальными клавишами",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,218,10
     LTEXT           "Заметки:\n- вы можете использовать клавишу Windows\n- некоторые специальные ярлыки недоступны",IDC_STATIC,6,42,216,29,SS_NOPREFIX
-    PUSHBUTTON      "Отмена",IDCANCEL,101,159,56,14
-    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
     GROUPBOX        "Условие активации",IDC_STATIC,6,84,214,66
     LTEXT           "&Caps Lock состояние:",IDC_STATIC,12,98,73,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -115,6 +113,8 @@ BEGIN
     COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Scr&oll Lock состояние:",IDC_STATIC,12,134,75,8
     COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Отмена",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
 END
 #endif
 
@@ -480,9 +480,7 @@ BEGIN
     EDITTEXT        IDCTXT,54,6,166,12,ES_AUTOHSCROLL
     CONTROL         "Zwischen den linken und rechten speziellen Tasten &unterscheiden",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,6,24,180,18
-    LTEXT           "Hinweis:\n- Windows Taste ist benutzbar\n- einige besondere Verknьpfungen sind nicht verfьgbar",IDC_STATIC,6,48,216,30,SS_NOPREFIX
-    PUSHBUTTON      "Abbrechen",IDCANCEL,101,159,56,14
-    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
+    LTEXT           "Hinweis:\n- Windows Taste ist benutzbar\n- Strg + Alt = Alt Gr\n- einige besondere Verknьpfungen sind nicht verfьgbar",IDC_STATIC,6,45,216,33,SS_NOPREFIX
     GROUPBOX        "Aktivierungsbedingung",IDC_STATIC,6,84,214,66
     LTEXT           "&Feststelltaste:",IDC_STATIC,12,98,47,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -490,6 +488,8 @@ BEGIN
     COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Rollen-Feststelltaste:",IDC_STATIC,12,134,69,8
     COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
 END
 
 IDD_MAIN DIALOGEX 0, 0, 414, 246
@@ -502,7 +502,7 @@ BEGIN
     PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Verknьpfungen sind deaktiviert solange dieser Dialog angezeigt wird.",IDCLBL_HELP,90,114,123,17
+    LTEXT           "Verknьpfungen sind deaktiviert solange dieser Dialog angezeigt wird.",IDCLBL_HELP,90,114,123,17,0,WS_EX_STATICEDGE
     LTEXT           "Anzahl der Verknьpfungen:",IDCLBL_SHORTCUTSCOUNT,228,114,88,8,SS_NOPREFIX
     LTEXT           "",IDCTXT_SHORTCUTSCOUNT,320,114,8,8,SS_NOPREFIX
     CONTROL         "Beim Starten von &Windows Clavier+ ausfьhren",IDCCHK_AUTOSTART,
@@ -736,8 +736,6 @@ BEGIN
     CONTROL         "&Distinguish between left and right special keys",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,163,10
     LTEXT           "Notes:\n- you can use the Windows key\n- some special shortcuts are not available",IDC_STATIC,6,42,216,29,SS_NOPREFIX
-    PUSHBUTTON      "Cancel",IDCANCEL,101,159,56,14
-    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
     GROUPBOX        "Activation condition",IDC_STATIC,6,84,214,66
     LTEXT           "&Caps Lock state:",IDC_STATIC,12,98,54,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -745,6 +743,8 @@ BEGIN
     COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Scr&oll Lock state:",IDC_STATIC,12,134,56,8
     COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Cancel",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
 END
 
 IDD_MAIN DIALOGEX 0, 0, 414, 246
@@ -757,7 +757,7 @@ BEGIN
     PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Beware that all shortcuts are disabled while this window is visible.",IDCLBL_HELP,90,114,123,17
+    LTEXT           "Beware that all shortcuts are disabled while this window is visible.",IDCLBL_HELP,90,114,123,17,0,WS_EX_STATICEDGE
     LTEXT           "Shortcuts count:",IDCLBL_SHORTCUTSCOUNT,228,114,54,8,SS_NOPREFIX
     LTEXT           "",IDCTXT_SHORTCUTSCOUNT,286,114,30,8,SS_NOPREFIX
     CONTROL         "L&aunch Clavier+ at Windows startup",IDCCHK_AUTOSTART,
@@ -1008,7 +1008,7 @@ BEGIN
     PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Les raccourcis sont dйsactivйs lorsque cette boоte de dialogue est affichйe.",IDCLBL_HELP,90,114,128,17
+    LTEXT           "Les raccourcis sont dйsactivйs lorsque cette boоte de dialogue est affichйe.",IDCLBL_HELP,90,114,128,17,0,WS_EX_STATICEDGE
     LTEXT           "Nombre de raccourcis :",IDCLBL_SHORTCUTSCOUNT,228,114,74,8,SS_NOPREFIX
     LTEXT           "",IDCTXT_SHORTCUTSCOUNT,306,114,30,8,SS_NOPREFIX
     CONTROL         "Lancer Clavier+ au dйmarrage de &Windows",IDCCHK_AUTOSTART,
@@ -1342,8 +1342,6 @@ BEGIN
     CONTROL         "&Fazer distinзгo de teclas especiais\n(se sгo do lado direito ou esquerdo do teclado)",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,6,24,168,18
     LTEXT           "Atenзгo:\n- vocк pode usar a tecla Windows (Win key)\n- mas outras teclas especiais nгo",IDC_STATIC,6,48,216,30,SS_NOPREFIX
-    PUSHBUTTON      "Cancelar",IDCANCEL,101,159,56,14
-    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
     GROUPBOX        "Condiзгo do acionamento",IDC_STATIC,6,84,214,66
     LTEXT           "Status da &Caps Lock:",IDC_STATIC,12,98,68,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -1351,6 +1349,8 @@ BEGIN
     COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Status da Scr&oll Lock:",IDC_STATIC,12,134,69,8
     COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Cancelar",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
 END
 
 IDD_MAIN DIALOGEX 0, 0, 414, 246
@@ -1363,7 +1363,7 @@ BEGIN
     PUSHBUTTON      "",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Atenзгo: Todos os atalhos ficam desativados enquanto esta janela estiver aberta.",IDCLBL_HELP,90,114,147,17
+    LTEXT           "Atenзгo: Todos os atalhos ficam desativados enquanto esta janela estiver aberta.",IDCLBL_HELP,90,114,147,17,0,WS_EX_STATICEDGE
     LTEXT           "Quantidade de atalhos:",IDCLBL_SHORTCUTSCOUNT,246,114,76,8,SS_NOPREFIX
     LTEXT           "",IDCTXT_SHORTCUTSCOUNT,326,114,30,8,SS_NOPREFIX
     CONTROL         "&Abrir o Clavier+ com o Windows",IDCCHK_AUTOSTART,
