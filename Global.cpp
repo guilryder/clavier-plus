@@ -258,15 +258,10 @@ struct FIND_WINDOW_BY_NAME {
 };
 
 HWND findWindowByName(LPCTSTR title_regexp) {
-	const LPTSTR pszWindowSpecLowercase = new TCHAR[lstrlen(title_regexp) + 1];
-	lstrcpy(pszWindowSpecLowercase, title_regexp);
-	CharLower(pszWindowSpecLowercase);
-	
 	FIND_WINDOW_BY_NAME fwbn;
-	fwbn.title_regexp = pszWindowSpecLowercase;
+	fwbn.title_regexp = title_regexp;
 	fwbn.hwnd_found = NULL;
-	EnumWindows(prcEnumFindWindowByName, (LPARAM)&fwbn);
-	delete [] pszWindowSpecLowercase;
+	EnumWindows(prcEnumFindWindowByName, reinterpret_cast<LPARAM>(&fwbn));
 	return fwbn.hwnd_found;
 }
 
