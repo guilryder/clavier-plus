@@ -473,14 +473,14 @@ END
 
 IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Verknüpfung"
+CAPTION "Hotkey"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "&Verknüpfung:",IDC_STATIC,7,8,44,8
-    EDITTEXT        IDCTXT,54,6,166,12,ES_AUTOHSCROLL
+    LTEXT           "&Hotkey:",IDC_STATIC,7,8,26,8
+    EDITTEXT        IDCTXT,36,6,184,12,ES_AUTOHSCROLL
     CONTROL         "Zwischen den linken und rechten speziellen Tasten &unterscheiden",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,6,24,180,18
-    LTEXT           "Hinweis:\n- Windows Taste ist benutzbar\n- Strg + Alt = Alt Gr\n- einige besondere Verknüpfungen sind nicht verfügbar",IDC_STATIC,6,45,216,33,SS_NOPREFIX
+    LTEXT           "Hinweis:\n- Windows Taste ist benutzbar\n- Strg + Alt = Alt Gr\n- einige besondere Hotkeys sind nicht verfügbar",IDC_STATIC,6,45,216,33,SS_NOPREFIX
     GROUPBOX        "Aktivierungsbedingung",IDC_STATIC,6,84,214,66
     LTEXT           "&Feststelltaste:",IDC_STATIC,12,98,47,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -502,8 +502,8 @@ BEGIN
     PUSHBUTTON      "Hinzufügen",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "Entfernen",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "Bearbeiten",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Verknüpfungen sind deaktiviert solange dieser Dialog angezeigt wird.",IDCLBL_HELP,90,114,123,17,0,WS_EX_STATICEDGE
-    LTEXT           "Anzahl der Verknüpfungen:",IDCLBL_SHORTCUTSCOUNT,228,114,88,8,SS_NOPREFIX
+    LTEXT           "Alle Hotkeys sind deaktiviert solange dieser Dialog angezeigt wird.",IDCLBL_HELP,90,114,123,17,0,WS_EX_STATICEDGE
+    LTEXT           "Anzahl der Hotkeys:",IDCLBL_SHORTCUTSCOUNT,228,114,88,8,SS_NOPREFIX
     LTEXT           "",IDCTXT_SHORTCUTSCOUNT,320,114,8,8,SS_NOPREFIX
     CONTROL         "Beim Starten von &Windows Clavier+ ausführen",IDCCHK_AUTOSTART,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,165,10
@@ -556,10 +556,10 @@ END
 
 IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Verknüpfung simulieren"
+CAPTION "Tastendruck simulieren"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "&Verknüpfung:",IDC_STATIC,7,8,44,8
+    LTEXT           "&Tastendruck:",IDC_STATIC,7,8,43,8
     EDITTEXT        IDCTXT,55,6,178,12,ES_AUTOHSCROLL
     PUSHBUTTON      "Abbrechen",IDCANCEL,114,30,56,14
     DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
@@ -634,10 +634,10 @@ BEGIN
     END
     POPUP " "
     BEGIN
-        MENUITEM "&Verknüpfung simulieren: [...]", ID_TEXT_SENDKEYS
+        MENUITEM "&Tastendruck simulieren: [...]", ID_TEXT_SENDKEYS
         MENUITEM "&Programm starten: [[...]]",  ID_TEXT_COMMAND
         MENUITEM "100 Millisekunden &warten: []", ID_TEXT_WAIT
-        MENUITEM "Low-level &Textschreibung",   ID_TEXT_LOWLEVEL
+        MENUITEM "Low-level Te&xtschreibung",   ID_TEXT_LOWLEVEL
         MENUITEM SEPARATOR
         POPUP "&Zeichen schreiben"
         BEGIN
@@ -684,20 +684,20 @@ END
 
 STRINGTABLE 
 BEGIN
-    ERR_INVALID_SHORTCUT    "Gültige Verknüpfung wird benötigt."
-    ERR_SHORTCUT_DUPLICATE  "Eine Verknüpfung wird zweimal benutzt: %s. Eins der Duplikate bitte entfernen."
+    ERR_INVALID_SHORTCUT    "Gültige Hotkey wird benötigt."
+    ERR_SHORTCUT_DUPLICATE  "Ein Hotkey wird zweimal benutzt: %s. Eins der Duplikate bitte entfernen."
     ERR_SAVING_INI          "Einstellungen konnten nicht gespeichert werden."
     ERR_LOADING_INI         "Einstellungen konnten nicht geladen werden."
     ERR_TARGET              "Kein Programm gewählt."
-    ASK_QUIT                "Soll Clavier+ wirklich beendet werden?\nAlle Verknüpfungen werden deaktiviert."
-    ASK_DELETE              "Soll diese Verknüpfung wirklich gelöscht werden?"
-    MSG_COPYLIST            "Die Verknüpfungliste ist zum Klemmbrett kopiert worden."
+    ASK_QUIT                "Soll Clavier+ wirklich beendet werden?\nAlle Hotkeys werden deaktiviert."
+    ASK_DELETE              "Soll diese Hotkey wirklich gelöscht werden?"
+    MSG_COPYLIST            "Die Hotkeyliste ist zum Klemmbrett kopiert worden."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_TOKENS              "Deutsch;Verknüpfung;Code;LinksRechtsUnterscheiden;Beschreibung;Befehl;Text;Ordner;Fenster;DateiÖffnenStützen;Programme;AlleProgrammeAber;Kein;Sprache;Grösse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Links;Rechts;Feststell;Num;Rollen;Ja;Nein;"
-    IDS_COLUMNS             "Inhalt;Verknüpfung;Bedingung;Beschreibung;"
+    IDS_COLUMNS             "Inhalt;Hotkey;Bedingung;Beschreibung;"
     IDS_HELP                "Hilfe.html"
     IDS_CONDITIONS          "ohne Bedingung;eingeschaltet;ausgeschaltet;"
     IDS_CONDITION_KEYS      "FNR"
