@@ -1,0 +1,20 @@
+# VisualStudio
+*.aps
+*.cache
+*.ncb
+*.suo
+*.user
+
+# Other
+*.pyc
+
+# Root
+/output
+
+# Distrub
+/Distrib/*.exe
+/Distrib/*.zip
+
+# Tests
+/Tests/*Test.cpp
+/Tests/output
