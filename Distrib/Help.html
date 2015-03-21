@@ -1,7 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Clavier+ help</title>
 <link rel="stylesheet" type="text/css" href="ClavierHelp.css"/>
 </head>
@@ -48,7 +49,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <p>Clavier+ is released under the <a href="http://www.gnu.org/copyleft/gpl.html">GPL license</a>. This gives you the right to use, copy, distribute the software, for any use (personal or commercial), all that without having to pay anything.</p>
 
-<p>There is no warranty for this program, I’m not responsible of any damage due to its use.</p>
+<p>There is no warranty for this program, Iâ€™m not responsible of any damage due to its use.</p>
 
 <p>The full source code of Clavier+ is available here:<br/>
 <a href="https://github.com/guilryder/clavier-plus"><kbd>https://github.com/guilryder/clavier-plus</kbd></a></p>
@@ -84,7 +85,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 <li>launch a program: Word, calculator, Internet browser, etc.</li>
 <li>display a website</li>
 <li>open a folder: <i>My documents</i>, <kbd>C:</kbd>, CD-Rom drive, etc.</li>
-<li>write special characters: ® and © symbols, currency symbols like € or ¥, etc.</li>
+<li>write special characters: Â® and Â© symbols, currency symbols like â‚¬ or Â¥, etc.</li>
 <li>write text: E-mail address, company name, etc. in any program (Word, Internet browser, notepad)</li>
 <li>simulate keystrokes, for example to execute a command in the menus of a program</li>
 <li>simulate mouse moves and clicks or mouse wheel action</li>
@@ -131,12 +132,12 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <p>You can restrict the effect of a shortcut to some conditions. If all conditions fulfill, the action of the shortcut is executed. If one or more conditions do not fulfill, Clavier+ ignores the shortcut, and the original action of the shortcut is executed (the one defined by Windows or the active program). This allows to associate different actions to the same shortcut.</p>
 
-<p><span class="ipt">Warning!</span> If you associate several actions to the same shortcut, beware to avoid ambiguities by giving them mutually exclusive conditions. Otherwise, an error message will appear when you close the window. For example, if you want to associate <kbd>Ctrl + X</kbd> to Notepad when <kbd>Num Lock</kbd> is off and to the Calculator otherwise, you <i>must</i> give the condition “Num Lock: must be on” to the second shortcut. This is because “Num Lock: no condition” can be ambiguous with other shortcuts, such as <kbd>Ctrl + X</kbd> with the condition “Caps Lock: must be on”.</p>
+<p><span class="ipt">Warning!</span> If you associate several actions to the same shortcut, beware to avoid ambiguities by giving them mutually exclusive conditions. Otherwise, an error message will appear when you close the window. For example, if you want to associate <kbd>Ctrl + X</kbd> to Notepad when <kbd>Num Lock</kbd> is off and to the Calculator otherwise, you <i>must</i> give the condition â€œNum Lock: must be onâ€ to the second shortcut. This is because â€œNum Lock: no conditionâ€ can be ambiguous with other shortcuts, such as <kbd>Ctrl + X</kbd> with the condition â€œCaps Lock: must be onâ€.</p>
 
 
 <h3>Active program</h3>
 
-<p>You can restrict a shortcut to some programs. This allows to give different meanings to the same shortcut, depending of the active program. By defaults, shortcuts are enabled for “all programs but: <i>none</i>”, i.e. for all programs.</p>
+<p>You can restrict a shortcut to some programs. This allows to give different meanings to the same shortcut, depending of the active program. By defaults, shortcuts are enabled for â€œall programs but: <i>none</i>â€, i.e. for all programs.</p>
 
 <p>You can define two kinds of condition on the active program. The shortcut can be enabled for all programs, except specific ones (exclusive criteria), or only for specific programs (inclusive criteria). Choose the condition type in the <i>Activate for</i> combo box, after having selected your shortcut in the list.</p>
 
@@ -146,7 +147,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <p>For a given keystroke, you can define any count of shortcuts having an <i>only these programs</i> condition, if they refer to different programs. In all cases, you can only define one shortcut having an <i>all programs but</i> condition.</p>
 
-<p>Shortcuts of type <i>only these programs</i> have the priority on <i>all programs but</i> shortcuts. If you associate the condition “only these programs: <kbd>notepad.exe</kbd>” to a first shortcut, and “all programs but: <i>none</i>” to a second shortcut, if both shortcuts have the same keystroke, and if you execute this keystroke in Notepad, the first shortcut will be executed, the second will be ignored.</p>
+<p>Shortcuts of type <i>only these programs</i> have the priority on <i>all programs but</i> shortcuts. If you associate the condition â€œonly these programs: <kbd>notepad.exe</kbd>â€ to a first shortcut, and â€œall programs but: <i>none</i>â€ to a second shortcut, if both shortcuts have the same keystroke, and if you execute this keystroke in Notepad, the first shortcut will be executed, the second will be ignored.</p>
 
 
 <h3>Toggle keys</h3>
@@ -262,7 +263,7 @@ The arrow menu has an entry listing all special characters.</p>
 
 <h2 id="conffile">Configuration files</h2>
 
-<p>By default, Clavier+ uses a single configuration file to store its settings: <kbd>Clavier.ini</kbd>, located in the same directory than Clavier+ main executable. Clavier+ doesn’t put anything in the registry, except if you use the <i>Launch Clavier+ at Windows startup</i> option.</p>
+<p>By default, Clavier+ uses a single configuration file to store its settings: <kbd>Clavier.ini</kbd>, located in the same directory than Clavier+ main executable. Clavier+ doesnâ€™t put anything in the registry, except if you use the <i>Launch Clavier+ at Windows startup</i> option.</p>
 
 <p>Clavier+ menu, displayed by right clicking Clavier+ icon near the system clock, proposes several commands to manage configuration files:</p>
 <ul>
@@ -294,7 +295,7 @@ Second shortcut settings
 <h4>Global settings</h4>
 
 <pre>
-Language=Français <i>or</i> English <i>or</i> Deutsch <i>or</i> Português brasileiro
+Language=FranÃ§ais <i>or</i> English <i>or</i> Deutsch <i>or</i> PortuguÃªs brasileiro
 Size=<i>width</i>,<i>height</i>,<i>maximized</i>,<i>hide icon</i>
 Columns=<i>width 1</i>,<i>width 2</i>,<i>width 3</i>
 Sorting=<i>column index</i>
@@ -339,7 +340,7 @@ ScrollLock=<i>condition</i>
 
 <p>Note the necessity to type a <kbd>&gt;</kbd> character at the beginning of additional lines for the <kbd>Text=</kbd> field.</p>
 
-<p><kbd>Text</kbd> on a side, and <kbd>Command</kbd>, <kbd>Directory</kbd> and <kbd>Window</kbd> on the other side are mutually exclusive: a shortcut can’t write a text and execute a command line at the same time.</p>
+<p><kbd>Text</kbd> on a side, and <kbd>Command</kbd>, <kbd>Directory</kbd> and <kbd>Window</kbd> on the other side are mutually exclusive: a shortcut canâ€™t write a text and execute a command line at the same time.</p>
 
 <dl>
 <dt><kbd>Shortcut</kbd></dt>
@@ -361,7 +362,7 @@ ScrollLock=<i>condition</i>
 <dd>If the command is the path of a directory, specifies whether Clavier+ should detect File/Open dialog boxes to change their current directory (value 1). If the detection fails, or if this settings is 0 (default value), the directory is opened in Windows Explorer.</dd>
 
 <dt><kbd>Programs</kbd>, <kbd>AllProgramsBut</kbd> (mutually exclusive)</dt>
-<dd>Activation condition: list of the only programs for which the shortcut is activated (<kbd>Programs</kbd>) or disabled (<kbd>AllProgramsBut</kbd>). The programs are semi-colon-separated. They don’t have a full path: file name only, with extension.</dd>
+<dd>Activation condition: list of the only programs for which the shortcut is activated (<kbd>Programs</kbd>) or disabled (<kbd>AllProgramsBut</kbd>). The programs are semi-colon-separated. They donâ€™t have a full path: file name only, with extension.</dd>
 
 <dt><kbd>CapsLock</kbd>, <kbd>NumLock</kbd>, <kbd>ScrollLock</kbd></dt>
 <dd>If specified, specify an activation condition to the shortcut. Accepted values: <kbd>None</kbd> (default value), <kbd>Yes</kbd> and <kbd>No</kbd>.</dd>
@@ -408,17 +409,17 @@ ScrollLock=<i>condition</i>
 
 <h3>Unavailable shortcuts</h3>
 
-<p>Some special keys can’t be used:</p>
+<p>Some special keys canâ€™t be used:</p>
 <pre>
 Print Screen
 Pause
 </pre>
 
-<p>The special keys “Refresh browser”, “increase volume”, etc. are partially supported. Shortcuts using them can be created, and it is possible to modify their original behavior. However the action of these keys is executed when they are pressed in the <i>Add</i> dialog box. Moreover, as Windows does not provide a generic method to get the name of theses special keys, they are named by a number (for example: <kbd>#183</kbd>).</p>
+<p>The special keys â€œRefresh browserâ€, â€œincrease volumeâ€, etc. are partially supported. Shortcuts using them can be created, and it is possible to modify their original behavior. However the action of these keys is executed when they are pressed in the <i>Add</i> dialog box. Moreover, as Windows does not provide a generic method to get the name of theses special keys, they are named by a number (for example: <kbd>#183</kbd>).</p>
 
 <p>Windows standard shortcuts cannot be modified. Here are some of them:</p>
 
-<table><colgroup><col width="30%"/><col/></colgroup>
+<table style="border-spacing: 2em 0">
 <tr><td><kbd>Ctrl + Alt + DEL</kbd></td><td>show task manager</td></tr>
 <tr><td><kbd>F12</kbd></td><td>reserved to the debugger</td></tr>
 <tr><td><kbd>Alt + Tab</kbd></td><td>activate the next task</td></tr>
@@ -441,7 +442,7 @@ Pause
 
 <p>Windows 7 has a few more standard shortcuts that cannot be modified:</p>
 
-<table><colgroup><col width="30%"/><col/></colgroup>
+<table style="border-spacing: 2em 0">
 <tr><td><kbd>Win + =</kbd></td><td>magnifier</td></tr>
 <tr><td><kbd>Win + B</kbd></td><td>give the focus to the notifications area</td></tr>
 <tr><td><kbd>Win + G</kbd></td><td>show desktop gadgets</td></tr>
@@ -482,10 +483,10 @@ Pause
 <p>You can access the last version of this FAQ in <a href="http://utilfr42.free.fr/util/Clavier.php#faq">Clavier+ page</a>.</p>
 
 <div id="automate" class="faq-question">1. How to automate an action in <i>MyFavoriteProgram</i> with Clavier+?</div>
-<div class="faq-answer"><p>Clavier+ is a generic tool that can simulate keystrokes. As each program is unique, it’s up to you to figure out the keystrokes that execute the action you want to automate. You can contact me to report Clavier+ bugs or ask questions on how to configure Clavier+, however I will not find keystrokes for you and cannot help you with programs other than Clavier+.</p></div>
+<div class="faq-answer"><p>Clavier+ is a generic tool that can simulate keystrokes. As each program is unique, itâ€™s up to you to figure out the keystrokes that execute the action you want to automate. You can contact me to report Clavier+ bugs or ask questions on how to configure Clavier+, however I will not find keystrokes for you and cannot help you with programs other than Clavier+.</p></div>
 <div id="windows" class="faq-question">2. Which Windows versions is Clavier+ compatible with?</div>
 <div class="faq-answer"><p>The latest Clavier+ version is compatible with all NT family Windows versions: 2000, NT, XP, Vista, 7, 8. The <a href="#old">older Clavier+ versions</a> are compatible with Windows 95/98/ME too.</p></div>
-<div id="incompatprog" class="faq-question">3. Clavier+ can’t write text in <i>MyFavoriteProgram</i>!</div>
+<div id="incompatprog" class="faq-question">3. Clavier+ canâ€™t write text in <i>MyFavoriteProgram</i>!</div>
 <div class="faq-answer"><p>Some programs handle the keyboard in a non-standard way, preventing Clavier+ from writing text. To get around this problem, surround your text with <kbd>[|</kbd> and <kbd>|]</kbd>, as below:</p><p><kbd>[|My text|]</kbd></p></div>
 <div id="games" class="faq-question">4. Does Clavier+ work with games?</div>
 <div class="faq-answer"><p>Most of the time, no. Games access the keyboard in low-level, for various raisons: speed, cheat protection.</p></div>
@@ -494,19 +495,19 @@ Pause
 <div id="textformat" class="faq-question">6. How to write formatted text, e.g. bold, hyperlinks?</div>
 <div class="faq-answer"><p>There is no standard way to format text: the exact procedure depends on which program you want to write text in (Word, Excel, OpenOffice).</p><p>The AutoText feature of Word allows to insert any formatted text block. With other programs, you can use keyboard shortcuts. For example, <kbd>Ctrl+B</kbd> often toggles the bold attribute. To make a word bold, one can write:</p><p><kbd>A [Ctrl+B]bold[Ctrl+B] word</kbd></p><p>Again, formatting hotkeys depend on the program you are using. Please refer to its documentation for more details.</p></div>
 <div id="maclinux" class="faq-question">7. Is Clavier+ available on Mac, Linux, Android, iPad, or any other non-Windows OS?</div>
-<div class="faq-answer"><p>No, Clavier+ is for Windows desktop only. I have no plans to rewrite Clavier+ for Mac, Linux, iPhone/iPad, Windows Phone, or any other system. I don’t know if these systems offer a Clavier+ equivalent. Porting Clavier+ to another system would require a full rewrite therefore a lot of work.</p></div>
+<div class="faq-answer"><p>No, Clavier+ is for Windows desktop only. I have no plans to rewrite Clavier+ for Mac, Linux, iPhone/iPad, Windows Phone, or any other system. I donâ€™t know if these systems offer a Clavier+ equivalent. Porting Clavier+ to another system would require a full rewrite therefore a lot of work.</p></div>
 <div id="password" class="faq-question">8. How to protect Clavier+ with a password?</div>
 <div class="faq-answer"><p>Acess to Clavier+ shortcut list cannot be password protected. Indeed, storing data in a secure fashion is both difficult and restrictive in terms of available features. I strongly recommend using software specialized in passwords storage, such as <a href="http://keepass.sourceforge.net/">KeePass</a>, <a href="http://passwordsafe.sourceforge.net/">Password Safe</a> or <a href="http://www.roboform.com/fr/">RoboForm</a>.</p></div>
 <div id="numpadcomma" class="faq-question">9. How to make the numpad period key write a comma?</div>
 <div class="faq-answer"><p>Click the plus shaped button, choose <i>Write Text</i>, press the numpad period key, then click the <i>OK</i> button. Write a comma in the <i>Write text</i> area.</p></div>
-<div id="specialfolder" class="faq-question">10. How to create a shortcut to a special folder: My computer, Control panel, …?</div>
+<div id="specialfolder" class="faq-question">10. How to create a shortcut to a special folder: My computer, Control panel, â€¦?</div>
 <div class="faq-answer"><p>In Windows Explorer, create a Windows shortcut to the special folder: press the right mouse button on the special folder, drag the mouse to another folder (for example <kbd>C:\</kbd>), release the buton and choose <i>Create shortcut here</i> in the popup menu.</p><p>Then, in Clavier+, create a <i>Launch a program</i> keyboard shortcut that executes the Windows shortcut you have just created. You have to write the full path manually, and to append the <kbd>.lnk</kbd> extension. For example: <kbd>C:\My computer.lnk</kbd> if you have created a shortcut named <kbd>My computer</kbd> in the folder <kbd>C:\</kbd>.</p><p>Some special folders can be opened without the need for a shortcut. For instance, <kbd>::{20d04fe0-3aea-1069-a2d8-08002b30309d}</kbd> opens My computer. The CLSIDs marked as <i>supported by Run</i> in <a href="http://www.autohotkey.com/docs/misc/CLSID-List.htm">this list</a> are also available.</p></div>
 <div id="explorertreepane" class="faq-question">11. How to open a folder in Explorer and display the tree pane?</div>
 <div class="faq-answer"><p>In the shortcut command line, insert <kbd>explorer /e,</kbd> before the folder path; make sure to write a comma after <kbd>/e</kbd>. For example: <kbd>explorer /e, C:\</kbd></p></div>
 <div id="hideicon" class="faq-question">12. How to remove Clavier+ icon from the traybar?</div>
 <div class="faq-answer"><p>Launch Clavier+ then quit it. Double-click on the <kbd>Clavier.ini</kbd> file located in the same directory than Clavier+. In the second line, that begins with <kbd>Size=</kbd>, replace the <i>last</i> zero by the digit one. For example: <kbd>Size=923,501,0,0</kbd> should become <kbd>Size=923,501,0,1</kbd>.</p><p>As Clavier+ icon will no more be visible, you will have to launch Clavier+ twice to display its configuration window (once to launch it, once to display the window).</p></div>
 <div id="linereturn" class="faq-question">13. How to write a line return with a shortcut?</div>
-<div class="faq-answer"><p>Two solutions:</p><ul><li>insert a line return in the edit box, by pressing the <kbd>Return</kbd> key,</li><li>if the previous solution doesn’t work, write the code <kbd>[ENTER]</kbd><br/>The shortcut will probably have to pause for a short time to let the return key be processed: <kbd>[][ENTER]</kbd></li></ul></div>
+<div class="faq-answer"><p>Two solutions:</p><ul><li>insert a line return in the edit box, by pressing the <kbd>Return</kbd> key,</li><li>if the previous solution doesnâ€™t work, write the code <kbd>[ENTER]</kbd><br/>The shortcut will probably have to pause for a short time to let the return key be processed: <kbd>[][ENTER]</kbd></li></ul></div>
 <div id="simulkey" class="faq-question">14. How to simulate the key <i>XYZ</i></div>
 <div class="faq-answer"><p>Click the arrow-shape button, choose the command <i>Simulate a Keystroke</i>.</p></div>
 <div id="soundvolume" class="faq-question">15. How to change the sound volume?</div>
@@ -515,7 +516,7 @@ Pause
 <div class="faq-answer"><p>There are four keys related to music players:</p><ul><li>next track: code <kbd>[#176]</kbd></li><li>previous track: code <kbd>[#177]</kbd></li><li>stop: code <kbd>[#178]</kbd></li><li>play/pause: code <kbd>[#179]</kbd></li></ul><p>These keys work even if the music player in not the active application. To use them, create a shortcut with Clavier+ in text mode, then write the key code in the <i>Write text</i> area, between brackets.</p></div>
 <div id="browseractions" class="faq-question">17. How to control the Internet browser: previous page, favorites, etc.?</div>
 <div class="faq-answer"><p>There are several keys related to Internet browsers:</p><ul><li>back: code <kbd>[#166]</kbd></li><li>forward: code <kbd>[#167]</kbd></li><li>refresh: code <kbd>[#168]</kbd></li><li>stop: code <kbd>[#169]</kbd></li><li>search: code <kbd>[#170]</kbd></li><li>favorites: code <kbd>[#171]</kbd></li><li>home: code <kbd>[#172]</kbd></li><li>e-mail: code <kbd>[#180]</kbd></li><li>media player: code <kbd>[#181]</kbd></li><li>application 1: code <kbd>[#182]</kbd></li><li>application 2: code <kbd>[#183]</kbd></li></ul><p>These keys work only if the Internet browser is active.</p></div>
-<div id="autostartup" class="faq-question">18. The checkbox <i>Launch Clavier+ at Windows startup</i> doesn’t work!</div>
+<div id="autostartup" class="faq-question">18. The checkbox <i>Launch Clavier+ at Windows startup</i> doesnâ€™t work!</div>
 <div class="faq-answer"><p>Create a shortcut to <kbd>Clavier.exe</kbd> in <i>Start Menu/Programs/Startup</i>. To do this, click with the right button on <kbd>Clavier.exe</kbd>, keep the button down and drag the mouse to the Start menu, then <i>Programs</i>, then <i>Startup</i>, and release the mouse button. Choose <i>Create a shortcut here</i>.</p></div>
 <div id="twoprograms" class="faq-question">19. How to launch two programs at once?</div>
 <div class="faq-answer"><p>The solution is to enclose the path of the two programs in double brackets, in the <kbd>Write text</kbd> area. For example, to launch notepad and the calculator:</p><pre>[[notepad.exe]][[calc.exe]]</pre></div>
@@ -539,7 +540,7 @@ Pause
 <li>Display the control panel<br/>command <kbd>control.exe</kbd></li>
 <li>Higher or lower the volume<br/>text <kbd>[#175]</kbd> or text <kbd>[#174]</kbd></li>
 <li>Paste the selection to Notepad<br/>text <kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd></li>
-<li>Paste the clipboard as raw text, without formatting – warning: changes the contents of the clipboard<br/>text <kbd>[[notepad.exe]][][Ctrl+V][Ctrl+A][Ctrl+X][Alt+F4][N][][Ctrl+V]</kbd></li>
+<li>Paste the clipboard as raw text, without formatting â€“ warning: changes the contents of the clipboard<br/>text <kbd>[[notepad.exe]][][Ctrl+V][Ctrl+A][Ctrl+X][Alt+F4][N][][Ctrl+V]</kbd></li>
 <li>Fill a form<br/>text <kbd>first field[TAB][{Focus}]second field[TAB][{Focus}]third field[ENTER]</kbd></li>
 <li>Shutdown Windows<br/>command <kbd>shutdown.exe -s -t 01</kbd></li>
 <li>Restart Windows<br/>command <kbd>shutdown.exe -r -t 01</kbd></li>
