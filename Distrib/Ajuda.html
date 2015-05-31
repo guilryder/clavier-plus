@@ -142,7 +142,7 @@ Endereço eletrônico: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kb
 <p><span class="ipt">Atenção!</span> Se você associar vários tipos de operações à mesma combinação de teclas de atalho, não deixe de lhes conferir condições mutuamente exclusivas e explícitas (ou seja, para o programa fazer a distinção, você tem de optar ou pelo status de tecla <b>ativada</b> ou de <b>desativada</b> – não basta deixar o status apenas como “nenhuma condição”). Do contrário, você verá uma mensagem de erro ao tentar fechar a janela.</p>
 
 
-<h3>Programa ativo</h3>
+<h3 id="conditions-active">Programa ativo</h3>
 
 <p>Você pode restringir o funcionamento de determinada tecla de atalho em relação a alguns programas. Isto permite conferir diferentes objetivos à mesma combinação de teclas de atalho, depedendo do programa ativo. Como regra geral, atalhos são acionáveis “com todos os programas, exceto: <i>nenhum</i>” (o campo aparece vazio), ou seja, neste caso, são acionáveis com todos.</p>
 
@@ -157,7 +157,7 @@ Endereço eletrônico: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kb
 <p>Atalhos do tipo <i>só com estes programas</i> têm prioridade sobre atalhos com a função <i>todos os programas, exceto</i>. Se você criar um atalho com o acionamento condicionado à função “<i>só com estes programas</i>: <kbd>notepad.exe</kbd>”, e outro, com a função “todos os programas, exceto: <i>nenhum</i>” (campo vazio), e a associação do acionamento de uma determinada tecla (por exemplo: a tecla que grafa o caracter <b>æ</b>) com ambos, quando você acionar a combinação de teclas de atalho que reproduz (“digita”) o caracter visado (<b>æ</b>, no exemplo) no Bloco de Notas, o primeiro atalho será ativado, mas o segundo será ignorado.</p>
 
 
-<h3>O status de teclas especiais</h3>
+<h3 id="conditions-toggle-keys">O status de teclas especiais</h3>
 
 <p>Dependendo do status (ativado/desativado) de algumas teclas especiais, você pode acionar ou não a remissão visada pela combinação de teclas, como sejam as teclas: <kbd>Caps Lock</kbd>, <kbd>Num Lock</kbd>, <kbd>Scroll Lock</kbd>. Por exemplo, você pode criar uma combinação de teclas de atalho somente acionável quando a tecla <kbd>Caps Lock</kbd> estiver ativada (“acesa”).</p>
 
@@ -169,19 +169,19 @@ Endereço eletrônico: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kb
 <p>Na caixa de texto <i>Transcrever texto</i>, você pode definir vários tipos de operações, tais como:</p>
 
 
-<h3>Reprodução de texto</h3>
+<h3 id="text-typing">Reprodução de texto</h3>
 
 <p>Basta digitar o texto desejado no campo de texto. A opção <i>Reproduzir um caracter</i> presente no menu acionável por um clique no botão com uma seta que permite a inserção de caracter especiais, normalmente inacessíveis por meio do teclado.</p>
 
 
-<h3>Simulação de digitação (teclagem)</h3>
+<h3 id="text-simulating-keystroke">Simulação de digitação (teclagem)</h3>
 
 <p>Use a função <i>Digitar um caracter</i> no menu da seta para reproduzir a digitação de um conjunto de teclas. Normalmente, o código do nome das teclas aparece entre colchetes, como: <kbd>[Ctrl+O]</kbd>.</p>
 
-<p>Note que a digitação simulada permite a realização de muitas operações, como manipular a Área de Armazenagem (com <kbd>Ctrl+C</kbd> and <kbd>Ctrl+V</kbd>) ou acionar comandos de menu (com <kbd>Alt+<i>letra</i></kbd>).</p>
+<p>Note que a digitação simulada permite a realização de muitas operações, como manipular a Área de Armazenagem (com <kbd>Ctrl + C</kbd> and <kbd>Ctrl + V</kbd>) ou acionar comandos de menu (com <kbd>Alt + <i>letra</i></kbd>).</p>
 
 
-<h3>Abertura de programas</h3>
+<h3 id="text-launching-program">Abertura de programas</h3>
 
 <p>Use o comando <i>Abrir programa</i> no menu da seta ou digite uma linha de comando entre colchetes duplos. Por exemplo, para abrir um arquivo de texto e mover o cursor para o fim dele, digite isto:<br/>
 <kbd>[[notepad.exe C:\\afazeres.txt]][][Ctrl+End]</kbd></p>
@@ -193,11 +193,11 @@ Endereço eletrônico: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kb
 <kbd>[Ctrl+C][][[iexplore.exe %CLIPBOARD%]]</kbd></p>
 
 
-<h3>Criação de pausas</h3>
+<h3 id="text-syncing">Criação de pausas</h3>
 
 <p>Caso seu atalho realize várias operações, pode ser necessário conceder a cada uma delas tempo suficiente para que sejam executadas. Para criar uma pausa, digite um par de colchetes: <kbd>[]</kbd>. O Clavier+ espera 100 milissegundos antes de identificar a janela recém-selecionada.</p>
 
-<p>Este último detalhe é fundamental. Se você cria uma simulação de digitação que abre uma janela (por exempo, <kbd>Ctrl+O</kbd>, que apresenta a caixa de diálogo de Abrir arquivos), na qual algum texto deve ser digitado (o nome de um arquivo, por exemplo), você tem de informar ao Clavier+ que o texto deve ser digitado na <i>nova</i> janela:<br/>
+<p>Este último detalhe é fundamental. Se você cria uma simulação de digitação que abre uma janela (por exempo, <kbd>Ctrl + O</kbd>, que apresenta a caixa de diálogo de Abrir arquivos), na qual algum texto deve ser digitado (o nome de um arquivo, por exemplo), você tem de informar ao Clavier+ que o texto deve ser digitado na <i>nova</i> janela:<br/>
 <kbd>[Ctrl+O][]meuarquivo.txt[Enter]</kbd></p>
 
 <p>Faça a mesma coisa ao executar um programa que abre uma janela: oriente o Clavier+ a identificar a presença da nova janela.<br/>
@@ -205,7 +205,7 @@ Endereço eletrônico: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kb
 Este atalho copia o texto selecionado na Área de Armazenamento, abre o Bloco de Notas e cola nele o texto gravado nela. O identificador <kbd>[]</kbd> é fundamental; faz que o Clavier+ efetue a colagem na <i>nova janela</i>, ou seja, na do Bloco de Notas.</p>
 
 
-<h3>Comandos especiais</h3>
+<h3 id="text-special-commands">Comandos especiais</h3>
 
 <p>O menu da seta contém uma lista de comandos.</p>
 
@@ -217,7 +217,7 @@ Este atalho copia o texto selecionado na Área de Armazenamento, abre o Bloco de
 <dd>Identifica a nova janela. Útil se a simulação abre uma nova janela na qual o comando do atalho tem por objetivo escrever algo. Geralmente, o comando <kbd>[]</kbd> é melhor, pois espera um pouco também, a fim de dar tempo suficiente à abertura da janela.</dd>
 
 <dt><kbd>[{<i>Copy</i>,<i>texto</i>}]</kbd></dt>
-<dd>Copia o texto especificado na Área de Armazenamento. Observe que este comando não tem nenhuma relação com o comando <kbd>Ctrl+C</kbd>, já que este atalho copia a <i>seleção</i> na Área de Armazenagem. Associado à digitação simulada <kbd>[Ctrl+V]</kbd>, este comando permite a digitação de um longo texto rapidamente ou do mesmo texto muitas vezes. Os seguinte exemplos reproduzem o mesmo texto cinco vezes:<br/>
+<dd>Copia o texto especificado na Área de Armazenamento. Observe que este comando não tem nenhuma relação com o comando <kbd>Ctrl + C</kbd>, já que este atalho copia a <i>seleção</i> na Área de Armazenagem. Associado à digitação simulada <kbd>[Ctrl+V]</kbd>, este comando permite a digitação de um longo texto rapidamente ou do mesmo texto muitas vezes. Os seguinte exemplos reproduzem o mesmo texto cinco vezes:<br/>
 <kbd>[{Copiar,Frase que se deseja repetir cinco vezes.}][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd></dd>
 
 <dt><kbd>[{MouseButton,<i>code</i>}]</kbd></dt>
@@ -230,7 +230,7 @@ Este atalho copia o texto selecionado na Área de Armazenamento, abre o Bloco de
 </dl>
 
 
-<h3>Reprodução de caracteres especiais</h3>
+<h3 id="text-special-chars">Reprodução de caracteres especiais</h3>
 
 <p>Se precisar digitar caracteres especiais, como <kbd>[</kbd>, <kbd>]</kbd>, <kbd>{</kbd>, <kbd>}</kbd> ou <kbd>|</kbd>, você precisa assinalá-los com uma barra inclinada. Por exemplo: <br/>
 <kbd>Isto é um colchete: \[, ao passo que isto é uma barra inclinada: \\</kbd><br/>
@@ -242,7 +242,7 @@ Um dos itens de menu da seta apresenta uma lista de caracteres especiais.</p>
 
 <h2 id="print">Impressão da lista de atalhos</h2>
 
-<p>Na principal janela do Clavier+, clique no botão <i>Copiar lista</i>. Esta função copia a lista de todos as combinações de teclas de atalho na Área de Armazenagem: depois, você pode colá-la em seu processador de textos para imprimi-la. Se usar o Word, você pode dispô-las em forma de tabela: abra o Word, cole a lista com <kbd>Ctrl+V</kbd>, selecione-a com <kbd>Ctrl+A</kbd> e clique no botão <i>Inserir como tabela</i>.</p>
+<p>Na principal janela do Clavier+, clique no botão <i>Copiar lista</i>. Esta função copia a lista de todos as combinações de teclas de atalho na Área de Armazenagem: depois, você pode colá-la em seu processador de textos para imprimi-la. Se usar o Word, você pode dispô-las em forma de tabela: abra o Word, cole a lista com <kbd>Ctrl + V</kbd>, selecione-a com <kbd>Ctrl + A</kbd> e clique no botão <i>Inserir como tabela</i>.</p>
 
 
 <h2 id="conffile">Arquivos de configuração</h2>
@@ -262,7 +262,7 @@ Um dos itens de menu da seta apresenta uma lista de caracteres especiais.</p>
 <pre>clavier.exe /load <i>arquivo_de_configuração.ini</i></pre>
 
 
-<h3>Sintaxe de arquivos de configuração</h3>
+<h3 id="conffile-syntax">Sintaxe de arquivos de configuração</h3>
 
 <p>Se precisar criar muitas combinações de teclas de atalho ao mesmo tempo, eis o formato do arquivo de configuração</p>
 
@@ -276,7 +276,7 @@ configuração do segundo atalho
 </pre>
 
 
-<h4>Configurações globais</h4>
+<h4 id="conffile-syntax-global">Configurações globais</h4>
 
 <pre>
 Idioma=Français <i>ou</i> English <i>ou</i> Deutsch <i>ou</i> Português brasileiro
@@ -301,7 +301,7 @@ use 0.<br/>
 </dl>
 
 
-<h4>Configurações dos atalhos</h4>
+<h4 id="conffile-syntax-shortcuts">Configurações dos atalhos</h4>
 
 <pre>
 Atalho=<i>keystroke</i>
@@ -391,7 +391,7 @@ ScrollLock=<i>status</i>
 
 <h2 id="limits">Problemas conhecidos</h2>
 
-<h3>Teclas de atalho que não podem ser usadas</h3>
+<h3 id="limits-unavailable-shortcuts">Teclas de atalho que não podem ser usadas</h3>
 
 <p>Algumas teclas especiais não podem ser usadas:</p>
 <pre>
@@ -425,12 +425,12 @@ Pause
 </table>
 
 
-<h3>Atalhos que causam efeitos colaterais</h3>
+<h3 id="limits-side-effects">Atalhos que causam efeitos colaterais</h3>
 
-<p>Por padrão, no Windows a combinação de teclas <kbd>Alt+Shift</kbd> altera o layout do teclado. É altamente recomendável evitar o uso de atalhos com teclas como <kbd>Alt+Shift+<i>tecla</i></kbd>, pois você pode alterar o layout do teclado sem querer.</p>
+<p>Por padrão, no Windows a combinação de teclas <kbd>Alt + Shift</kbd> altera o layout do teclado. É altamente recomendável evitar o uso de atalhos com teclas como <kbd>Alt+Shift+<i>tecla</i></kbd>, pois você pode alterar o layout do teclado sem querer.</p>
 
 
-<h3>Programas de incompatibilidade parcial</h3>
+<h3 id="limits-programs">Programas de incompatibilidade parcial</h3>
 
 <p>O Clavier+ pode ter problemas com alguns programas nas operações de reprodução de texto e simulação de digitação:</p>
 

@@ -135,7 +135,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 <p><span class="ipt">Warning!</span> If you associate several actions to the same shortcut, beware to avoid ambiguities by giving them mutually exclusive conditions. Otherwise, an error message will appear when you close the window. For example, if you want to associate <kbd>Ctrl + X</kbd> to Notepad when <kbd>Num Lock</kbd> is off and to the Calculator otherwise, you <i>must</i> give the condition “Num Lock: must be on” to the second shortcut. This is because “Num Lock: no condition” can be ambiguous with other shortcuts, such as <kbd>Ctrl + X</kbd> with the condition “Caps Lock: must be on”.</p>
 
 
-<h3>Active program</h3>
+<h3 id="conditions-active">Active program</h3>
 
 <p>You can restrict a shortcut to some programs. This allows to give different meanings to the same shortcut, depending of the active program. By defaults, shortcuts are enabled for “all programs but: <i>none</i>”, i.e. for all programs.</p>
 
@@ -150,7 +150,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 <p>Shortcuts of type <i>only these programs</i> have the priority on <i>all programs but</i> shortcuts. If you associate the condition “only these programs: <kbd>notepad.exe</kbd>” to a first shortcut, and “all programs but: <i>none</i>” to a second shortcut, if both shortcuts have the same keystroke, and if you execute this keystroke in Notepad, the first shortcut will be executed, the second will be ignored.</p>
 
 
-<h3>Toggle keys</h3>
+<h3 id="conditions-toggle-keys">Toggle keys</h3>
 
 <p>You can modify the action of a keyboard shortcut depending of the toggle keys state: <kbd>Caps Lock</kbd>, <kbd>Num Lock</kbd>, <kbd>Scroll Lock</kbd>. For example, you can create a keyboard shortcut active only in caps lock mode.</p>
 
@@ -162,20 +162,20 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 <p>In the <i>Write text</i> textbox, you can specify several kinds of actions:</p>
 
 
-<h3>Typing text</h3>
+<h3 id="text-typing">Typing text</h3>
 
 <p>Simply write the text to be typed in the text area. The <i>Write a character</i> in the arrow menu allows to insert special characters unreachable from the keyboard.</p>
 
 <p>Typing text does not work with some programs. You can try to use the <kbd>[|<i>text to write</i>|]</kbd> syntax to make Clavier+ using low-level techniques when typing text (better compatibility, but slower and more limited).</p>
 
-<h3>Simulating a keystroke</h3>
+<h3 id="text-simulating-keystroke">Simulating a keystroke</h3>
 
 <p>Use the <i>Simulate a Keystroke</i> in the arrow menu to write the keystroke code. Typically, the code is the name of the keystroke between brackets, for example: <kbd>[Ctrl+O]</kbd>.</p>
 
 <p>Note that simulating a keystroke allows to do many different actions, like manipulating the clipboard (with <kbd>Ctrl + C</kbd> and <kbd>Ctrl + V</kbd>) or executing menu commands (with <kbd>Alt + <i>letter</i></kbd>).</p>
 
 
-<h3>Launching a program</h3>
+<h3 id="text-launching-program">Launching a program</h3>
 
 <p>Use the <i>Launch a Program</i> command in the arrow menu, or write the command line to execute enclosed in double brackets. For example, to open a text file and move the cursor to its end:<br/>
 <kbd>[[notepad.exe C:\\TODO.txt]][][Ctrl+End]</kbd></p>
@@ -187,7 +187,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 <kbd>[Ctrl+C][][[iexplore.exe %CLIPBOARD%]]</kbd></p>
 
 
-<h3>Synchronizing</h3>
+<h3 id="text-syncing">Synchronizing</h3>
 
 <p>If your shortcut executes several actions, it may be necessary to let each of them enough time to be executed. To make a pause, write a pair of brackets: <kbd>[]</kbd>. Clavier+ will wait for 100 milliseconds, then detect the new focused window. You can also use the command <a href="#focus"><kbd>[{Focus}]</kbd></a> to specify the delay.</p>
 
@@ -199,7 +199,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 This shortcut copies to the clipboard the text currently selected, launches notepad, then pastes the copied text in it. The <kbd>[]</kbd> tag is crucial; it orders Clavier+ to paste to the <em>new</em> active window, i.e. notepad.</p>
 
 
-<h3>Executing special commands</h3>
+<h3 id="text-special-commands">Executing special commands</h3>
 
 <p>The arrow menu contains the list of supported commands.</p>
 
@@ -246,7 +246,7 @@ This shortcut copies to the clipboard the text currently selected, launches note
 </dl>
 
 
-<h3>Special characters</h3>
+<h3 id="text-special-chars">Special characters</h3>
 
 <p>If you need to write special characters <kbd>\</kbd>, <kbd>[</kbd>, <kbd>]</kbd>, <kbd>{</kbd>, <kbd>}</kbd> or <kbd>|</kbd>, you need to escape them with a backslash. For example:<br/>
 <kbd>This is a bracket: \[, this is a single backslash: \\</kbd><br/>
@@ -265,7 +265,12 @@ The arrow menu has an entry listing all special characters.</p>
 
 <p>By default, Clavier+ uses a single configuration file to store its settings: <kbd>Clavier.ini</kbd>, located in the same directory than Clavier+ main executable. Clavier+ doesn’t put anything in the registry, except if you use the <i>Launch Clavier+ at Windows startup</i> option.</p>
 
-<p>Clavier+ menu, displayed by right clicking Clavier+ icon near the system clock, proposes several commands to manage configuration files:</p>
+
+<h3 id="conffile-multiple">Multiple configuration files</h3>
+
+<p>You can create multiple configuration files to easily switch between multiple sets of shortcuts. You can switch between configuration files without restarting Clavier+.</p>
+
+<p>The Clavier+ menu, displayed by right clicking Clavier+ icon near the system clock, proposes several commands to manage configuration files:</p>
 <ul>
 <li>Available configuration files: <kbd>*.ini</kbd> files located in Clavier+ directory. Choose a file to load it.</li>
 <li>Load Configuration: load a configuration file, if it is not in the list. Make sure not to load the configuration file of another program, it would be overwritten and lost.</li>
@@ -277,7 +282,7 @@ The arrow menu has an entry listing all special characters.</p>
 <pre>clavier.exe /load <i>configuration_file.ini</i></pre>
 
 
-<h3>Configuration files syntax</h3>
+<h3 id="conffile-syntax">Configuration files syntax</h3>
 
 <p>If you need to add many shortcuts at once, here is the configuration file format</p>
 
@@ -292,7 +297,7 @@ Second shortcut settings
 
 <p>If a configuration file contains multiple definitions for the same shortcut, Clavier+ retains only the first definition. The duplicate definitions coming next are ignored. Therefore if you want to override some of your shortcuts by copy-pasting new definitions, insert the new configuration at the beginning of the file, not at the end.</p>
 
-<h4>Global settings</h4>
+<h4 id="conffile-syntax-global">Global settings</h4>
 
 <pre>
 Language=Français <i>or</i> English <i>or</i> Deutsch <i>or</i> Português brasileiro
@@ -316,7 +321,7 @@ Sorting=<i>column index</i>
 </dl>
 
 
-<h4>Shortcuts settings</h4>
+<h4 id="conffile-syntax-shortcuts">Shortcuts settings</h4>
 
 <pre>
 Shortcut=<i>keystroke</i>
@@ -407,7 +412,7 @@ ScrollLock=<i>condition</i>
 
 <h2 id="limits">Known issues</h2>
 
-<h3>Unavailable shortcuts</h3>
+<h3 id="limits-unavailable-shortcuts">Unavailable shortcuts</h3>
 
 <p>Some special keys can’t be used:</p>
 <pre>
@@ -417,53 +422,15 @@ Pause
 
 <p>The special keys “Refresh browser”, “increase volume”, etc. are partially supported. Shortcuts using them can be created, and it is possible to modify their original behavior. However the action of these keys is executed when they are pressed in the <i>Add</i> dialog box. Moreover, as Windows does not provide a generic method to get the name of theses special keys, they are named by a number (for example: <kbd>#183</kbd>).</p>
 
-<p>Windows standard shortcuts cannot be modified. Here are some of them:</p>
-
-<table style="border-spacing: 2em 0">
-<tr><td><kbd>Ctrl + Alt + DEL</kbd></td><td>show task manager</td></tr>
-<tr><td><kbd>F12</kbd></td><td>reserved to the debugger</td></tr>
-<tr><td><kbd>Alt + Tab</kbd></td><td>activate the next task</td></tr>
-<tr><td><kbd>Alt + Shift + Tab</kbd></td><td>activate the previous task</td></tr>
-<tr><td><kbd>Win + B</kbd></td><td>give the focus to the traybar</td></tr>
-<tr><td><kbd>Win + D</kbd></td><td>minimize or restore all windows</td></tr>
-<tr><td><kbd>Win + E</kbd></td><td>launch the explorer</td></tr>
-<tr><td><kbd>Win + F</kbd></td><td>show the <i>Find files</i> window</td></tr>
-<tr><td><kbd>Win + Ctrl + F</kbd></td><td>show the <i>Find computers</i></td></tr>
-<tr><td><kbd>Win + L</kbd></td><td>fast user switching</td></tr>
-<tr><td><kbd>Win + M</kbd></td><td>minimize all windows</td></tr>
-<tr><td><kbd>Win + Shift + M</kbd></td><td>cancel the effect of Win + M</td></tr>
-<tr><td><kbd>Win + R</kbd></td><td>show Start/Run window</td></tr>
-<tr><td><kbd>Win + U</kbd></td><td>launch the utilities manager</td></tr>
-<tr><td><kbd>Win + F1</kbd></td><td>launch Windows help</td></tr>
-<tr><td><kbd>Win + Tab</kbd></td><td>activate the next taskbar button</td></tr>
-<tr><td><kbd>Win + Shift + Tab</kbd></td><td>activate the previous taskbar button</td></tr>
-<tr><td><kbd>Win + Pause</kbd></td><td>show the <i>System</i> applet of the configuration panel</td></tr>
-</table>
-
-<p>Windows 7 has a few more standard shortcuts that cannot be modified:</p>
-
-<table style="border-spacing: 2em 0">
-<tr><td><kbd>Win + =</kbd></td><td>magnifier</td></tr>
-<tr><td><kbd>Win + B</kbd></td><td>give the focus to the notifications area</td></tr>
-<tr><td><kbd>Win + G</kbd></td><td>show desktop gadgets</td></tr>
-<tr><td><kbd>Win + Home</kbd></td><td>minimize or maximize all inactive windows</td></tr>
-<tr><td><kbd>Win + P</kbd></td><td>show presentation mode projector options</td></tr>
-<tr><td><kbd>Win + T</kbd></td><td>cycle through taskbar buttons</td></tr>
-<tr><td><kbd>Win + Shift + T</kbd></td><td>cycle through taskbar buttons in reverse order</td></tr>
-<tr><td><kbd>Win + X</kbd></td><td>launch mobility center</td></tr>
-<tr><td><kbd>Win + Space</kbd></td><td>Aero desktop peek</td></tr>
-<tr><td><kbd>Win + arrow</kbd></td><td>dock, maximize, or minimize window</td></tr>
-<tr><td><kbd>Win + Shift + arrow</kbd></td><td>change monitor, or change vertical size of window</td></tr>
-<tr><td><kbd>Win + digit</kbd></td><td>open taskbar pinned</td></tr>
-</table>
+<p>Windows system shortcuts cannot be modified. As of Windows 8 it includes most <kbd>Win + <i>letter</i></kbd> and <kbd>Win + <i>digit</i></kbd> shortcuts. The <a href="http://windows.microsoft.com/en-us/windows/keyboard-shortcuts">Microsoft documentation</a> provides an exhaustive list.</p>
 
 
-<h3>Shortcuts having side effects</h3>
+<h3 id="limits-side-effects">Shortcuts having side effects</h3>
 
 <p>By default under Windows, the <kbd>Alt + Shift</kbd> shortcut changes the keyboard layout. You are strongly encouraged not to use shortcuts like <kbd>Alt + Shift + <i>key</i></kbd>, because you could change the keyboard layout by mistake.</p>
 
 
-<h3>Partially incompatible programs</h3>
+<h3 id="limits-programs">Partially incompatible programs</h3>
 
 <p>Clavier+ may encounter difficulty with some programs when typing text or simulating keystrokes:</p>
 <ul>
@@ -473,9 +440,11 @@ Pause
 </ul>
 
 
-<h3>Other limitations</h3>
+<h3 id="limits-repetition">Repetition</h3>
 
-<p>Some shortcuts do not allow fast repetition: you may have to release all special keys (Ctrl, Alt, etc.), then press them again to repeat the shortcut. Shortcuts that simulate other shortcuts or launch programs, Clavier+ has to release the special keys. This avoids the shortcuts to mix and the launched programs to detect that some special keys are down. For example, if <kbd>Ctrl+X</kbd> is associated to <kbd>[Alt+Y]</kbd>, Clavier+ releases the <kbd>Ctrl</kbd> key, otherwise <kbd>Ctrl+Alt+Y</kbd> would be simulated instead of <kbd>Alt+Y</kbd>. For technical reasons, Clavier+ cannot determine whether the user has released or not the special keys before the end of the shortcut, indicating whether or not they should be pressed again to allow shortcut repetition. To avoid buggy keyboard behavior, Clavier+ never presses the special keys down again.</p>
+<p>Some shortcuts do not allow fast repetition: you may have to release all special keys (Ctrl, Alt, etc.), then press them again to repeat the shortcut. For instance, if you associate actions to <kbd>Ctrl + A</kbd> and <kbd>Ctrl + B</kbd>, to execute the two shortcuts sequentially you cannot do simply press <kbd>Ctrl + A</kbd> then release A and press B. You have to press <kbd>Ctrl + A</kbd>, release all keys, then press <kbd>Ctrl + B</kbd>.</p>
+
+<p>This limitation exists because Clavier+ has to release the special keys for shortcuts that simulate other shortcuts or launch programs. This avoids the shortcuts to mix and the launched programs to detect that some special keys are down. For example, if <kbd>Ctrl + A</kbd> is associated to <kbd>[Alt+B]</kbd>, Clavier+ releases the <kbd>Ctrl</kbd> key, otherwise <kbd>Ctrl + Alt + B</kbd> would be simulated instead of <kbd>Alt + B</kbd>. For technical reasons, Clavier+ cannot determine whether the user has released or not the special keys before the end of the shortcut, indicating whether or not they should be pressed again to allow shortcut repetition. To avoid buggy keyboard behavior, Clavier+ never presses the special keys down again.</p>
 
 
 <h2 id="faq">FAQ</h2>
@@ -493,7 +462,7 @@ Pause
 <div id="special" class="faq-question">5. How to write special characters? <kbd>\ [ ] { } |</kbd></div>
 <div class="faq-answer"><p>Some characters have a special meaning for Clavier+: <kbd>\ [ ] { } |</kbd></p><p>You need to escape when with a backslash to write them. Example:</p><p><kbd>This is a bracket: \[, this is a single backslash: \</kbd></p></div>
 <div id="textformat" class="faq-question">6. How to write formatted text, e.g. bold, hyperlinks?</div>
-<div class="faq-answer"><p>There is no standard way to format text: the exact procedure depends on which program you want to write text in (Word, Excel, OpenOffice).</p><p>The AutoText feature of Word allows to insert any formatted text block. With other programs, you can use keyboard shortcuts. For example, <kbd>Ctrl+B</kbd> often toggles the bold attribute. To make a word bold, one can write:</p><p><kbd>A [Ctrl+B]bold[Ctrl+B] word</kbd></p><p>Again, formatting hotkeys depend on the program you are using. Please refer to its documentation for more details.</p></div>
+<div class="faq-answer"><p>There is no standard way to format text: the exact procedure depends on which program you want to write text in (Word, Excel, OpenOffice).</p><p>The AutoText feature of Word allows to insert any formatted text block. With other programs, you can use keyboard shortcuts. For example, <kbd>Ctrl + B</kbd> often toggles the bold attribute. To make a word bold, one can write:</p><p><kbd>A [Ctrl+B]bold[Ctrl+B] word</kbd></p><p>Again, formatting hotkeys depend on the program you are using. Please refer to its documentation for more details.</p></div>
 <div id="maclinux" class="faq-question">7. Is Clavier+ available on Mac, Linux, Android, iPad, or any other non-Windows OS?</div>
 <div class="faq-answer"><p>No, Clavier+ is for Windows desktop only. I have no plans to rewrite Clavier+ for Mac, Linux, iPhone/iPad, Windows Phone, or any other system. I don’t know if these systems offer a Clavier+ equivalent. Porting Clavier+ to another system would require a full rewrite therefore a lot of work.</p></div>
 <div id="password" class="faq-question">8. How to protect Clavier+ with a password?</div>

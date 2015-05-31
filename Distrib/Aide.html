@@ -130,7 +130,7 @@ E-mail&nbsp;: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd><
 
 
 
-<h3>Programme actif</h3>
+<h3 id="conditions-active">Programme actif</h3>
 
 <p>Vous pouvez restreindre un raccourci à certains programmes. Cela permet de donner des effets différents au même raccourci clavier, selon le programme courant. Par défaut, les raccourcis sont activés pour «&nbsp;tous les programmes sauf&nbsp;: <i>aucun</i>&nbsp;», c’est-à-dire pour tous les programmes.</p>
 
@@ -143,7 +143,7 @@ E-mail&nbsp;: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd><
 <p>Les raccourcis de type <i>seulement ces programmes</i> sont prioritaires sur ceux de type <i>tous les programmes sauf</i>. Si vous associez la condition «&nbsp;seulement ces programmes&nbsp;: <kbd>notepad.exe</kbd>&nbsp;» à un premier raccourci et «&nbsp;tous les programmes sauf&nbsp;: <i>aucun</i>&nbsp;» à un second raccourci, que les deux raccourcis ont la même séquence de touches, et que vous effectuez cette séquence de touches dans le bloc-notes, le premier raccourci sera exécuté, le second sera ignoré.</p>
 
 
-<h3>État des touches bascule</h3>
+<h3 id="conditions-toggle-keys">État des touches bascule</h3>
 
 <p>Vous pouvez modifier l’action d’un raccourci selon l’état des touches bascule&nbsp;: verrouillage majuscule, pavé numérique, arrêt défilement. Vous pouvez par exemple créer un raccourci qui ne sera actif que si le mode verrouillage majuscule est activé.</p>
 
@@ -155,21 +155,21 @@ E-mail&nbsp;: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd><
 <p>Dans la zone de texte <i>Écrire du texte</i>, vous pouvez ordonner l’exécution de plusieurs actions&nbsp;:</p>
 
 
-<h3>Écrire du texte</h3>
+<h3 id="text-typing">Écrire du texte</h3>
 
 <p>Il suffit d’écrire votre texte tel quel. La commande <i>Écrire un caractère</i> du menu en forme de flèche permet d’écrire les caractères inaccessibles au clavier.</p>
 
 <p>La frappe de texte ne fonctionne pas avec certains programmes. Vous pouvez alors utiliser la syntaxe <kbd>[|<i>texte à écrire</i>|]</kbd> pour forcer Clavier+ à écrire le texte en bas niveau (meilleure compatibilité mais plus lent et plus limité).</p>
 
 
-<h3>Simuler des frappes de touches</h3>
+<h3 id="text-simulating-keystroke">Simuler des frappes de touches</h3>
 
 <p>Utilisez la commande <i>Simuler une frappe de touches</i> du menu en forme de flèche pour écrire le code correspondant à la frappe de touches souhaitée. Typiquement, ce code est le nom de la combinaison de touches entre crochets, par exemple <kbd>[Ctrl+O]</kbd>.</p>
 
 <p>Notez que simuler une frappe de touches permet d’effectuer de nombreuses actions, notamment manipuler le presse-papiers (avec <kbd>Ctrl + C</kbd> et <kbd>Ctrl + V</kbd>) ou exécuter une commande dans un menu (avec <kbd>Alt + <i>lettre</i></kbd>).</p>
 
 
-<h3>Lancer un programme</h3>
+<h3 id="text-launching-program">Lancer un programme</h3>
 
 <p>Utilisez la commande <i>Lancer un programme</i> du menu en forme de flèches, ou bien écrivez la ligne de commande à exécuter entre double crochets. Par exemple, pour ouvrir un fichier texte et aller à la fin&nbsp;:<br/>
 <kbd>[[notepad.exe C:\\urgent.txt]][][Ctrl+Fin]</kbd></p>
@@ -181,7 +181,7 @@ E-mail&nbsp;: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd><
 <kbd>[Ctrl+C][][[iexplore.exe %CLIPBOARD%]]</kbd></p>
 
 
-<h3>Synchroniser</h3>
+<h3 id="text-syncing">Synchroniser</h3>
 
 <p>Si vous enchaînez plusieurs actions, il peut être utile de leur laisser le temps de s’exécuter. Pour cela écrivez une paire de crochets&nbsp;: <kbd>[]</kbd>. Cela attendra 100 millisecondes puis détectera la nouvelle fenêtre active. Vous pouvez aussi utiliser la commande <a href="#focus"><kbd>[{Focus}]</kbd></a>, qui offre un meilleur contrôle du délai.</p>
 
@@ -193,7 +193,7 @@ E-mail&nbsp;: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd><
 Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, lance le bloc-notes, puis y colle le texte copié. Le <kbd>[]</kbd> est très important, il indique à Clavier+ de coller dans la <em>nouvelle</em> fenêtre active, c’est-à-dire celle du bloc-notes qui vient de s’ouvrir.</p>
 
 
-<h3>Exécuter des commandes spéciales</h3>
+<h3 id="text-special-commands">Exécuter des commandes spéciales</h3>
 
 <p>Le menu en forme de flèche rappelle la liste des commandes gérées.</p>
 
@@ -240,7 +240,7 @@ Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, l
 </dl>
 
 
-<h3>Caractères spéciaux</h3>
+<h3 id="text-special-chars">Caractères spéciaux</h3>
 
 <p>Si vous avez besoin d’insérer les caractères <kbd>\</kbd>, <kbd>[</kbd>, <kbd>]</kbd>, <kbd>{</kbd>, <kbd>}</kbd> ou <kbd>|</kbd>, vous devez le faire précéder d’un antislash. Par exemple&nbsp;:<br/>
 <kbd>Ceci est un crochet ouvrant: \[, ceci est un seul antislash: \\</kbd><br/>
@@ -260,9 +260,9 @@ Le menu en forme de flèche rappelle la liste des caractères spéciaux.</p>
 <p>Par défaut, Clavier+ utilise un seul fichier de configuration pour stocker ses paramètres&nbsp;: <kbd>Clavier.ini</kbd>, situé dans le même répertoire que le programme. Le programme ne stocke rien dans la base de registre, à l’exception de l’option <i>Lancer Clavier+ au démarrage de Windows</i>.</p>
 
 
-<h3>Fichiers de configuration multiples</h3>
+<h3 id="conffile-multiple">Fichiers de configuration multiples</h3>
 
-<p>Si souhaitez utiliser plusieurs jeux de raccourcis, vous pouvez créer plusieurs fichiers de configuration et charger celui qui vous convient. Charger un fichier de configuration peut se faire sans relancer Clavier+.</p>
+<p>Si vous souhaitez utiliser plusieurs jeux de raccourcis, vous pouvez créer plusieurs fichiers de configuration et charger celui qui vous convient. Charger un fichier de configuration peut se faire sans relancer Clavier+.</p>
 
 <p>Le menu de Clavier+, affiché par un clic droit sur l’icône de Clavier+ à côté de l’horloge, propose plusieurs commandes&nbsp;:</p>
 <ul>
@@ -276,7 +276,7 @@ Le menu en forme de flèche rappelle la liste des caractères spéciaux.</p>
 <pre>clavier.exe /load <i>fichier_de_configuration.ini</i></pre>
 
 
-<h3>Syntaxe des fichiers de configuration</h3>
+<h3 id="conffile-syntax">Syntaxe des fichiers de configuration</h3>
 
 <p>Si vous voulez ajouter d’un seul coup de nombreux raccourcis, voici le format du fichier de configuration&nbsp;:</p>
 
@@ -292,7 +292,7 @@ Paramètres du second raccourci
 <p>Si un fichier de configuration contient plusieurs définitions pour le même raccourci, Clavier+ ne retient que la première définition. Les définitions en double qui suivent sont ignorées. Si vous souhaitez modifier certains de vous raccourcis en copiant-collant leurs définitions mises à jour, insérez la nouvelle configuration au début du fichier.</p>
 
 
-<h4>Paramètres globaux</h4>
+<h4 id="conffile-syntax-global">Paramètres globaux</h4>
 
 <pre>
 Langue=Français <i>ou</i> English <i>ou</i> Deutsch <i>ou</i> Português brasileiro
@@ -316,7 +316,7 @@ Tri=<i>numéro colonne</i>
 </dl>
 
 
-<h4>Paramètres des raccourcis</h4>
+<h4 id="conffile-syntax-shortcuts">Paramètres des raccourcis</h4>
 
 <pre>
 Raccourci=<i>séquence de touches</i>
@@ -409,7 +409,7 @@ pour le champ <kbd>Texte=</kbd>.</p>
 <h2 id="limits">Limitations</h2>
 
 
-<h3>Raccourcis indisponibles</h3>
+<h3 id="limits-unavailable-shortcuts">Raccourcis indisponibles</h3>
 
 <p>Certaines touches spéciales ne peuvent être utilisées&nbsp;:</p>
 <pre>
@@ -419,53 +419,15 @@ Pause
 
 <p>Les touches spéciales «&nbsp;Rafraîchir le navigateur&nbsp;», «&nbsp;Augmenter le volume&nbsp;», etc. sont partiellement supportées. On peut créer des raccourcis les utilisant, et même modifier leur comportement d’origine. Cependant, ceci peut surprendre, l’action de ces touches s’exécute lorsqu’on les enfonce dans la boîte de dialogue <i>Ajouter</i>. De plus, comme Windows ne propose pas de méthode générique pour récupérer le nom de ces touches spéciales, elles s’affichent sous la forme d’un numéro (par exemple&nbsp;: <kbd>#183</kbd>).</p>
 
-<p>Les raccourcis standards de Windows ne peuvent être modifiés. En voici une liste non exhaustive&nbsp;:</p>
-
-<table style="border-spacing: 2em 0">
-<tr><td><kbd>Ctrl + Alt + SUPPR</kbd></td><td>permet de fermer un programme</td></tr>
-<tr><td><kbd>F12</kbd></td><td>réservé au débogueur</td></tr>
-<tr><td><kbd>Alt + Tab</kbd></td><td>active le programme suivant</td></tr>
-<tr><td><kbd>Alt + Maj + Tab</kbd></td><td>active le programme précédent</td></tr>
-<tr><td><kbd>Win + B</kbd></td><td>active le focus dans la barre d’icônes à côté de l’horloge</td></tr>
-<tr><td><kbd>Win + D</kbd></td><td>réduit toutes les fenêtres&nbsp;; un autre appui retourne à l’état antérieur</td></tr>
-<tr><td><kbd>Win + E</kbd></td><td>lance l’explorateur</td></tr>
-<tr><td><kbd>Win + F</kbd></td><td>affiche la fenêtre <i>Rechercher des fichiers</i></td></tr>
-<tr><td><kbd>Win + Ctrl + F</kbd></td><td>affiche la fenêtre <i>Rechercher des ordinateurs</i></td></tr>
-<tr><td><kbd>Win + L</kbd></td><td>changement rapide d’utilisateur</td></tr>
-<tr><td><kbd>Win + M</kbd></td><td>réduit toutes les fenêtres</td></tr>
-<tr><td><kbd>Win + Maj + M</kbd></td><td>annule l’effet de <kbd>Win + M</kbd></td></tr>
-<tr><td><kbd>Win + R</kbd></td><td>affiche la fenêtre Démarrer/Exécuter</td></tr>
-<tr><td><kbd>Win + U</kbd></td><td>lance le gestionnaire d’utilitaires</td></tr>
-<tr><td><kbd>Win + F1</kbd></td><td>lance l’aide de Windows</td></tr>
-<tr><td><kbd>Win + Tab</kbd></td><td>donne le focus à l’icône suivante dans la barre des tâches</td></tr>
-<tr><td><kbd>Win + Maj + Tab</kbd></td><td>donne le focus à l’icône précédente dans la barre des tâches</td></tr>
-<tr><td><kbd>Win + Pause</kbd></td><td>affiche le module <i>Système</i> du panneau de configuration</td></tr>
-</table>
-
-<p>Windows 7 accapare un certain nombre de raccourcis supplémentaires&nbsp;:</p>
-
-<table style="border-spacing: 2em 0">
-<tr><td><kbd>Win + =</kbd></td><td>loupe</td></tr>
-<tr><td><kbd>Win + B</kbd></td><td>doner le focus à la zone de notification</td></tr>
-<tr><td><kbd>Win + G</kbd></td><td>afficher les gadgets</td></tr>
-<tr><td><kbd>Win + Début</kbd></td><td>réduire ou agrandir les fenêtres inactives</td></tr>
-<tr><td><kbd>Win + P</kbd></td><td>afficher les options de presentation</td></tr>
-<tr><td><kbd>Win + T</kbd></td><td>parcourir les boutons de la barre des tâches</td></tr>
-<tr><td><kbd>Win + Maj + T</kbd></td><td>parcourir les boutons de la barre des tâches en arrière</td></tr>
-<tr><td><kbd>Win + X</kbd></td><td>lancer le centre de mobilité</td></tr>
-<tr><td><kbd>Win + Espace</kbd></td><td>vue du bureau</td></tr>
-<tr><td><kbd>Win + flèche</kbd></td><td>déplacer, agrandir, ou réduire la fenêtre active</td></tr>
-<tr><td><kbd>Win + Maj + flèche</kbd></td><td>changer le monitor ou la hauteur de la fenêtre active</td></tr>
-<tr><td><kbd>Win + chiffre</kbd></td><td>ouvrir un item de la barre des tâches</td></tr>
-</table>
+<p>Les raccourcis systèmes de Windows ne peuvent être modifiés. En particulier, Windows 8 réserve la plupart des raccourcis du type <kbd>Win + <i>lettre</i></kbd> et <kbd>Win + <i>chiffre</i></kbd>. La <a href="http://windows.microsoft.com/fr-fr/windows/keyboard-shortcuts">documentation Microsof</a> fournit une liste exhaustive des raccourcis concernés.</p>
 
 
-<h3>Raccourcis déconseillés</h3>
+<h3 id="limits-side-effects">Raccourcis déconseillés</h3>
 
 <p>Par défaut dans Windows, le raccourci clavier <kbd>Alt + Maj gauche</kbd> sert à changer la langue du clavier. Il est vivement recommandé de ne pas utiliser de raccourci clavier de type <kbd>Alt + Maj + <i>touche</i></kbd>, car vous risqueriez de changer la langue du clavier sans le vouloir.</p>
 
 
-<h3>Programmes partiellement incompatibles</h3>
+<h3 id="limits-programs">Programmes partiellement incompatibles</h3>
 
 <p>Clavier+ peut rencontrer des difficultés avec certains programmes, notamment en ce qui concerne la frappe de texte et la simulation de frappe de touche&nbsp;:</p>
 <ul>
@@ -475,9 +437,11 @@ Pause
 </ul>
 
 
-<h3>Autres limitations</h3>
+<h3 id="limits-repetition">Répétition</h3>
 
-<p>Il n’est pas possible de répéter certains raccourcis sans relâcher puis renfoncer toutes les touches spéciales (Ctrl, Alt, etc.) du raccourci. Pour les raccourcis qui simulent des raccourcis clavier ou lancent des programmes, Clavier+ doit relâcher les touches spéciales pour ne pas que les raccourcis se mélangent ou que le programme lancé voie qu’une touche spéciale est enfoncée. Par exemple, si <kbd>Ctrl+X</kbd> est associé à <kbd>[Alt+Y]</kbd>, il faut relâcher <kbd>Ctrl</kbd>, sinon <kbd>Ctrl+Alt+Y</kbd> sera simulé, au lieu de <kbd>Alt+Y</kbd>. Or, pour des raisons techniques, Clavier+ ne peut pas détecter si l’utilisateur a ou non relâché les touches spéciales avant la fin du raccourci, et donc s’il doit ou non les renfoncer pour permettre la répétition du raccourci. Dans le doute, pour éviter des comportements étranges, il suppose que non.</p>
+<p>Il n’est pas possible de répéter certains raccourcis sans relâcher puis renfoncer toutes les touches spéciales (Ctrl, Alt, etc.) du raccourci. Par exemple, si vous avez associé des actions à  <kbd>Ctrl + A</kbd> et <kbd>Ctrl + B</kbd>, pour exécuter les deux actions à la suite vous ne pouvez pas simplement enfoncer <kbd>Ctrl + A</kbd> puis relâcher A et enfoncer B. Vous devez enfoncer <kbd>Ctrl + A</kbd>, relâcher toutes les touches, puis enfoncer <kbd>Ctrl + B</kbd>.</p>
+
+<p>Cette limitation existe car, pour les raccourcis qui simulent des raccourcis clavier ou lancent des programmes, Clavier+ doit relâcher les touches spéciales pour ne pas que les raccourcis se mélangent ou que le programme lancé voie qu’une touche spéciale est enfoncée. Par exemple, si <kbd>Ctrl + A</kbd> est associé à <kbd>[Alt + B]</kbd>, il faut relâcher <kbd>Ctrl</kbd>, sinon <kbd>Ctrl + Alt + B</kbd> sera simulé, au lieu de <kbd>Alt + B</kbd>. Or, pour des raisons techniques, Clavier+ ne peut pas détecter si l’utilisateur a ou non relâché les touches spéciales avant la fin du raccourci, et donc s’il doit ou non les renfoncer pour permettre la répétition du raccourci. Dans le doute, pour éviter des comportements étranges, il suppose que non.</p>
 
 
 <h2 id="faq">FAQ</h2>
@@ -495,7 +459,7 @@ Pause
 <div id="special" class="faq-question">5. Comment écrire des caractères spéciaux&nbsp;?</div>
 <div class="faq-answer"><p>Certains caractères ont une signification particulière pour Clavier+&nbsp;: <kbd>\ [ ] { } |</kbd></p><p>Ils doivent être précédés d’un antislash pour être écrits tels quels. Exemple&nbsp;:</p><p><kbd>Ceci est un crochet ouvrant: \[, ceci est un seul antislash: \</kbd></p></div>
 <div id="textformat" class="faq-question">6. Comment écrire du texte avec formattage&nbsp;: gras, lien hypertexte, …?</div>
-<div class="faq-answer"><p>Il n’existe pas de manière standard pour formatter du texte&nbsp;: la procédure dépend des programmes (Word, Excel, OpenOffice).</p><p>Avec Word, les insertions automatiques permettent d’insérer n’importe quel bloc de texte formatté. Avec les autres logiciels, vous pouvez utiliser les raccourcis clavier de formattage. Par exemple, <kbd>Ctrl+G</kbd> sert souvent à mettre en gras. Pour mettre un mot en gras, on peut alors écrire&nbsp;:</p><p><kbd>Un [Ctrl+G]mot[Ctrl+G] en gras</kbd></p><p>Encore une fois, les raccourcis de formattage dépendent des logiciels, veuillez consulter leur documentation.</p></div>
+<div class="faq-answer"><p>Il n’existe pas de manière standard pour formatter du texte&nbsp;: la procédure dépend des programmes (Word, Excel, OpenOffice).</p><p>Avec Word, les insertions automatiques permettent d’insérer n’importe quel bloc de texte formatté. Avec les autres logiciels, vous pouvez utiliser les raccourcis clavier de formattage. Par exemple, <kbd>Ctrl + G</kbd> sert souvent à mettre en gras. Pour mettre un mot en gras, on peut alors écrire&nbsp;:</p><p><kbd>Un [Ctrl+G]mot[Ctrl+G] en gras</kbd></p><p>Encore une fois, les raccourcis de formattage dépendent des logiciels, veuillez consulter leur documentation.</p></div>
 <div id="maclinux" class="faq-question">7. Clavier+ est-il disponible pour Mac, Linux, Android, iPad, ou un OS autre que Windows&nbsp;?</div>
 <div class="faq-answer"><p>Non, Clavier+ n’existe que pour Windows pour ordinateur. Je n’envisage de programmer de version Mac, Linux, Android, iPhone/iPad, Windows Phone, ou tout autre système. J’ignore s’il existe des équivalents de Clavier+ pour d’autres systèmes d’exploitation que Windows. Porter Clavier+ sur un autre système nécessiterait une réécriture complète donc beaucoup de travail.</p></div>
 <div id="password" class="faq-question">8. Comment protéger l’accès à Clavier+ par un mot de passe&nbsp;?</div>
