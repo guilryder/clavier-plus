@@ -422,12 +422,12 @@ Pause
 
 <p>The special keys “Refresh browser”, “increase volume”, etc. are partially supported. Shortcuts using them can be created, and it is possible to modify their original behavior. However the action of these keys is executed when they are pressed in the <i>Add</i> dialog box. Moreover, as Windows does not provide a generic method to get the name of theses special keys, they are named by a number (for example: <kbd>#183</kbd>).</p>
 
-<p>Windows system shortcuts cannot be modified. As of Windows 8 it includes most <kbd>Win + <i>letter</i></kbd> and <kbd>Win + <i>digit</i></kbd> shortcuts. The <a href="http://windows.microsoft.com/en-us/windows/keyboard-shortcuts">Microsoft documentation</a> provides an exhaustive list.</p>
+<p>Windows system shortcuts cannot be modified. As of Windows 8 it includes most <kbd>Win + <i>letter</i></kbd> and <kbd>Win + <i>digit</i></kbd> shortcuts. The <a href="http://windows.microsoft.com/en-us/windows-10/keyboard-shortcuts">Microsoft documentation</a> lists them all.</p>
 
 
-<h3 id="limits-side-effects">Shortcuts having side effects</h3>
+<h3 id="limits-side-effects">Discouraged shortcuts</h3>
 
-<p>By default under Windows, the <kbd>Alt + Shift</kbd> shortcut changes the keyboard layout. You are strongly encouraged not to use shortcuts like <kbd>Alt + Shift + <i>key</i></kbd>, because you could change the keyboard layout by mistake.</p>
+<p>By default under Windows, the <kbd>Alt + Shift</kbd> shortcut changes the keyboard layout. You are strongly discouraged to use shortcuts like <kbd>Alt + Shift + <i>key</i></kbd>, because you could change the keyboard layout by mistake.</p>
 
 
 <h3 id="limits-programs">Partially incompatible programs</h3>
@@ -454,17 +454,17 @@ Pause
 <div id="automate" class="faq-question">1. How to automate an action in <i>MyFavoriteProgram</i> with Clavier+?</div>
 <div class="faq-answer"><p>Clavier+ is a generic tool that can simulate keystrokes. As each program is unique, it’s up to you to figure out the keystrokes that execute the action you want to automate. You can contact me to report Clavier+ bugs or ask questions on how to configure Clavier+, however I will not find keystrokes for you and cannot help you with programs other than Clavier+.</p></div>
 <div id="windows" class="faq-question">2. Which Windows versions is Clavier+ compatible with?</div>
-<div class="faq-answer"><p>The latest Clavier+ version is compatible with all NT family Windows versions: 2000, NT, XP, Vista, 7, 8. The <a href="#old">older Clavier+ versions</a> are compatible with Windows 95/98/ME too.</p></div>
+<div class="faq-answer"><p>The latest Clavier+ version is compatible with all NT family Windows versions: 2000, NT, XP, Vista, 7, 8, 10. The <a href="#old">older Clavier+ versions</a> are compatible with Windows 95/98/ME too.</p></div>
 <div id="incompatprog" class="faq-question">3. Clavier+ can’t write text in <i>MyFavoriteProgram</i>!</div>
-<div class="faq-answer"><p>Some programs handle the keyboard in a non-standard way, preventing Clavier+ from writing text. To get around this problem, surround your text with <kbd>[|</kbd> and <kbd>|]</kbd>, as below:</p><p><kbd>[|My text|]</kbd></p></div>
+<div class="faq-answer"><p>Some programs such as Microsoft Edge (the Windows 10 web browser) handle the keyboard in a non-standard way, preventing Clavier+ from writing text. To get around this problem, surround your text with <kbd>[|</kbd> and <kbd>|]</kbd>, as below:</p><p><kbd>[|My text|]</kbd></p></div>
 <div id="games" class="faq-question">4. Does Clavier+ work with games?</div>
 <div class="faq-answer"><p>Most of the time, no. Games access the keyboard in low-level, for various raisons: speed, cheat protection.</p></div>
 <div id="special" class="faq-question">5. How to write special characters? <kbd>\ [ ] { } |</kbd></div>
-<div class="faq-answer"><p>Some characters have a special meaning for Clavier+: <kbd>\ [ ] { } |</kbd></p><p>You need to escape when with a backslash to write them. Example:</p><p><kbd>This is a bracket: \[, this is a single backslash: \</kbd></p></div>
+<div class="faq-answer"><p>Some characters have a special meaning for Clavier+: <kbd>\ [ ] { } |</kbd></p><p>You need to escape when with a backslash to write them. Example:</p><p><kbd>This is a bracket: \[, this is a single backslash: \\</kbd></p></div>
 <div id="textformat" class="faq-question">6. How to write formatted text, e.g. bold, hyperlinks?</div>
 <div class="faq-answer"><p>There is no standard way to format text: the exact procedure depends on which program you want to write text in (Word, Excel, OpenOffice).</p><p>The AutoText feature of Word allows to insert any formatted text block. With other programs, you can use keyboard shortcuts. For example, <kbd>Ctrl + B</kbd> often toggles the bold attribute. To make a word bold, one can write:</p><p><kbd>A [Ctrl+B]bold[Ctrl+B] word</kbd></p><p>Again, formatting hotkeys depend on the program you are using. Please refer to its documentation for more details.</p></div>
-<div id="maclinux" class="faq-question">7. Is Clavier+ available on Mac, Linux, Android, iPad, or any other non-Windows OS?</div>
-<div class="faq-answer"><p>No, Clavier+ is for Windows desktop only. I have no plans to rewrite Clavier+ for Mac, Linux, iPhone/iPad, Windows Phone, or any other system. I don’t know if these systems offer a Clavier+ equivalent. Porting Clavier+ to another system would require a full rewrite therefore a lot of work.</p></div>
+<div id="maclinux" class="faq-question">7. Is Clavier+ available on Mac, Linux, tablet, smartphone, or any other non-Windows system?</div>
+<div class="faq-answer"><p>No, Clavier+ works with Windows for PC only. I have no plans to port Clavier+ to Mac, Linux, Android, iOS/iPhone/iPad, Windows Phone, or any other system. I don’t know if these systems offer a Clavier+ equivalent. Porting Clavier+ to another system would require a full rewrite therefore a lot of work.</p></div>
 <div id="password" class="faq-question">8. How to protect Clavier+ with a password?</div>
 <div class="faq-answer"><p>Acess to Clavier+ shortcut list cannot be password protected. Indeed, storing data in a secure fashion is both difficult and restrictive in terms of available features. I strongly recommend using software specialized in passwords storage, such as <a href="http://keepass.sourceforge.net/">KeePass</a>, <a href="http://passwordsafe.sourceforge.net/">Password Safe</a> or <a href="http://www.roboform.com/fr/">RoboForm</a>.</p></div>
 <div id="numpadcomma" class="faq-question">9. How to make the numpad period key write a comma?</div>
@@ -497,7 +497,6 @@ Pause
 <div class="faq-answer"><p>To keep your Clavier+ shortcuts after upgrading or reformatting your computer, you can transfer the <kbd>Clavier.ini</kbd> configuration file, located in Clavier+ directory. Detailed procedure:</p><ol><li>On the new computer: install Clavier+.</li><li>On the new computer: click on <i>Quit</i> in Clavier+ configuration window, then confirm.</li><li>Copy the <kbd>Clavier.ini</kbd> file located in Clavier+ directory from the old to the new computer.</li><li>On the new computer: restart Clavier+.</li></ol></div>
 <div id="permerror" class="faq-question">23. Clavier+ loses its configuration whenever I restart my computer!</div>
 <div class="faq-answer"><p>Clavier+ saves its configuration in a file named <kbd>Clavier.ini</kbd>. If it cannot do that, Clavier+ displays an error message <i>Unable to save the settings</i> and your changes are lost when you exit Clavier+. It is often a permissions issue: Clavier+ needs write permissions for the configuration file. To solve the issue, install Clavier+ in a directory where you have write permissions.</p></div>
-
 
 
 <h2 id="examples">Shortcuts examples</h2>
