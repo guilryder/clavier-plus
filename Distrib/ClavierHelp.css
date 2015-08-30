@@ -1,6 +1,6 @@
 body {
 	font-family: sans-serif;
-	font-size: 16px;
+	counter-reset: faq-counter;
 }
 
 a:hover {
@@ -36,6 +36,10 @@ p {
 	color: red;
 }
 
+.faq-question:before {
+	content: counter(faq-counter) ". ";
+	counter-increment: faq-counter;
+}
 .faq-question {
 	margin-top: 1.5em;
 	border-top: .1em solid #888;
