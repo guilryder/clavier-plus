@@ -464,11 +464,17 @@ void Keystroke::detachKeyboardFocus(DWORD idThread) {
 
 void Keystroke::releaseSpecialKeys(BYTE abKeyboard[]) {
 	for (int i = 0; i < arrayLength(e_special_keys); i++) {
-		const BYTE vk = e_special_keys[i].vk;
-		if (abKeyboard[vk] & keyDownMask) {
-			abKeyboard[vk] = 0;
-			keybdEvent(vk, false /* down */);
-		}
+		const SpecialKey& special_key = e_special_keys[i];
+		releaseSpecialKey(special_key.vk_left, abKeyboard);
+		releaseSpecialKey(special_key.vk_right, abKeyboard);
+		abKeyboard[special_key.vk] = 0;
+	}
+}
+
+void Keystroke::releaseSpecialKey(BYTE vk, BYTE abKeyboard[]) {
+	if (abKeyboard[vk] & keyDownMask) {
+		abKeyboard[vk] = 0;
+		keybdEvent(vk, false /* down */);
 	}
 }
 

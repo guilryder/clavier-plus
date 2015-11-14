@@ -146,6 +146,8 @@ public:
 private:
 	
 	static INT_PTR CALLBACK prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	
+	static void releaseSpecialKey(BYTE vk, BYTE abKeyboard[]);
 };
 
 
