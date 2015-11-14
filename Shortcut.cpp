@@ -454,21 +454,21 @@ bool Shortcut::execute(bool bFromHotkey) const {
 				(abKeyboard[VK_SHIFT] & keyDownMask) &&
 				!(abKeyboard[VK_CONTROL] & keyDownMask)) {
 			bReleaseControl = true;
-			keybdEvent(VK_CONTROL, false);
+			keybdEvent(VK_CONTROL, true /* down */);
 			abKeyboardNew[VK_CONTROL] = keyDownMask;
 		}
 		
-		for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
-			const SPECIALKEY& rspecial_key = e_special_keys[special_key];
-			abKeyboardNew[rspecial_key.vk] =
-			abKeyboardNew[rspecial_key.vk_left] =
-			abKeyboardNew[getRightVkFromLeft(rspecial_key.vk_left)] = 0;
+		for (int i = 0; i < arrayLength(e_special_keys); i++) {
+			const SpecialKey& special_key = e_special_keys[i];
+			abKeyboardNew[special_key.vk] =
+			abKeyboardNew[special_key.vk_left] =
+			abKeyboardNew[special_key.vk_right] = 0;
 		}
 		abKeyboardNew[m_vk] = 0;
 		SetKeyboardState(abKeyboardNew);
 		
 		if (bReleaseControl) {
-			keybdEvent(VK_CONTROL, true);
+			keybdEvent(VK_CONTROL, false /* down */);
 		}
 	}
 	

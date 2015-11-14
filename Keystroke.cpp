@@ -21,11 +21,11 @@
 #include "Keystroke.h"
 
 
-const SPECIALKEY e_special_keys[kSpecialKeysCount] = {
-	{ VK_LWIN, VK_LWIN, MOD_WIN, tokWin },
-	{ VK_CONTROL, VK_LCONTROL, MOD_CONTROL, tokCtrl },
-	{ VK_SHIFT, VK_LSHIFT, MOD_SHIFT, tokShift },
-	{ VK_MENU, VK_LMENU, MOD_ALT, tokAlt },
+const SpecialKey e_special_keys[kSpecialKeysCount] = {
+	{ VK_LWIN, VK_LWIN, VK_RWIN, MOD_WIN, tokWin },
+	{ VK_CONTROL, VK_LCONTROL, VK_RCONTROL, MOD_CONTROL, tokCtrl },
+	{ VK_SHIFT, VK_LSHIFT, VK_RSHIFT, MOD_SHIFT, tokShift },
+	{ VK_MENU, VK_LMENU, VK_RMENU, MOD_ALT, tokAlt },
 };
 
 
@@ -156,22 +156,21 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 				// Flags
 				DWORD sided_mod_code = s_keystroke.m_sided_mod_code;
 				bool is_special = false;
-				for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
-					const SPECIALKEY& rspecial_key = e_special_keys[special_key];
-					const BYTE special_vk_right = getRightVkFromLeft(rspecial_key.vk_left);
-					if (vk_typed == rspecial_key.vk || vk_typed == rspecial_key.vk_left
-							|| vk_typed == special_vk_right) {
-						vk_typed = rspecial_key.vk;
+				for (int i = 0; i < arrayLength(e_special_keys); i++) {
+					const SpecialKey& special_key = e_special_keys[i];
+					if ((vk_typed == special_key.vk) ||
+					    (vk_typed == special_key.vk_left) ||
+					    (vk_typed == special_key.vk_right)) {
+						vk_typed = special_key.vk;
 						is_special = true;
 					}
 					
-					const DWORD mod_code = rspecial_key.mod_code;
-					if (isKeyDown(rspecial_key.vk_left)) {
-						sided_mod_code |= mod_code;
-					} else if (isKeyDown(special_vk_right)) {
-						sided_mod_code |= mod_code << kRightModCodeOffset;
+					if (isKeyDown(special_key.vk_left)) {
+						sided_mod_code |= special_key.mod_code;
+					} else if (isKeyDown(special_key.vk_right)) {
+						sided_mod_code |= special_key.mod_code << kRightModCodeOffset;
 					} else {
-						sided_mod_code &= ~mod_code;
+						sided_mod_code &= ~special_key.mod_code;
 					}
 				}
 				
@@ -348,9 +347,9 @@ void Keystroke::serialize(LPTSTR psz) {
 			// Special key token
 			
 			mod_code_last = 0;
-			for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
-				if (e_special_keys[special_key].tok == tok) {
-					mod_code_last = e_special_keys[special_key].mod_code;
+			for (int i = 0; i < arrayLength(e_special_keys); i++) {
+				if (e_special_keys[i].tok == tok) {
+					mod_code_last = e_special_keys[i].mod_code;
 					m_sided_mod_code |= mod_code_last;
 					break;
 				}
@@ -403,8 +402,8 @@ void Keystroke::serialize(LPTSTR psz) {
 }
 
 
-void Keystroke::keybdEvent(UINT vk, bool bUp) {
-	DWORD dwFlags = (bUp) ? KEYEVENTF_KEYUP : 0;
+void Keystroke::keybdEvent(UINT vk, bool down) {
+	DWORD dwFlags = down ? 0 : KEYEVENTF_KEYUP;
 	if (isKeyExtended(vk)) {
 		dwFlags |= KEYEVENTF_EXTENDEDKEY;
 	}
@@ -418,23 +417,23 @@ void Keystroke::simulateTyping(HWND MY_UNUSED(hwndFocus), bool bSpecialKeys) con
 	
 	// Press the special keys
 	if (bSpecialKeys) {
-		for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
-			if (mod_code & e_special_keys[special_key].mod_code) {
-				keybdEvent(e_special_keys[special_key].vk, false);
+		for (int i = 0; i < arrayLength(e_special_keys); i++) {
+			if (mod_code & e_special_keys[i].mod_code) {
+				keybdEvent(e_special_keys[i].vk, true /* down */);
 			}
 		}
 	}
 	
 	// Press and release the main key
-	keybdEvent(m_vk, false);
+	keybdEvent(m_vk, true /* down */);
 	sleepBackground(0);
-	keybdEvent(m_vk, true);
+	keybdEvent(m_vk, false /* down */);
 	
 	// Release the special keys
 	if (bSpecialKeys) {
-		for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
-			if (mod_code & e_special_keys[special_key].mod_code) {
-				keybdEvent(e_special_keys[special_key].vk, true);
+		for (int i = 0; i < arrayLength(e_special_keys); i++) {
+			if (mod_code & e_special_keys[i].mod_code) {
+				keybdEvent(e_special_keys[i].vk, false /* down */);
 			}
 		}
 	}
@@ -464,11 +463,11 @@ void Keystroke::detachKeyboardFocus(DWORD idThread) {
 }
 
 void Keystroke::releaseSpecialKeys(BYTE abKeyboard[]) {
-	for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
-		const BYTE vk = e_special_keys[special_key].vk;
+	for (int i = 0; i < arrayLength(e_special_keys); i++) {
+		const BYTE vk = e_special_keys[i].vk;
 		if (abKeyboard[vk] & keyDownMask) {
 			abKeyboard[vk] = 0;
-			keybdEvent(vk, true);
+			keybdEvent(vk, false /* down */);
 		}
 	}
 }

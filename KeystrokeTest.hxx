@@ -147,3 +147,15 @@ public:
 		}
 	}
 };
+
+
+class SpecialKeyTest : public CxxTest::TestSuite {
+public:
+	
+	void testVkRight() {
+		for (int i = 0; i < arrayLength(e_special_keys); i++) {
+			const SpecialKey& special_key = e_special_keys[i];
+			TS_ASSERT_EQUALS(static_cast<BYTE>(special_key.vk_left + 1), special_key.vk_right);
+		}
+	}
+};

@@ -104,13 +104,14 @@ public:
 	bool match(const Keystroke& ks) const;
 	
 	bool canReleaseSpecialKeys() const {
-		return (0xA6 > m_vk || m_vk > 0xB7);
+		return (VK_BROWSER_BACK > m_vk) ||  // first media key
+		       (m_vk > VK_LAUNCH_APP2);     // last media key
 	}
 	
 	static bool askSendKeys(HWND hwnd_parent, Keystroke& rks);
 	
 	
-	static void keybdEvent(UINT vk, bool bUp);
+	static void keybdEvent(UINT vk, bool down);
 	static BYTE filterVK(BYTE vk) {
 		return (vk == VK_CLEAR) ? VK_NUMPAD5 : vk;
 	}
@@ -148,21 +149,16 @@ private:
 };
 
 
-struct SPECIALKEY {
+struct SpecialKey {
 	BYTE vk;  // Virtual key code, undistinguishable from left and right if possible
 	BYTE vk_left;  // Virtual code of the left key
+	BYTE vk_right;  // Virtual code of the right key
 	DWORD mod_code;  // MOD_* code of the key (e.g. MOD_CONTROL), not sided
 	int tok;  // Token index of the name of the key
 };
 
 const int kSpecialKeysCount = 4;
-extern const SPECIALKEY e_special_keys[kSpecialKeysCount];
-
-// Returns the virtual code of a right key from the virtual code of a left key.
-// For instance, returns VK_RWIN if vk_left_key is VK_LWIN.
-inline BYTE getRightVkFromLeft(BYTE vk_left_key) {
-	return static_cast<BYTE>(vk_left_key + 1);
-}
+extern const SpecialKey e_special_keys[kSpecialKeysCount];
 
 
 bool askKeystroke(HWND hwnd_parent, Keystroke* edited_keystroke, Keystroke& result_keystroke);

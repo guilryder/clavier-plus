@@ -208,12 +208,10 @@ void runGui(CMDLINE_OPTION cmdopt) {
 			const HWND hwndFocus = Keystroke::getKeyboardFocus();
 			
 			// Test for right special keys
-			for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
-				const DWORD mod_code = e_special_keys[special_key].mod_code;
-				const BYTE vk_left = e_special_keys[special_key].vk_left;
-				const BYTE vk_right = getRightVkFromLeft(vk_left);
+			for (int i = 0; i < arrayLength(e_special_keys); i++) {
+				const DWORD mod_code = e_special_keys[i].mod_code;
 				if (ks.m_sided_mod_code & mod_code) {
-					if (isKeyDown(vk_right)) {
+					if (isKeyDown(e_special_keys[i].vk_right)) {
 						ks.m_sided_mod_code &= ~mod_code;
 						ks.m_sided_mod_code |= mod_code << kRightModCodeOffset;
 					}

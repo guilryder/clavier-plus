@@ -19,33 +19,6 @@
 #include "Shortcut.h"
 
 
-class ShortcutTest : public CxxTest::TestSuite {
-private:
-	
-	Shortcut* m_shortcut;
-	
-public:
-	
-	void setUp() {
-		Keystroke ks;
-		ks.m_vk = 'A';
-		m_shortcut = new Shortcut(ks);
-	}
-	
-	void tearDown() {
-		delete m_shortcut;
-	}
-	
-	
-	void testGetRightVkFromLeft() {
-		TS_ASSERT_EQUALS(VK_RWIN, getRightVkFromLeft(VK_LWIN));
-		TS_ASSERT_EQUALS(VK_RCONTROL, getRightVkFromLeft(VK_LCONTROL));
-		TS_ASSERT_EQUALS(VK_RSHIFT, getRightVkFromLeft(VK_LSHIFT));
-		TS_ASSERT_EQUALS(VK_RMENU, getRightVkFromLeft(VK_LMENU));
-	}
-};
-
-
 class ShortcutCompareTest : public CxxTest::TestSuite {
 private:
 	
