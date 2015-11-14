@@ -80,7 +80,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <h2 id="utility">What can Clavier+ do</h2>
 
-<p>Clavier allows to associate an action to any keyboard shortcut. Those actions can be:</p>
+<p>Clavier allows associating an action to any keyboard shortcut. Those actions can be:</p>
 <ul>
 <li>launch a program: Word, calculator, Internet browser, etc.</li>
 <li>display a website</li>
@@ -95,9 +95,9 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <p>Clavier+ can modify the behavior of special keys like <kbd>`</kbd> or <kbd>F11</kbd>. Thus a keyboard shortcut of one single key can be associated to a frequently used action.</p>
 
-<p>If necessary, the action of a keyboard shortcut can depend of the active program. This allows to add shortcuts to a specific program.</p>
+<p>If necessary, the action of a keyboard shortcut can depend of the active program. This allows adding shortcuts to a specific program.</p>
 
-<p>In the same way, the action of a keyboard shortcut can depend of the state of the toggle keys, i.e. the keys having small lights in the keyboard: Caps Lock, Num Lock, Scroll Lock. For example, this allows to write special characters instead of digits when the caps lock mode is set.</p>
+<p>In the same way, the action of a keyboard shortcut can depend of the state of the toggle keys, i.e. the keys having small lights in the keyboard: Caps Lock, Num Lock, Scroll Lock. For example, this allows writing special characters instead of digits when the caps lock mode is set.</p>
 
 <p>Clavier+ website proposes <a href="http://utilfr42.free.fr/util/Clavier.php#examples">some shortcuts examples</a>.</p>
 
@@ -119,7 +119,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <p>A dialog box appears for you to specify the keyboard shortcut. Type it in the dedicated area: its text name should be written in the textbox. Then, click the <i>OK</i> button.</p>
 
-<p>If necessary, modify the shortcut action in the lower part of the configuration window. If the shortcut should write text, for example an E-mail address, check that the <i>Write text</i> option is checked, then enter your text in the big text area. Each time you will type the keyboard shortcut, the specified text will be written. You can use the arrow menu to insert special characters or simulate a keystroke.</p>
+<p>If necessary, modify the shortcut action in the lower part of the configuration window. If the shortcut should write text, for example an E-mail address, check that the <i>Write text</i> option is checked, and then enter your text in the big text area. Each time you will type the keyboard shortcut, the specified text will be written. You can use the arrow menu to insert special characters or simulate a keystroke.</p>
 
 <p>If the shortcut should launch a program or display a website, check the matching option. Write the path of your program or the address of your website in the area below. You can use the small button on the right to look for the program to launch. You can check the action of your shortcut by clicking the <i>Test</i> button. If necessary, click the <i>Advanced settings</i> button to specify the initial directory or the initial window size of the program (maximized, windowed, minimized).</p>
 
@@ -130,14 +130,14 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <h2 id="conditions">Conditions applied to the shortcuts</h2>
 
-<p>You can restrict the effect of a shortcut to some conditions. If all conditions fulfill, the action of the shortcut is executed. If one or more conditions do not fulfill, Clavier+ ignores the shortcut, and the original action of the shortcut is executed (the one defined by Windows or the active program). This allows to associate different actions to the same shortcut.</p>
+<p>You can restrict the effect of a shortcut to some conditions. If all conditions fulfill, the action of the shortcut is executed. If one or more conditions do not fulfill, Clavier+ ignores the shortcut, and the original action of the shortcut is executed (the one defined by Windows or the active program). This allows associating different actions to the same shortcut.</p>
 
 <p><span class="ipt">Warning!</span> If you associate several actions to the same shortcut, beware to avoid ambiguities by giving them mutually exclusive conditions. Otherwise, an error message will appear when you close the window. For example, if you want to associate <kbd>Ctrl + X</kbd> to Notepad when <kbd>Num Lock</kbd> is off and to the Calculator otherwise, you <i>must</i> give the condition “Num Lock: must be on” to the second shortcut. This is because “Num Lock: no condition” can be ambiguous with other shortcuts, such as <kbd>Ctrl + X</kbd> with the condition “Caps Lock: must be on”.</p>
 
 
 <h3 id="conditions-active">Active program</h3>
 
-<p>You can restrict a shortcut to some programs. This allows to give different meanings to the same shortcut, depending of the active program. By defaults, shortcuts are enabled for “all programs but: <i>none</i>”, i.e. for all programs.</p>
+<p>You can restrict a shortcut to some programs. This allows giving different meanings to the same shortcut, depending of the active program. By defaults, shortcuts are enabled for “all programs but: <i>none</i>”, i.e. for all programs.</p>
 
 <p>You can define two kinds of condition on the active program. The shortcut can be enabled for all programs, except specific ones (exclusive criteria), or only for specific programs (inclusive criteria). Choose the condition type in the <i>Activate for</i> combo box, after having selected your shortcut in the list.</p>
 
@@ -164,15 +164,15 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <h3 id="text-typing">Typing text</h3>
 
-<p>Simply write the text to be typed in the text area. The <i>Write a character</i> in the arrow menu allows to insert special characters unreachable from the keyboard.</p>
+<p>Simply write the text to be typed in the text area. The <i>Write a character</i> in the arrow menu allows inserting special characters unreachable from the keyboard.</p>
 
-<p>Typing text does not work with some programs. You can try to use the <kbd>[|<i>text to write</i>|]</kbd> syntax to make Clavier+ using low-level techniques when typing text (better compatibility, but slower and more limited).</p>
+<p>Typing text does not work with some programs. You can try to use the <kbd>[|<i>text to write</i>|]</kbd> syntax to make Clavier+ use low-level techniques when typing text (better compatibility, but slower and more limited).</p>
 
 <h3 id="text-simulating-keystroke">Simulating a keystroke</h3>
 
 <p>Use the <i>Simulate a Keystroke</i> in the arrow menu to write the keystroke code. Typically, the code is the name of the keystroke between brackets, for example: <kbd>[Ctrl+O]</kbd>.</p>
 
-<p>Note that simulating a keystroke allows to do many different actions, like manipulating the clipboard (with <kbd>Ctrl + C</kbd> and <kbd>Ctrl + V</kbd>) or executing menu commands (with <kbd>Alt + <i>letter</i></kbd>).</p>
+<p>Note that simulating a keystroke allows doing many different actions, like manipulating the clipboard (with <kbd>Ctrl + C</kbd> and <kbd>Ctrl + V</kbd>) or executing menu commands (with <kbd>Alt + <i>letter</i></kbd>).</p>
 
 
 <h3 id="text-launching-program">Launching a program</h3>
@@ -180,7 +180,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 <p>Use the <i>Launch a Program</i> command in the arrow menu, or write the command line to execute enclosed in double brackets. For example, to open a text file and move the cursor to its end:<br/>
 <kbd>[[notepad.exe C:\\TODO.txt]][][Ctrl+End]</kbd></p>
 
-<p>This syntax allows to launch several programs with the same shortcut. For example, to launch Notepad and the calculator:<br/>
+<p>This syntax allows launching several programs with the same shortcut. For example, to launch Notepad and the calculator:<br/>
 <kbd>[[notepad.exe]][[calc.exe]]</kbd></p>
 
 <p>The command line can contain <kbd>%</kbd> enclosed environment variables, like in <kbd>explorer.exe %WINDIR%</kbd> to open the explorer at Windows directory. The <kbd>%CLIPBOARD%</kbd> environment variable will contain the text currently stored in the clipboard. For example, to open the selected URL with Internet Explorer:<br/>
@@ -221,7 +221,7 @@ This shortcut copies to the clipboard the text currently selected, launches note
 <p>Note that <kbd>[{Focus,100}]</kbd> is equivalent to <kbd>[]</kbd>.</p></dd>
 
 <dt><kbd>[{Copy,<i>text</i>}]</kbd></dt>
-<dd>Copy the specified text to the clipboard. Beware that this command is completely unrelated to the <kbd>Ctrl + C</kbd> clipboard shortcut, because this shortcut copies the <i>selection</i> to the clipboard. Associated to the <kbd>Ctrl + V</kbd> keystroke, this command allows to write a long text quickly, or to write many times the same text. The following example writes five time the same text:<br/>
+<dd>Copy the specified text to the clipboard. Beware that this command is completely unrelated to the <kbd>Ctrl + C</kbd> clipboard shortcut, because this shortcut copies the <i>selection</i> to the clipboard. Associated to the <kbd>Ctrl + V</kbd> keystroke, this command allows writing a long text quickly, or to write many times the same text. The following example writes five time the same text:<br/>
 <kbd>[{Copy,A sentence to repeat five times. }][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd></dd>
 
 <dt><kbd>[{MouseButton,<i>code</i>}]</kbd></dt>
@@ -229,7 +229,7 @@ This shortcut copies to the clipboard the text currently selected, launches note
 <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd></dd>
 
 <dt><kbd>[{MouseMoveTo,<i>x</i>,<i>y</i>}]</kbd></dt>
-<dd>Move the mouse cursor to the given (x,y) position, specified in pixels relatively to the upper-left corner of the screen. For example, if you have a resolution resolution of 1,024 &times; 768, the following command will move the cursor to the upper right corner:<br/>
+<dd>Move the mouse cursor to the given (x,y) position, specified in pixels relatively to the upper-left corner of the screen. For example, if you have a screen size of 1,024 &times; 768 pixels, the following command will move the cursor to the upper right corner:<br/>
 <kbd>[{MouseMoveTo,1023,0}]</kbd></dd>
 
 <dt><kbd>[{MouseMoveToFocus,<i>x</i>,<i>y</i>}]</kbd></dt>
@@ -278,7 +278,7 @@ The arrow menu has an entry listing all special characters.</p>
 <li>Save Configuration: save the current shortcuts to a new configuration file.</li>
 </ul>
 
-<p>Another way to load a configuration file is to run Clavier+ with the <kbd>/load</kbd> or <kbd>/merge</kbd> <a href="#cmdline">command line</a> option. This allows to load a configuration file with a keystroke, by associating a keyboard shortcut to the command line:</p>
+<p>Another way to load a configuration file is to run Clavier+ with the <kbd>/load</kbd> or <kbd>/merge</kbd> <a href="#cmdline">command line</a> option. This allows loading a configuration file with a keystroke, by associating a keyboard shortcut to the command line:</p>
 <pre>clavier.exe /load <i>configuration_file.ini</i></pre>
 
 
@@ -355,7 +355,7 @@ ScrollLock=<i>condition</i>
 <dd>Numerical representation of the keystroke, generated and used by Clavier+. This code is used only if the <kbd>Shortcut</kbd> field is erroneous.</dd>
 
 <dt><kbd>DistinguishLeftRight</kbd></dt>
-<dd>Specifies whether Clavier+ should distinguish between left-side and right-side specials keys. If this setting is 1, <kbd>Ctrl</kbd>, <kbd>Alt</kbd>, <kbd>Shift</kbd> and <kbd>Win</kbd> keys located at the left side of the keyboard are distinguished from their equivalent located at the right side. This allows to create more shortcuts. If this settings is 0 (default value), the side of the special keys is not relevant in the keystroke.</dd>
+<dd>Specifies whether Clavier+ should distinguish between left-side and right-side specials keys. If this setting is 1, <kbd>Ctrl</kbd>, <kbd>Alt</kbd>, <kbd>Shift</kbd> and <kbd>Win</kbd> keys located at the left side of the keyboard are distinguished from their equivalent located at the right side. This allows creating more shortcuts. If this settings is 0 (default value), the side of the special keys is not relevant in the keystroke.</dd>
 
 <dt><kbd>Directory</kbd> (command mode only)</dt>
 <dd>Startup directory of the command. If none is given, Clavier+ uses the directory of the executable itself.</dd>
@@ -407,7 +407,7 @@ ScrollLock=<i>condition</i>
 <dd>Simulate text typing. The text follows the <a href="#text">syntax specified above</a>. This option allows, for example, to type text when double-clicking on a Windows shortcut, or at Windows startup, or when choosing a command in Explorer context menu. Quotes and backslashes must be escaped by a backslash, for example: <kbd>clavier.exe /sendkeys "Write a \"quoted\" word and a single \\ backslash"</kbd></dd>
 </dl>
 
-<p>If Clavier+ is launched without any argument, the behavior depends of whether Clavier+ is already launched. If no, launch Clavier+ silently. If yes, do not launch Clavier+ again but display the configuration window. This allows to access Clavier+ options even if its icon is hidden.</p>
+<p>If Clavier+ is launched without any argument, the behavior depends on whether Clavier+ is already launched. If no, launch Clavier+ silently. If yes, do not launch Clavier+ again but display the configuration window. This allows accessing Clavier+ options even if its icon is hidden.</p>
 
 
 <h2 id="limits">Known issues</h2>
@@ -420,7 +420,7 @@ Print Screen
 Pause
 </pre>
 
-<p>The special keys “Refresh browser”, “increase volume”, etc. are partially supported. Shortcuts using them can be created, and it is possible to modify their original behavior. However the action of these keys is executed when they are pressed in the <i>Add</i> dialog box. Moreover, as Windows does not provide a generic method to get the name of theses special keys, they are named by a number (for example: <kbd>#183</kbd>).</p>
+<p>The special keys “Refresh browser”, “increase volume”, etc. are partially supported. Shortcuts using them can be created, and it is possible to modify their original behavior. However the action of these keys is executed when they are pressed in the <i>Add</i> dialog box. Moreover, as Windows does not provide a generic method to get the name of these special keys, they are named by a number (for example: <kbd>#183</kbd>).</p>
 
 <p>Windows system shortcuts cannot be modified. As of Windows 8 it includes most <kbd>Win + <i>letter</i></kbd> and <kbd>Win + <i>digit</i></kbd> shortcuts. The <a href="http://windows.microsoft.com/en-us/windows-10/keyboard-shortcuts">Microsoft documentation</a> lists them all.</p>
 
@@ -442,7 +442,7 @@ Pause
 
 <h3 id="limits-repetition">Repetition</h3>
 
-<p>Some shortcuts do not allow fast repetition: you may have to release all special keys (Ctrl, Alt, etc.), then press them again to repeat the shortcut. For instance, if you associate actions to <kbd>Ctrl + A</kbd> and <kbd>Ctrl + B</kbd>, to execute the two shortcuts sequentially you cannot do simply press <kbd>Ctrl + A</kbd> then release A and press B. You have to press <kbd>Ctrl + A</kbd>, release all keys, then press <kbd>Ctrl + B</kbd>.</p>
+<p>Some shortcuts do not allow fast repetition: you may have to release all special keys (Ctrl, Alt, etc.), and then press them again to repeat the shortcut. For instance, if you associate actions to <kbd>Ctrl + A</kbd> and <kbd>Ctrl + B</kbd>, to execute the two shortcuts sequentially you cannot do simply press <kbd>Ctrl + A</kbd> then release A and press B. You have to press <kbd>Ctrl + A</kbd>, release all keys, and then press <kbd>Ctrl + B</kbd>.</p>
 
 <p>This limitation exists because Clavier+ has to release the special keys for shortcuts that simulate other shortcuts or launch programs. This avoids the shortcuts to mix and the launched programs to detect that some special keys are down. For example, if <kbd>Ctrl + A</kbd> is associated to <kbd>[Alt+B]</kbd>, Clavier+ releases the <kbd>Ctrl</kbd> key, otherwise <kbd>Ctrl + Alt + B</kbd> would be simulated instead of <kbd>Alt + B</kbd>. For technical reasons, Clavier+ cannot determine whether the user has released or not the special keys before the end of the shortcut, indicating whether or not they should be pressed again to allow shortcut repetition. To avoid buggy keyboard behavior, Clavier+ never presses the special keys down again.</p>
 
@@ -464,15 +464,15 @@ Pause
 <div id="special" class="faq-question">How to write special characters? <kbd>\ [ ] { } |</kbd></div>
 <div class="faq-answer"><p>Some characters have a special meaning for Clavier+: <kbd>\ [ ] { } |</kbd></p><p>You need to escape when with a backslash to write them. Example:</p><p><kbd>This is a bracket: \[, this is a single backslash: \\</kbd></p></div>
 <div id="textformat" class="faq-question">How to write formatted text, e.g. bold, hyperlinks?</div>
-<div class="faq-answer"><p>There is no standard way to format text: the exact procedure depends on which program you want to write text in (Word, Excel, OpenOffice).</p><p>The AutoText feature of Word allows to insert any formatted text block. With other programs, you can use keyboard shortcuts. For example, <kbd>Ctrl + B</kbd> often toggles the bold attribute. To make a word bold, one can write:</p><p><kbd>A [Ctrl+B]bold[Ctrl+B] word</kbd></p><p>Again, formatting hotkeys depend on the program you are using. Please refer to its documentation for more details.</p></div>
+<div class="faq-answer"><p>There is no standard way to format text: the exact procedure depends on which program you want to write text in (Word, Excel, OpenOffice).</p><p>The AutoText feature of Word allows inserting any formatted text block. With other programs, you can use keyboard shortcuts. For example, <kbd>Ctrl + B</kbd> often toggles the bold attribute. To make a word bold, one can write:</p><p><kbd>A [Ctrl+B]bold[Ctrl+B] word</kbd></p><p>Again, formatting hotkeys depend on the program you are using. Please refer to its documentation for more details.</p></div>
 <div id="maclinux" class="faq-question">Is Clavier+ available on Mac, Linux, tablet, smartphone, or any other non-Windows system?</div>
 <div class="faq-answer"><p>No, Clavier+ works with Windows for PC only. I have no plans to port Clavier+ to Mac, Linux, Android, iOS/iPhone/iPad, Windows Phone, or any other system. I don’t know if these systems offer a Clavier+ equivalent. Porting Clavier+ to another system would require a full rewrite therefore a lot of work.</p></div>
 <div id="password" class="faq-question">How to protect Clavier+ with a password?</div>
-<div class="faq-answer"><p>Acess to Clavier+ shortcut list cannot be password protected. Indeed, storing data in a secure fashion is both difficult and restrictive in terms of available features. I strongly recommend using software specialized in passwords storage, such as <a href="http://keepass.sourceforge.net/">KeePass</a>, <a href="http://passwordsafe.sourceforge.net/">Password Safe</a> or <a href="http://www.roboform.com/fr/">RoboForm</a>.</p></div>
+<div class="faq-answer"><p>Access to the Clavier+ shortcut list cannot be password protected. Indeed, storing data in a secure fashion is both difficult and restrictive in terms of available features. I strongly recommend using software specialized in passwords storage, such as <a href="http://keepass.sourceforge.net/">KeePass</a>, <a href="http://passwordsafe.sourceforge.net/">Password Safe</a> or <a href="http://www.roboform.com/fr/">RoboForm</a>.</p></div>
 <div id="numpadcomma" class="faq-question">How to make the numpad period key write a comma?</div>
 <div class="faq-answer"><p>Click the plus shaped button, choose <i>Write Text</i>, press the numpad period key, then click the <i>OK</i> button. Write a comma in the <i>Write text</i> area.</p></div>
 <div id="specialfolder" class="faq-question">How to create a shortcut to a special folder: My computer, Control panel, …?</div>
-<div class="faq-answer"><p>In Windows Explorer, create a Windows shortcut to the special folder: press the right mouse button on the special folder, drag the mouse to another folder (for example <kbd>C:\</kbd>), release the buton and choose <i>Create shortcut here</i> in the popup menu.</p><p>Then, in Clavier+, create a <i>Launch a program</i> keyboard shortcut that executes the Windows shortcut you have just created. You have to write the full path manually, and to append the <kbd>.lnk</kbd> extension. For example: <kbd>C:\My computer.lnk</kbd> if you have created a shortcut named <kbd>My computer</kbd> in the folder <kbd>C:\</kbd>.</p><p>Some special folders can be opened without the need for a shortcut. For instance, <kbd>::{20d04fe0-3aea-1069-a2d8-08002b30309d}</kbd> opens My computer. The CLSIDs marked as <i>supported by Run</i> in <a href="http://www.autohotkey.com/docs/misc/CLSID-List.htm">this list</a> are also available.</p></div>
+<div class="faq-answer"><p>In Windows Explorer, create a Windows shortcut to the special folder: press the right mouse button on the special folder, drag the mouse to another folder (for example <kbd>C:\</kbd>), release the button and choose <i>Create shortcut here</i> in the popup menu.</p><p>Then, in Clavier+, create a <i>Launch a program</i> keyboard shortcut that executes the Windows shortcut you have just created. You have to write the full path manually, and to append the <kbd>.lnk</kbd> extension. For example: <kbd>C:\My computer.lnk</kbd> if you have created a shortcut named <kbd>My computer</kbd> in the folder <kbd>C:\</kbd>.</p><p>Some special folders can be opened without the need for a shortcut. For instance, <kbd>::{20d04fe0-3aea-1069-a2d8-08002b30309d}</kbd> opens My computer. The CLSIDs marked as <i>supported by Run</i> in <a href="http://www.autohotkey.com/docs/misc/CLSID-List.htm">this list</a> are also available.</p></div>
 <div id="explorertreepane" class="faq-question">How to open a folder in Explorer and display the tree pane?</div>
 <div class="faq-answer"><p>In the shortcut command line, insert <kbd>explorer /e,</kbd> before the folder path; make sure to write a comma after <kbd>/e</kbd>. For example: <kbd>explorer /e, C:\</kbd></p></div>
 <div id="hideicon" class="faq-question">How to remove Clavier+ icon from the traybar?</div>
