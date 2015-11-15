@@ -19,6 +19,169 @@
 #include "Shortcut.h"
 
 
+static const Keystroke s_ks_empty;
+static const String* NO_PROGRAMS = NULL;
+
+
+class ShortcutGetProgramsTest : public CxxTest::TestSuite {
+private:
+	
+	Shortcut m_shortcut;
+	
+public:
+	
+	ShortcutGetProgramsTest() : m_shortcut(s_ks_empty) {}
+	
+	void testEmpty() {
+		TS_ASSERT_EQUALS(NO_PROGRAMS, m_shortcut.getPrograms());
+	}
+	
+	void testOnlySeparators() {
+		m_shortcut.m_sPrograms = _T(";");
+		String* actual = m_shortcut.getPrograms();
+		TS_ASSERT_DIFFERS(NO_PROGRAMS, actual);
+		TS_ASSERT_EQUALS(0, lstrcmp(actual[0], _T("")));
+		delete [] actual;
+	}
+	
+	void testOne() {
+		m_shortcut.m_sPrograms = _T("prog1");
+		String* actual = m_shortcut.getPrograms();
+		TS_ASSERT_DIFFERS(NO_PROGRAMS, actual);
+		TS_ASSERT_EQUALS(0, lstrcmp(actual[0], _T("prog1")));
+		TS_ASSERT_EQUALS(0, lstrcmp(actual[1], _T("")));
+		delete [] actual;
+	}
+	
+	void testSeveral() {
+		m_shortcut.m_sPrograms = _T("prog1;prog2");
+		String* actual = m_shortcut.getPrograms();
+		TS_ASSERT_DIFFERS(NO_PROGRAMS, actual);
+		TS_ASSERT_EQUALS(0, lstrcmp(actual[0], _T("prog1")));
+		TS_ASSERT_EQUALS(0, lstrcmp(actual[1], _T("prog2")));
+		TS_ASSERT_EQUALS(0, lstrcmp(actual[2], _T("")));
+		delete [] actual;
+	}
+	
+	void testSkipsEmpty() {
+		m_shortcut.m_sPrograms = _T(";prog1;;prog2;");
+		String* actual = m_shortcut.getPrograms();
+		TS_ASSERT_DIFFERS(NO_PROGRAMS, actual);
+		TS_ASSERT_EQUALS(0, lstrcmp(actual[0], _T("prog1")));
+		TS_ASSERT_EQUALS(0, lstrcmp(actual[1], _T("prog2")));
+		TS_ASSERT_EQUALS(0, lstrcmp(actual[2], _T("")));
+		delete [] actual;
+	}
+};
+
+
+class ShortcutCleanProgramsTest : public CxxTest::TestSuite {
+private:
+	
+	Shortcut m_shortcut;
+	
+	void check(LPCTSTR programsBefore, LPCTSTR programsExpectedAfter) {
+		m_shortcut.m_sPrograms = programsBefore;
+		m_shortcut.cleanPrograms();
+		TSM_ASSERT_EQUALS(m_shortcut.m_sPrograms,
+		                  0, lstrcmp(m_shortcut.m_sPrograms, programsExpectedAfter));
+	}
+	
+public:
+	
+	ShortcutCleanProgramsTest() : m_shortcut(s_ks_empty) {}
+	
+	void testEmpty() {
+		check(_T(""), _T(""));
+	}
+	
+	void testOnlySeparators() {
+		check(_T(";"), _T(""));
+		check(_T(";;"), _T(""));
+	}
+	
+	void testOne() {
+		check(_T("prog1"), _T("prog1"));
+	}
+	
+	void testSeveral() {
+		check(_T("prog1;prog2"), _T("prog1;prog2"));
+	}
+	
+	void testSkipsEmpty() {
+		check(_T(";prog1;;prog2;"), _T("prog1;prog2"));
+	}
+	
+	void testIgnoresCase() {
+		check(_T("prog1;PrOg1;PROG1"), _T("prog1"));
+	}
+	
+	void testDropsDuplicates() {
+		check(_T("prog1;prog2;prog1"), _T("prog1;prog2"));
+		check(_T("prog1;prog1;prog1"), _T("prog1"));
+		check(_T("prog1;prog2;prog1;prog3;prog1;prog2"), _T("prog1;prog2;prog3"));
+		check(_T("prog1;prog2;prog3;prog2"), _T("prog1;prog2;prog3"));
+	}
+};
+
+
+class ShortcutMatchTest : public CxxTest::TestSuite {
+private:
+	
+	Keystroke m_ks;
+	
+public:
+	
+	void setUp() {
+		m_ks.m_vk = 'A';
+		m_ks.m_sided_mod_code = MOD_CONTROL;
+	}
+	
+	void testBasic() {
+		Shortcut shortcut(m_ks);
+		
+		Keystroke ks_matching;
+		ks_matching.m_vk = 'A';
+		ks_matching.m_sided_mod_code = MOD_CONTROL;
+		ks_matching.m_sided = true;
+		
+		Keystroke ks_different(m_ks);
+		ks_different.m_vk = 'B';
+		
+		TS_ASSERT_EQUALS(true, shortcut.match(m_ks, NULL));
+		TS_ASSERT_EQUALS(true, shortcut.match(ks_matching, NULL));
+		TS_ASSERT_EQUALS(true, shortcut.match(m_ks, _T("prog")));
+		TS_ASSERT_EQUALS(false, shortcut.match(ks_different, NULL));
+	}
+	
+	void testProgramsOnlyTrue() {
+		testProgramsOnly(true);
+	}
+	
+	void testProgramsOnlyFalse() {
+		testProgramsOnly(false);
+	}
+	
+	void testProgramsOnly(bool programsOnly) {
+		Shortcut shortcut(m_ks);
+		shortcut.m_bProgramsOnly = programsOnly;
+		shortcut.m_sPrograms = _T("prog1;prog2;prog3");
+		
+		TS_ASSERT_EQUALS(!programsOnly, shortcut.match(m_ks, NULL));
+		TS_ASSERT_EQUALS(programsOnly, shortcut.match(m_ks, _T("prog1")));
+		TS_ASSERT_EQUALS(programsOnly, shortcut.match(m_ks, _T("PrOg1")));
+		TS_ASSERT_EQUALS(programsOnly, shortcut.match(m_ks, _T("PROG1")));
+		TS_ASSERT_EQUALS(programsOnly, shortcut.match(m_ks, _T("prog2")));
+		TS_ASSERT_EQUALS(programsOnly, shortcut.match(m_ks, _T("prog3")));
+		TS_ASSERT_EQUALS(!programsOnly, shortcut.match(m_ks, _T("prog1.exe")));
+		TS_ASSERT_EQUALS(!programsOnly, shortcut.match(m_ks, _T("pro")));
+		TS_ASSERT_EQUALS(!programsOnly, shortcut.match(m_ks, _T("ro")));
+		TS_ASSERT_EQUALS(!programsOnly, shortcut.match(m_ks, _T("rog2")));
+		TS_ASSERT_EQUALS(!programsOnly, shortcut.match(m_ks, _T("other")));
+	}
+};
+
+
 class ShortcutCompareTest : public CxxTest::TestSuite {
 private:
 	
