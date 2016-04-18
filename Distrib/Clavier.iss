@@ -84,19 +84,27 @@ Filename: {app}\{#AppExeName}; Description: {cm:LaunchProgram,{#AppName}}; Flags
 UseAbsolutePaths=false
 
 [Code]
+const
+	MSG_CLAVIER_NOTIFY_ICON = 'RyderClavierOptions';
+	WM_COMMAND = $111;
+	WM_LBUTTONUP = $202;
+	IDCCMD_QUIT = 1018;
+	QUIT_POST_DELAY_MS = 1000;
+	DISPLAY_CONFIG_PRE_DELAY_MS = 200;
+
 // Close Clavier+ just before install
 // Display Clavier+ settings just after install
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
 	if CurStep = ssInstall then
 	begin
-		PostBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0);
-		Sleep(1000)
+		PostBroadcastMessage(RegisterWindowMessage(MSG_CLAVIER_NOTIFY_ICON), IDCCMD_QUIT, WM_COMMAND);
+		Sleep(QUIT_POST_DELAY_MS)
 	end
 	else if CurStep = ssDone then
 	begin
-		Sleep(200);
-		PostBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 0, $201)
+		Sleep(DISPLAY_CONFIG_PRE_DELAY_MS);
+		PostBroadcastMessage(RegisterWindowMessage(MSG_CLAVIER_NOTIFY_ICON), 0, WM_LBUTTONUP)
 	end
 end;
 
@@ -105,7 +113,7 @@ procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
 	if CurUninstallStep = usUninstall then
 	begin
-		PostBroadcastMessage(RegisterWindowMessage('RyderClavierOptions'), 1, 0)
-		Sleep(1000);
+		PostBroadcastMessage(RegisterWindowMessage(MSG_CLAVIER_NOTIFY_ICON), IDCCMD_QUIT, WM_COMMAND)
+		Sleep(QUIT_POST_DELAY_MS);
 	end
 end;

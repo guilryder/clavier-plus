@@ -472,33 +472,39 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 
 
 void processCmdLineAction(CMDLINE_OPTION cmdopt) {
-	UINT command;
+	LPARAM lParam_to_send;
+	WPARAM wParam_to_send;
 	switch (cmdopt) {
 		
 		case cmdoptSettings:
-			command = 0;
+			lParam_to_send = WM_LBUTTONUP;
+			wParam_to_send = 0;
 			break;
 		
 		case cmdoptMenu:
-			PostMessage(e_hwndInvisible, msgClavierNotifyIcon, 0, WM_RBUTTONDOWN);
-			return;
+			lParam_to_send = WM_RBUTTONUP;
+			wParam_to_send = 0;
+			break;
 		
 		case cmdoptQuit:
-			PostMessage(e_hwndInvisible, msgClavierNotifyIcon, IDCCMD_QUIT, 0);
-			return;
+			lParam_to_send = WM_COMMAND;
+			wParam_to_send = IDCCMD_QUIT;
+			break;
 		
 		case cmdoptAddText:
-			command = ID_ADD_TEXT;
+			lParam_to_send = WM_COMMAND;
+			wParam_to_send = ID_ADD_TEXT;
 			break;
 		
 		case cmdoptAddCommand:
-			command = ID_ADD_COMMAND;
+			lParam_to_send = WM_COMMAND;
+			wParam_to_send = ID_ADD_COMMAND;
 			break;
 		
 		default:
 			return;
 	}
-	PostMessage(e_hwndInvisible, msgClavierNotifyIcon, command, WM_LBUTTONDOWN);
+	PostMessage(e_hwndInvisible, msgClavierNotifyIcon, wParam_to_send, lParam_to_send);
 }
 
 
@@ -512,24 +518,35 @@ Destroy:
 		PostQuitMessage(0);
 		
 	} else if (message == msgClavierNotifyIcon) {
-		if (wParam == 1 || wParam == IDCCMD_QUIT) {
+		if (lParam == WM_COMMAND && wParam == IDCCMD_QUIT) {
 			goto Destroy;
 		}
 		
-		if (lParam != WM_LBUTTONDOWN && lParam != WM_RBUTTONDOWN) {
+		// WM_LBUTTONUP is a special case of WM_COMMAND:
+		// show the configuration dialog then execute no command.
+		if (lParam == WM_LBUTTONUP) {
+			lParam = WM_COMMAND;
+			wParam = 0;
+		}
+		
+		if (lParam != WM_COMMAND && lParam != WM_RBUTTONUP) {
 			return 0;
 		}
 		
 		if (e_hdlgModal) {
+			// A modal dialog is visible: give it the focus.
+			// Execute the WM_COMMAND (if any), but only
+			// if just the configuration dialog is visible, not a child dialog,
+			// to avoid opening another child dialog.
 			SetForegroundWindow(e_hdlgModal);
-			if (e_hdlgModal == dialogs::e_hdlgMain && wParam) {
+			if (e_hdlgModal == dialogs::e_hdlgMain && lParam == WM_COMMAND && wParam != 0) {
 				PostMessage(dialogs::e_hdlgMain, WM_COMMAND, wParam, 0);
 			}
 			return 0;
 		}
 		
-		if (lParam == WM_LBUTTONDOWN) {
-			// Left click: display dialog box
+		if (lParam == WM_COMMAND) {
+			// Left click or command: display the configuration dialog.
 			
 			for (;;) {
 				HeapCompact(e_hHeap, 0);
@@ -544,8 +561,8 @@ Destroy:
 				}
 			}
 			
-		} else /* (lParam == WM_RBUTTONDOWN)*/ {
-			// Right click: display tray menu
+		} else /* (lParam == WM_RBUTTONUP)*/ {
+			// Right click: display the tray menu
 			
 			if (displayTrayIconMenu() == ID_TRAY_QUIT) {
 				goto Destroy;
