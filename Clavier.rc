@@ -1008,7 +1008,7 @@ BEGIN
     PUSHBUTTON      "Ajouter",IDCCMD_ADD,6,114,20,18,BS_ICON
     PUSHBUTTON      "Supprimer",IDCCMD_DELETE,30,114,20,18,BS_ICON
     PUSHBUTTON      "Modifier",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Les raccourcis sont désactivés lorsque cette boîte de dialogue est affichée.",IDCLBL_HELP,90,114,128,17,0,WS_EX_STATICEDGE
+    LTEXT           "Les raccourcis sont désactivés tant que cette boîte de dialogue est visible.",IDCLBL_HELP,90,114,128,17,0,WS_EX_STATICEDGE
     LTEXT           "Nombre de raccourcis :",IDCLBL_SHORTCUTSCOUNT,228,114,74,8,SS_NOPREFIX
     LTEXT           "",IDCTXT_SHORTCUTSCOUNT,306,114,30,8,SS_NOPREFIX
     CONTROL         "Lancer Clavier+ au démarrage de &Windows",IDCCHK_AUTOSTART,
