@@ -349,13 +349,13 @@ END
 // Dialog
 //
 
-IDD_LANGUAGE DIALOGEX 0, 0, 115, 82
+IDD_LANGUAGE DIALOGEX 0, 0, 115, 105
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTERMOUSE | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Language"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LISTBOX         IDCLST_LANGUAGE,6,6,102,49,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,32,62,50,14
+    LISTBOX         IDCLST_LANGUAGE,6,6,102,72,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,32,85,50,14
 END
 
 
@@ -372,7 +372,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 108
         TOPMARGIN, 7
-        BOTTOMMARGIN, 76
+        BOTTOMMARGIN, 99
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1500,6 +1500,279 @@ BEGIN
 END
 
 #endif    // Portuguese (Brazil) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Greek resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ELL)
+#ifdef _WIN32
+LANGUAGE LANG_GREEK, SUBLANG_DEFAULT
+#pragma code_page(1253)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 157, 144
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "Περί Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    CONTROL         "Clavier+ 10.6.9",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    LTEXT           "Copyright © 2000-2016\nGuillaume Ryder\nSoftware under GPLv3 license",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    GROUPBOX        "Δημιουργός",IDC_STATIC,6,48,145,44
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    CONTROL         "Μετάφραση : geogeo  (www.geogeo.gr)",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,130,8
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    DEFPUSHBUTTON   "&Εντάξει",IDOK,101,124,50,14,WS_GROUP
+END
+
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Πρόγραμμα για εκτέλεση"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Γραμμή εντολής:",IDC_STATIC,6,8,58,8
+    EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
+    LTEXT           "&Κατάλογος:",IDC_STATIC,6,26,40,8
+    EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
+    LTEXT           "&Παράθυρο:",IDC_STATIC,6,44,43,8
+    COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Α&λλαγή καταλόγου στο παράθυρο Αρχείο/’νοιγμα\n(η γραμμή εντολών πρέπει να είναι ένας φάκελος)",IDCCHK_SUPPORTFILEOPEN,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,175,18
+    PUSHBUTTON      "’κυρο",IDCANCEL,78,93,56,14
+    DEFPUSHBUTTON   "&Εντάξει",IDOK,140,93,57,14
+END
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Συντόμευση"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Συντόμευση:",IDC_STATIC,7,8,40,8
+    EDITTEXT        IDCTXT,50,6,170,12,ES_AUTOHSCROLL
+    CONTROL         "&Διάκριση μεταξύ αριστερών και δεξιών ειδικών πλήκτρων",IDCCHK_DISTINGUISH_LEFT_RIGHT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,196,10
+    LTEXT           "Σημειώσεις:\n- μπορείτε να χρησιμοποιήσετε το πλήκτρο των Windows\n- κάποιες ειδικές συντομεύσεις δεν είναι διαθέσιμες",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    GROUPBOX        "Κατάσταση ενεργοποίησης",IDC_STATIC,6,84,214,66
+    LTEXT           "&Κατάσταση Caps Lock:",IDC_STATIC,12,98,78,8
+    COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Κατάσταση &Νum Lock:",IDC_STATIC,12,116,76,8
+    COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Κατάσταση Scr&οll Lock:",IDC_STATIC,12,134,76,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "’κυρο",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "&Εντάξει",IDOK,163,159,57,14
+END
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "Προσθήκη",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "Διαγραφή",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "Επεξεργασία",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "Όλες οι συντομεύσεις είναι ανενεργές όταν αυτό το παράθυρο είναι ορατό.",IDCLBL_HELP,90,114,123,17,0,WS_EX_STATICEDGE
+    LTEXT           "Αριθμός συντομεύσεων:",IDCLBL_SHORTCUTSCOUNT,228,114,78,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,310,114,30,8,SS_NOPREFIX
+    CONTROL         "Εκκί&νηση του Clavier+ μαζί με τα Windows",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,156,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
+    CONTROL         "&Γράψιμο κειμένου",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,79,10
+    CONTROL         "Εκκίνη&ση ενός προγράμματος ή εμφάνιση ιστοσελίδας",IDCOPT_COMMAND,
+                    "Button",BS_AUTORADIOBUTTON,216,138,189,10
+    EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
+    ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
+    PUSHBUTTON      "Π&ροηγμένες ρυθμίσεις...",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "&Δοκιμή",IDCCMD_TEST,354,168,48,14
+    LTEXT           "Ενερ&γοπ. για:",IDCLBL_PROGRAMS,6,194,47,8
+    COMBOBOX        IDCCBO_PROGRAMS,54,192,105,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,161,192,230,12,ES_AUTOHSCROLL
+    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    LTEXT           "Περιγρα&φή:",IDCLBL_DESCRIPTION,6,210,38,8
+    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "&Βοήθεια",IDCCMD_HELP,60,227,48,14
+    PUSHBUTTON      "&Αντιγ. λίστας",IDCCMD_COPYLIST,110,227,48,14
+    PUSHBUTTON      "Γ&λώσσα/Lang",IDCCMD_LANGUAGE,160,227,48,14
+    PUSHBUTTON      "&Περί...",IDCCMD_ABOUT,210,227,48,14
+    PUSHBUTTON      "Έ&ξοδος",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "’&κυρο",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "&Εντάξει",IDOK,360,227,48,14
+END
+
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Προσομοίωση πληκτρολόγησης"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Ακολουθία:",IDC_STATIC,7,8,36,8
+    EDITTEXT        IDCTXT,48,6,185,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "’&κυρο",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "&Εντάξει",IDOK,176,30,57,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        RIGHTMARGIN, 156
+        BOTTOMMARGIN, 119
+    END
+
+    IDD_CMDSETTINGS, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 93
+    END
+
+    IDD_KEYSTROKE, DIALOG
+    BEGIN
+        RIGHTMARGIN, 190
+    END
+
+    IDD_SENDKEYS, DIALOG
+    BEGIN
+        RIGHTMARGIN, 179
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_DONATE              BITMAP                  "DonateGR.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_CONTEXT MENU 
+BEGIN
+    POPUP " "
+    BEGIN
+        POPUP "&Πρόγραμμα"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Αγαπημένο διαδικτύου"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Ει&δικός χαρακτήρας"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "’νοιγμα &φακέλου...",             ID_ADD_FOLDER
+        MENUITEM "&Γράψιμο κειμένου...",              ID_ADD_TEXT
+        MENUITEM "&Εκκίνηση προγράμματος...",        ID_ADD_COMMAND
+        MENUITEM "Προ&οβολή ιστότοπου...",       ID_ADD_WEBSITE
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM "&Προσομοίωση πληκτρολόγησης: [...]", ID_TEXT_SENDKEYS
+        MENUITEM "Εκκίνηση ενός &Προγράμματος: [[...]]",  ID_TEXT_COMMAND
+        MENUITEM "&Αναμονή 100 ms και μετά ανίχνευση εστίασης: []", ID_TEXT_WAIT
+        MENUITEM "&Γράψιμο κειμένου σε λειτουργία χαμηλού επιπέδου: [|...|]", ID_TEXT_LOWLEVEL
+        MENUITEM SEPARATOR
+        POPUP "Γράψιμο ενός &Χαρακτήρα"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Γράψιμο ενός Ει&δικού χαρακτήρα"
+        BEGIN
+            MENUITEM "Ανάστρο&φη κάθετος: \\\\",    ID_TEXT_BACKSLASH
+            MENUITEM "’νοιγμα &αγκύλης: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Κλείσιμο α&γκύλης: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "’νοιγμα άγ&κυστρου: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Κλείσιμο άγκυ&στρου: \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Κά&θετος: \\|",          ID_TEXT_PIPE
+        END
+        POPUP "Εκτέλεση &Ειδικής εντολής"
+        BEGIN
+            MENUITEM "&Αναμονή: [{Wait,<διάρκεια>}]",  ID_TEXT_CMD_WAIT
+            MENUITEM "&Εντοπισμός παραθύρου εστίασης: [{Focus,<καθυστέρηση>,<όνομα παραθύρου>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "Αντι&γραφή στο Πρόχειρο: [{Copy,<κείμενο>}]", ID_TEXT_CMD_COPY
+            MENUITEM "&Κουμπί ποντικιού: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "Κίνηση &ποντικιού σε (απόλ.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "Κίνηση π&οντικιού σε (σχετ.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Κίνηση πο&ντικιού από: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "&Τροχός ποντικιού: [{MouseWheel,<+/- αριθμός βημάτων>}]", ID_TEXT_CMD_MOUSE_WHEEL
+        END
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Ρυθμίσεις...",                ID_TRAY_SETTINGS
+        MENUITEM "&Αντιγραφή λίστας",                  ID_TRAY_COPYLIST
+        MENUITEM "&Φόρτωση ρυθμίσεων...",      ID_TRAY_INI_LOAD
+        MENUITEM "&Συγχώνευση ρυθμίσεων με...", ID_TRAY_INI_MERGE
+        MENUITEM "Απο&θήκευση ρυθμίσεων...",      ID_TRAY_INI_SAVE
+        MENUITEM "Έ&ξοδος",                       ID_TRAY_QUIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ERR_INVALID_SHORTCUT    "Απαιτείται έγκυρη συντόμευση."
+    ERR_SHORTCUT_DUPLICATE  "Μια συντόμευση πληκτρολογίου είναι διπλή: %s.\nΠαρακαλώ τροποποιήστε ή αφαιρέστε τη μία από αυτές."
+    ERR_SAVING_INI          "Δεν είναι δυνατή η αποθήκευση των ρυθμίσεων."
+    ERR_LOADING_INI         "Δεν είναι δυνατή η φόρτωση των ρυθμίσεων."
+    ERR_TARGET              "Δεν έχει επιλεγεί κανένα πρόγραμμα.\nΚρατήστε το κουμπί του ποντικιού και σύρετε το δρομέα\nστο παράθυρο του προγράμματος για να το επιλέξετε."
+    ASK_QUIT                "Θέλετε πραγματικά την έξοδο από το Clavier+;\nΑυτό θα απενεργοποιήσει όλες τις συντομεύσεις σας.\n\n(Πατήστε το πλήκτρο Shift ενώ κάνετε κλικ στο κουμπί,\nγια παράκαμψη αυτού του μηνύματος.)"
+    ASK_DELETE              "Θέλετε πραγματικά να διαγράψετε αυτή τη συντόμευση;\n\n(Πατήστε το πλήκτρο Shift ενώ κάνετε κλικ στο κουμπί,\nγια παράκαμψη αυτού του μηνύματος.)"
+    MSG_COPYLIST            "Ο κατάλογος συντομεύσεων έχει αντιγραφεί στο πρόχειρο.\n\nΜπορείτε να τον επικολλήσετε με Ctrl+V σε έναν επεξεργαστή κειμένου ή ένα υπολογιστικό φύλλο."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TOKENS              "Ελληνικά;Συντόμευση;Κώδικας;ΔιάκρισηΑριστερούΔεξιού;Περιγραφή;Εντολή;Κείμενο;Κατάλογος;Παράθυρο;ΥποστήριξηΑνοίγματοςΑρχείου;Προγράμματα;ΌλαΤαΠρογράμματαΕκτός;Κανένα;Γλώσσα;Μέγεθος;Στήλες;Ταξινόμηση;Κανονικό παράθυρο;Ελαχιστοποιημένο;Μεγιστοποιημένο;Win;Ctrl;Shift;Alt;Αριστερό;Δεξί;CapsLock;NumLock;ScrollLock;Ναι;Όχι;"
+    IDS_COLUMNS             "Περιεχόμενα;Συντόμευση;Συνθήκες;Περιγραφή;"
+    IDS_HELP                "Help.html"
+    IDS_CONDITIONS          "χωρίς όρους;πρέπει να είναι ανοιχτό;πρέπει να είναι κλειστό;"
+    IDS_CONDITION_KEYS      "CNS"
+    IDS_INI_FILTER          "Αρχεία INI|*.ini|"
+    IDS_BROWSEDIR           "Επιλέξτε τον κατάλογο εκκίνησης της εντολής."
+    IDS_PROGRAMS            "όλα τα προγράμματα, εκτός;μόνο αυτά τα προγράμματα;"
+    IDS_TOOLTIPS            "Προσθήκη νέας συντόμευσης;Διαγραφή της επιλεγμένης συντόμευσης;Επεξεργασία της επιλεγμένης συντόμευσης;Κλικ και Μεταφορά-Απόθεση για επιλογή του παραθύρου ενός προγράμματος;"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
+END
+
+#endif    // Greek resources
 /////////////////////////////////////////////////////////////////////////////
 
 

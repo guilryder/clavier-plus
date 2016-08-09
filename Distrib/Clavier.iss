@@ -54,6 +54,7 @@ Name: english; MessagesFile: compiler:Default.isl
 Name: french; MessagesFile: compiler:Languages\French.isl
 Name: german; MessagesFile: compiler:Languages\German.isl
 Name: portuguese; MessagesFile: compiler:Languages\BrazilianPortuguese.isl
+Name: greek; MessagesFile: compiler:Languages\Greek.isl
 Name: russian; MessagesFile: compiler:Languages\Russian.isl
 
 [Files]
@@ -62,6 +63,7 @@ Source: {#BinDir}\ClavierEnglish.ini; DestDir: {app}; Flags: ignoreversion onlyi
 Source: {#BinDir}\ClavierFrench.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: french
 Source: {#BinDir}\ClavierGerman.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: german
 Source: {#BinDir}\ClavierPortuguese.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: portuguese
+Source: {#BinDir}\ClavierGreek.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: greek
 Source: {#BinDir}\ClavierRussian.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: russian
 
 [Icons]
@@ -70,6 +72,7 @@ Name: {group}\Help; Filename: {#HelpFileBaseUrl}Help.html; Languages: english
 Name: {group}\Aide; Filename: {#HelpFileBaseUrl}Aide.html; Languages: french
 Name: {group}\Hilfe; Filename: {#HelpFileBaseUrl}Hilfe.html; Languages: german
 Name: {group}\Ajuda; Filename: {#HelpFileBaseUrl}Ajuda.html; Languages: portuguese
+Name: {group}\Βοήθεια; Filename: {#HelpFileBaseUrl}Help.html; Languages: greek
 Name: {group}\Помощь; Filename: {#HelpFileBaseUrl}HelpRU.html; Languages: russian
 Name: {group}\{cm:ProgramOnTheWeb,{#AppName}}; Filename: {#AppURL}
 Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}

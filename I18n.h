@@ -31,6 +31,7 @@ enum {
 	langEN,
 	langFR,
 	langPT,
+	langGR,
 	langRU,
 	langCount
 };
