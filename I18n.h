@@ -27,9 +27,9 @@
 namespace i18n {
 
 enum {
-	langFR,
-	langEN,
 	langDE,
+	langEN,
+	langFR,
 	langPT,
 	langRU,
 	langCount
