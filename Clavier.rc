@@ -25,12 +25,7 @@ LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
 // Dialog
 //
 
-#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
-#if defined(APSTUDIO_INVOKED)
-IDD_SENDKEYS$(UNICODE) DIALOGEX 0, 0, 238, 50
-#else
 IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Имитация нажатия клавиш"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -40,14 +35,8 @@ BEGIN
     PUSHBUTTON      "Отмена",IDCANCEL,114,30,56,14
     DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
 END
-#endif
 
-#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
-#if defined(APSTUDIO_INVOKED)
-IDD_MAIN$(UNICODE) DIALOGEX 0, 0, 414, 246
-#else
 IDD_MAIN DIALOGEX 0, 0, 414, 246
-#endif
 STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Clavier+"
@@ -89,14 +78,8 @@ BEGIN
     PUSHBUTTON      "Отмена",IDCANCEL,310,227,48,14
     DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
 END
-#endif
 
-#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
-#if defined(APSTUDIO_INVOKED)
-IDD_KEYSTROKE$(UNICODE) DIALOGEX 0, 0, 226, 178
-#else
 IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Ярлык"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -116,14 +99,8 @@ BEGIN
     PUSHBUTTON      "Отмена",IDCANCEL,101,159,56,14
     DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
 END
-#endif
 
-#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
-#if defined(APSTUDIO_INVOKED)
-IDD_CMDSETTINGS$(UNICODE) DIALOGEX 0, 0, 268, 113
-#else
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Программа для запуска"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -141,14 +118,8 @@ BEGIN
     PUSHBUTTON      "Отмена",IDCANCEL,78,93,56,14
     DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
 END
-#endif
 
-#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
-#if defined(APSTUDIO_INVOKED)
-IDD_ABOUT$(UNICODE) DIALOGEX 0, 0, 157, 144
-#else
 IDD_ABOUT DIALOGEX 0, 0, 157, 144
-#endif
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_NOPARENTNOTIFY
 CAPTION "О программе Clavier+"
@@ -165,7 +136,6 @@ BEGIN
     CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,46,16
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
-#endif
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -176,22 +146,22 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
-    "IDD_SENDKEYS$(UNICODE)", DIALOG
+    IDD_SENDKEYS, DIALOG
     BEGIN
         RIGHTMARGIN, 179
     END
 
-    "IDD_KEYSTROKE$(UNICODE)", DIALOG
+    IDD_KEYSTROKE, DIALOG
     BEGIN
         RIGHTMARGIN, 190
     END
 
-    "IDD_CMDSETTINGS$(UNICODE)", DIALOG
+    IDD_CMDSETTINGS, DIALOG
     BEGIN
         BOTTOMMARGIN, 93
     END
 
-    "IDD_ABOUT$(UNICODE)", DIALOG
+    IDD_ABOUT, DIALOG
     BEGIN
         RIGHTMARGIN, 157
         BOTTOMMARGIN, 139
@@ -205,25 +175,14 @@ END
 // Bitmap
 //
 
-#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
-#if defined(APSTUDIO_INVOKED)
-IDB_DONATE$(UNICODE)    BITMAP                  "DonateRU.bmp"
-#else
 IDB_DONATE              BITMAP                  "DonateRU.bmp"
-#endif
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
-#if defined(APSTUDIO_INVOKED)
-IDM_CONTEXT$(UNICODE) MENU 
-#else
 IDM_CONTEXT MENU 
-#endif
 BEGIN
     POPUP " "
     BEGIN
@@ -288,7 +247,6 @@ BEGIN
         MENUITEM "&Выход",                      ID_TRAY_QUIT
     END
 END
-#endif
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -296,7 +254,6 @@ END
 // String Table
 //
 
-#if defined(APSTUDIO_INVOKED) || defined(UNICODE)
 STRINGTABLE 
 BEGIN
     ERR_INVALID_SHORTCUT    "Нужен действительный ярлык."
@@ -322,7 +279,6 @@ BEGIN
     IDS_TOOLTIPS            "Добавить новый ярлык;Удалить выбранный ярлык;Изменить выбранный ярлык;Нажмите и перетяните для выбора окна программы;"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
 END
-#endif
 
 #endif    // Russian resources
 /////////////////////////////////////////////////////////////////////////////
