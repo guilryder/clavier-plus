@@ -664,7 +664,7 @@ UINT displayTrayIconMenu() {
 	
 	switch (id) {
 		case ID_TRAY_SETTINGS:
-			PostMessage(hwnd, msgClavierNotifyIcon, 0, WM_LBUTTONDOWN);
+			PostMessage(hwnd, msgClavierNotifyIcon, 0, WM_COMMAND);
 			break;
 		
 		case ID_TRAY_COPYLIST:
