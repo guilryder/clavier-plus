@@ -53,6 +53,7 @@ ArchitecturesAllowed=x64
 Name: german; MessagesFile: compiler:Languages\German.isl
 Name: english; MessagesFile: compiler:Default.isl
 Name: french; MessagesFile: compiler:Languages\French.isl
+Name: italian; MessagesFile: compiler:Languages\Italian.isl
 Name: portuguese; MessagesFile: compiler:Languages\BrazilianPortuguese.isl
 Name: greek; MessagesFile: compiler:Languages\Greek.isl
 Name: russian; MessagesFile: compiler:Languages\Russian.isl
@@ -62,6 +63,7 @@ Source: {#BinDir}\{#CompilOutputDir}{#AppExeName}; DestDir: {app}; Flags: ignore
 Source: {#BinDir}\ClavierGerman.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: german
 Source: {#BinDir}\ClavierEnglish.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: english
 Source: {#BinDir}\ClavierFrench.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: french
+Source: {#BinDir}\ClavierItalian.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: italian
 Source: {#BinDir}\ClavierPortuguese.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: portuguese
 Source: {#BinDir}\ClavierGreek.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: greek
 Source: {#BinDir}\ClavierRussian.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: russian
@@ -71,6 +73,7 @@ Name: {group}\{#AppName}; Filename: {app}\{#AppExeName}
 Name: {group}\Hilfe; Filename: {#HelpFileBaseUrl}Hilfe.html; Languages: german
 Name: {group}\Help; Filename: {#HelpFileBaseUrl}Help.html; Languages: english
 Name: {group}\Aide; Filename: {#HelpFileBaseUrl}Aide.html; Languages: french
+Name: {group}\Aiuto; Filename: {#HelpFileBaseUrl}Help.html; Languages: italian
 Name: {group}\Ajuda; Filename: {#HelpFileBaseUrl}Ajuda.html; Languages: portuguese
 Name: {group}\Βοήθεια; Filename: {#HelpFileBaseUrl}Help.html; Languages: greek
 Name: {group}\Помощь; Filename: {#HelpFileBaseUrl}HelpRU.html; Languages: russian

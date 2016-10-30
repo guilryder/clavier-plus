@@ -1238,6 +1238,278 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
+// Italian (Italy) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ITA)
+#ifdef _WIN32
+LANGUAGE LANG_ITALIAN, SUBLANG_ITALIAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Programma da eseguire"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Linea di comando :",IDC_STATIC,6,8,60,8
+    EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
+    LTEXT           "&Cartella :",IDC_STATIC,6,26,30,8
+    EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
+    LTEXT           "&Finestra :",IDC_STATIC,6,44,32,8
+    COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "C&ambia cartella nella casella di dialogo File/apri (la linea di comando può essere una cartella)",IDCCHK_SUPPORTFILEOPEN,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,168,18
+    PUSHBUTTON      "Annulla",IDCANCEL,78,93,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+END
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Scorciatoia"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Scorciatoia :",IDC_STATIC,7,8,40,8
+    EDITTEXT        IDCTXT,54,6,166,12,ES_AUTOHSCROLL
+    CONTROL         "&Distingui tra i tasti speciali di sinistra e destra",IDCCHK_DISTINGUISH_LEFT_RIGHT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,159,10
+    LTEXT           "Nota :\n- puoi usare il tasto Windows\n- alcune scorciatoie speciali non sono disponibili",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    GROUPBOX        "Condizioni d'attivazione",IDC_STATIC,6,84,214,66
+    LTEXT           "Stato &Caps Lock :",IDC_STATIC,12,98,57,8
+    COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Stato &Num Lock :",IDC_STATIC,12,116,55,8
+    COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Stato Scr&oll Lock :",IDC_STATIC,12,134,58,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Annulla",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
+END
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "Aggiungi",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "Elimina",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "Modifica",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "Attenzione tutte le scorciatoie sono disabilitate mentre questa finestra è visibile.",IDCLBL_HELP,78,114,144,17,0,WS_EX_STATICEDGE
+    LTEXT           "Lista scorciatoie :",IDCLBL_SHORTCUTSCOUNT,228,114,56,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,288,114,30,8,SS_NOPREFIX
+    CONTROL         "Lancia Clavier+ all'avvio di &Windows",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,131,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
+    CONTROL         "&Scrivi testo",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,51,10
+    CONTROL         "&Lancia un programma o mostra un sito web",IDCOPT_COMMAND,
+                    "Button",BS_AUTORADIOBUTTON,216,138,153,10
+    EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
+    ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
+    PUSHBUTTON      "Impostazioni A&vanzate...",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "&Prova",IDCCMD_TEST,354,168,48,14
+    LTEXT           "A&bilita per :",IDCLBL_PROGRAMS,6,194,38,8
+    COMBOBOX        IDCCBO_PROGRAMS,54,192,144,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,200,192,190,12,ES_AUTOHSCROLL
+    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    LTEXT           "&Descrizione :",IDCLBL_DESCRIPTION,6,210,42,8
+    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "&Aiuto",IDCCMD_HELP,60,227,32,14
+    PUSHBUTTON      "&Copia lista",IDCCMD_COPYLIST,94,227,48,14
+    PUSHBUTTON      "Lin&gua...",IDCCMD_LANGUAGE,143,227,41,14
+    PUSHBUTTON      "In&formazioni su...",IDCCMD_ABOUT,186,227,72,14
+    PUSHBUTTON      "&Esci",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "Annulla",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
+END
+
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Simula una pressione di tasti"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Tasto premuto :",IDC_STATIC,7,8,52,8
+    EDITTEXT        IDCTXT,66,6,167,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Annulla",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 157, 144
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "Informazioni su Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    CONTROL         "Clavier+ 10.7.0",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,101,8
+    LTEXT           "Copyright © 2000-2016\nGuillaume Ryder\nSoftware sotto licenza GPLv3 ",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    GROUPBOX        "Autore",IDC_STATIC,6,48,145,44
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    CONTROL         "Traduzione : Andrea Zanella",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_CMDSETTINGS, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 93
+    END
+
+    IDD_KEYSTROKE, DIALOG
+    BEGIN
+        RIGHTMARGIN, 190
+    END
+
+    IDD_SENDKEYS, DIALOG
+    BEGIN
+        RIGHTMARGIN, 179
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 138
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_DONATE              BITMAP                  "DonateIT.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_CONTEXT MENU 
+BEGIN
+    POPUP " "
+    BEGIN
+        POPUP "&Programma"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Preferito &Internet"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Carattere &speciale"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Apri cartella...",            ID_ADD_FOLDER
+        MENUITEM "Scrivi &testo...",            ID_ADD_TEXT
+        MENUITEM "&Lancia un programma...",     ID_ADD_COMMAND
+        MENUITEM "&Mostra un sito Web...",      ID_ADD_WEBSITE
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM "&Simula una pressione di tasti : [...]", ID_TEXT_SENDKEYS
+        MENUITEM "Lancia un &programma : [[...]]", ID_TEXT_COMMAND
+        MENUITEM "&Attendi 100 ms poi controlla il focus : []", ID_TEXT_WAIT
+        MENUITEM "Scrivi testo in &low-level mode : [|...|]", ID_TEXT_LOWLEVEL
+        MENUITEM SEPARATOR
+        POPUP "Scrivi un &carattere"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Scrivi un carattere speciale"
+        BEGIN
+            MENUITEM "Scrive un back&slash : \\\\", ID_TEXT_BACKSLASH
+            MENUITEM "Scrive una parentesi &quadra aperta : \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Scrive una parentesi q&uadra chiusa : \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Scrive una parentesi g&raffa aperta : \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Scrive una parentesi gra&ffa chiusa : \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Scrive una &verticale : \\|", ID_TEXT_PIPE
+        END
+        POPUP "Esegue un c&omando speciale"
+        BEGIN
+            MENUITEM "&Attendi : [{Wait,<durata>}]", ID_TEXT_CMD_WAIT
+            MENUITEM "&Individua finestra attiva : [{Focus,<attesa>,<nome finestra>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Copia negli appunti : [{Copy,<testo>}]", ID_TEXT_CMD_COPY
+            MENUITEM "&Pulsante del mouse : [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "&Muovi Mouse a (ass.) : [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "Mu&ovi Mouse a (rel.) : [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Muo&vi Mouse con : [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "Mouse &rotella : [{MouseWheel,<+/- conteggio scatti>}]", ID_TEXT_CMD_MOUSE_WHEEL
+        END
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Impostazioni...",            ID_TRAY_SETTINGS
+        MENUITEM "&Copia lista",                ID_TRAY_COPYLIST
+        MENUITEM "C&arica configurazione...",   ID_TRAY_INI_LOAD
+        MENUITEM "&Unisci la configurazione con...", ID_TRAY_INI_MERGE
+        MENUITEM "Sal&va configurazione...",    ID_TRAY_INI_SAVE
+        MENUITEM "&Esci",                       ID_TRAY_QUIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ERR_INVALID_SHORTCUT    "È richiesta una scorciatoia valida."
+    ERR_SHORTCUT_DUPLICATE  "Una scorciatoia da tastiera è duplicata : %s.\nPrego modificate o eliminate uno dei duplicati."
+    ERR_SAVING_INI          "Impossibile salvare le impostazioni."
+    ERR_LOADING_INI         "Impossibile caricare le impostazioni."
+    ERR_TARGET              "Nessun programma è stato scelto.\nPrego tenete premuto il pulsante del mouse e trascinate il cursore\nalla finestra del programma da scegliere."
+    ASK_QUIT                "Volete uscire davvero da Clavier+ ?\nQuesto disattiverà tutte le vostre scorciatoie.\n\n(Premete il tasto Shift mentre cliccate il pulsante\nper saltarequesto messaggio.)"
+    ASK_DELETE              "Volete davvero eliminare questa scorciatoia ?\n\n(Premete il tasto Shift mentre cliccate il pulsante\nper saltarequesto messaggio.)"
+    MSG_COPYLIST            "La lista delle scorciatoie è stata copiata negli appunti.\n\nPotete incollarla con Ctrl+V in qualsiasi text processor o foglio di calcolo."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TOKENS              "Italiano;Scorciatoia;Codice;DistinguiSinistraDestra;Descrizione;Comando;Testo;Cartella;Finestra;SupportaAperturaFile;Programmi;TuttiprogrammiEccetto;Nessuno;Lingua;Grandezza;Colonne;Ordinamento;Normale;Ridotta;Ingrandita;Win;Ctrl;Shift;Alt;Sinistra;Destra;CapsLock;NumLock;ScrollLock;Si;No;"
+    IDS_COLUMNS             "Contenuto;Scorciatoia;Condizioni;Descrizione;"
+    IDS_HELP                "Help.html"
+    IDS_CONDITIONS          "nessuna condizione;deve essere attivato;deve essere disattivato;"
+    IDS_CONDITION_KEYS      "CNS"
+    IDS_INI_FILTER          "Files di configurazione|*.ini|"
+    IDS_BROWSEDIR           "Scegli la cartella di esecuzione per il comando."
+    IDS_PROGRAMS            "tutti i programmi eccetto;esclusivamente in questo programma;"
+    IDS_TOOLTIPS            "Aggiungi una nuova scorciatoia;Elimina la scorciatoia selezionata;Modificala scorciatoia selezionata;Clicca e trascina per selezionare la finestra di un programma;"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
+END
+
+#endif    // Italian (Italy) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // Portuguese (Brazil) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PTB)

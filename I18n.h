@@ -30,6 +30,7 @@ enum {
 	langDE,
 	langEN,
 	langFR,
+	langIT,
 	langPT,
 	langGR,
 	langRU,
