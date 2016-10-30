@@ -1532,7 +1532,7 @@ BEGIN
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     CONTROL         "Μετάφραση : geogeo  (www.geogeo.gr)",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,130,8
     CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
-    DEFPUSHBUTTON   "&Εντάξει",IDOK,101,124,50,14,WS_GROUP
+    DEFPUSHBUTTON   "Εντάξει",IDOK,101,124,50,14,WS_GROUP
 END
 
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
@@ -1551,7 +1551,7 @@ BEGIN
     CONTROL         "Α&λλαγή καταλόγου στο παράθυρο Αρχείο/Άνοιγμα\n(η γραμμή εντολών πρέπει να είναι ένας φάκελος)",IDCCHK_SUPPORTFILEOPEN,
                     "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,175,18
     PUSHBUTTON      "Άκυρο",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "&Εντάξει",IDOK,140,93,57,14
+    DEFPUSHBUTTON   "Εντάξει",IDOK,140,93,57,14
 END
 
 IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
@@ -1572,7 +1572,7 @@ BEGIN
     LTEXT           "Κατάσταση Scr&οll Lock:",IDC_STATIC,12,134,76,8
     COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Άκυρο",IDCANCEL,101,159,56,14
-    DEFPUSHBUTTON   "&Εντάξει",IDOK,163,159,57,14
+    DEFPUSHBUTTON   "Εντάξει",IDOK,163,159,57,14
 END
 
 IDD_MAIN DIALOGEX 0, 0, 414, 246
@@ -1602,7 +1602,7 @@ BEGIN
     ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
     PUSHBUTTON      "Π&ροηγμένες ρυθμίσεις...",IDCCMD_CMDSETTINGS,246,168,102,14
     PUSHBUTTON      "&Δοκιμή",IDCCMD_TEST,354,168,48,14
-    LTEXT           "Ενερ&γοπ. για:",IDCLBL_PROGRAMS,6,194,47,8
+    LTEXT           "Ενεργ&οπ. για:",IDCLBL_PROGRAMS,6,194,47,8
     COMBOBOX        IDCCBO_PROGRAMS,54,192,105,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,161,192,230,12,ES_AUTOHSCROLL
     CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
@@ -1615,7 +1615,7 @@ BEGIN
     PUSHBUTTON      "&Περί...",IDCCMD_ABOUT,210,227,48,14
     PUSHBUTTON      "Έ&ξοδος",IDCCMD_QUIT,260,227,48,14
     PUSHBUTTON      "Ά&κυρο",IDCANCEL,310,227,48,14
-    DEFPUSHBUTTON   "&Εντάξει",IDOK,360,227,48,14
+    DEFPUSHBUTTON   "Εντάξει",IDOK,360,227,48,14
 END
 
 IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
@@ -1625,8 +1625,8 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "&Ακολουθία:",IDC_STATIC,7,8,36,8
     EDITTEXT        IDCTXT,48,6,185,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "Ά&κυρο",IDCANCEL,114,30,56,14
-    DEFPUSHBUTTON   "&Εντάξει",IDOK,176,30,57,14
+    PUSHBUTTON      "Άκυρο",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "Εντάξει",IDOK,176,30,57,14
 END
 
 
@@ -1699,7 +1699,7 @@ BEGIN
     POPUP " "
     BEGIN
         MENUITEM "&Προσομοίωση πληκτρολόγησης: [...]", ID_TEXT_SENDKEYS
-        MENUITEM "Εκκίνηση ενός &Προγράμματος: [[...]]", ID_TEXT_COMMAND
+        MENUITEM "Ε&κκίνηση ενός Προγράμματος: [[...]]", ID_TEXT_COMMAND
         MENUITEM "&Αναμονή 100 ms και μετά ανίχνευση εστίασης: []", ID_TEXT_WAIT
         MENUITEM "&Γράψιμο κειμένου σε λειτουργία χαμηλού επιπέδου: [|...|]", ID_TEXT_LOWLEVEL
         MENUITEM SEPARATOR
