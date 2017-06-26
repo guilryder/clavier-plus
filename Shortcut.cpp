@@ -504,6 +504,7 @@ bool Shortcut::execute(bool bFromHotkey) const {
 		for (size_t i = 0; pszText[i]; i++) {
 			const WORD c = (WORD)pszText[i];
 			if (c == _T('\n')) {
+				// Redundant with '\r'.
 				continue;
 			}
 			
@@ -513,6 +514,7 @@ bool Shortcut::execute(bool bFromHotkey) const {
 			}
 			
 			if (bBackslash || c != _T('[')) {
+				// Regular character: send WM_CHAR.
 				if (lastKind != kindText) {
 					sleepBackground(0);
 				}
@@ -520,8 +522,8 @@ bool Shortcut::execute(bool bFromHotkey) const {
 				
 				bBackslash = false;
 				const WORD vkMask = VkKeyScan(c);
-				PostMessage(hwndFocus, WM_CHAR, c, MAKELPARAM(1,
-					MapVirtualKey(LOBYTE(vkMask), 0)));
+				PostMessage(hwndFocus, WM_CHAR, c,
+					MAKELPARAM(1, MapVirtualKey(LOBYTE(vkMask), 0)));
 				
 			} else {
 				// Inline shortcut, or inline command line execution
@@ -619,6 +621,11 @@ bool Shortcut::execute(bool bFromHotkey) const {
 						
 						sInside[sInside.getLength() - 1] = _T('\0');
 						for (LPCTSTR psz = (LPCTSTR)sInside; *++psz;) {
+							if (*psz == _T('\n')) {
+								// Redundant with '\r'.
+								continue;
+							}
+							
 							const WORD wKey = VkKeyScan(*psz);
 							if (wKey == (WORD)-1) {
 								TCHAR pszCode[5];
