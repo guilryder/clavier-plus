@@ -163,7 +163,6 @@ BEGIN
 
     IDD_ABOUT, DIALOG
     BEGIN
-        RIGHTMARGIN, 157
         BOTTOMMARGIN, 139
     END
 END
@@ -295,6 +294,47 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Dialog
+//
+
+IDD_LANGUAGE DIALOGEX 0, 0, 115, 105
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTERMOUSE | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Language"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LISTBOX         IDCLST_LANGUAGE,6,6,102,72,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,32,85,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_LANGUAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 108
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 99
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_TARGET              BITMAP                  "Target.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Icon
 //
 
@@ -343,47 +383,6 @@ BEGIN
     END
 END
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_LANGUAGE DIALOGEX 0, 0, 115, 105
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTERMOUSE | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Language"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LISTBOX         IDCLST_LANGUAGE,6,6,102,72,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,32,85,50,14
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_LANGUAGE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 108
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 99
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_TARGET              BITMAP                  "Target.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1835,7 +1834,7 @@ BEGIN
     EDITTEXT        IDCTXT,50,6,170,12,ES_AUTOHSCROLL
     CONTROL         "&Διάκριση μεταξύ αριστερών και δεξιών ειδικών πλήκτρων",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,196,10
-    LTEXT           "Σημειώσεις:\n- μπορείτε να χρησιμοποιήσετε το πλήκτρο των Windows\n- κάποιες ειδικές συντομεύσεις δεν είναι διαθέσιμες",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    LTEXT           "Σημείωση:\n- μπορείτε να χρησιμοποιήσετε το πλήκτρο των Windows\n- τα Ctrl+Alt και δεξί Alt είναι ισοδύναμα\n- κάποιες ειδικές συντομεύσεις δεν είναι διαθέσιμες",IDC_STATIC,6,42,216,36,SS_NOPREFIX
     GROUPBOX        "Κατάσταση ενεργοποίησης",IDC_STATIC,6,84,214,66
     LTEXT           "&Κατάσταση Caps Lock:",IDC_STATIC,12,98,78,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
