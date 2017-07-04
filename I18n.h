@@ -27,6 +27,7 @@
 namespace i18n {
 
 enum {
+	langZH_CN,
 	langDE,
 	langEN,
 	langFR,

@@ -50,6 +50,7 @@ ArchitecturesAllowed=x64
 #endif
 
 [Languages]
+Name: chinesesimpl; MessagesFile: compiler:Languages\ChineseSimplified.isl
 Name: german; MessagesFile: compiler:Languages\German.isl
 Name: english; MessagesFile: compiler:Default.isl
 Name: french; MessagesFile: compiler:Languages\French.isl
@@ -60,6 +61,7 @@ Name: russian; MessagesFile: compiler:Languages\Russian.isl
 
 [Files]
 Source: {#BinDir}\{#CompilOutputDir}{#AppExeName}; DestDir: {app}; Flags: ignoreversion
+Source: {#BinDir}\ClavierChineseSimpl.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: chinesesimpl
 Source: {#BinDir}\ClavierGerman.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: german
 Source: {#BinDir}\ClavierEnglish.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: english
 Source: {#BinDir}\ClavierFrench.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: french
@@ -70,6 +72,7 @@ Source: {#BinDir}\ClavierRussian.ini; DestDir: {app}; Flags: ignoreversion onlyi
 
 [Icons]
 Name: {group}\{#AppName}; Filename: {app}\{#AppExeName}
+Name: {group}\帮助; Filename: {#HelpFileBaseUrl}Help.html; Languages: chinesesimpl
 Name: {group}\Hilfe; Filename: {#HelpFileBaseUrl}Hilfe.html; Languages: german
 Name: {group}\Help; Filename: {#HelpFileBaseUrl}Help.html; Languages: english
 Name: {group}\Aide; Filename: {#HelpFileBaseUrl}Aide.html; Languages: french

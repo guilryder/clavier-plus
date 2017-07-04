@@ -12,6 +12,244 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Chinese (P.R.C.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 157, 144
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "关于 Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    CONTROL         "Clavier+ 10.7.2",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    LTEXT           "Copyright (C) 2000-2017\nGuillaume Ryder\nSoftware under GPLv3 license",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    GROUPBOX        "作者",IDC_STATIC,6,48,145,44
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    CONTROL         "翻译: Bluebell",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    DEFPUSHBUTTON   "确定",IDOK,101,124,50,14,WS_GROUP
+END
+
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "要执行的程序"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "命令行(&C):",IDC_STATIC,6,8,38,8
+    EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
+    LTEXT           "目录(&D):",IDC_STATIC,6,26,30,8
+    EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
+    LTEXT           "窗口(&W):",IDC_STATIC,6,44,32,8
+    COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "在文件/打开对话框中更改目录(命令行应为一个文件夹)(&H)",IDCCHK_SUPPORTFILEOPEN,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,153,18
+    PUSHBUTTON      "取消",IDCANCEL,78,93,56,14
+    DEFPUSHBUTTON   "确定",IDOK,140,93,57,14
+END
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "快捷方式"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "快捷键(&S):",IDC_STATIC,7,8,37,8
+    EDITTEXT        IDCTXT,48,6,172,12,ES_AUTOHSCROLL
+    CONTROL         "区分左右特殊键(&D)",IDCCHK_DISTINGUISH_LEFT_RIGHT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,82,10
+    LTEXT           "注:\n- 您可以使用 Windows 键\n- 一些特殊的快捷方式不可用",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    GROUPBOX        "激活条件",IDC_STATIC,6,84,214,66
+    LTEXT           "&Caps Lock 状态:",IDC_STATIC,12,98,54,8
+    COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Num Lock 状态:",IDC_STATIC,12,116,52,8
+    COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Scr&oll Lock 状态:",IDC_STATIC,12,134,54,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "取消",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "确定",IDOK,163,159,57,14
+END
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "添加",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "删除",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "编辑",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "当此窗口可见时, 禁用所有快捷方式.",IDCLBL_HELP,90,114,123,17,0,WS_EX_STATICEDGE
+    LTEXT           "快捷方式计数:",IDCLBL_SHORTCUTSCOUNT,228,114,54,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,286,114,30,8,SS_NOPREFIX
+    CONTROL         "在 Windows 启动时运行 Clavier+(&A)",IDCCHK_AUTOSTART,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,136,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
+    CONTROL         "写入文本(&W)",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,60,10
+    CONTROL         "启动程序或显示网站(&L)",IDCOPT_COMMAND,"Button",BS_AUTORADIOBUTTON,216,138,97,10
+    EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
+    ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
+    PUSHBUTTON      "高级设置(&V)...",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "测试(&T)",IDCCMD_TEST,354,168,48,14
+    LTEXT           "启用(&E):",IDCLBL_PROGRAMS,6,194,29,8
+    COMBOBOX        IDCCBO_PROGRAMS,54,192,90,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,146,192,244,12,ES_AUTOHSCROLL
+    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    LTEXT           "描述(&D):",IDCLBL_DESCRIPTION,6,210,30,8
+    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "帮助(&H)",IDCCMD_HELP,60,227,48,14
+    PUSHBUTTON      "复制列表(&O)",IDCCMD_COPYLIST,110,227,48,14
+    PUSHBUTTON      "语言(&G)...",IDCCMD_LANGUAGE,160,227,48,14
+    PUSHBUTTON      "关于(&B)...",IDCCMD_ABOUT,210,227,48,14
+    PUSHBUTTON      "退出(&Q)",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "取消",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "确定",IDOK,360,227,48,14
+END
+
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "模拟击键"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "击键(&K):",IDC_STATIC,7,8,29,8
+    EDITTEXT        IDCTXT,48,6,185,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "取消",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "确定",IDOK,176,30,57,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_DONATE              BITMAP                  "DonateZH_CN.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_CONTEXT MENU 
+BEGIN
+    POPUP " "
+    BEGIN
+        POPUP "程序(&P)"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "互联网收藏(&I)"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "特殊字符(&S)"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "打开文件夹(&F)...",                ID_ADD_FOLDER
+        MENUITEM "写入文本(&W)...",                 ID_ADD_TEXT
+        MENUITEM "启动程序(&L)...",                 ID_ADD_COMMAND
+        MENUITEM "显示网站(&D)...",                 ID_ADD_WEBSITE
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM "模拟击键(&S): [...]",             ID_TEXT_SENDKEYS
+        MENUITEM "启动程序(&P): [[...]]",           ID_TEXT_COMMAND
+        MENUITEM "等待 100 ms, 然后检测焦点(&W): []",   ID_TEXT_WAIT
+        MENUITEM "在低级模式下写入文本(&L): [|...|]",     ID_TEXT_LOWLEVEL
+        MENUITEM SEPARATOR
+        POPUP "写入一个字符(&C)"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "写入特殊字符(&E)"
+        BEGIN
+            MENUITEM "写入一个反斜杠(&S): \\\\",           ID_TEXT_BACKSLASH
+            MENUITEM "写入一个开方括号(&B): \\[",           ID_TEXT_BRACKET_OPEN
+            MENUITEM "写入一个闭方括号(&K): \\]",           ID_TEXT_BRACKET_CLOSE
+            MENUITEM "写入一个开花括号(&A): \\{",           ID_TEXT_BRACE_OPEN
+            MENUITEM "写入一个闭花括号(&C): \\}",           ID_TEXT_BRACE_CLOSE
+            MENUITEM "写入管道符(&P): \\|",              ID_TEXT_PIPE
+        END
+        POPUP "执行特殊命令(&O)"
+        BEGIN
+            MENUITEM "等待(&W): [{Wait,<持续时间>}]",     ID_TEXT_CMD_WAIT
+            MENUITEM "检测焦点窗口(&D): [{Focus,<延迟>,<窗口名称>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "复制到剪贴板(&C): [{Copy,<文本>}]",   ID_TEXT_CMD_COPY
+            MENUITEM "鼠标按钮(&M): [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "鼠标移动到(绝对)(&V): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "鼠标移动到(相对)(&E): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "鼠标移动方式(&Y): [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "鼠标滚轮(&H): [{MouseWheel,<+/- 滴答数>}]", ID_TEXT_CMD_MOUSE_WHEEL
+        END
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "设置(&S)...",                   ID_TRAY_SETTINGS
+        MENUITEM "复制列表(&C)",                    ID_TRAY_COPYLIST
+        MENUITEM "加载配置(&L)...",                 ID_TRAY_INI_LOAD
+        MENUITEM "合并配置(&M)...",                 ID_TRAY_INI_MERGE
+        MENUITEM "保存配置(&V)...",                 ID_TRAY_INI_SAVE
+        MENUITEM "退出(&Q)",                      ID_TRAY_QUIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ERR_INVALID_SHORTCUT    "需要有效的快捷键."
+    ERR_SHORTCUT_DUPLICATE  "重复的键盘快捷键: %s.\n请修改或移除其中一个重复项1."
+    ERR_SAVING_INI          "无法保存设置."
+    ERR_LOADING_INI         "无法加载设置."
+    ERR_TARGET              "没有程序被选定.\n请按住鼠标按钮并拖动光标到程序窗口以选择."
+    ASK_QUIT                "您确定要退出 Clavier+?\n这将禁用所有快捷方式.\n\n(按 Shift 键同时点击按钮可跳过此消息.)"
+    ASK_DELETE              "您确定要删除此快捷方式?\n\n(按 Shift 键同时点击按钮可跳过此消息.)"
+    MSG_COPYLIST            "快捷方式列表已复制到剪贴板.\n\n您可以使用 Ctrl+V 将其粘贴到文本处理器或电子表格."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TOKENS              "简体中文;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;"
+    IDS_COLUMNS             "内容;快捷键;条件;描述;"
+    IDS_HELP                "Help.html"
+    IDS_CONDITIONS          "没有条件;必须打开;必须关闭;"
+    IDS_CONDITION_KEYS      "CNS"
+    IDS_INI_FILTER          "INI 文件|*.ini|"
+    IDS_BROWSEDIR           "选择命令的启动目录."
+    IDS_PROGRAMS            "所有程序;仅指定的程序;"
+    IDS_TOOLTIPS            "添加新的快捷方式;删除所选的快捷方式;编辑所选的快捷方式;点击并拖放以选择程序的窗口;"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
+END
+
+#endif    // Chinese (P.R.C.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // Russian resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
