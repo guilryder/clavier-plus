@@ -140,37 +140,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_SENDKEYS, DIALOG
-    BEGIN
-        RIGHTMARGIN, 179
-    END
-
-    IDD_KEYSTROKE, DIALOG
-    BEGIN
-        RIGHTMARGIN, 190
-    END
-
-    IDD_CMDSETTINGS, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 93
-    END
-
-    IDD_ABOUT, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 139
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Bitmap
 //
 
@@ -305,25 +274,6 @@ BEGIN
     LISTBOX         IDCLST_LANGUAGE,6,6,102,72,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     DEFPUSHBUTTON   "OK",IDOK,32,85,50,14
 END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_LANGUAGE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 108
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 99
-    END
-END
-#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -519,38 +469,6 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,114,30,56,14
     DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
 END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_ABOUT, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 138
-    END
-
-    IDD_KEYSTROKE, DIALOG
-    BEGIN
-        RIGHTMARGIN, 190
-        BOTTOMMARGIN, 162
-    END
-
-    IDD_CMDSETTINGS, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 93
-    END
-
-    IDD_SENDKEYS, DIALOG
-    BEGIN
-        RIGHTMARGIN, 233
-    END
-END
-#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -795,38 +713,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_KEYSTROKE, DIALOG
-    BEGIN
-        RIGHTMARGIN, 190
-    END
-
-    IDD_ABOUT, DIALOG
-    BEGIN
-        RIGHTMARGIN, 156
-        BOTTOMMARGIN, 119
-    END
-
-    IDD_CMDSETTINGS, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 93
-    END
-
-    IDD_SENDKEYS, DIALOG
-    BEGIN
-        RIGHTMARGIN, 179
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Bitmap
 //
 
@@ -1064,38 +950,6 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,114,30,56,14
     DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
 END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_KEYSTROKE, DIALOG
-    BEGIN
-        RIGHTMARGIN, 190
-        BOTTOMMARGIN, 162
-    END
-
-    IDD_ABOUT, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 119
-    END
-
-    IDD_CMDSETTINGS, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 100
-    END
-
-    IDD_SENDKEYS, DIALOG
-    BEGIN
-        RIGHTMARGIN, 179
-    END
-END
-#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1365,37 +1219,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_CMDSETTINGS, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 93
-    END
-
-    IDD_KEYSTROKE, DIALOG
-    BEGIN
-        RIGHTMARGIN, 190
-    END
-
-    IDD_SENDKEYS, DIALOG
-    BEGIN
-        RIGHTMARGIN, 179
-    END
-
-    IDD_ABOUT, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 138
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Bitmap
 //
 
@@ -1632,32 +1455,6 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,114,30,56,14
     DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
 END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_ABOUT, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 138
-    END
-
-    IDD_CMDSETTINGS, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 93
-    END
-
-    IDD_SENDKEYS, DIALOG
-    BEGIN
-        RIGHTMARGIN, 179
-    END
-END
-#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1899,38 +1696,6 @@ BEGIN
     PUSHBUTTON      "’κυρο",IDCANCEL,114,30,56,14
     DEFPUSHBUTTON   "Εντάξει",IDOK,176,30,57,14
 END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_ABOUT, DIALOG
-    BEGIN
-        RIGHTMARGIN, 156
-        BOTTOMMARGIN, 119
-    END
-
-    IDD_CMDSETTINGS, DIALOG
-    BEGIN
-        BOTTOMMARGIN, 93
-    END
-
-    IDD_KEYSTROKE, DIALOG
-    BEGIN
-        RIGHTMARGIN, 190
-    END
-
-    IDD_SENDKEYS, DIALOG
-    BEGIN
-        RIGHTMARGIN, 179
-    END
-END
-#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
