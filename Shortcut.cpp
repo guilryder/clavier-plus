@@ -18,6 +18,7 @@
 
 
 #include "StdAfx.h"
+#include "I18n.h"
 #include "Shortcut.h"
 
 namespace shortcut {
@@ -28,7 +29,7 @@ const int aiShowOption[nbShowOption] = {
 	SW_NORMAL, SW_MINIMIZE, SW_MAXIMIZE,
 };
 
-static const int s_acxColOrig[] = { 40, 20, 20 };
+static const int s_acxColOrig[] = { 35, 20, 15, 10 };
 
 static const WCHAR kUtf16LittleEndianBom = 0xFEFF;
 
@@ -89,6 +90,8 @@ Shortcut::Shortcut(const Shortcut& sh) : Keystroke(sh) {
 	m_sCommand = sh.m_sCommand;
 	m_sDirectory = sh.m_sDirectory;
 	m_sPrograms = sh.m_sPrograms;
+	
+	m_nbUsage = sh.m_nbUsage;
 }
 
 Shortcut::Shortcut(const Keystroke& ks) : Keystroke(ks) {
@@ -99,6 +102,8 @@ Shortcut::Shortcut(const Keystroke& ks) : Keystroke(ks) {
 	m_bProgramsOnly = false;
 	m_iSmallIcon = iconNeeded;
 	m_hIcon = NULL;
+	
+	m_nbUsage = 0;
 }
 
 void Shortcut::addToList() {
@@ -122,7 +127,7 @@ void Shortcut::save(HANDLE hf) {
 		int tokKey;
 		LPCTSTR pszValue;
 	};
-	LINE aLine[3 + 4 + 2 + condTypeCount];
+	LINE aLine[3 + 4 + 2 + condTypeCount + 1];
 	aLine[0].tokKey = tokShortcut;
 	aLine[0].pszValue = pszHotKey;
 	aLine[1].tokKey = tokCode;
@@ -205,6 +210,11 @@ void Shortcut::save(HANDLE hf) {
 		nbLine++;
 	}
 	
+	TCHAR strbuf_usage_count[i18n::bufIntegerCount];
+	wsprintf(strbuf_usage_count, _T("%d"), m_nbUsage);
+	aLine[nbLine].tokKey = tokUsageCount;
+	aLine[nbLine].pszValue = strbuf_usage_count;
+	nbLine++;
 	
 	// Write all
 	for (int i = 0; i < nbLine; i++) {
@@ -404,6 +414,12 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 					}
 				}
 				break;
+			
+			// Usage count
+			case tokUsageCount:
+				m_nbUsage = StrToInt(pcSep);
+				m_nbUsage = max(0, m_nbUsage);
+				break;
 		}
 	}
 	
@@ -431,7 +447,11 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 // Executing
 //------------------------------------------------------------------------
 
-bool Shortcut::execute(bool bFromHotkey) const {
+bool Shortcut::execute(bool bFromHotkey) {
+	if (bFromHotkey) {
+		m_nbUsage++;
+	}
+	
 	BYTE abKeyboard[256], abKeyboardNew[256];
 	GetKeyboardState(abKeyboard);
 	

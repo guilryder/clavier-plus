@@ -306,7 +306,7 @@ Second shortcut settings
 <pre>
 Language=Français <i>or</i> English <i>or</i> Deutsch <i>or</i> Português brasileiro
 Size=<i>width</i>,<i>height</i>,<i>maximized</i>,<i>hide icon</i>
-Columns=<i>width 1</i>,<i>width 2</i>,<i>width 3</i>
+Columns=<i>width 1</i>,<i>width 2</i>,<i>width 3</i>,<i>width 4</i>
 Sorting=<i>column index</i>
 </pre>
 
@@ -318,7 +318,7 @@ Sorting=<i>column index</i>
 </dd>
 
 <dt><kbd>Columns</kbd></dt>
-<dd>Specifies the width of the first three columns in the configuration window. Each width is a percentage relative to the list width. The last column takes the remaining space.</dd>
+<dd>Specifies the width of all columns but the last one in the configuration window. Each width is a percentage relative to the list width. The last column takes the remaining space.</dd>
 
 <dt><kbd>Sorting</kbd></dt>
 <dd>Specifies the index of the column used to sort the list. 0 for the first column, 1 for the second one, and so on.</dd>
@@ -345,6 +345,7 @@ AllProgramsBut=<i>programs list</i>
 CapsLock=<i>condition</i>
 NumLock=<i>condition</i>
 ScrollLock=<i>condition</i>
+UsageCount=<i>count</i>
 </pre>
 
 <p>Note the requirement to type a <kbd>&gt;</kbd> character at the beginning of each additional line for the <kbd>Text=</kbd> field.</p>
@@ -375,6 +376,9 @@ ScrollLock=<i>condition</i>
 
 <dt><kbd>CapsLock</kbd>, <kbd>NumLock</kbd>, <kbd>ScrollLock</kbd></dt>
 <dd>If specified, specifies an activation condition for the shortcut. Accepted values: <kbd>None</kbd> (default value), <kbd>Yes</kbd> and <kbd>No</kbd>.</dd>
+
+<dt><kbd>UsageCount</kbd></dt>
+<dd>The number of times the shortcut has been used since its creation.</dd>
 </dl>
 
 

@@ -299,7 +299,7 @@ Paramètres du second raccourci
 <pre>
 Langue=Français <i>ou</i> English <i>ou</i> Deutsch <i>ou</i> Português brasileiro
 Taille=<i>largeur</i>,<i>hauteur</i>,<i>agrandie</i>,<i>masquer icône</i>
-Colonnes=<i>largeur 1</i>,<i>largeur 2</i>,<i>largeur 3</i>
+Colonnes=<i>largeur 1</i>,<i>largeur 2</i>,<i>largeur 3</i>,<i>largeur 4</i>
 Tri=<i>numéro colonne</i>
 </pre>
 
@@ -311,7 +311,7 @@ Tri=<i>numéro colonne</i>
 </dd>
 
 <dt><kbd>Colonnes</kbd></dt>
-<dd>Indique la largeur des trois premières colonnes dans la fenêtre de configuration. Chaque largeur est un pourcentage relatif à la largeur totale de la liste. Elles sont séparées par des virgules. La dernière colonne occupe l’espace restant.</dd>
+<dd>Indique la largeur des colonnes de la fenêtre de configuration, excepté la dernière colonne. Chaque largeur est un pourcentage relatif à la largeur totale de la liste. Elles sont séparées par des virgules. La dernière colonne occupe l’espace restant.</dd>
 
 <dt><kbd>Tri</kbd></dt>
 <dd>Indique le numéro de la colonne utilisée pour trier la liste. 0 pour la première colonne, 1 pour la seconde, et ainsi de suite.</dd>
@@ -338,6 +338,7 @@ TousProgrammesSauf=<i>liste des programmes</i>
 VerrMaj=<i>condition</i>
 VerrNum=<i>condition</i>
 ArrêtDéfil=<i>condition</i>
+Utilisations=<i>nombre</i>
 </pre>
 
 <p>Notez la nécessité du caractère <kbd>&gt;</kbd> au début des lignes supplémentaires
@@ -369,6 +370,9 @@ pour le champ <kbd>Texte=</kbd>.</p>
 
 <dt><kbd>VerrMaj</kbd>, <kbd>VerrNum</kbd>, <kbd>ArrêtDéfil</kbd></dt>
 <dd>Si présents, définissent une condition d’activation du raccourci. Valeurs possibles&nbsp;: <kbd>Aucune</kbd> (valeur par défaut), <kbd>Oui</kbd> et <kbd>Non</kbd>.</dd>
+
+<dt><kbd>Utilisations</kbd></dt>
+<dd>Le nombre d’utilisations du raccourci depuis sa création.</dd>
 </dl>
 
 

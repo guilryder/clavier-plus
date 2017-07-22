@@ -298,6 +298,7 @@ enum {
 	colContents,
 	colKeystroke,
 	colCond,
+	colUsageCount,
 	colDescription,
 	colCount
 };

@@ -38,7 +38,7 @@ public:
 	void save(HANDLE hf);
 	bool load(LPTSTR& rpszCurrent);
 	
-	bool execute(bool bFromHotkey) const;
+	bool execute(bool bFromHotkey);
 	
 	//------------------------------------------------------------------------
 	// List
@@ -143,6 +143,9 @@ public:
 	// Example: "explorer.exe;Test*;firefox.exe" matches Explorer windows whose title starts with
 	// "Test" and all Firefox windows.
 	String m_sPrograms;
+	
+	// The number of times the shortcut has been used.
+	int m_nbUsage;
 	
 private:
 	

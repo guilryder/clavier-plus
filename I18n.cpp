@@ -19,6 +19,7 @@
 
 #include "StdAfx.h"
 #include "I18n.h"
+#include "MyString.h"
 
 extern HINSTANCE e_hInst;
 extern HWND e_hdlgModal;
@@ -134,6 +135,57 @@ HBITMAP loadBitmap(UINT id) {
 	ReleaseDC(NULL, hdc);
 	
 	return hBitmap;
+}
+
+
+void formatInteger(int number, String* output) {
+	const LCID locale = LOCALE_USER_DEFAULT;
+	
+	static NUMBERFMT format;
+	
+	// Populate format once for all.
+	static bool format_initialized = false;
+	if (!format_initialized) {
+		format_initialized = true;
+		
+		format.NumDigits = 0;
+		format.LeadingZero = TRUE;
+		format.lpDecimalSep = _T(".");  // unused
+		
+		// Number groups. Convert the LOCALE_SGROUPING string ("3;2;0") into a number (320).
+		TCHAR grouping_buf[10];
+		GetLocaleInfo(locale, LOCALE_SGROUPING, grouping_buf, arrayLength(grouping_buf));
+		format.Grouping = parseNumberGroupingString(grouping_buf);
+		
+		static TCHAR thousand_sep_buf[4];
+		GetLocaleInfo(locale, LOCALE_STHOUSAND, thousand_sep_buf, arrayLength(thousand_sep_buf));
+		format.lpThousandSep = thousand_sep_buf;
+		
+		GetLocaleInfo(locale, LOCALE_RETURN_NUMBER | LOCALE_INEGNUMBER,
+			reinterpret_cast<LPTSTR>(&format.NegativeOrder),
+			sizeof(format.NegativeOrder) / sizeof(TCHAR));
+	}
+	
+	TCHAR number_buf[bufIntegerCount];
+	wsprintf(number_buf, _T("%d"), number);
+	GetNumberFormat(locale, 0, number_buf, &format, output->getBuffer(bufIntegerCount), bufIntegerCount);
+}
+
+
+int parseNumberGroupingString(LPCTSTR input) {
+	int result = 0;
+	LPCTSTR current_char;
+	for (current_char = input; *current_char; current_char++) {
+		if (_T('0') <= *current_char && *current_char <= _T('9')) {
+			result = (result * 10) + (*current_char - _T('0'));
+		}
+	}
+	if (*input && (current_char[-1] == _T('0'))) {
+		result /= 10;
+	} else {
+		result *= 10;
+	}
+	return result;
 }
 
 }  // i18n namespace

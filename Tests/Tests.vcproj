@@ -242,6 +242,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\I18nTest.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\I18nTest.hxx"
+			>
+		</File>
+		<File
 			RelativePath="..\Keystroke.cpp"
 			>
 		</File>

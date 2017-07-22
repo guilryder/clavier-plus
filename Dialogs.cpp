@@ -20,6 +20,7 @@
 #include "StdAfx.h"
 #include "App.h"
 #include "Dialogs.h"
+#include "I18n.h"
 #include "Shortcut.h"
 
 #ifndef OPENFILENAME_SIZE_VERSION_400
@@ -953,8 +954,11 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				i18n::loadStringAuto(IDS_COLUMNS, pszText);
 				TCHAR *pcText = pszText;
 				LVCOLUMN lvc;
-				lvc.mask = LVCF_TEXT | LVCF_SUBITEM;
+				lvc.mask = LVCF_FMT | LVCF_TEXT | LVCF_SUBITEM;
 				for (lvc.iSubItem = 0; lvc.iSubItem < colCount; lvc.iSubItem++) {
+					lvc.fmt = (lvc.iSubItem == colUsageCount)
+						? LVCFMT_RIGHT
+						: LVCFMT_LEFT;
 					lvc.pszText = pcText;
 					while (*pcText != _T(';')) {
 						pcText++;
@@ -1820,6 +1824,10 @@ void Shortcut::getColumnText(int iColumn, String& rs) const {
 			}
 			break;
 		
+		case colUsageCount:
+			i18n::formatInteger(m_nbUsage, &rs);
+			break;
+		
 		case colDescription:
 			rs = m_sDescription;
 			break;
@@ -1842,6 +1850,9 @@ int CALLBACK Shortcut::compare(const Shortcut* shortcut1, const Shortcut* shortc
 		
 		case colKeystroke:
 			return Keystroke::compare(*shortcut1, *shortcut2);
+		
+		case colUsageCount:
+			return shortcut1->m_nbUsage - shortcut2->m_nbUsage;
 	}
 	
 	// Other columns: sort alphabetically.

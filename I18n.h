@@ -24,6 +24,8 @@
 
 #pragma once
 
+class String;
+
 namespace i18n {
 
 enum {
@@ -77,5 +79,16 @@ HMENU loadMenu(UINT id);
 
 // Loads a bitmap from a resource, for getLanguage() locale.
 HBITMAP loadBitmap(UINT id);
+
+
+const size_t bufIntegerCount = 40;
+
+// Formats a number with the default i18n format.
+void formatInteger(int number, String* output);
+
+// Converts a LOCALE_SGROUPING string into its NUMBERFMT.Grouping equivalent.
+int parseNumberGroupingString(LPCTSTR input);
+
+
 
 }  // i18n namespace
