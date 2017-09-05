@@ -250,6 +250,247 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
+// Polish resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PLK)
+#ifdef _WIN32
+LANGUAGE LANG_POLISH, SUBLANG_DEFAULT
+#pragma code_page(1250)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 157, 144
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "O Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    CONTROL         "Clavier+ 10.8.0",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    LTEXT           "Copyright © 2000-2017\nGuillaume Ryder\nOprogramowanie z licencj¹ GPLv3",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    GROUPBOX        "Autor",IDC_STATIC,6,48,145,44
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    CONTROL         "T³umaczenie: Grzegorz Miros",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
+END
+
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Program do uruchomienia"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Wiersz poleceñ:",IDC_STATIC,6,8,48,8
+    EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
+    LTEXT           "&Katalog:",IDC_STATIC,6,26,33,8
+    EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
+    LTEXT           "&Okno:",IDC_STATIC,6,44,43,8
+    COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Zmieñ katalog w oknach dialogowych Plik->Otwórz\n(wiersz polecenia powinien byæ katalogiem)",IDCCHK_SUPPORTFILEOPEN,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,180,18
+    PUSHBUTTON      "Anuluj",IDCANCEL,78,93,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+END
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Skrót klawiszowy"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Skrót:",IDC_STATIC,7,8,30,8
+    EDITTEXT        IDCTXT,42,6,178,12,ES_AUTOHSCROLL
+    CONTROL         "&Rozró¿nij lewe i prawe klawisze specjalne ",IDCCHK_DISTINGUISH_LEFT_RIGHT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,163,10
+    LTEXT           "Uwagi:\n- mo¿esz u¿yæ klawisz Windows\n- niektóre skróty specjalne nie s¹ dostêpne",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    GROUPBOX        "Warunki aktywacji",IDC_STATIC,6,84,214,66
+    LTEXT           "Stan &Caps Lock:",IDC_STATIC,12,98,54,8
+    COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Stan &Num Lock:",IDC_STATIC,12,116,53,8
+    COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Stan Scr&oll Lock:",IDC_STATIC,12,134,56,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Anuluj",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
+END
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "Dodaj",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "Usuñ",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "Edytuj",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "Wiedz, ¿e wszystkie skróty klawiszowe s¹ wy³¹czone, gdy to okno jest widoczne.",IDCLBL_HELP,79,114,135,17,0,WS_EX_STATICEDGE
+    LTEXT           "Liczba skrótów:",IDCLBL_SHORTCUTSCOUNT,228,114,50,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,286,114,30,8,SS_NOPREFIX
+    CONTROL         "Uruchom Clavier+ przy st&arcie Windows",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,143,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
+    CONTROL         "Napisz t&ekst",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,55,10
+    CONTROL         "&Uruchom program lub stronê internetow¹",IDCOPT_COMMAND,
+                    "Button",BS_AUTORADIOBUTTON,216,138,147,10
+    EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
+    ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
+    PUSHBUTTON      "U&stawienia zaawansowane...",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "&Testuj",IDCCMD_TEST,354,168,48,14
+    LTEXT           "W³¹cz &dla:",IDCLBL_PROGRAMS,6,194,34,8
+    COMBOBOX        IDCCBO_PROGRAMS,48,192,108,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,158,192,232,12,ES_AUTOHSCROLL
+    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    LTEXT           "&Opis:",IDCLBL_DESCRIPTION,6,210,18,8
+    EDITTEXT        IDCTXT_DESCRIPTION,48,208,360,12,ES_AUTOHSCROLL
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "&Pomoc",IDCCMD_HELP,60,227,36,14
+    PUSHBUTTON      "&Kopiuj listê",IDCCMD_COPYLIST,98,227,48,14
+    PUSHBUTTON      "&Jêzyk...",IDCCMD_LANGUAGE,148,227,48,14
+    PUSHBUTTON      "O p&rogramie...",IDCCMD_ABOUT,198,227,60,14
+    PUSHBUTTON      "&Zakoñcz",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "Anuluj",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
+END
+
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Symuluj kombinacjê klawiszy"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Kombinacja:",IDC_STATIC,7,8,40,8
+    EDITTEXT        IDCTXT,54,6,179,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Anuluj",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_DONATE              BITMAP                  "DonateEN.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_CONTEXT MENU 
+BEGIN
+    POPUP " "
+    BEGIN
+        POPUP "&Program"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Ulubione"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Znak specjalny"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Otwórz katalog...",          ID_ADD_FOLDER
+        MENUITEM "&Napisz tekst...",            ID_ADD_TEXT
+        MENUITEM "U&ruchom program...",         ID_ADD_COMMAND
+        MENUITEM "Wyœwietl stronê &internetow¹...", ID_ADD_WEBSITE
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM "&Symuluj kombinacjê klawiszy: [...]", ID_TEXT_SENDKEYS
+        MENUITEM "Uruchom &program: [[...]]",   ID_TEXT_COMMAND
+        MENUITEM "&Czekaj 100 ms, nastêpnie wykryj aktywne okno: []", ID_TEXT_WAIT
+        MENUITEM "Napisz tekst w trybie &Niskiego poziomu: [|...|]", ID_TEXT_LOWLEVEL
+        MENUITEM SEPARATOR
+        POPUP "Wstaw &znak"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Wstaw znak specjalny"
+        BEGIN
+            MENUITEM "Wstaw &lewy ukoœnik: \\\\",   ID_TEXT_BACKSLASH
+            MENUITEM "Wstaw otwieraj¹cy nawias &kwadratowy: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Wstaw zamykaj¹cy nawias kwa&dratowy: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Wstaw otwieraj¹cy nawias kl&amrowy: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Wstaw zamykaj¹cy nawias kla&mrowy: \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Wstaw kreskê p&ionow¹: \\|",  ID_TEXT_PIPE
+        END
+        POPUP "Wykonaj p&olecenie specjalne"
+        BEGIN
+            MENUITEM "&Czekaj: [{Wait,<czas trwania>}]", ID_TEXT_CMD_WAIT
+            MENUITEM "&Wykryj aktywne okno: [{Focus,<opóŸnienie>,<nazwa okna>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Kopiuj do schowka: [{Copy,<tekst>}]", ID_TEXT_CMD_COPY
+            MENUITEM "&Przycisk myszy: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "Przesuñ wskaŸnik myszy do (&bezwzgl.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "Przesuñ wskaŸnik myszy do (wz&gl.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Przesuñ wskaŸnik myszy &o: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "&Rolka myszy: [{MouseWheel,<+/- liczba skoków>}]", ID_TEXT_CMD_MOUSE_WHEEL
+        END
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Ustawienia...",              ID_TRAY_SETTINGS
+        MENUITEM "&Kopiuj listê",               ID_TRAY_COPYLIST
+        MENUITEM "&Wczytaj konfiguracjê...",    ID_TRAY_INI_LOAD
+        MENUITEM "&Po³¹cz konfiguracjê z...",   ID_TRAY_INI_MERGE
+        MENUITEM "Zapi&sz konfiguracjê...",     ID_TRAY_INI_SAVE
+        MENUITEM "&Zakoñcz",                    ID_TRAY_QUIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ERR_INVALID_SHORTCUT    "Wymagany poprawny skrót."
+    ERR_SHORTCUT_DUPLICATE  "Skrót klawiszowy jest zduplikowany: %s.\nProszê zmodyfikowaæ lub usun¹æ jeden z duplikatów."
+    ERR_SAVING_INI          "Nie mo¿na zapisaæ ustawieñ."
+    ERR_LOADING_INI         "Nie mo¿na wczytaæ ustawieñ."
+    ERR_TARGET              "Nie wybrano programu.\nTrzymaj przycisk myszy wciœniêty i przeci¹gnij kursor\nna okno programu do wyboru."
+    ASK_QUIT                "Czy napewno chcesz zakoñczyæ Clavier+?\nTo spowoduje wy³¹czenie wszystkich skrótów.\n\n(Naciœnij klawisz Shift, kiedy klikasz przycisk,\naby pomin¹c tê wiadomoœæ.)"
+    ASK_DELETE              "Czy napewno chcesz usun¹æ ten skrót?\n\n(Naciœnij klawisz Shift, kiedy klikasz przycisk,\naby pomin¹c tê wiadomoœæ.)"
+    MSG_COPYLIST            "Lista skrótów zosta³a skopiowana do schowka.\n\nMo¿esz teraz wkleiæ j¹ (Ctrl+V) do edytora tekstowego lub arkusza."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TOKENS              "Polski;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normalne;Zminimalizowane;Zmaksymalizowane;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages;"
+    IDS_COLUMNS             "Zawartoœæ;Skrót;Warunki;U¿ycia;Opis;"
+    IDS_HELP                "Help.html"
+    IDS_CONDITIONS          "brak warunku;musi byæ w³¹czony;musi byæ wy³¹czony;"
+    IDS_CONDITION_KEYS      "CNS"
+    IDS_INI_FILTER          "Pliki INI|*.ini|"
+    IDS_BROWSEDIR           "Wybierz katalog startowy polecenia."
+    IDS_PROGRAMS            "wszystkie programy oprócz;tylko te programy;"
+    IDS_TOOLTIPS            "Dodaj nowy skrót;Usuñ wybrany skrót;Edytuj wybrany skrót;Przeci¹gnij i upuœæ, aby wybraæ okno programu;"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
+END
+
+#endif    // Polish resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // Russian resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
@@ -504,13 +745,13 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // Dialog
 //
 
-IDD_LANGUAGE DIALOGEX 0, 0, 115, 105
+IDD_LANGUAGE DIALOGEX 0, 0, 115, 132
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTERMOUSE | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Language"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LISTBOX         IDCLST_LANGUAGE,6,6,102,72,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,32,85,50,14
+    LISTBOX         IDCLST_LANGUAGE,6,6,102,99,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,32,112,50,14
 END
 
 
