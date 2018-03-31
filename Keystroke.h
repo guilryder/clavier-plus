@@ -129,19 +129,21 @@ public:
 	//   0 if the keystrokes are equal.
 	static int compare(const Keystroke& keystroke1, const Keystroke& keystroke2);
 	
-	// Returns an integer between 0 and 3 inclusive to be used for comparing the mode codes of two
+	// Returns an integer between 0 and 3 inclusive to be used for comparing the mod codes of two
 	// keystrokes for a given special key. Mod codes order: none < unsided < left < right.
 	//
 	// Args:
 	//   mod_code: Unsided MOD_* constant identifying the special key.
-	//   if_none: Value to return if the keystroke does not use the given special key.
 	//
 	// Returns:
-	//   - if_none if the keystroke does not use the special key.
+	//   - 0 if the keystroke does not use the special key
+	//       and has none of the mod codes in remaining_mod_codes_mask.
 	//   - 1 if the keystroke is unsided and uses the given special key.
 	//   - 2 if the keystroke is sided and uses the given special key as left.
 	//   - 3 if the keystroke is sided and uses the given special key as right.
-	int getComparableSpecialKey(int mod_code, int if_none) const;
+	//   - 0 if the keystroke does not use the special key
+	//       and has some of the mod codes in remaining_mod_codes_mask.
+	int getModCodeSortKey(int mod_code, DWORD remaining_mod_codes_mask) const;
 	
 private:
 	

@@ -484,11 +484,19 @@ void Keystroke::releaseSpecialKey(BYTE vk, BYTE abKeyboard[]) {
 //------------------------------------------------------------------------
 
 int Keystroke::compare(const Keystroke& keystroke1, const Keystroke& keystroke2) {
+	// Compare virtual key codes
+	const int vk1 = static_cast<int>(keystroke1.m_vk);
+	const int vk2 = static_cast<int>(keystroke2.m_vk);
+	if (vk1 != vk2) {
+		return vk1 - vk2;
+	}
 	
 	// Compare special keys, applying the following order:
 	// X
 	// Win + X
 	// Win + Ctrl + X
+	// Win + Ctrl + Shift + X
+	// Win + Shift + X
 	// Win Left + Shift Left + X
 	// Win Left + Shift Right + X
 	// Win Right + Shift Left + X
@@ -498,39 +506,25 @@ int Keystroke::compare(const Keystroke& keystroke1, const Keystroke& keystroke2)
 	// Ctrl + Shift + Alt + X
 	// Ctrl + Alt + X
 	// Ctrl Left + X
-	int index1 = 0;
-	int index2 = 0;
-	int inherited1 = 0;
-	int inherited2 = 0;
-	int offset = 0;
-	for (int special_key = arrayLength(e_special_keys) - 1; special_key >= 0; special_key--) {
+	// Shift + X
+	// Alt + X
+	DWORD remaining_mod_codes_mask = ~0U;
+	for (int special_key = 0; special_key < arrayLength(e_special_keys); special_key++) {
 		const int mod_code = e_special_keys[special_key].mod_code;
-		const int value1 = keystroke1.getComparableSpecialKey(mod_code, inherited1);
-		const int value2 = keystroke2.getComparableSpecialKey(mod_code, inherited2);
+		remaining_mod_codes_mask &= ~(mod_code | (mod_code << kRightModCodeOffset));
 		
-		if (value1) {
-			inherited1 = 7;
+		const int sort_key1 = keystroke1.getModCodeSortKey(mod_code, remaining_mod_codes_mask);
+		const int sort_key2 = keystroke2.getModCodeSortKey(mod_code, remaining_mod_codes_mask);
+		if (sort_key1 != sort_key2) {
+			return sort_key1 - sort_key2;
 		}
-		if (value2) {
-			inherited2 = 7;
-		}
-		
-		index1 += value1 << offset;
-		index2 += value2 << offset;
-		offset += 3;
 	}
 	
-	const int diff = index1 - index2;
-	if (diff) {
-		return diff;
-	}
-	
-	// Compare virtual key codes
-	return static_cast<int>(keystroke1.m_vk) - static_cast<int>(keystroke2.m_vk);
+	return 0;
 }
 
 
-int Keystroke::getComparableSpecialKey(int mod_code, int if_none) const {
+int Keystroke::getModCodeSortKey(int mod_code, DWORD remaining_mod_codes_mask) const {
 	if (m_sided) {
 		if (m_sided_mod_code & mod_code) {
 			// Left
@@ -538,19 +532,14 @@ int Keystroke::getComparableSpecialKey(int mod_code, int if_none) const {
 		} else if (m_sided_mod_code & (mod_code << kRightModCodeOffset)) {
 			// Right
 			return 3;
-		} else {
-			// Sided, none
-			return if_none;
 		}
-	} else {
-		if (m_sided_mod_code & mod_code) {
-			// Unsided
-			return 1;
-		} else {
-			// Unsided, none
-			return if_none;
-		}
+	} else if (m_sided_mod_code & mod_code) {
+		// Unsided
+		return 1;
 	}
+	
+	// None
+	return (m_sided_mod_code & remaining_mod_codes_mask) ? 4 : 0;
 }
 
 

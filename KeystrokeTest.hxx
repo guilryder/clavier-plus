@@ -98,6 +98,12 @@ public:
 		checkCompare(-1);
 	}
 	
+	void testWinControlBeforeWinControlShift() {
+		setKeystroke(m_keystroke1, 'A', false, MOD_WIN | MOD_CONTROL);
+		setKeystroke(m_keystroke2, 'A', false, MOD_WIN | MOD_CONTROL | MOD_SHIFT);
+		checkCompare(-1);
+	}
+	
 	void testWinControlShiftBeforeWinControlAlt() {
 		setKeystroke(m_keystroke1, 'A', false, MOD_WIN | MOD_CONTROL | MOD_SHIFT);
 		setKeystroke(m_keystroke2, 'A', false, MOD_WIN | MOD_CONTROL | MOD_ALT);
@@ -123,20 +129,36 @@ public:
 	}
 	
 	void testSortedList() {
-		Keystroke keystrokes[12];
+		Keystroke keystrokes[21];
 		Keystroke* keystroke = keystrokes;
+		
+		setKeystroke(keystroke++, 'W', false, 0);
+		setKeystroke(keystroke++, 'W', false, MOD_WIN);
+		
 		setKeystroke(keystroke++, 'X', false, 0);
+		
 		setKeystroke(keystroke++, 'X', false, MOD_WIN);
 		setKeystroke(keystroke++, 'X', false, MOD_WIN | MOD_CONTROL);
+		setKeystroke(keystroke++, 'X', false, MOD_WIN | MOD_CONTROL | MOD_SHIFT);
+		setKeystroke(keystroke++, 'X', false, MOD_WIN | MOD_SHIFT);
 		setKeystroke(keystroke++, 'X', true, MOD_WIN | MOD_SHIFT);
 		setKeystroke(keystroke++, 'X', true, MOD_WIN | (MOD_SHIFT << kRightModCodeOffset));
-		setKeystroke(keystroke++, 'X', true, (MOD_WIN << kRightModCodeOffset) | MOD_SHIFT);
-		setKeystroke(keystroke++, 'X', true, (MOD_WIN | MOD_SHIFT) << kRightModCodeOffset);
+		
 		setKeystroke(keystroke++, 'X', false, MOD_CONTROL);
 		setKeystroke(keystroke++, 'X', false, MOD_CONTROL | MOD_SHIFT);
 		setKeystroke(keystroke++, 'X', false, MOD_CONTROL | MOD_SHIFT | MOD_ALT);
 		setKeystroke(keystroke++, 'X', false, MOD_CONTROL | MOD_ALT);
 		setKeystroke(keystroke++, 'X', true, MOD_CONTROL);
+		
+		setKeystroke(keystroke++, 'X', false, MOD_SHIFT);
+		setKeystroke(keystroke++, 'X', true, MOD_SHIFT);
+		setKeystroke(keystroke++, 'X', true, MOD_SHIFT << kRightModCodeOffset);
+		
+		setKeystroke(keystroke++, 'X', false, MOD_ALT);
+		setKeystroke(keystroke++, 'X', true, MOD_ALT);
+		setKeystroke(keystroke++, 'X', true, MOD_ALT << kRightModCodeOffset);
+		
+		setKeystroke(keystroke++, 'Y', false, 0);
 		
 		TS_ASSERT_EQUALS(static_cast<int>(keystroke - keystrokes), arrayLength(keystrokes));
 		
