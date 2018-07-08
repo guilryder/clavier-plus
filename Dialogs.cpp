@@ -653,7 +653,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 			break;
 		
 		case ID_ADD_WEBSITE:
-			createAndAddShortcut(_T("http://"));
+			createAndAddShortcut(_T("https://"));
 			break;
 		
 		
