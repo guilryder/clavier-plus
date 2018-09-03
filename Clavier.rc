@@ -235,7 +235,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "ΌςΜεΦΠΞΔ;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages;"
     IDS_COLUMNS             "ΔΪΘέ;Ώμ½έΌό;ΜυΌώ;ΚΉΣΓ΄ΞΚύ;ΓθΚφ;"
-    IDS_HELP                "Help.html"
+    IDS_LANGUAGE_CODE       "zh-CN"
     IDS_CONDITIONS          "Γ»ΣΠΜυΌώ;±ΨΠλ΄ςΏª;±ΨΠλΉΨ±Υ;"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "INI ΞΔΌώ|*.ini|"
@@ -476,7 +476,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "Polski;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normalne;Zminimalizowane;Zmaksymalizowane;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages;"
     IDS_COLUMNS             "Zawartoζ;Skrσt;Warunki;UΏycia;Opis;"
-    IDS_HELP                "Help.html"
+    IDS_LANGUAGE_CODE       "pl"
     IDS_CONDITIONS          "brak warunku;musi byζ w³Ήczony;musi byζ wy³Ήczony;"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "Pliki INI|*.ini|"
@@ -717,7 +717,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "Πσρρκθι;ίπλϋκ;Κξδ;ΠΰηλθχΰςόΛεβΰÿΟπΰβΰÿ;Ξοθρΰνθε;Κξμΰνδΰ;Òεκρς;Δθπεκςξπθÿ;Ξκνξ;ΟξδδεπζκΰΞςκπϋςθÿΤΰιλΰ;Οπξγπΰμμϋ;ΒρευΟπξγπΰμμΚπξμε;Νες;ίηϋκ;Πΰημεπ;Ρςξλαφϋ;Ρξπςθπξβκΰ;Νξπμΰλόνξ;Ρβεπνσςξ;Πΰηβεπνσςξ;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Δΰ;Νες;Θροξλόηξβΰνθι;"
     IDS_COLUMNS             "Ρξδεπζθμξε;ίπλϋκ;Σρλξβθÿ;Θροξλόηξβΰνθι;Ξοθρΰνθε;"
-    IDS_HELP                "HelpRU.html"
+    IDS_LANGUAGE_CODE       "ru"
     IDS_CONDITIONS          "νες σρλξβθι;δξλζνξ αϋςό βκλ.;δξλζνξ αϋςό βϋκλ.;"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "INI τΰιλϋ|*.ini|"
@@ -1050,7 +1050,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "Deutsch;Verknόpfung;Code;LinksRechtsUnterscheiden;Beschreibung;Befehl;Text;Ordner;Fenster;DateiΦffnenStόtzen;Programme;AlleProgrammeAber;Kein;Sprache;Grφsse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Links;Rechts;Feststell;Num;Rollen;Ja;Nein;Verwendungszδhlung;"
     IDS_COLUMNS             "Inhalt;Hotkey;Bedingung;Verwendungszδhlung;Beschreibung;"
-    IDS_HELP                "Hilfe.html"
+    IDS_LANGUAGE_CODE       "de"
     IDS_CONDITIONS          "ohne Bedingung;eingeschaltet;ausgeschaltet;"
     IDS_CONDITION_KEYS      "FNR"
     IDS_INI_FILTER          "INI Dateien|*.ini|"
@@ -1290,7 +1290,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "English;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages;"
     IDS_COLUMNS             "Contents;Shortcut;Conditions;Usages;Description;"
-    IDS_HELP                "Help.html"
+    IDS_LANGUAGE_CODE       "en"
     IDS_CONDITIONS          "no condition;must be on;must be off;"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "INI files|*.ini|"
@@ -1555,7 +1555,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "Franηais;Raccourci;Code;DistinguerGaucheDroite;Description;Commande;Texte;Rιpertoire;Fenκtre;GιrerFichierOuvrir;Programmes;TousProgrammesSauf;Aucun;Langue;Taille;Colonnes;Tri;Normale;Rιduite;Agrandie;Win;Ctrl;Maj;Alt;Gauche;Droite;VerrMaj;VerrNum;ArrκtDιfil;Oui;Non;Utilisations;"
     IDS_COLUMNS             "Contenu;Raccourci;Conditions;Utilisations;Description;"
-    IDS_HELP                "Aide.html"
+    IDS_LANGUAGE_CODE       "fr"
     IDS_CONDITIONS          "pas de condition;doit κtre activι;doit κtre dιsactivι;"
     IDS_CONDITION_KEYS      "MND"
     IDS_INI_FILTER          "Fichiers INI|*.ini|"
@@ -1796,7 +1796,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "Italiano;Scorciatoia;Codice;DistinguiSinistraDestra;Descrizione;Comando;Testo;Cartella;Finestra;SupportaAperturaFile;Programmi;TuttiprogrammiEccetto;Nessuno;Lingua;Grandezza;Colonne;Ordinamento;Normale;Ridotta;Ingrandita;Win;Ctrl;Shift;Alt;Sinistra;Destra;CapsLock;NumLock;ScrollLock;Si;No;Usi;"
     IDS_COLUMNS             "Contenuto;Scorciatoia;Condizioni;Usi;Descrizione;"
-    IDS_HELP                "Help.html"
+    IDS_LANGUAGE_CODE       "it"
     IDS_CONDITIONS          "nessuna condizione;deve essere attivato;deve essere disattivato;"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "Files di configurazione|*.ini|"
@@ -2036,7 +2036,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "Portuguκs brasileiro;Atalho;Cσdigo;DistinguirEsquerdaDireita;Descriηγo;Comando;Texto;Pasta;Janela;SuportaAberturaArquivo;Programas;TodosProgramasExceto;Nenhum;Idioma;Tamanho;Colunas;Ordenaηγo;Normal;Minimizada;Maximizada;Win;Ctrl;Shift;Alt;Esquerda;Direita;CapsLock;NumLock;ScrollLock;Sim;Nγo;Usos;"
     IDS_COLUMNS             "Conteϊdo;Atalho;Condiηυes;Usos;Descriηγo;"
-    IDS_HELP                "Ajuda.html"
+    IDS_LANGUAGE_CODE       "pt-BR"
     IDS_CONDITIONS          "nenhuma condiηγo;deve estar ativada;deve estar desativada;"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "Arquivos INI|*.ini|"
@@ -2182,7 +2182,7 @@ END
 // Bitmap
 //
 
-IDB_DONATE              BITMAP                  "DonateGR.bmp"
+IDB_DONATE              BITMAP                  "DonateEL.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2277,7 +2277,7 @@ STRINGTABLE
 BEGIN
     IDS_TOKENS              "Ελληνικά;Συντόμευση;Κώδικας;ΔιάκρισηΑριστερούΔεξιού;Περιγραφή;Εντολή;Κείμενο;Κατάλογος;Παράθυρο;ΥποστήριξηΑνοίγματοςΑρχείου;Προγράμματα;ΌλαΤαΠρογράμματαΕκτός;Κανένα;Γλώσσα;Μέγεθος;Στήλες;Ταξινόμηση;Κανονικό παράθυρο;Ελαχιστοποιημένο;Μεγιστοποιημένο;Win;Ctrl;Shift;Alt;Αριστερό;Δεξί;CapsLock;NumLock;ScrollLock;Ναι;Όχι;Χρήσεις;"
     IDS_COLUMNS             "Περιεχόμενα;Συντόμευση;Συνθήκες;Χρήσεις;Περιγραφή;"
-    IDS_HELP                "Help.html"
+    IDS_LANGUAGE_CODE       "el"
     IDS_CONDITIONS          "χωρίς όρους;πρέπει να είναι ανοιχτό;πρέπει να είναι κλειστό;"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "Αρχεία INI|*.ini|"

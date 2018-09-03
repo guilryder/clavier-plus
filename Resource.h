@@ -29,7 +29,7 @@
 #define MSG_COPYLIST                    135
 #define IDS_TOKENS                      256
 #define IDS_COLUMNS                     257
-#define IDS_HELP                        258
+#define IDS_LANGUAGE_CODE               258
 #define IDS_CONDITIONS                  259
 #define IDS_CONDITION_KEYS              260
 #define IDS_INI_FILTER                  261

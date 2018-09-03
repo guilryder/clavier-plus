@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Clavier+</title>
+<link rel="stylesheet" type="text/css" href="ClavierHelp.css"/>
+</head>
+
+<body>
+
+<h1>Clavier+</h1>
+
+<p class="ipt">The German help file is not up-to-date, please refer to the <a href="ClavierDoc_en.html">English help file</a> if you can read English. Volonteer translators are welcome!</p>
+
+<p class="toc">
+<a href="#name">Warum so ein seltsamer Name?</a>
+<a href="#author">Autor</a>
+<a href="#license">Lizenz</a>
+<a href="#setup">Manualles Einrichten</a>
+<a href="#uninstall">Manualles Entfernen</a>
+<a href="#use">Bedienung</a>
+<a href="#text">Text-Format</a>
+<a href="#print">Liste aller Verknüpfungen ausdrucken</a>
+<a href="#conffile">Konfigurationsdatei</a>
+<a href="#limits">Bekannte Probleme</a>
+</p>
+
+
+<h2 style="clear: both"><a href="http://utilfr42.free.fr/util/Clavier.php">Clavier+ Webseite</a></h2>
+
+
+<h2 id="name">Warum so ein seltsamer Name?</h2>
+
+<p>Einfach, weil <i>Clavier</i> das französische Wort für <i>Tastatur</i> ist. Es gilt die unglaubliche Originalität der Namens als auch die Kreativität der Namensfindung zu beachten.</p>
+
+
+<h2 id="author">Autor</h2>
+
+<p>Guillaume Ryder<br/>
+Webseite: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br/>
+Email: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
+</p>
+
+<p><b>Deutsche Übersetzung</b><br/>
+Dietmar Vogel<br/>
+Webseite: <a href="http://www.verdrahtet.net/"><kbd>http://www.verdrahtet.net</kbd></a><br/>
+Email: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a>
+</p>
+
+
+<h2 id="license">Lizenz</h2>
+
+<p>Clavier+ ist lizensiert nach der <a href="https://www.gnu.org/copyleft/gpl.de.html">GNU GPL</a>. Diese gewährt Ihnen das Recht dieses Programm zu jedem Zweck (privat oder kommerziell) zu benutzen, zu kopieren und weiterzuverbreiten – dies alles ohne etwas bezahlen zu müssen.</p>
+
+<p>Für dieses Programm wird keinerlei Gewährleistung übernommen. Ich bin für keinerlei Schäden verantwortlich zu machen, die mit der Benutzung dieses Programmes auftreten.</p>
+
+<p><b>Bezugsquellen</b></p>
+<ul>
+<li>Software <b>mit</b> Installationsprogramm: <a href="http://utilfr42.free.fr/dn/ClavierSetup32.exe"><kbd>http://utilfr42.free.fr/dn/ClavierSetup32.exe</kbd></a>, <a href="http://utilfr42.free.fr/dn/ClavierSetup64.exe"><kbd>http://utilfr42.free.fr/dn/ClavierSetup64.exe</kbd></a></li>
+<li>Software <b>ohne</b> Installationsprogramm: <a href="http://utilfr42.free.fr/dn/Clavier32.zip"><kbd>http://utilfr42.free.fr/dn/Clavier32.zip</kbd></a>, <a href="http://utilfr42.free.fr/dn/Clavier64.zip"><kbd>http://utilfr42.free.fr/dn/Clavier64.zip</kbd></a></li>
+<li>Quellcode: <a href="https://github.com/guilryder/clavier-plus"><kbd>https://github.com/guilryder/clavier-plus</kbd></a>
+</ul>
+
+
+<h2 id="setup">Manualles Einrichten</h2>
+
+<p>Clavier+ ohne Installationsprogramm installieren:</p>
+<ol>
+<li>Die Dateien beliebig lokal kopieren.</li>
+<li><kbd>Clavier.exe</kbd> ausführen.</li>
+<li>Sollen die Verknüpfungen immer verfügbar sein, <kbd>Clavier.exe</kbd> ausführen dann Konfigurations-Dialog öffnen und das Kontrollkästchen <kbd>Beim Starten von Windows Clavier+ ausführen</kbd> aktivieren.</li>
+</ol>
+
+
+<h2 id="uninstall">Manualles Entfernen</h2>
+
+<ol>
+<li>Falls notwendig im Konfigurations-Dialog von Clavier+ das Kontrollkästchen <kbd>Beim Starten von Windows Clavier+ ausführen</kbd> deaktivieren.</li>
+<li>Clavier+ beenden – Schaltfläche „Beenden” klicken.</li>
+<li>Alle Dateien von Clavier+ löschen.</li>
+</ol>
+
+
+<h2 id="use">Bedienung</h2>
+
+<p>Clavier+ ermöglicht Tastatur-Verknüpfungen für fast alle Tasten einschliesslich der Windows Taste (neben der <kbd>Leertaste</kbd>) zu erzeugen. Sobald Clavier+ ausgeführt wird, kann das Tastatur-Symbol in der Taskleiste rechts unten im Bildschirm angeklickt werden. Der obere Teil enthält die Verknüpfungsliste. In Clavier+ sind einige Verknüpfungen vordefiniert.</p>
+
+<p>Um eine neue Verknüpfung zu erzeugen, muß die Schaltfläche <kbd>Hinzufügen</kbd> (symbolisiert durch ein „+”) geklickt werden, anschließend kann die Verknüpfung in das weisse Eingabefeld eingetippt werden, danach <kbd>OK</kbd> klicken.</p>
+
+<p>Das Ausführen von Verknüpfungen kann eingeschränkt werden, indem einige Bedingungen erfüllt sein müssen. Erst wenn alle Bedingungen erfüllt sind, wird der entsprechende Befehl ausgeführt. Sollte nur eine Bedingung nicht erfüllt sein, wird die Verknüpfung von Clavier+ übergangen und der originale Windows- oder Programm-Befehl wird ausgeführt. Mögliche Bedingungen werden über die Feststell-Tasten realisiert: Feststelltaste, Num-Feststelltaste und Rollen-Feststelltaste. Diese drei Bedingungen sind mit den Buchstaben F, N und R in der Spalte <kbd>Bedingung</kbd> der Verknüpfungsliste hinterlegt. Es kann ein Startordner angegeben werden, wird das entsprechende Feld nicht ausgefüllt, benutzt Clavier+ den aktuellen Programmordner.</p>
+
+<p>Danach muss die Aktion der Verknüpfung im unteren Teil eingegeben werden. Sofern die Verknüpfung Text ausgibt sowie andere Tastaturverknüpfungen ausführt, muss das Auswahlkästchen <kbd>Schreiben</kbd> aktiviert werden, anschliessend wird der auszugebende Text im Feld eingetragen. Bei jedem Ausführen der Verknüpfung wird der Text ausgegeben.</p>
+
+<p>Soll die Verknüpfung ein Programm ausführen, muss das Auswahlkästchen <kbd>In der Kommandozeile ausführen</kbd> aktiviert sein, anschliessend die Auswahlfläche <kbd>Auswählen</kbd> (drei Punkte „…”) drücken oder den Pfad zum Programm manuell eintippen. Die <kbd>Ausführen</kbd> Auswahlliste ermöglicht die Festlegung der Fenstergröße, die benutzt wird, wenn das Programm ausgeführt wird.</p>
+
+<p>Für den Fall, dass z.B. die Verknüpfungsliste später ausgedruckt werden soll, kann eine Beschreibung der Tastaturverknüpfungen im Feld <kbd>Bescheibung</kbd> eingetragen werden.</p>
+
+<p>Um die Verknüpfungen der Tastenanschläge zu ändern, muss die Verknüpfung mit einem Doppel-Klick in der Liste oder durch einen einfachen Klick auf die Schaltfläche <kbd>ändern</kbd> (belegt mit einem Stift-Symbol) geöffnet werden.</p>
+
+<p>Mit <kbd>OK</kbd> werden die änderungen übernommen oder mit <kbd>Beenden</kbd> werden die änderungen gespeichert und Clavier+ beendet.</p>
+
+<p>Durch Anklicken des Clavier+ Symbols mit der rechten Maustaste wird die Verknüpfungsliste in einem Pop-Up Fenster angezeigt.</p>
+
+
+<h2 id="text">Text-Format</h2>
+
+<p>Im Textfeld <kbd>Schreiben</kbd> können Clavier+ weitere Verknüpfungen zum Ausführen übergeben werden. Dazu ist der Verknüpfungsname lediglich in eckigen Klammern zu schreiben. Zum Beispiel:<br/>
+<kbd>[Strg + O]</kbd></p>
+
+<p>Um den Namen von Sondertasten herauszufinden, kann jener Name kopiert werden, der im Hinzufügen Dialog angezeigt wird. Um z.B. den Tastennamen für den <i>*</i> im Nummerblock herauszufinden, Schaltfläche „+” klicken und anschliessend die „*”-Taste drücken: der Tastenname wird angezeigt. Diesen Namen in Klammern exakt in das Textfeld <kbd>Schreiben</kbd> eingeben. Klammern und Punkte im Verknüpfungsnamen bitte beachten.</p>
+
+<p>Soll die eckige Klammer verwendet werden <kbd>[</kbd>, muss diese durch einen „Backslash” „escaped” werden. Z.B.: <br/>
+<kbd>Dies ist ein Klammer: \[</kbd></p>
+
+<p>Um einen „Backslash” zu schreiben, muss dieser doppelt eingegeben werden: <kbd>dies ist ein "Backslash": \\</kbd></p>
+
+<p>Clavier+ schickt alle Verknüpfungen in das selbe Fenster. Sofern eine Verknüpfung ein neues Fenster öffnet (z.B. <kbd>[Strg + O]</kbd>), muss Clavier+ angewiesen werden die Verknüpfung in das neue aktive Fenster zu senden. Hierzu muss ein leerer Verknüpfungsname eingegeben werden: <kbd>[]</kbd>. Clavier+ wartet 100 Millisekunden und setzt anschliessend den Fokus auf das neue aktive Fenster. Beispiel:<br/>
+<kbd>[Strg + O][][][]MeineDatei.txt</kbd></p>
+
+<p>Um ein Programm während einer Textausgabe zu starten, wird der Befehl in doppelte Klammern gesetzti<br/>
+<kbd>[Strg+C][[notepad.exe]][][Strg+V]</kbd><br/>
+Diese Verknüpfung kopiert den ausgewählten Text in die Zwischenablage, öffnet den Windows Editor und fügt den Text dort ein. Die Klammer <kbd>[]</kbd> ist sehr wicktig; sie bestimmt, dass Clavier+ den Text in das <em>neue</em> aktive Fenster (des Editors) einfügt.</p>
+
+
+<h2 id="print">Liste aller Verknüpfungen ausdrucken</h2>
+
+<p>Im Hauptfenster von Clavier+, Schaltfläche <kbd>Liste kopieren</kbd> klicken. Dies kopiert die Liste aller Tastaturverknüpfungen in die Zwischenablage: Zum Drucken muss diese dann nur noch in ein Textverarbeitungsprogramm eingefügt werden. Sollte MS Word benutzt werden, kann die Liste als Tabelle dargestellt werden: Word starten, Liste einfügen mit <kbd>Strg + V</kbd>, alles markieren mit <kbd>Strg + A</kbd> und dann die Schaltfläche <kbd>Tabelle einfügen</kbd> klicken.</p>
+
+
+<h2 id="conffile">Konfigurationsdatei</h2>
+
+<p>Die Datei <kbd>Clavier.ini</kbd> enthält alle Parameter. Clavier+ speichert keine Daten in der Windows Registrierung, ausser es wird die Option <kbd>Beim Starten von Windows Clavier+ ausführen</kbd> verwendet.</p>
+
+<p>Nachfolgend das Format der Konfigurationsdatei, sofern mehrere Verknüpfungen gleichzeitig hinzugefügt werden sollen:</p>
+
+<pre>
+Daten der ersten Verknüpfung
+- &nbsp; &nbsp; &nbsp; &nbsp;(beinahe leere Zeile: ausser einem Bindestrich)
+Daten der zweiten Verknüpfung
+-
+...
+</pre>
+
+<p>Die Verknüpfungsdaten entsprechen dem folgenden Format:</p>
+
+<pre>
+Verknüpfung=<i>Tastendruck</i>
+Code=<i>Code des Tastendrucks</i> (intern von Clavier+ benutzt)
+Beschreibung=<i>Beschreibung</i>
+Text=<i>Text ausgeben, sobald die Verknüpfung ausgeführt wird</i>
+&gt;<i>Weitere Eingabezeile</i>
+&gt;<i>Zusätzliche Zeile</i>
+...
+Befehl=<i>Anwendung ausführen, sobald die Verknüpfung gedrückt wird</i>
+Ordner=<i>Startordner</i>
+Window=<i>Programm im Windows Modus starten</i>
+Feststell=<i>Bedingung</i>
+Num-Feststell=<i>Bedingung</i>
+Rollen-Feststell=<i>Bedingung</i>
+</pre>
+
+<p>Achtung: Ein <kbd>&gt;</kbd> Zeichen muss zu Beginn einer jeden zusätzlichen Zeile im <kbd>Text=</kbd> Feld eingegeben werden.</p>
+
+<p>Die Optionen <kbd>Text</kbd> einerseits und <kbd>Befehl</kbd> sowie <kbd>Fenster</kbd> andererseits schliessen sich gegenseitig aus. Verknüpfungen können keinen Text ausgeben und gleichzeitig ein Programm ausführen.</p>
+
+<p>Der Name des Tastendrucks folgt dem gleichen Format wie in der Liste in Clavier+.<br/>
+Beispiel: <kbd>Win + Umschalt + A</kbd></p>
+
+<p>Die Option <kbd>Ordner</kbd> bestimmt den Startordner für den Befehl. Falls kein Ordner angegeben ist, benutzt Clavier+ den eigenen Programmordner.</p>
+
+<p>Das <kbd>Fenster</kbd> Feld kann folgende mögliche Werte aufnehmen: <kbd>Normal</kbd>, <kbd>Minimiert</kbd>, <kbd>Maximiert</kbd>.</p>
+
+<p><kbd>Feststell</kbd>, <kbd>Num-Feststell</kbd> and <kbd>Rollen-Feststell</kbd> Parameter, sofern festgelegt, fügen der Verknüpfung eine Aktivierungsbedingung hinzu. Erlaubte Werte sind <kbd>Kein</kbd> (Standardwert), <kbd>Ja</kbd> und <kbd>Nein</kbd>.</p>
+
+
+<h2 id="limits">Bekannte Probleme</h2>
+
+<p>Einige Sondertasten können nicht benutzt werden:</p>
+<pre>
+Druck
+Pause
+F12
+</pre>
+
+<p>Die Sondertasten „Browseranzeige aktualisieren”, „Lautstärke erhöhen”, etc. werden teilweise unterstützt. Verknüpfungen, die darauf zugreifen, können erzeugt werden und ist es auch möglich deren originale Zuordnung zu ändern. Sobald diese im <kbd>Hinzufügen</kbd> Dialog jedoch gedrückt werden, wird deren Verknüpfung ausgeführt. Da Windows ausserdem keine generische Methode anbietet deren Namen herauszufinden, werden diese Sondertasten mit einer Nummer angesprochen (z.B.: <kbd>#183</kbd>).</p>
+
+<p>Standardverknüpfungen von Windows können nicht verändert werden. Nachfolgend einige davon:</p>
+
+<table style="border-spacing: 2em 0">
+<tr><td><kbd>Strg + Alt + Entf</kbd></td><td>„Task Manager” anzeigen</td></tr>
+<tr><td><kbd>F12</kbd></td><td>Reserviert für den Debugger</td></tr>
+<tr><td><kbd>Alt + Tab</kbd></td><td>Nächste Anwendung aktivieren</td></tr>
+<tr><td><kbd>Alt + Umschalt + Tab</kbd></td><td>Vorherige Anwendung aktivieren</td></tr>
+<tr><td><kbd>Win + B</kbd></td><td>Setzt den Fokus im Systray</td></tr>
+<tr><td><kbd>Win + D</kbd></td><td>Umschalten Fenster minimieren/maximieren</td></tr>
+<tr><td><kbd>Win + E</kbd></td><td>„Windows Explorer” starten</td></tr>
+<tr><td><kbd>Win + F</kbd></td><td>Fenster <i>Dateien suchen</i> anzeigen</td></tr>
+<tr><td><kbd>Win + Strg + F</kbd></td><td><i>Computer suchen</i> anzeigen</td></tr>
+<tr><td><kbd>Win + L</kbd></td><td>Schneller Benutzerwechsel</td></tr>
+<tr><td><kbd>Win + M</kbd></td><td>Alle Fenster minimieren</td></tr>
+<tr><td><kbd>Win + Umschalt + M</kbd></td><td>Effekt von Win + M rückgängig machen</td></tr>
+<tr><td><kbd>Win + R</kbd></td><td>Fenster Start/Ausführen anzeigen</td></tr>
+<tr><td><kbd>Win + U</kbd></td><td>Starten des Utilities Manager</td></tr>
+<tr><td><kbd>Win + F1</kbd></td><td>Windows Hilfe starten</td></tr>
+<tr><td><kbd>Win + Tab</kbd></td><td>Aktiviert die nächste Anwendung in der Taskleiste</td></tr>
+<tr><td><kbd>Win + Umschalt + Tab</kbd></td><td>Aktiviert die vorherige Anwendung in der Taskleiste</td></tr>
+<tr><td><kbd>Win + Pause</kbd></td><td>Anzeige der <i>Systemeigenschaften</i> aus der Systemsteuerung</td></tr>
+</table>
+
+</body>
+</html>

@@ -19,7 +19,7 @@
 #define AppVerName AppName + " " + AppVersion
 #define AppPublisher "Guillaume Ryder"
 #define AppURL "http://utilfr42.free.fr"
-#define HelpFileBaseUrl "http://utilfr42.free.fr/util/Clavier"
+#define HelpFileBaseUrl "http://utilfr42.free.fr/util/ClavierDoc_"
 
 #define IniFile "Clavier.ini"
 
@@ -62,27 +62,27 @@ Name: russian; MessagesFile: compiler:Languages\Russian.isl
 
 [Files]
 Source: {#BinDir}\{#CompilOutputDir}{#AppExeName}; DestDir: {app}; Flags: ignoreversion
-Source: {#BinDir}\ClavierChineseSimpl.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: chinesesimpl
-Source: {#BinDir}\ClavierGerman.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: german
-Source: {#BinDir}\ClavierEnglish.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: english
-Source: {#BinDir}\ClavierFrench.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: french
-Source: {#BinDir}\ClavierItalian.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: italian
-Source: {#BinDir}\ClavierPolish.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: polish
-Source: {#BinDir}\ClavierPortuguese.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: portuguese
-Source: {#BinDir}\ClavierGreek.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: greek
-Source: {#BinDir}\ClavierRussian.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: russian
+Source: {#BinDir}\Clavier_zh-CN.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: chinesesimpl
+Source: {#BinDir}\Clavier_de.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: german
+Source: {#BinDir}\Clavier_en.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: english
+Source: {#BinDir}\Clavier_fr.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: french
+Source: {#BinDir}\Clavier_it.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: italian
+Source: {#BinDir}\Clavier_pl.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: polish
+Source: {#BinDir}\Clavier_pt-BR.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: portuguese
+Source: {#BinDir}\Clavier_el.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: greek
+Source: {#BinDir}\Clavier_ru.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: russian
 
 [Icons]
 Name: {group}\{#AppName}; Filename: {app}\{#AppExeName}
-Name: {group}\帮助; Filename: {#HelpFileBaseUrl}Help.html; Languages: chinesesimpl
-Name: {group}\Hilfe; Filename: {#HelpFileBaseUrl}Hilfe.html; Languages: german
-Name: {group}\Help; Filename: {#HelpFileBaseUrl}Help.html; Languages: english
-Name: {group}\Aide; Filename: {#HelpFileBaseUrl}Aide.html; Languages: french
-Name: {group}\Aiuto; Filename: {#HelpFileBaseUrl}Help.html; Languages: italian
-Name: {group}\Pomoc; Filename: {#HelpFileBaseUrl}Help.html; Languages: polish
-Name: {group}\Ajuda; Filename: {#HelpFileBaseUrl}Ajuda.html; Languages: portuguese
-Name: {group}\Βοήθεια; Filename: {#HelpFileBaseUrl}Help.html; Languages: greek
-Name: {group}\Помощь; Filename: {#HelpFileBaseUrl}HelpRU.html; Languages: russian
+Name: {group}\帮助; Filename: {#HelpFileBaseUrl}zh-CN.html; Languages: chinesesimpl
+Name: {group}\Hilfe; Filename: {#HelpFileBaseUrl}de.html; Languages: german
+Name: {group}\Help; Filename: {#HelpFileBaseUrl}en.html; Languages: english
+Name: {group}\Aide; Filename: {#HelpFileBaseUrl}fr.html; Languages: french
+Name: {group}\Aiuto; Filename: {#HelpFileBaseUrl}it.html; Languages: italian
+Name: {group}\Pomoc; Filename: {#HelpFileBaseUrl}pl.html; Languages: polish
+Name: {group}\Ajuda; Filename: {#HelpFileBaseUrl}pt-BR.html; Languages: portuguese
+Name: {group}\Βοήθεια; Filename: {#HelpFileBaseUrl}en.html; Languages: greek
+Name: {group}\Помощь; Filename: {#HelpFileBaseUrl}ru.html; Languages: russian
 Name: {group}\{cm:ProgramOnTheWeb,{#AppName}}; Filename: {#AppURL}
 Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}
 

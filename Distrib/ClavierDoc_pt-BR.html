@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ajuda do Clavier+</title>
+<link rel="stylesheet" type="text/css" href="ClavierHelp.css"/>
+</head>
+
+<body>
+
+<h1>Ajuda do Clavier+</h1>
+
+<p class="toc">
+<a href="#name">Por que um nome tão esquisito?</a>
+<a href="#author">Criador</a>
+<a href="#license">Licença</a>
+<a href="#setup">Distribuição</a>
+<a href="#utility">Que pode fazer o Clavier+</a>
+<a href="#add">Como criar uma combinação de teclas de atalho</a>
+<a href="#conditions">Condicionando o acionamento dos atalhos</a>
+<a href="#text">Reprodução de texto pelos atalhos</a>
+<a href="#print">Imprimindo a lista de atalhos</a>
+<a href="#conffile">Arquivos de configuração</a>
+<a href="#cmdline">Opções de linha de comando</a>
+<a href="#limits">Problemas conhecidos</a>
+<a href="#faq">FAQ</a>
+<a href="#examples">Exemplos de atalhos</a>
+</p>
+
+
+<h2 style="clear: both;"><a href="http://utilfr42.free.fr/util/Clavier.php">Página do Clavier+ na web</a></h2>
+
+
+<h2 id="name">Por um nome tão esquisito?</h2>
+
+<p><i>Clavier</i> é simplesmente uma palavra francesa que significa <i>teclado</i>. Observe a incrível originalidade do nome e a criatividade usada para achá-lo!</p>
+
+
+<h2 id="author">Criador</h2>
+
+<p>Guillaume Ryder<br/>
+Página na web: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br/>
+Endereço eletrônico: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a><br/>
+</p>
+
+<p><b>Tradução do português brasileiro</b><br/>
+Milton Chaves de Almeida<br/>
+Página na web: <a href="http://mchal.110mb.com/"><kbd>http://mchal.110mb.com</kbd></a><br/>
+Endereço eletrônico: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kbd></a>
+</p>
+
+
+<h2 id="license">Licença de uso do programa</h2>
+
+<p>O Clavier+ é liberado sob os termos da <a href="https://www.gnu.org/licenses/gpl.pt-br.html">licença GPL</a>. Isto lhe dá o direito de usar, copiar e distribuir o programa, para qualquer propósito (pessoal ou comercial) sem pagar um centavo por isto.</p>
+
+<p>Porém, não há nenhuma garantia em relação ao programa. Não poderei ser responsabilizado por nenhum dano decorrente do uso dele.</p>
+
+<p>O código de programação do Clavier+ pode ser obtido pelo endereço abaixo:<br/>
+
+<a href="https://github.com/guilryder/clavier-plus"><kbd>https://github.com/guilryder/clavier-plus</kbd></a></p>
+
+
+<h2 id="setup">Distribuição</h2>
+
+<p>O Clavier+ é distribuído de duas formas:</p>
+<ul>
+<li><b>Com</b> o programa de instalação: <a href="http://utilfr42.free.fr/dn/ClavierSetup32.exe"><kbd>http://utilfr42.free.fr/dn/ClavierSetup32.exe</kbd></a>, <a href="http://utilfr42.free.fr/dn/ClavierSetup64.exe"><kbd>http://utilfr42.free.fr/dn/ClavierSetup64.exe</kbd></a></li>
+<li><b>Sem</b> o programa de instalação: <a href="http://utilfr42.free.fr/dn/Clavier32.zip"><kbd>http://utilfr42.free.fr/dn/Clavier32.zip</kbd></a>, <a href="http://utilfr42.free.fr/dn/Clavier64.zip"><kbd>http://utilfr42.free.fr/dn/Clavier64.zip</kbd></a></li>
+</ul>
+
+<p>Para instalar o Clavier+ sem o programa de instalação:</p>
+<ol>
+<li>Baixe o arquivo Zip (<a href="http://utilfr42.free.fr/dn/Clavier32.zip">32 bits</a>, <a href="http://utilfr42.free.fr/dn/Clavier64.zip">64 bits</a>) e descompacte-o.</li>
+<li>Abra o executável do <kbd>Clavier.exe</kbd>.</li>
+<li>Se quiser que os atalhos fiquem ativos sempre, abra o <kbd>Clavier.exe</kbd> novamente, para que a janela de configuração seja exibida, e depois marque a opção <i>Abrir o Clavier+ com o Windows.</i></li>
+</ol>
+
+<p>Para desinstalar o Clavier+ sem o programa de instalação:</p>
+<ol>
+<li>Na configuração do Clavier+, desmarque o quadrículo <i>Abrir o Clavier+ com o Windows</i>, se necessário.</li>
+<li>Feche o Clavier+ clicando no botão Fechar.</li>
+<li>Apague todos os arquivos do Clavier+.</li>
+</ol>
+
+
+<h2 id="utility">Que pode fazer o Clavier+</h2>
+
+<p>O Clavier+ permite a associação de combinação de teclas de atalho com uma operação qualquer. Elas podem ser:</p>
+<ul>
+<li>de abertura de programas: o Word, a Calculadora, navegadores da Internet etc.;</li>
+<li>de abertura de páginas da web;</li>
+<li>de abertura de pastas: <i>Meus documentos</i>, o drive <kbd>C:</kbd>, drives de CD-Rom etc.;</li>
+<li>de reprodução (digitação simulada) de caracteres especiais: símbolos como ® e ©, ou de moedas, como € ou ¥, etc.;</li>
+<li>de reprodução de texto (digitação simulada): endereços eletrônicos, nome de empresas etc. em qualquer programa (Word, navegadores da Internet, Bloco de Notas);</li>
+<li>de simulação de comandos: por exemplo, para efetuar um comando nos menus de um programa, e</li>
+<li>de simulação de cliques ou de uso da esfera do mouse.</li>
+</ul>
+
+<p>Nas combinações de teclas de atalho (quase) todo o teclado pode ser usado. A tecla Windows (Win key), localizada perto da barra de espaço, pode ser usada com as teclas Ctrl, Alt e Shift. Uma vez que programas raramente usam essa tecla, é possível criar muitas combinações de teclas de atalho: <kbd>Win + A</kbd>, <kbd>Win + 2</kbd>, <kbd>Win + .</kbd> etc.</p>
+
+<p>O Clavier+ pode modificar o comportamento de teclas especiais, como <kbd>`</kbd> ou <kbd>F11</kbd>. Portanto, atalhos de apenas uma tecla podem ser associados a operações freqüentes (e efetuá-las).</p>
+
+<p>Se necessário, o acionamento de uma combinação de teclas de atalho pode ficar dependente de um programa ativo. Isto permite a associação específica de atalhos com determinado programa.</p>
+
+<p>Da mesma forma, o acionamento de um atalho pode depender do status de teclas especiais, ou seja, teclas cujo status de ativação é indicado por uma pequena luz piscante: a Caps Lock, a Num Lock e a Scroll Lock. Por exemplo, esta opção permite a reprodução de caracteres especiais, em vez de números, quando a tecla Caps Lock está ativa.</p>
+
+<p>Na página do Clavier+, apresentamos <a href="http://utilfr42.free.fr/util/Clavier.php#examples">alguns exemplos de atalhos</a>.</p>
+
+
+<h2 id="add">Criação de atalhos</h2>
+
+<p>Abra o Clavier+. Um pequeno ícone aparece na Barra de Tarefas, perto do relógio do sistema. Isso indica que o Clavier+ está aberto e que, portanto, os atalhos estão ativos. Clique no ícone para abrir a janela de configuração. Você pode redimensionar a janela se achá-la pequena demais. A parte superior dela contém alguns exemplos de atalhos.</p>
+
+<p>Para criar uma nova combinação de teclas, clique no botão <i>Criar</i> (com o sinal de +) e escolha a operação que deve ser efetuada no acionamento da combinação:</p>
+<ul>
+<li><b>Programa:</b> abre um programa do menu Iniciar</li>
+<li><b>Favoritos:</b> abre a página de marcadores dos Favoritos, do Internet Explorer (se você usa outro navegador, como o Firefox, por exemplo, opte por <i>Abrir uma página da web</i>, abaixo)</li>
+<li><b>Caracter especial:</b> reproduz um caracter especial (por simulação de digitação)</li>
+<li><b>Pasta:</b> abre uma pasta no Windows Explorer</li>
+<li><b>Transcrever exto:</b> simula a reprodução de texto e, às vezes, de teclagens (como, por exemplo, o acionamento da tecla <kbd>Tab</kbd>, para preencher os campos de um formulário de uma só vez)</li>
+<li><b>Abrir programa</b>: abre um programa que não esteja no menu Iniciar ou executa qualquer linha de comando</li>
+<li><b>Abrir uma página da web</b>: abre uma página da web (cujo endereço talvez inexista nos Favoritos do Internet Explorer)</li>
+</ul>
+
+<p>Feita a escolha, aparece uma janela para a especificação da combinação de teclas. Pressione-as simultaneamente no devido campo que elas aparecerão na caixa de texto. Por fim, clique no botão <i>OK</i>.</p>
+
+<p>Se necessário, você pode modificar o tipo de operação de um atalho na parte inferior da janela de configuração. Se o objetivo do atalho for transcrever texto, como um endereço eletrônico, por exemplo, verifique se a opção <i>Transcrever texto</i> é a marcada e depois digite o texto na grande área própria para isso. Toda vez que você acionar essas teclas simultaneamente, esse texto será transcrito na janela visada. Você pode também usar a seta de menu para inserir caracteres especiais ou reproduzir digitação.</p>
+
+<p>Se a função do atalho for abrir um programa ou uma página da web, escolha a opção correspondente. Digite (ou clique em “...”) o caminho do programa ou endereço da página da web no campo inferior. É possível saber se o atalho é válido clicando no botão <i>Testar</i>. Se necessário, clique no botão <i>Configuração avançada</i> para especificar a pasta inicial ou o tamanho inicial da janela do programa (maximizada, normal, minimizada).</p>
+
+<p>Se a função do atalho for a de abrir uma pasta, é possível fazer que ele altere o caminho da pasta atual nas janelas de <i>Abrir/Salvar</i> arquivos. Para fazer isto, clique no botão <i>Configuração avançada</i> e marque o quadrículo <i>Mudar para a pasta nas janelas de Abrir/Salvar arquivos</i>. Quando você aciona o atalho, o Clavier+ verifica se você está ou não numa janela de Abrir/Salvar arquivos. Se estiver, ele exibe a pasta indicada pelo atalho, em vez de abri-la no Windows Explorer. Esse recurso do Clavier+ funciona com vários tipos de caixas de diálogo: Abrir/Salvar arquivos, Salvar como e de escolha de pastas.</p>
+
+<p><span class="ipt">Importante:</span> É necessário fechar a janela de configuração do Clavier+ <i>antes</i> de testar seus atalhos. Enquanto esta janela estiver aberta, os atalhos ficarão desativados.</p>
+
+
+<h2 id="conditions">Condicionando o acionamento dos atalhos</h2>
+
+<p>Você pode restringir o acionamento dos atalhos a determinadas condições. Se todas elas forem satisfeitas, o atalho é acionado. Se uma ou mais delas não satisfizerem certas condições, o Clavier+ ignora o comando associado ao atalho, e é efetuado o comando original objetivado pelo atalho que porventura tenha sido criado pelo Windows ou por um programa ativo qualquer. Esta função permite associar diferentes operações à mesma combinação de teclas de atalho. Por exemplo: <kbd>Ctrl + Shift + C</kbd> abre <kbd>c:\</kbd> se a tecla <kbd>Num Lock</kbd> <b>estiver</b> ativa, mas <kbd>Ctrl + Shift + C</kbd> abre a Calculadora se essa mesma tecla <b>não</b> estiver desativada (conforme opção previamente adotada pelo usuário).</p>
+
+<p><span class="ipt">Atenção!</span> Se você associar vários tipos de operações à mesma combinação de teclas de atalho, não deixe de lhes conferir condições mutuamente exclusivas e explícitas (ou seja, para o programa fazer a distinção, você tem de optar ou pelo status de tecla <b>ativada</b> ou de <b>desativada</b> – não basta deixar o status apenas como “nenhuma condição”). Do contrário, você verá uma mensagem de erro ao tentar fechar a janela.</p>
+
+
+<h3 id="conditions-active">Programa ativo</h3>
+
+<p>Você pode restringir o funcionamento de determinada tecla de atalho em relação a alguns programas. Isto permite conferir diferentes objetivos à mesma combinação de teclas de atalho, depedendo do programa ativo. Como regra geral, atalhos são acionáveis “com todos os programas, exceto: <i>nenhum</i>” (o campo aparece vazio), ou seja, neste caso, são acionáveis com todos.</p>
+
+<p>É possível definir dois tipos de condições em relação ao programa ativo. O atalho pode ser configurado para ser acionado com todos os programas, exceto os especificados (critério de exclusão), ou apenas com alguns (critério de inclusão). Escolha a condição na caixa de opções <i>Ativar com</i> depois que tiver feito a combinação na janela de escolha de teclas.</p>
+
+<p>Para criar a lista de inclusão/exclusão de programas mais comodamente, use o pequeno símbolo na forma de alvo, no lado direito da janela de configuração (fundo branco). Com o botão esquerdo do mouse pressionado sobre o alvo, mova-o até a janela do programa que deseja selecionar (por exemplo, da janela do Word ou do Windows Explorer). O nome do programa é grafado automaticamente no campo de texto à esquerda do alvo. Repita esta operação com todos os programa que deseja adicionar à lista.</p>
+
+<p>Quando a lista de programa está vazia, significa que o atalho é acionável diante de qualquer programa aberto. Se não estiver vazia (contiver Word.exe, por exemplo, com a opção <i>Ativar com</i> “todos os programas, exceto”), o atalho será acionado diante de todos os programas, mas não funcionará diante do que estiver especificado nela (no exemplo, Word.exe).</p>
+
+<p>No caso do acionamento de determinada tecla, você pode criar uma quantidade indefinida de atalhos tendo como condição <i>só com estes programas</i> se eles forem remissões de programas diferentes. Em todo caso, só é possível criar um atalho tendo como condição a alternativa <i>com todos os programas</i>.</p>
+
+<p>Atalhos do tipo <i>só com estes programas</i> têm prioridade sobre atalhos com a função <i>todos os programas, exceto</i>. Se você criar um atalho com o acionamento condicionado à função “<i>só com estes programas</i>: <kbd>notepad.exe</kbd>”, e outro, com a função “todos os programas, exceto: <i>nenhum</i>” (campo vazio), e a associação do acionamento de uma determinada tecla (por exemplo: a tecla que grafa o caracter <b>æ</b>) com ambos, quando você acionar a combinação de teclas de atalho que reproduz (“digita”) o caracter visado (<b>æ</b>, no exemplo) no Bloco de Notas, o primeiro atalho será ativado, mas o segundo será ignorado.</p>
+
+
+<h3 id="conditions-toggle-keys">O status de teclas especiais</h3>
+
+<p>Dependendo do status (ativado/desativado) de algumas teclas especiais, você pode acionar ou não a remissão visada pela combinação de teclas, como sejam as teclas: <kbd>Caps Lock</kbd>, <kbd>Num Lock</kbd>, <kbd>Scroll Lock</kbd>. Por exemplo, você pode criar uma combinação de teclas de atalho somente acionável quando a tecla <kbd>Caps Lock</kbd> estiver ativada (“acesa”).</p>
+
+<p>Para especificar condições, clique duplamente num item qualquer da lista de teclas de atalho. Na janela <i>Condições de ativação</i>, escolha a condição que cada uma dessas teclas deve ter para o atalho funcionar. Você pode optar por ter uma delas (ou todas) ativadas ou desativadas, ou não estabelecer nenhuma condição.</p>
+
+
+<h2 id="text">Função de texto</h2>
+
+<p>Na caixa de texto <i>Transcrever texto</i>, você pode definir vários tipos de operações, tais como:</p>
+
+
+<h3 id="text-typing">Reprodução de texto</h3>
+
+<p>Basta digitar o texto desejado no campo de texto. A opção <i>Reproduzir um caracter</i> presente no menu acionável por um clique no botão com uma seta que permite a inserção de caracter especiais, normalmente inacessíveis por meio do teclado.</p>
+
+
+<h3 id="text-simulating-keystroke">Simulação de digitação (teclagem)</h3>
+
+<p>Use a função <i>Digitar um caracter</i> no menu da seta para reproduzir a digitação de um conjunto de teclas. Normalmente, o código do nome das teclas aparece entre colchetes, como: <kbd>[Ctrl+O]</kbd>.</p>
+
+<p>Note que a digitação simulada permite a realização de muitas operações, como manipular a Área de Armazenagem (com <kbd>Ctrl + C</kbd> and <kbd>Ctrl + V</kbd>) ou acionar comandos de menu (com <kbd>Alt + <i>letra</i></kbd>).</p>
+
+
+<h3 id="text-launching-program">Abertura de programas</h3>
+
+<p>Use o comando <i>Abrir programa</i> no menu da seta ou digite uma linha de comando entre colchetes duplos. Por exemplo, para abrir um arquivo de texto e mover o cursor para o fim dele, digite isto:<br/>
+<kbd>[[notepad.exe C:\\afazeres.txt]][][Ctrl+End]</kbd></p>
+
+<p>Esta sintaxe permite a abertura de vários programas por meio do mesmo atalho. Por exemplo, para abrir o Bloco de Notas e a Calculadora:<br/>
+<kbd>[[notepad.exe]][[calc.exe]]</kbd></p>
+
+<p>A linha de comando pode conter <kbd>%</kbd> entre variáveis de ambiente, como em <kbd>explorer.exe %WINDIR%</kbd>, para abrir a pasta do Windows no Explorer. A variável de ambiente <kbd>%CLIPBOARD%</kbd> absorve o texto presente na Área de Armazenamento. Por exemplo para abrir com o Internet Explorer o URL nela gravado, use:<br/>
+<kbd>[Ctrl+C][][[iexplore.exe %CLIPBOARD%]]</kbd></p>
+
+
+<h3 id="text-syncing">Criação de pausas</h3>
+
+<p>Caso seu atalho realize várias operações, pode ser necessário conceder a cada uma delas tempo suficiente para que sejam executadas. Para criar uma pausa, digite um par de colchetes: <kbd>[]</kbd>. O Clavier+ espera 100 milissegundos antes de identificar a janela recém-selecionada.</p>
+
+<p>Este último detalhe é fundamental. Se você cria uma simulação de digitação que abre uma janela (por exempo, <kbd>Ctrl + O</kbd>, que apresenta a caixa de diálogo de Abrir arquivos), na qual algum texto deve ser digitado (o nome de um arquivo, por exemplo), você tem de informar ao Clavier+ que o texto deve ser digitado na <i>nova</i> janela:<br/>
+<kbd>[Ctrl+O][]meuarquivo.txt[Enter]</kbd></p>
+
+<p>Faça a mesma coisa ao executar um programa que abre uma janela: oriente o Clavier+ a identificar a presença da nova janela.<br/>
+<kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd><br/>
+Este atalho copia o texto selecionado na Área de Armazenamento, abre o Bloco de Notas e cola nele o texto gravado nela. O identificador <kbd>[]</kbd> é fundamental; faz que o Clavier+ efetue a colagem na <i>nova janela</i>, ou seja, na do Bloco de Notas.</p>
+
+
+<h3 id="text-special-commands">Comandos especiais</h3>
+
+<p>O menu da seta contém uma lista de comandos.</p>
+
+<dl>
+<dt><kbd>[{Wait,<i>duração</i>}]</kbd></dt>
+<dd>Faz uma pausa com a seguinte duração, em milissegundos.</dd>
+
+<dt><kbd>[{Focus}]</kbd></dt>
+<dd>Identifica a nova janela. Útil se a simulação abre uma nova janela na qual o comando do atalho tem por objetivo escrever algo. Geralmente, o comando <kbd>[]</kbd> é melhor, pois espera um pouco também, a fim de dar tempo suficiente à abertura da janela.</dd>
+
+<dt><kbd>[{<i>Copy</i>,<i>texto</i>}]</kbd></dt>
+<dd>Copia o texto especificado na Área de Armazenamento. Observe que este comando não tem nenhuma relação com o comando <kbd>Ctrl + C</kbd>, já que este atalho copia a <i>seleção</i> na Área de Armazenagem. Associado à digitação simulada <kbd>[Ctrl+V]</kbd>, este comando permite a digitação de um longo texto rapidamente ou do mesmo texto muitas vezes. Os seguinte exemplos reproduzem o mesmo texto cinco vezes:<br/>
+<kbd>[{Copiar,Frase que se deseja repetir cinco vezes.}][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd></dd>
+
+<dt><kbd>[{MouseButton,<i>code</i>}]</kbd></dt>
+<dd>Simula o clique de um botão do mouse. <i>code</i> determina que botão deve ser modificado e indica seu novo estado. É composto por duas letras. A primeira (obrigatória) indica o botão cuja operação deve ser simulada: <kbd>L</kbd> = esquerdo, <kbd>M</kbd> = mediano, <kbd>R</kbd> = direito. A segunda letra (opcional) assinala a operação que deve ser efetuada: <kbd>D</kbd> = pressionar o botão, <kbd>U</kbd> = soltar o botão. Se a segunda letra não for especificada, o botão é “pressionado e solto” em seguida: é a simulação de um clique simples. Por exemplo, para simular um clique duplo com o botão esquerdo do mouse, use isto:<br/>
+<kbd>[{MouseButton,L}][{MouseButton,L}]</kbd></dd>
+
+<dt><kbd>[{MouseWheel,<i>ticks</i>}]</kbd></dt>
+<dd>Simula uma operação com a esfera do mouse. <i>ticks</i> indica o número de linhas do uso simulado da esfera. Valores positivos fazem a rolagem da página para baixo de um número x de linhas, enquanto valores negativos fazem a página deslizar para cima outro número x de linhas. Por exemplo, para rolar apenas um linha acima, digite:<br/>
+<kbd>[{MouseWheel,-1}]</kbd></dd>
+</dl>
+
+
+<h3 id="text-special-chars">Reprodução de caracteres especiais</h3>
+
+<p>Se precisar digitar caracteres especiais, como <kbd>[</kbd>, <kbd>]</kbd>, <kbd>{</kbd>, <kbd>}</kbd> ou <kbd>|</kbd>, você precisa assinalá-los com uma barra inclinada. Por exemplo: <br/>
+<kbd>Isto é um colchete: \[, ao passo que isto é uma barra inclinada: \\</kbd><br/>
+Um dos itens de menu da seta apresenta uma lista de caracteres especiais.</p>
+
+<p>Você precisa incluir uma barra inclinada antes de todo caracter especial na parte textual dos atalhos, mesmo no caso de identificadores especiais, tais como os de simulação de digitação ou de abertura de programas:<br/>
+<kbd>[[notepad.exe documento\[1\].txt]]</kbd> para abrir o arquivo chamado <kbd>documento[1].txt</kbd> com o Bloco de Notas</p>
+
+
+<h2 id="print">Impressão da lista de atalhos</h2>
+
+<p>Na principal janela do Clavier+, clique no botão <i>Copiar lista</i>. Esta função copia a lista de todos as combinações de teclas de atalho na Área de Armazenagem: depois, você pode colá-la em seu processador de textos para imprimi-la. Se usar o Word, você pode dispô-las em forma de tabela: abra o Word, cole a lista com <kbd>Ctrl + V</kbd>, selecione-a com <kbd>Ctrl + A</kbd> e clique no botão <i>Inserir como tabela</i>.</p>
+
+
+<h2 id="conffile">Arquivos de configuração</h2>
+
+<p>Por padrão, o Clavier+ usa um único arquivo de configuração para armazenar seus parâmetros: <kbd>Clavier.ini</kbd>, localizado na mesma pasta do executável do Clavier+. O Clavier+ não grava nada no Registro, exceto no caso de você acionar a opção <i>Abrir o Clavier+ com o Windows</i>.</p>
+
+<p>O menu do Clavier+, acionável com um clique do botão direito do mouse no ícone do Clavier+ na Barra, próximo ao relógio do sitema, oferece vários comandos para controlar os arquivos de configuração:</p>
+
+<ul>
+<li>Arquivos de configuração existentes: arquivos <kbd>*.ini</kbd> localizados na pasta do Clavier+. Escolha o que deseja carregar.</li>
+<li>Carregar configuração: carrega outro arquivo de configuração se ele não fizer parte da lista. Cuidado para não carregar o arquivo de configuração de outro programa, que poderia ser substituído e, portanto, perdido.</li>
+<li>Mesclar Configuração com: mescla um arquivo de configuração com o atual. Atalhos que criem conflitos ou ambigüidades com os atalhos existentes não são adicionados. Ademais, os atalhos existentes não são substituídos.</li>
+<li>Salvar configuração: salvar a lista de atalhos em um novo arquivo de configuração.</li>
+</ul>
+
+<p>Outra forma de carregar um arquivo de configuração é abrir o Clavier+ com a opção de <a href="#cmdline">linha de comando</a> <kbd>/load</kbd> ou <kbd>/merge</kbd>. Isto permite carregar um arquivo de configuração com uma digitação simulada, pela associação de uma combinação de teclas de atalho com esta linha de comando:</p>
+<pre>clavier.exe /load <i>arquivo_de_configuração.ini</i></pre>
+
+
+<h3 id="conffile-syntax">Sintaxe de arquivos de configuração</h3>
+
+<p>Se precisar criar muitas combinações de teclas de atalho ao mesmo tempo, eis o formato do arquivo de configuração</p>
+
+<pre>
+Global settings
+configuração do primeiro atalho
+-       (linha quase vazia: contém apenas um único travessão)
+configuração do segundo atalho
+-
+...
+</pre>
+
+
+<h4 id="conffile-syntax-global">Configurações globais</h4>
+
+<pre>
+Idioma=Français <i>ou</i> English <i>ou</i> Deutsch <i>ou</i> Português brasileiro
+Tamanho=<i>largura</i>,<i>altura</i>,<i>minimizada</i>,<i>ícone do ocultare</i>
+Colunas=<i>largura 1</i>,<i>largura 2</i>,<i>largura 3</i>
+Ordenação=<i>índice da coluna</i>
+</pre>
+
+<dl>
+<dt><kbd>Tamanho</kbd></dt>
+<dd><kbd>largura,altura</kbd>: tamanho da janela de configuração, em
+pixels.<br/>
+<kbd>minimizada</kbd>: 1 se quiser a janela maximizada; do contrário,
+use 0.<br/>
+<kbd>ícone do ocultare</kbd>: 1 para ocultar o ícone do Clavier+ na Barra de Tarefas, próximo ao relógio do sistema; 0 para mantê-lo visível.</dd>
+
+<dt><kbd>Colunas</kbd></dt>
+<dd>Especifica a largura das três primeiras colunas na janela de configuração. Cada largura é uma porcentagem da largura da lista. A última coluna fica com o espaço restante.</dd>
+
+<dt><kbd>Sorting</kbd></dt>
+<dd>Especifica o número da coluna que deve ser usado para ordenar a lista. 0 para a primeira coluna, 1 para a segunda e assim por diante.</dd>
+</dl>
+
+
+<h4 id="conffile-syntax-shortcuts">Configurações dos atalhos</h4>
+
+<pre>
+Atalho=<i>keystroke</i>
+Código=<i>teclas da digitação simulada</i> (usado internamente pelo Clavier+)
+DistinguirEsquerdaDireita=<i>0 ou 1</i>
+Descrição=<i>descrição</i>
+Texto=<i>texto que deve ser digitado quando o atalho é acionado</i>
+&gt;<i>Outra linha a ser digitada</i>
+&gt;<i>Outra linha</i>...
+Comando=<i>programa a abrir quando o atalho é acionado</i>
+Pasta=<i>pasta inicial</i>
+Janela=<i>status inicial da janela do programa após ser aberto</i>
+SuportaAberturaArquivo=<i>0 ou 1</i>
+Programas=<i>lista de programas</i>
+TodosProgramasExceto=<i>lista de programas</i>
+CapsLock=<i>status</i>
+NumLock=<i>lista de programas</i>
+ScrollLock=<i>status</i>
+</pre>
+
+<p>Observe a necessidade de se digitar o caracter <kbd>&gt;</kbd> no início de arquivos adicionais para o campo <kbd>Texto=</kbd>.</p>
+
+<p><kbd>Texto</kbd> num lado, e <kbd>Comando</kbd>, <kbd>Pasta</kbd> e <kbd>Janela</kbd>, do outro, se excluem mutuamente: atalhos não podem transcrever textos e efetuar linhas de comando ao mesmo tempo.</p>
+
+<dl>
+<dt><kbd>Atalho</kbd></dt>
+<dd>Forma textual da combinação de teclas simulada, com o mesmo formato do da janela de configuração.</dd>
+
+<dt><kbd>Código</kbd></dt>
+<dd>Representação numérica da combinação de teclas de atalho de simulação, gerado e usado pelo Clavier+. Este código só é usado se o campo <kbd>Atalho</kbd> contiver erro.</dd>
+
+<dt><kbd>DistinguirEsquerdaDireita</kbd></dt>
+<dd>Indica se o Clavier+ deve fazer a distinção no uso de teclas especiais da parte esquerda e da parte direita do teclado. Se esta opção for 1, as chaves <kbd>Ctrl</kbd>, <kbd>Alt</kbd>, <kbd>Shift</kbd> e <kbd>Win</kbd> da parte esquerda do teclado recebem, para fins operacionais, tratamento diferente das localizadas na parte direita dele. Obviamente, isto permite a criação de mais atalhos ainda, como alternativa que é. Se esta opção for 0 (o valor padrão), o programa vê como irrelevante o lado ocupado por essas teclas especiais nas combinações de teclas de atalho.</dd>
+
+<dt><kbd>Pasta</kbd> (apenas modo de comando)</dt>
+<dd>Pasta inicial do elemento visado pelo comando. Se nenhum for especificado, o Clavier+ usa a pasta do executável mesmo.</dd>
+
+<dt><kbd>Janela</kbd> (apenas modo de comando)</dt>
+<dd>O tamanho inicial da janela principal do programa aberto por atalho, ou seja: <kbd>Normal</kbd>, <kbd>Minimizada</kbd>, <kbd>Maximizada</kbd>.</dd>
+
+<dt><kbd>SuportaAberturaArquivo</kbd> (apenas modo de comando)</dt>
+<dd>Se o comando visar ao caminho de uma pasta, indique se o Clavier+ deve identificar a presença de janelas de abertura de programas (Abrir), de modo que ele faça a mudança de pasta automaticamente (valor 1). Se a identificação falhar, ou se o valor da opção for 0 (o valor padrão), a pasta é aberta com o Windows Explorer.</dd>
+
+<dt><kbd>Programas</kbd>, <kbd>TodosProgramasExceto</kbd></dt>
+<dd>Condição de ativação: lista dos únicos programas diante dos quais o atalho é acionado (<kbd>Programas</kbd>) ou desativado (<kbd>TodosProgramasExceto</kbd>). Os programas devem figurar separados por ponto-e-vírgula. Não há necessidade do caminho completo: basta o nome do arquivo, com a extensão.</dd>
+
+<dt><kbd>CapsLock</kbd>, <kbd>NumLock</kbd>, <kbd>ScrollLock</kbd></dt>
+<dd>Se usado, especique uma condição de acionamento do atalho. Valores aceitos: <kbd>Nenhum</kbd> (o valor padrão), <kbd>Sim</kbd> e <kbd>Não</kbd>.</dd>
+</dl>
+
+
+<h2 id="cmdline">Opções de linha de comando</h2>
+
+<p>O Clavier+ aceita as seguintes opções de linha de comando:</p>
+
+<dl>
+<dt><kbd>/launch</kbd></dt>
+<dd>Abre o Clavier+, se necessário. A janela de configuração nunca é mostrada.</dd>
+
+<dt><kbd>/settings</kbd></dt>
+<dd>Mostra a janela de configuração do Clavier+. Se necessário, o Clavier+ é aberto antes.</dd>
+
+<dt><kbd>/menu</kbd></dt>
+<dd>Exibe o menu do Clavier+. Se necessário, o Clavier+ é aberto antes. O menu pode ser exibido manualmente clicando-se no ícone do Clavier+ perto do relógio do sistema.</dd>
+
+<dt><kbd>/quit</kbd></dt>
+<dd>Fecha o Clavier+ sem aviso. Se o Clavier+ não é aberto, nada mais acontece.</dd>
+
+<dt><kbd>/addtext</kbd></dt>
+<dd>Abre a janela de criação de atalho de reprodução de texto. Se necessário, o Clavier+ é aberto, junto com a exibição da janela de configuração.</dd>
+
+<dt><kbd>/addcommand</kbd></dt>
+<dd>Abre a janela de criação de atalho de comando. Se necessário, o Clavier+ é aberto, junto com a janela de configuração.</dd>
+
+<dt><kbd>/load <i>configuration_file.ini</i></kbd></dt>
+<dd>Se o Clavier+ ainda não estiver aberto, abra-o e carregue o arquivo de configuração. Se ele já estiver aberto, não o abra novamente, mas altere o arquivo de configuração do Clavier+ ativo. Ponha o nome do arquivo entre aspas se ele contiver espaços. Por exemplo: <kbd>clavier.exe /load "Internet shortcuts.ini"</kbd></dd>
+
+<dt><kbd>/merge <i>configuration_file.ini</i></kbd></dt>
+<dd>Se o Clavier+ não estiver aberto, abre-o e faz a mesclagem do arquivo de configuração padrão (ou o especificado pelo comando <kbd>/load</kbd>) com o arquivo de configuração indicado pelo usuário. Se o Clavier+ estiver aberto, mescla o arquivo de configuração da cópia Clavier+ no momento com o arquivo de configuração especificado pelo usuário. Atalhos conflitantes ou que apresentem ambigüidades com os atalhos existentes não são adicionados.</dd>
+
+<dt><kbd>/sendkeys "<i>texto</i>"</kbd></dt>
+<dd>Simula digitação de texto. O texto deve obdecer à <a href="#text">sintaxe especificada acima</a>. Essas opções permitem, por exemplo, a reprodução de texto (simulação) ao se clicar duplamente num atalho do Windows, na abertura do Windows, ou na escolha de um comando do menu de contexto do Explorer. Aspas e barras inclinadas precisam ser assinaladas com uma barra inclinada. Por exemplo: <kbd>clavier.exe /sendkeys "Digite uma \"aspas\" palavra e uma única barra \\ inclinada"</kbd></dd>
+</dl>
+
+<p>Se o Clavier+ for aberto sem nenhum parâmetro, o comportamento dele dependerá do fato de já estar aberto. Se não estiver, abra o Clavier+ normalmente. Se estiver, não o abra novamente; em vez disso, abra a janela de configuração. Isto permite o acesso às opções do Clavier+, mesmo que o ícone dele esteja oculto.</p>
+
+
+<h2 id="limits">Problemas conhecidos</h2>
+
+<h3 id="limits-unavailable-shortcuts">Teclas de atalho que não podem ser usadas</h3>
+
+<p>Algumas teclas especiais não podem ser usadas:</p>
+<pre>
+Print Screen
+Pause
+F12
+</pre>
+
+<p>As teclas especiais “Atualizar” (navegador), “aumentar volune” etc. funcionam de forma limitada. É possível, pois, criar atalhos com elas e até modificar a função original delas. Porém, a função desempenhada por essas tecla é acionada quando elas são pressionadas na janela de <i>Adicionar</i>. Além disso, já que o Windows não fornece um método genérico para se obter o nome dessas teclas especiais, elas são numeradas (por exemplo: <kbd>#183</kbd>).</p>
+
+<p>As combinações de teclas de atalho padrão do Windows não podem ser modificadas. Eis algumas delas:</p>
+
+<table style="border-spacing: 2em 0">
+<tr><td><kbd>Ctrl + Alt + DEL</kbd></td><td>abre o Gerenciador de Tarefas</td></tr>
+<tr><td><kbd>F12</kbd></td><td>reservada para o depurador</td></tr>
+<tr><td><kbd>Alt + Tab</kbd></td><td>faz a alternância na escolha de janelas de programas ativos</td></tr>
+<tr><td><kbd>Alt + Shift + Tab</kbd></td><td>mostra o programa anterior listado na função de alternância</td></tr>
+<tr><td><kbd>Win + B</kbd></td><td>faz a seleção da Barra de Tarefas</td></tr>
+<tr><td><kbd>Win + D</kbd></td><td>minimiza todas as janelas; use-as uma segunda vez para restaurá-las</td></tr>
+<tr><td><kbd>Win + E</kbd></td><td>abre o Explorer</td></tr>
+<tr><td><kbd>Win + F</kbd></td><td>abre a janela de Pesquisa do Windows</td></tr>
+<tr><td><kbd>Win + Ctrl + F</kbd></td><td>abre a janela de localização de computadores</td></tr>
+<tr><td><kbd>Win + L</kbd></td><td>aciona a troca rápida de usuários</td></tr>
+<tr><td><kbd>Win + M</kbd></td><td>minimiza todas as janelas</td></tr>
+<tr><td><kbd>Win + Shift + M</kbd></td><td>reverte o efeito do uso de Win + M</td></tr>
+<tr><td><kbd>Win + R</kbd></td><td>aciona a janela do comando Executar</td></tr>
+<tr><td><kbd>Win + U</kbd></td><td>abre o Gerenciador de Utilitários</td></tr>
+<tr><td><kbd>Win + F1</kbd></td><td>abre a Ajuda do Windows</td></tr>
+<tr><td><kbd>Win + Tab</kbd></td><td>seleciona o botão seguinte da Barra de Tarefas</td></tr>
+<tr><td><kbd>Win + Shift + Tab</kbd></td><td>seleciona o botão anterior da Barra de Tarefas</td></tr>
+<tr><td><kbd>Win + Pause</kbd></td><td>abre o aplicativo de Propriedades do Sistema</td></tr>
+</table>
+
+
+<h3 id="limits-side-effects">Atalhos que causam efeitos colaterais</h3>
+
+<p>Por padrão, no Windows a combinação de teclas <kbd>Alt + Shift</kbd> altera o layout do teclado. É altamente recomendável evitar o uso de atalhos com teclas como <kbd>Alt + Shift + <i>tecla</i></kbd>, pois você pode alterar o layout do teclado sem querer.</p>
+
+
+<h3 id="limits-programs">Programas de incompatibilidade parcial</h3>
+
+<p>O Clavier+ pode ter problemas com alguns programas nas operações de reprodução de texto e simulação de digitação:</p>
+
+<ul>
+<li>Alguns programas utilizáveis em qualquer sistema operacional, os quais não respeitam o padrão Windows na questão do uso do teclado. Alguns deles são programas baseados em <b>Java</b>, como o <b>OpenOffice</b>, os programas da Fundação Mozilla (<b>Firefox</b>, <b>Thunderbird</b>), <b>Opera</b> etc. Se tiver problemas com alguns desses programas, empregue a sintaxe <kbd>[|<i>texto</i>|]</kbd> para fazer o Clavier+ usar técnicas de acesso privilegiado ao teclado nas operações de repdorução de texto (mais compatibilidade, porém operações mais lentas e limitadas)</li>
+<li><b>Jogos</b>, já que ignoram certos controles do Windows, e portanto do Clavier+, no uso do teclado</li>
+<li>Programas de sistema, já que também ignoram restrições impostas pelo Windows. Por exemplo: emuladores de <kbd>command.com</kbd>, sistemas virtuais (Cygwin, VirtualPC) e virtualizadores (VNC)</li>
+</ul>
+
+
+<h2 id="faq">FAQ</h2>
+
+<p>Você pode achar a última versão deste FAQ na <a href="http://utilfr42.free.fr/util/Clavier.php#faq">página do Clavier+</a>.</p>
+
+<div class="faq-question">O Clavier+ não consegue transcrever texto em <i>MeuProgramaFavorito</i>!</div>
+<div class="faq-answer">
+<p>Alguns programas lidam com o teclado de uma forma inusitada, o que impede que o Clavier+ transcreva texto. Para resolver esse problema, ponha o texto entre <kbd>[|</kbd> e <kbd>|]</kbd>, como abaixo:</p>
+<p><kbd>[|Meu texto|]</kbd></p>
+</div>
+
+<div class="faq-question">O Clavier+ funciona com jogos?</div>
+<div class="faq-answer">
+<p>Na maioria dos casos, não. Jogos usam o teclado com acesso privilegiado, por vários motivos (rapidez, trapaça, proteção…).</p>
+</div>
+
+<div class="faq-question">Uso o Clavier+ para reproduzir minhas senhas. Como proteger o Clavier+ com uma senha?</div>
+<div class="faq-answer">
+<p>O Clavier+ não foi feito para armazenar senhas. No máximo, no Windows XP Profissional, você pode cifrar o arquivo <kbd>Clavier.ini</kbd> e ocultar o ícone do Clavier+ (veja abaixo). Porém, recomendo o uso de um programa especializado na armazenagem de senhas, como o <a href="https://keepass.info">KeePass</a> ou o <a href="https://pwsafe.org">Password Safe</a>.</p>
+</div>
+
+<div class="faq-question">Como fazer a tecla de ponto do teclado numérico reproduzir uma vírgula?</div>
+<div class="faq-answer">
+<p>Clique no botão com um símbolo em forma de cruz e escolha <i>Transcrever texto</i>. Pressione a tecla de ponto do teclado numérico e depois o botão <i>OK</i>. Digite uma vírgula no campo <i>Transcrever exto</i> e clique em <i>OK</i>.</p>
+</div>
+
+<div class="faq-question">Como criar atalhos para pastas especiais, como Meu Computador, Painel de Controle …?</div>
+<div class="faq-answer">
+<p>No Windows Explorer, crie um atalho para uma dessas pastas especiais: pressione o botão direito do mouse nessa pasta especial, arraste o ponteiro do mouse para outra pasta (por exemplo, <kbd>C:\pasta</kbd>), solte o botão e escolha <i>Criar atalho aqui</i> no menu de contexto.</p>
+<p>Depois, no Clavier+, crie um atalho de <i>Abrir um programa</i> que seja uma remissão (“link”) do atalho do Windows que você acabou de criar. Você tem de digitar o caminho completo manualmente e adicionar a extensão <kbd>.lnk</kbd>. Por exemplo: <kbd>C:\Meu computador.lnk</kbd> se tiver criado um atalho com o nome de <kbd>Meu computador</kbd> no pasta <kbd>C:\pasta</kbd>.</p>
+</div>
+
+<div class="faq-question">Como abrir uma pasta no Explorer com a janela de estrutura de pastas?</div>
+<div class="faq-answer"><p>Na linha de comando de atalhos, insira <kbd>explorer /e,</kbd> antes do caminho da pasta. Por exemplo: <kbd>explorer /e, C:\</kbd></p></div>
+
+<div class="faq-question">Como remover o ícone do Clavier+ da Barra de Tarefas?</div>
+<div class="faq-answer">
+<p>Abra o Clavier+ e depois feche-o. Clique duplamente no arquivo <kbd>Clavier.ini</kbd>, localizado na pasta do executável do Clavier+. Na segunda linha, que inicia com <kbd>Tamanho=</kbd>, substitua o <i>último</i> zero pelo número um (1). Por exemplo: <kbd>Tamanho=923,501,0,0</kbd> deve tornar-se <kbd>Tamanho=923,501,0,1</kbd>.</p>
+<p>Uma vez que o ícone do Clavier+ icon não aparecerá mais, você precisará fechar e abrir o Clavier+ duas vezes para abrir a janela de configuração dele (uma vez para abri-lo, outra para abrir a janela).</p>
+</div>
+
+<div class="faq-question">Como quebrar uma linha com uma combinação de teclas de atalho?</div>
+<div class="faq-answer">
+<p>Há duas soluções possíveis:</p>
+<ul>
+<li>fazer uma quebra de linha na caixa de edição pressionando a tecla <kbd>Enter</kbd>,</li>
+<li>se a opção anterior não funcionar, inclua o código <kbd>[RETURN]</kbd></li>
+</ul>
+</div>
+
+<div class="faq-question">Como simular um falso sucedâneo de tecla</div>
+<div class="faq-answer">
+<p>Clique no botão que tem um símbolo em forma de seta, escolha o comando <i>Digitar texto</i>.</p>
+</div>
+<div class="faq-question">Como exibir o menu de contexto?</div>
+<div class="faq-answer">
+<p>É possível reproduzir a exibição do Menu de Contexto por meio de digitação simulada. Com o comando <i>Digitar texto</i> do botão em forma de seta, podemos saber que o código dessa tecla é <kbd>#93</kbd>. Portanto, a reprodução de <kbd>[#93]</kbd> permite a exibição do menu de contexto. Para exibir o menu de contexto no ponto de incidência do cursor, crie a simulação de um clique com o botão direito do mouse, como: <kbd>[{MouseButton,R}]</kbd></p>
+</div>
+
+<div class="faq-question">Como manipular o volume?</div>
+<div class="faq-answer">
+<p>Existem três teclas relacionadas com o volume do som:</p>
+<ul>
+<li>mudo: código <kbd>[#173]</kbd></li>
+<li>Aumentar: código <kbd>[#175]</kbd></li>
+<li>Abaixar: código <kbd>[#174]</kbd></li>
+</ul>
+<p>Você pode usar o programa <a href="http://utilfr42.free.fr/dn/VolumeManager.exe">VolumeManager</a> para ajustar o volume facilmente.</p>
+</div>
+
+<div class="faq-question">A opção <i>Abrir o Clavier+ com o Windows</i> não funciona!</div>
+<div class="faq-answer">
+<p>Crie um atalho para o <kbd>Clavier.exe</kbd> em <i>Menu Iniciar/Programas/Inicializar</i>. Para fazer isto, clique com o botão direito do mouse no <kbd>Clavier.exe</kbd> e, com o botão pressionado, arraste o mouse para o menu Iniciar, depois para Programa e <i>Inicializar</i>. Solte o botão. Escolha <i>Criar atalho aqui</i>.</p>
+</div>
+
+<div class="faq-question">Como abrir dois programas ao mesmo tempo?</div>
+<div class="faq-answer">
+<p>A solução é pôr os caminhos dos dois programas entre colchetes duplos no campo de <kbd>Transcrever texto</kbd>. Por exemplo, para abrir o Bloco de Notas e a Calculadora:</p>
+<pre>[[notepad.exe]][[calc.exe]]</pre>
+</div>
+
+<div class="faq-question">Como reproduzir cliques do mouse, cliques duplos e cliques com o botão direito?</div>
+<div class="faq-answer">
+<p>Você precisa criar uma atalho do tipo <i>Transcrever texto</i> e usar o comando especial <kbd>[{MouseButton,<i>code</i>}]</kbd>. Por exemplo, para reproduzir um clique com o botão esquerdo: <kbd>[{MouseButton,L}]</kbd>. No caso de clique duplo, inclua dois comandos de clique com o botão esquerdo: <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>. Para reproduzir um clique com o botão direito, use o código <kbd>R</kbd>: <kbd>[{MouseButton,R}]</kbd>.</p>
+</div>
+
+<div class="faq-question">Como fazer coisas mais complicadas, como: incluir a data atual, ativar um aplicativo…?</div>
+<div class="faq-answer">
+<p>Você pode criar um programa em VBScript e instruir o Clavier+ a executá-lo. O procedimento genérico é o seguinte: abra o Bloco de
+Notas, crie o código, salve-o com a extensão <kbd>.VBS</kbd> e depois crie um atalho dele no Clavier+.</p>
+<p>Alguns exemplos de scripts:</p>
+<ul>
+<li>Digitar a data atual no programa ativo:
+<pre>
+set shell = WScript.CreateObject("WScript.Shell")
+shell.SendKeys Date()
+</pre></li>
+<li>Ativar um aplicativo e reproduzir digitação nele. Por exemplo, fazer a soma de 2+7 na Calculadora (que já deve estar aberta):
+<pre>
+set shell = WScript.CreateObject("WScript.Shell")
+shell.AppActivate "Calculadora"
+WScript.Sleep(100)
+shell.SendKeys "2{+}"
+WScript.Sleep(100)
+shell.SendKeys "7{=}"
+</pre>
+</li>
+</ul>
+</div>
+
+
+<h2 id="examples">Exemplo de atalhos</h2>
+
+<ul>
+<li>Criar uma nova pasta no Windows Explorer<br/>
+texto <kbd>[#93][N][Enter]</kbd> com a condição de programa <kbd>explorer.exe</kbd></li>
+<li>Executar o comando <i>Arquivo/Fechar</i><br/>
+texto <kbd>[Alt+F4]</kbd> ou texto <kbd>[Alt+F][Q]</kbd></li>
+<li>Traduzir para o português a palavra selecionada com um dicionário online<br/>
+texto <kbd>[Ctrl+C][[https://www.wordreference.com/enpt/%CLIPBOARD%]]</kbd></li>
+<li>Criar uma mensagem de correio eletrônico<br/>
+comando <kbd>mailto:</kbd> ou <kbd>mailto:somebody@domain.com&amp;subject=Subject</kbd></li>
+<li>Fazer a página do programa ativo rolar três linhas para baixo<br/>
+texto <kbd>[{MouseWheel,3}]</kbd></li>
+<li>Abrir o Painel de Controle<br/>
+comando <kbd>control.exe</kbd></li>
+<li>Aumentar ou baixar o volume<br/>
+texto <kbd>[#175]</kbd> or texto <kbd>[#174]</kbd></li>
+<li>Colar a seleção do Bloco de Notas<br/>
+texto <kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd></li>
+<li>Preencher um formulário<br/>
+texto <kbd>primeiro campo[TAB]segundo campo[TAB]terceiro campo[ENTER]</kbd></li>
+<li>Fecha o Windows<br/>
+commando <kbd>shutdown.exe -s -t 01</kbd></li>
+<li>Recarrega o sistema<br/>
+commando <kbd>shutdown.exe -r -t 01</kbd></li>
+<li>Faz o logout do usuário atual<br/>
+commando <kbd>shutdown.exe -l</kbd></li>
+<li>Dica: Para digitar os símbolos que aparecem no canto direito das teclas, pressione simultaneamente Ctrl+Alt mais o símbolo visado. Exemplos: <kbd>Ctrl + Alt + +</kbd> = <kbd>§</kbd>; <kbd>Ctrl + Alt + 3</kbd> = <kbd>³</kbd> (sobrescrito); <kbd>Ctrl + Alt + ]</kbd> ou <kbd>[</kbd> = <kbd>º</kbd>; ou <kbd>ª</kbd> (sobrescritos difíceis de reproduzir pelo usuário inexperiente na edição de arquivos HTML ou no uso de editores de texto). Isto funciona mesmo com o Clavier+ fechado.</li>
+</ul>
+
+</body>
+</html>

@@ -55,7 +55,7 @@ const LPCTSTR pszValueAutoStart = pszApp;
 
 HWND e_hdlgMain;
 
-const LPCTSTR pszHelpURL = _T("http://utilfr42.free.fr/util/Clavier");
+const LPCTSTR pszHelpUrlFormat = _T("http://utilfr42.free.fr/util/ClavierDoc_%s.html");
 static TCHAR pszDonateURL[256];
 
 static INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -724,14 +724,13 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		
 		case IDCCMD_HELP:
 			{
-				TCHAR pszPath[MAX_PATH];
-				lstrcpy(pszPath, pszHelpURL);
+				TCHAR pszLanguageCode[MAX_PATH];
+				i18n::loadStringAuto(IDS_LANGUAGE_CODE, pszLanguageCode);
 				
-				TCHAR pszFile[MAX_PATH];
-				i18n::loadStringAuto(IDS_HELP, pszFile);
-				lstrcat(pszPath, pszFile);
+				TCHAR pszUrl[MAX_PATH];
+				wsprintf(pszUrl, pszHelpUrlFormat, pszLanguageCode);
 				
-				ShellExecute(NULL, NULL, pszPath, NULL, NULL, SW_SHOWDEFAULT);
+				ShellExecute(NULL, NULL, pszUrl, NULL, NULL, SW_SHOWDEFAULT);
 			}
 			break;
 		
