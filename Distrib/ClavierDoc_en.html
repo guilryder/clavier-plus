@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Clavier+ documentation</title>
-<link rel="stylesheet" type="text/css" href="ClavierHelp.css"/>
+<link rel="stylesheet" href="ClavierHelp.css">
 </head>
 
 <body>
@@ -39,8 +39,8 @@
 
 <h2 id="author">Author</h2>
 
-<p>Guillaume Ryder<br/>
-Website: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br/>
+<p>Guillaume Ryder<br>
+Website: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br>
 E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 </p>
 
@@ -53,7 +53,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <p>There is no warranty for this program, I’m not responsible of any damage due to its use.</p>
 
-<p>The full source code of Clavier+ is available here:<br/>
+<p>The full source code of Clavier+ is available here:<br>
 <a href="https://github.com/guilryder/clavier-plus"><kbd>https://github.com/guilryder/clavier-plus</kbd></a></p>
 
 
@@ -178,15 +178,15 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <h3 id="text-launching-program">Launching a program</h3>
 
-<p>Use the <i>Launch a Program</i> command in the arrow menu, or write the command line to execute enclosed in double brackets. For example, to open a text file and move the cursor to its end:<br/>
+<p>Use the <i>Launch a Program</i> command in the arrow menu, or write the command line to execute enclosed in double brackets. For example, to open a text file and move the cursor to its end:<br>
 <kbd>[[notepad.exe C:\\TODO.txt]][][Ctrl+End]</kbd></p>
 
-<p>This syntax allows launching several programs with the same shortcut. For example, to launch Notepad and the calculator:<br/>
+<p>This syntax allows launching several programs with the same shortcut. For example, to launch Notepad and the calculator:<br>
 <kbd>[[notepad.exe]][[calc.exe]]</kbd></p>
 
 <p>The command line can contain <kbd>%</kbd>-enclosed environment variables, like in <kbd>explorer.exe %WINDIR%</kbd> to open the Windows directory with the Explorer.<p>
 
-<p>Clavier+ sets the <kbd>%CLIPBOARD%</kbd> environment variable to the text currently stored in the clipboard. For example, to open the selected URL with Internet Explorer:<br/>
+<p>Clavier+ sets the <kbd>%CLIPBOARD%</kbd> environment variable to the text currently stored in the clipboard. For example, to open the selected URL with Internet Explorer:<br>
 <kbd>[Ctrl+C][][[iexplore.exe %CLIPBOARD%]]</kbd></p>
 
 
@@ -194,11 +194,11 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <p>If your shortcut executes several actions sequentially, you may need Clavier+ to wait a little time between them to let them fully execute. To insert a pause, write a pair of brackets: <kbd>[]</kbd>. Clavier+ will wait for 100 milliseconds, then detect the new focused window. You can also use the command <a href="#focus"><kbd>[{Focus}]</kbd></a> to specify the delay.</p>
 
-<p>This last point is crucial. If you simulate a keystroke that displays a new window (for example <kbd>Ctrl + O</kbd> which pops out the <i>File/Open</i> dialog box), then write some text (for example a filename), you must indicate to Clavier+ that the text should be typed in the <em>new</em> window:<br/>
+<p>This last point is crucial. If you simulate a keystroke that displays a new window (for example <kbd>Ctrl + O</kbd> which pops out the <i>File/Open</i> dialog box), then write some text (for example a filename), you must indicate to Clavier+ that the text should be typed in the <em>new</em> window:<br>
 <kbd>[Ctrl+O][]MyFile.txt[ENTER]</kbd></p>
 
-<p>Do the same if you launch a program that displays a window: ask Clavier+ to detect the new active window.<br/>
-<kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd><br/>
+<p>Do the same if you launch a program that displays a window: ask Clavier+ to detect the new active window.<br>
+<kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd><br>
 This shortcut copies to the clipboard the text currently selected, launches Notepad, then pastes the copied text in it. The <kbd>[]</kbd> tag is crucial; it tells Clavier+ to paste to the <em>new</em> active window, i.e. Notepad.</p>
 
 
@@ -213,49 +213,49 @@ This shortcut copies to the clipboard the text currently selected, launches Note
 <dt><kbd id="focus">[{Focus,<i>delay</i>,<i>window name</i>}]</kbd></dt>
 <dd><div>Detects or sets the new active window. The <i>window name</i> and <i>delay</i> parameters are optional.</div>
 <p>If not empty, <i>delay</i> is the number of milliseconds to wait before activating the window. It may be useful give enough time for the window to appear before trying to activate it. If <i>delay</i> is not specified, there is no delay.</p>
-<p>If <i>window name</i> is empty, Clavier+ detects the new active window and will send the future keystrokes to it. Useful if a keystroke displays a new window in which the shortcut needs to write. Example:<br/>
+<p>If <i>window name</i> is empty, Clavier+ detects the new active window and will send the future keystrokes to it. Useful if a keystroke displays a new window in which the shortcut needs to write. Example:<br>
 <kbd>[{Focus}]</kbd> or <kbd>[{Focus,200}]</kbd></p>
-<p>If <i>window name</i> is not empty, Clavier+ activates the first window matching the given name. The name can contain <kbd>*</kbd> and <kbd>?</kbd> wildcards. Backslashes should be used twice to escape commas. Example:<br/>
+<p>If <i>window name</i> is not empty, Clavier+ activates the first window matching the given name. The name can contain <kbd>*</kbd> and <kbd>?</kbd> wildcards. Backslashes should be used twice to escape commas. Example:<br>
 <kbd>[{Focus,50,* - Microsoft Word}]</kbd> or <kbd>[{Focus,,Title\\, subtitle}]</kbd></p>
-<p>By default, the shortcut execution stops if the window is not found. In order to continue executing the shortcut even if the window is not found, insert an exclamation mark <kbd>!</kbd> before the window title. If you want to search for a window having a title beginning with <kbd>!</kbd>, escape it with two backslashes. Examples:<br/>
-<kbd>[{Focus,0,*Internet Explorer}][Alt+F4]</kbd> closes the first Internet Explorer window found. Does nothing if Internet Explorer is not running.<br/>
-<kbd>[{Focus,0,!Untitled*}]Test</kbd> writes <kbd>Test</kbd> in the first window whose title starts with <kbd>Untitled</kbd>, or in the current window if no such window exists.<br/>
+<p>By default, the shortcut execution stops if the window is not found. In order to continue executing the shortcut even if the window is not found, insert an exclamation mark <kbd>!</kbd> before the window title. If you want to search for a window having a title beginning with <kbd>!</kbd>, escape it with two backslashes. Examples:<br>
+<kbd>[{Focus,0,*Internet Explorer}][Alt+F4]</kbd> closes the first Internet Explorer window found. Does nothing if Internet Explorer is not running.<br>
+<kbd>[{Focus,0,!Untitled*}]Test</kbd> writes <kbd>Test</kbd> in the first window whose title starts with <kbd>Untitled</kbd>, or in the current window if no such window exists.<br>
 <kbd>[{Focus,0,\\!Warning!}]</kbd> activates the first window titled <kbd>!Warning!</kbd>.</p>
 <p>Note that <kbd>[{Focus,100}]</kbd> is equivalent to <kbd>[]</kbd>.</p></dd>
 
 <dt><kbd>[{Copy,<i>text</i>}]</kbd></dt>
-<dd>Copies the specified text to the clipboard. Beware that this command is completely unrelated to the <kbd>Ctrl + C</kbd> clipboard shortcut, which copies the <i>selection</i> to the clipboard. Associated to the <kbd>Ctrl + V</kbd> keystroke, this command allows writing a long text quickly, or to write many times the same text. The following example writes five time the same text:<br/>
+<dd>Copies the specified text to the clipboard. Beware that this command is completely unrelated to the <kbd>Ctrl + C</kbd> clipboard shortcut, which copies the <i>selection</i> to the clipboard. Associated to the <kbd>Ctrl + V</kbd> keystroke, this command allows writing a long text quickly, or to write many times the same text. The following example writes five time the same text:<br>
 <kbd>[{Copy,A sentence to repeat five times. }][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd></dd>
 
 <dt><kbd>[{MouseButton,<i>code</i>}]</kbd></dt>
-<dd>Simulates a mouse button action. <i>code</i> specifies the button to modify and its new state. It is made of one or two letters.  The first one, mandatory, specifies the button to modify: <kbd>L</kbd> = left button, <kbd>M</kbd> = middle button, <kbd>R</kbd> = right button. The second letter, optional, specifies the action to perform: <kbd>D</kbd> = press the button down, <kbd>U</kbd> = release the button up. If the second letter is not specified, the button is pressed then released: this simulates a click. For example, to simulate a double-click with the left mouse button:<br/>
+<dd>Simulates a mouse button action. <i>code</i> specifies the button to modify and its new state. It is made of one or two letters.  The first one, mandatory, specifies the button to modify: <kbd>L</kbd> = left button, <kbd>M</kbd> = middle button, <kbd>R</kbd> = right button. The second letter, optional, specifies the action to perform: <kbd>D</kbd> = press the button down, <kbd>U</kbd> = release the button up. If the second letter is not specified, the button is pressed then released: this simulates a click. For example, to simulate a double-click with the left mouse button:<br>
 <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd></dd>
 
 <dt><kbd>[{MouseMoveTo,<i>x</i>,<i>y</i>}]</kbd></dt>
-<dd>Moves the mouse cursor to the given (x,y) position, specified in pixels relatively to the upper-left corner of the screen. For example, if you have a screen size of 1,024 &times; 768 pixels, the following command will move the cursor to the upper right corner:<br/>
+<dd>Moves the mouse cursor to the given (x,y) position, specified in pixels relatively to the upper-left corner of the screen. For example, if you have a screen size of 1,024 &times; 768 pixels, the following command will move the cursor to the upper right corner:<br>
 <kbd>[{MouseMoveTo,1023,0}]</kbd></dd>
 
 <dt><kbd>[{MouseMoveToFocus,<i>x</i>,<i>y</i>}]</kbd></dt>
-<dd>Moves the mouse cursor to the given (x,y) position, specified in pixels relatively to the upper-left corner of the active window. For example, to move the mouse over the system menu if the active window:<br/>
+<dd>Moves the mouse cursor to the given (x,y) position, specified in pixels relatively to the upper-left corner of the active window. For example, to move the mouse over the system menu if the active window:<br>
 <kbd>[{MouseMoveToFocus,8,8}]</kbd></dd>
 
 <dt><kbd>[{MouseMoveBy,<i>dx</i>,<i>dy</i>}]</kbd></dt>
-<dd>Moves the mouse cursor by the given amount of pixels. For example, to move the mouse by 10 pixels left and 3 pixels down:<br/>
+<dd>Moves the mouse cursor by the given amount of pixels. For example, to move the mouse by 10 pixels left and 3 pixels down:<br>
 <kbd>[{MouseMoveBy,-10,3}]</kbd></dd>
 
 <dt><kbd>[{MouseWheel,<i>ticks</i>}]</kbd></dt>
-<dd>Simulates a mouse wheel scroll. <i>ticks</i> specifies the number of ticks to scroll by. A positive value will scroll downwards, a negative one will scroll upwards. For example, to scroll twice upwards:<br/>
+<dd>Simulates a mouse wheel scroll. <i>ticks</i> specifies the number of ticks to scroll by. A positive value will scroll downwards, a negative one will scroll upwards. For example, to scroll twice upwards:<br>
 <kbd>[{MouseWheel,-2}]</kbd></dd>
 </dl>
 
 
 <h3 id="text-special-chars">Special characters</h3>
 
-<p>If you need to write special characters <kbd>\</kbd>, <kbd>[</kbd>, <kbd>]</kbd>, <kbd>{</kbd>, <kbd>}</kbd> or <kbd>|</kbd>, you need to escape them with a backslash. For example:<br/>
-<kbd>This is a bracket: \[, this is a single backslash: \\</kbd><br/>
+<p>If you need to write special characters <kbd>\</kbd>, <kbd>[</kbd>, <kbd>]</kbd>, <kbd>{</kbd>, <kbd>}</kbd> or <kbd>|</kbd>, you need to escape them with a backslash. For example:<br>
+<kbd>This is a bracket: \[, this is a single backslash: \\</kbd><br>
 The arrow menu has an entry listing all special characters.</p>
 
-<p>You need to write a backslash before special characters everywhere in the shortcut text, even in special tags such as keystroke simulation or program launching tags:<br/>
+<p>You need to write a backslash before special characters everywhere in the shortcut text, even in special tags such as keystroke simulation or program launching tags:<br>
 <kbd>[[notepad.exe document\[1\].txt]]</kbd> to open the file named <kbd>document[1].txt</kbd> with Notepad</p>
 
 
@@ -312,8 +312,8 @@ Sorting=<i>column index</i>
 
 <dl>
 <dt><kbd>Size</kbd></dt>
-<dd><kbd>width,height</kbd>: size of the configuration window, in pixels.<br/>
-<kbd>maximized</kbd>: 1 if the window is maximized, 0 otherwise.<br/>
+<dd><kbd>width,height</kbd>: size of the configuration window, in pixels.<br>
+<kbd>maximized</kbd>: 1 if the window is maximized, 0 otherwise.<br>
 <kbd>hide icon</kbd>: 1 to hide Clavier+ icon in the tray bar, near the system clock, 0 to keep it visible.
 </dd>
 

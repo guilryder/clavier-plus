@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Documentation de Clavier+</title>
-<link rel="stylesheet" type="text/css" href="ClavierHelp.css"/>
+<link rel="stylesheet" href="ClavierHelp.css">
 </head>
 
 <body>
@@ -33,8 +33,8 @@
 
 <h2 id="author">Auteur</h2>
 
-<p>Guillaume Ryder<br/>
-Site Web&nbsp;: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br/>
+<p>Guillaume Ryder<br>
+Site Web&nbsp;: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br>
 E-mail&nbsp;: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 </p>
 
@@ -47,7 +47,7 @@ E-mail&nbsp;: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd><
 
 <p>Clavier+ est fourni sans aucune garantie, je ne pourrai être tenu pour responsable des éventuels préjudices imputables à son usage.</p>
 
-<p>Le code source intégral de Clavier+ est disponible à l’adresse suivante&nbsp;:<br/>
+<p>Le code source intégral de Clavier+ est disponible à l’adresse suivante&nbsp;:<br>
 <a href="https://github.com/guilryder/clavier-plus"><kbd>https://github.com/guilryder/clavier-plus</kbd></a></p>
 
 
@@ -173,13 +173,13 @@ E-mail&nbsp;: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd><
 
 <h3 id="text-launching-program">Lancer un programme</h3>
 
-<p>Utilisez la commande <i>Lancer un programme</i> du menu en forme de flèches, ou bien écrivez la ligne de commande à exécuter entre double crochets. Par exemple, pour ouvrir un fichier texte et aller à la fin&nbsp;:<br/>
+<p>Utilisez la commande <i>Lancer un programme</i> du menu en forme de flèches, ou bien écrivez la ligne de commande à exécuter entre double crochets. Par exemple, pour ouvrir un fichier texte et aller à la fin&nbsp;:<br>
 <kbd>[[notepad.exe C:\\urgent.txt]][][Ctrl+Fin]</kbd></p>
 
-<p>Cette syntaxe permet de lancer plusieurs programmes à la fois avec le même raccourci. Par exemple, pour lancer le bloc-notes et la calculatrice&nbsp;:<br/>
+<p>Cette syntaxe permet de lancer plusieurs programmes à la fois avec le même raccourci. Par exemple, pour lancer le bloc-notes et la calculatrice&nbsp;:<br>
 <kbd>[[notepad.exe]][[calc.exe]]</kbd></p>
 
-<p>La ligne de commande peut contenir des variables d’environnement entre <kbd>%</kbd>, par exemple <kbd>explorer.exe %WINDIR%</kbd> pour ouvrir l’explorateur au répertoire d’installation de Windows. La variable d’environnement <kbd>%CLIPBOARD%</kbd> contiendra le texte actuellement présent dans le presse-papiers. Par exemple, pour ouvrir l’URL sélectionnée avec Internet Explorer&nbsp;:<br/>
+<p>La ligne de commande peut contenir des variables d’environnement entre <kbd>%</kbd>, par exemple <kbd>explorer.exe %WINDIR%</kbd> pour ouvrir l’explorateur au répertoire d’installation de Windows. La variable d’environnement <kbd>%CLIPBOARD%</kbd> contiendra le texte actuellement présent dans le presse-papiers. Par exemple, pour ouvrir l’URL sélectionnée avec Internet Explorer&nbsp;:<br>
 <kbd>[Ctrl+C][][[iexplore.exe %CLIPBOARD%]]</kbd></p>
 
 
@@ -187,11 +187,11 @@ E-mail&nbsp;: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd><
 
 <p>Si vous enchaînez plusieurs actions, il peut être utile de leur laisser le temps de s’exécuter. Pour cela écrivez une paire de crochets&nbsp;: <kbd>[]</kbd>. Cela attendra 100 millisecondes puis détectera la nouvelle fenêtre active. Vous pouvez aussi utiliser la commande <a href="#focus"><kbd>[{Focus}]</kbd></a>, qui offre un meilleur contrôle du délai.</p>
 
-<p>Ce dernier point est très important. Si vous simulez une frappe de touches qui affiche une nouvelle fenêtre (par exemple <kbd>Ctrl + O</kbd> qui affiche la fenêtre <i>Ouvrir</i>) et qu’ensuite vous simulez de la frappe de texte (par exemple le nom d’un fichier), il faut indiquer à Clavier+ de taper le texte dans la <em>nouvelle</em> fenêtre affichée&nbsp;:<br/>
+<p>Ce dernier point est très important. Si vous simulez une frappe de touches qui affiche une nouvelle fenêtre (par exemple <kbd>Ctrl + O</kbd> qui affiche la fenêtre <i>Ouvrir</i>) et qu’ensuite vous simulez de la frappe de texte (par exemple le nom d’un fichier), il faut indiquer à Clavier+ de taper le texte dans la <em>nouvelle</em> fenêtre affichée&nbsp;:<br>
 <kbd>[Ctrl+O][]MonFichier.txt[ENTREE]</kbd></p>
 
-<p>Même remarque si vous lancez un programme. Il faut demander à Clavier+ de se repositionner sur la nouvelle fenêtre active, en général celle du programme lancé&nbsp;:<br/>
-<kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd><br/>
+<p>Même remarque si vous lancez un programme. Il faut demander à Clavier+ de se repositionner sur la nouvelle fenêtre active, en général celle du programme lancé&nbsp;:<br>
+<kbd>[Ctrl+C][[notepad.exe]][][Ctrl+V]</kbd><br>
 Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, lance le bloc-notes, puis y colle le texte copié. Le <kbd>[]</kbd> est très important, il indique à Clavier+ de coller dans la <em>nouvelle</em> fenêtre active, c’est-à-dire celle du bloc-notes qui vient de s’ouvrir.</p>
 
 
@@ -206,49 +206,49 @@ Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, l
 <dt><kbd id="focus">[{Focus,<i>délai</i>,<i>fenêtre</i>}]</kbd></dt>
 <dd><div>Détecter ou changer la fenêtre active. Les paramètres sont facultatifs.</div>
 <p>Si non-vide, <i>délai</i> est le nombre de millisecondes qu’il faudra attendre avant d’avoir activé la fenêtre. En effet, il peut être utile de laisser à la fenêtre le temps d’apparaître avant de lui envoyer du texte. Si <i>délai</i> n’est pas spécifié, le délai d’attente est nul.</p>
-<p>Si <i>fenêtre</i> est vide, Clavier+ détecte la nouvelle fenêtre active. Les futures frappes de touches seront envoyées à cette fenêtre. Utile si une frappe de touches affiche une nouvelle fenêtre dans laquelle il faut écrire. Exemple&nbsp;:<br/>
+<p>Si <i>fenêtre</i> est vide, Clavier+ détecte la nouvelle fenêtre active. Les futures frappes de touches seront envoyées à cette fenêtre. Utile si une frappe de touches affiche une nouvelle fenêtre dans laquelle il faut écrire. Exemple&nbsp;:<br>
 <kbd>[{Focus}]</kbd> ou <kbd>[{Focus,200}]</kbd></p>
-<p>Si <i>fenêtre</i> n’est pas vide, Clavier+ active la première fenêtre qui a le nom spécifié. Le nom peut contenir les <em>wildcards</em> <kbd>*</kbd> et <kbd>?</kbd>. Deux antislashs consécutifs doivent être utilisés pour échapper les virgules. Exemple&nbsp;:<br/>
+<p>Si <i>fenêtre</i> n’est pas vide, Clavier+ active la première fenêtre qui a le nom spécifié. Le nom peut contenir les <em>wildcards</em> <kbd>*</kbd> et <kbd>?</kbd>. Deux antislashs consécutifs doivent être utilisés pour échapper les virgules. Exemple&nbsp;:<br>
 <kbd>[{Focus,50,* - Microsoft Word}]</kbd> ou <kbd>[{Focus,,Titre\\, sous-titre}]</kbd></p>
-<p>Par défaut, le raccourci est stoppé si la fenêtre n’est pas trouvée. Pour forcer la poursuite du raccourci même si la fenêtre n’est pas trouvée, ajoutez un point d’exclamation <kbd>!</kbd> devant le titre de la fenêtre à chercher. Pour chercher une fenêtre dont le titre commence par <kbd>!</kbd>, il faut l’échapper avec deux antislashs. Exemples&nbsp;:<br/>
-<kbd>[{Focus,0,*Internet Explorer}][Alt+F4]</kbd> quitte la première fenêtre d’Internet Explorer trouvée, mais ne fait rien si Internet Explorer n’est pas lancé.<br/>
-<kbd>[{Focus,0,!Sans titre*}]Test</kbd> écrit <kbd>Test</kbd> dans la fenêtre commençant par <kbd>Sans titre</kbd>, ou dans la fenêtre active si une telle fenêtre n’existe pas.<br/>
+<p>Par défaut, le raccourci est stoppé si la fenêtre n’est pas trouvée. Pour forcer la poursuite du raccourci même si la fenêtre n’est pas trouvée, ajoutez un point d’exclamation <kbd>!</kbd> devant le titre de la fenêtre à chercher. Pour chercher une fenêtre dont le titre commence par <kbd>!</kbd>, il faut l’échapper avec deux antislashs. Exemples&nbsp;:<br>
+<kbd>[{Focus,0,*Internet Explorer}][Alt+F4]</kbd> quitte la première fenêtre d’Internet Explorer trouvée, mais ne fait rien si Internet Explorer n’est pas lancé.<br>
+<kbd>[{Focus,0,!Sans titre*}]Test</kbd> écrit <kbd>Test</kbd> dans la fenêtre commençant par <kbd>Sans titre</kbd>, ou dans la fenêtre active si une telle fenêtre n’existe pas.<br>
 <kbd>[{Focus,0,\\!Attention!}]</kbd> active la fenêtre dont le titre est <kbd>!Attention!</kbd>.</p>
 <p>Noter que <kbd>[{Focus,100}]</kbd> est équivalent à <kbd>[]</kbd>.</p></dd>
 
 <dt><kbd>[{Copy,<i>texte</i>}]</kbd></dt>
-<dd>Copier le texte spécifié dans le presse-papiers. Attention&nbsp;! Cette commande n’a aucun rapport avec le raccourci clavier <kbd>Ctrl + C</kbd> qui, elle, copie la <i>sélection</i> dans le presse-papiers. Si vous utilisez la séquence de touches <kbd>Ctrl + V</kbd> par la suite, cela permet d’écrire rapidement de très longs textes, ou d’écrire plusieurs fois le même texte. L’exemple suivant écrit cinq fois le même texte&nbsp;:<br/>
+<dd>Copier le texte spécifié dans le presse-papiers. Attention&nbsp;! Cette commande n’a aucun rapport avec le raccourci clavier <kbd>Ctrl + C</kbd> qui, elle, copie la <i>sélection</i> dans le presse-papiers. Si vous utilisez la séquence de touches <kbd>Ctrl + V</kbd> par la suite, cela permet d’écrire rapidement de très longs textes, ou d’écrire plusieurs fois le même texte. L’exemple suivant écrit cinq fois le même texte&nbsp;:<br>
 <kbd>[{Copy,Une longue suite de mots. }][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd></dd>
 
 <dt><kbd>[{MouseButton,<i>code</i>}]</kbd></dt>
-<dd>Simuler une action sur les boutons de la souris. <i>code</i> spécifie l’action à effectuer. Il est constitué d’une ou deux lettres. La première, obligatoire, indiquant le bouton concerné&nbsp;: <kbd>L</kbd> = bouton gauche, <kbd>M</kbd> = bouton du milieu, <kbd>R</kbd> = bouton droit. La seconde, facultative, indique l’action à effectuer&nbsp;: <kbd>D</kbd> = enfoncer le bouton, <kbd>U</kbd> = le relâcher. Si la seconde lettre est absente, le bouton est enfoncé puis relâché&nbsp;: cela simule un clic. Par exemple, pour effectuer un double-clic avec le bouton gauche&nbsp;:<br/>
+<dd>Simuler une action sur les boutons de la souris. <i>code</i> spécifie l’action à effectuer. Il est constitué d’une ou deux lettres. La première, obligatoire, indiquant le bouton concerné&nbsp;: <kbd>L</kbd> = bouton gauche, <kbd>M</kbd> = bouton du milieu, <kbd>R</kbd> = bouton droit. La seconde, facultative, indique l’action à effectuer&nbsp;: <kbd>D</kbd> = enfoncer le bouton, <kbd>U</kbd> = le relâcher. Si la seconde lettre est absente, le bouton est enfoncé puis relâché&nbsp;: cela simule un clic. Par exemple, pour effectuer un double-clic avec le bouton gauche&nbsp;:<br>
 <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd></dd>
 
 <dt><kbd>[{MouseMoveTo,<i>x</i>,<i>y</i>}]</kbd></dt>
-<dd>Déplacer le curseur de la souris à la position (x,y), spécifiée en pixels par rapport au coin supérieur gauche de l’écran. Par exemple, si vous avez un écran en résolution 1&nbsp;024 &times; 768, la commande suivante déplace le curseur au coin supérieur droit&nbsp;:<br/>
+<dd>Déplacer le curseur de la souris à la position (x,y), spécifiée en pixels par rapport au coin supérieur gauche de l’écran. Par exemple, si vous avez un écran en résolution 1&nbsp;024 &times; 768, la commande suivante déplace le curseur au coin supérieur droit&nbsp;:<br>
 <kbd>[{MouseMoveTo,1023,0}]</kbd></dd>
 
 <dt><kbd>[{MouseMoveToFocus,<i>x</i>,<i>y</i>}]</kbd></dt>
-<dd>Déplacer le curseur de la souris à la position (x,y), spécifiée en pixels par rapport au coin supérieur gauche de la fenêtre active. Par exemple, pour déplacer la souris sur le menu système de la fenêtre active&nbsp;:<br/>
+<dd>Déplacer le curseur de la souris à la position (x,y), spécifiée en pixels par rapport au coin supérieur gauche de la fenêtre active. Par exemple, pour déplacer la souris sur le menu système de la fenêtre active&nbsp;:<br>
 <kbd>[{MouseMoveToFocus,8,8}]</kbd></dd>
 
 <dt><kbd>[{MouseMoveBy,<i>dx</i>,<i>dy</i>}]</kbd></dt>
-<dd>Déplacer le curseur de la souris relativement à sa position courante. <i>dx</i> et <i>dy</i> spécifient respectivement l’amplitude horizontale (resp. verticale) du déplacement, positives pour un déplacement à droite (resp. en bas). Par exemple, pour déplacer la souris de 10 pixels vers la gauche et de 3 vers le bas&nbsp;:<br/>
+<dd>Déplacer le curseur de la souris relativement à sa position courante. <i>dx</i> et <i>dy</i> spécifient respectivement l’amplitude horizontale (resp. verticale) du déplacement, positives pour un déplacement à droite (resp. en bas). Par exemple, pour déplacer la souris de 10 pixels vers la gauche et de 3 vers le bas&nbsp;:<br>
 <kbd>[{MouseMoveBy,-10,3}]</kbd></dd>
 
 <dt><kbd>[{MouseWheel,<i>ticks</i>}]</kbd></dt>
-<dd>Simuler une action sur la molette de la souris. <i>ticks</i> indique le nombre de roulements de molette à simuler. Spécifier une valeur positive pour défiler vers le bas, négative pour défiler vers le haut. Par exemple, pour défiler de deux crans vers le haut&nbsp;:<br/>
+<dd>Simuler une action sur la molette de la souris. <i>ticks</i> indique le nombre de roulements de molette à simuler. Spécifier une valeur positive pour défiler vers le bas, négative pour défiler vers le haut. Par exemple, pour défiler de deux crans vers le haut&nbsp;:<br>
 <kbd>[{MouseWheel,-2}]</kbd></dd>
 </dl>
 
 
 <h3 id="text-special-chars">Caractères spéciaux</h3>
 
-<p>Si vous avez besoin d’insérer les caractères <kbd>\</kbd>, <kbd>[</kbd>, <kbd>]</kbd>, <kbd>{</kbd>, <kbd>}</kbd> ou <kbd>|</kbd>, vous devez le faire précéder d’un antislash. Par exemple&nbsp;:<br/>
-<kbd>Ceci est un crochet ouvrant: \[, ceci est un seul antislash: \\</kbd><br/>
+<p>Si vous avez besoin d’insérer les caractères <kbd>\</kbd>, <kbd>[</kbd>, <kbd>]</kbd>, <kbd>{</kbd>, <kbd>}</kbd> ou <kbd>|</kbd>, vous devez le faire précéder d’un antislash. Par exemple&nbsp;:<br>
+<kbd>Ceci est un crochet ouvrant: \[, ceci est un seul antislash: \\</kbd><br>
 Le menu en forme de flèche rappelle la liste des caractères spéciaux.</p>
 
-<p>Vous devez écrire un antislash devant les caractères spéciaux partout dans le texte du raccourci, y compris dans les balises spéciales de frappe de touches ou d’exécution de programmes&nbsp;:<br/>
+<p>Vous devez écrire un antislash devant les caractères spéciaux partout dans le texte du raccourci, y compris dans les balises spéciales de frappe de touches ou d’exécution de programmes&nbsp;:<br>
 <kbd>[[notepad.exe document\[1\].txt]]</kbd> pour ouvrir le fichier nommé <kbd>document[1].txt</kbd> avec le bloc-notes</p>
 
 
@@ -305,8 +305,8 @@ Tri=<i>numéro colonne</i>
 
 <dl>
 <dt><kbd>Taille</kbd></dt>
-<dd><kbd>largeur,hauteur</kbd>&nbsp;: taille de la fenêtre de configuration, en pixels.<br/>
-<kbd>agrandie</kbd>&nbsp;: 1 si la fenêtre est agrandie à tout l’écran, 0 sinon.<br/>
+<dd><kbd>largeur,hauteur</kbd>&nbsp;: taille de la fenêtre de configuration, en pixels.<br>
+<kbd>agrandie</kbd>&nbsp;: 1 si la fenêtre est agrandie à tout l’écran, 0 sinon.<br>
 <kbd>masquer icône</kbd>&nbsp;: 1 pour masquer l’icône de Clavier+ à côté de l’horloge, 0 pour la rendre visible.
 </dd>
 

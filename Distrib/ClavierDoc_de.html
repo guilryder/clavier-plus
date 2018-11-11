@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Clavier+</title>
-<link rel="stylesheet" type="text/css" href="ClavierHelp.css"/>
+<link rel="stylesheet" href="ClavierHelp.css">
 </head>
 
 <body>
@@ -37,14 +37,14 @@
 
 <h2 id="author">Autor</h2>
 
-<p>Guillaume Ryder<br/>
-Webseite: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br/>
+<p>Guillaume Ryder<br>
+Webseite: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br>
 Email: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 </p>
 
-<p><b>Deutsche Übersetzung</b><br/>
-Dietmar Vogel<br/>
-Webseite: <a href="http://www.verdrahtet.net/"><kbd>http://www.verdrahtet.net</kbd></a><br/>
+<p><b>Deutsche Übersetzung</b><br>
+Dietmar Vogel<br>
+Webseite: <a href="http://www.verdrahtet.net/"><kbd>http://www.verdrahtet.net</kbd></a><br>
 Email: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a>
 </p>
 
@@ -105,21 +105,21 @@ Email: <a href="mailto:info@verdrahtet.net"><kbd>info@verdrahtet.net</kbd></a>
 
 <h2 id="text">Text-Format</h2>
 
-<p>Im Textfeld <kbd>Schreiben</kbd> können Clavier+ weitere Verknüpfungen zum Ausführen übergeben werden. Dazu ist der Verknüpfungsname lediglich in eckigen Klammern zu schreiben. Zum Beispiel:<br/>
+<p>Im Textfeld <kbd>Schreiben</kbd> können Clavier+ weitere Verknüpfungen zum Ausführen übergeben werden. Dazu ist der Verknüpfungsname lediglich in eckigen Klammern zu schreiben. Zum Beispiel:<br>
 <kbd>[Strg + O]</kbd></p>
 
 <p>Um den Namen von Sondertasten herauszufinden, kann jener Name kopiert werden, der im Hinzufügen Dialog angezeigt wird. Um z.B. den Tastennamen für den <i>*</i> im Nummerblock herauszufinden, Schaltfläche „+” klicken und anschliessend die „*”-Taste drücken: der Tastenname wird angezeigt. Diesen Namen in Klammern exakt in das Textfeld <kbd>Schreiben</kbd> eingeben. Klammern und Punkte im Verknüpfungsnamen bitte beachten.</p>
 
-<p>Soll die eckige Klammer verwendet werden <kbd>[</kbd>, muss diese durch einen „Backslash” „escaped” werden. Z.B.: <br/>
+<p>Soll die eckige Klammer verwendet werden <kbd>[</kbd>, muss diese durch einen „Backslash” „escaped” werden. Z.B.: <br>
 <kbd>Dies ist ein Klammer: \[</kbd></p>
 
 <p>Um einen „Backslash” zu schreiben, muss dieser doppelt eingegeben werden: <kbd>dies ist ein "Backslash": \\</kbd></p>
 
-<p>Clavier+ schickt alle Verknüpfungen in das selbe Fenster. Sofern eine Verknüpfung ein neues Fenster öffnet (z.B. <kbd>[Strg + O]</kbd>), muss Clavier+ angewiesen werden die Verknüpfung in das neue aktive Fenster zu senden. Hierzu muss ein leerer Verknüpfungsname eingegeben werden: <kbd>[]</kbd>. Clavier+ wartet 100 Millisekunden und setzt anschliessend den Fokus auf das neue aktive Fenster. Beispiel:<br/>
+<p>Clavier+ schickt alle Verknüpfungen in das selbe Fenster. Sofern eine Verknüpfung ein neues Fenster öffnet (z.B. <kbd>[Strg + O]</kbd>), muss Clavier+ angewiesen werden die Verknüpfung in das neue aktive Fenster zu senden. Hierzu muss ein leerer Verknüpfungsname eingegeben werden: <kbd>[]</kbd>. Clavier+ wartet 100 Millisekunden und setzt anschliessend den Fokus auf das neue aktive Fenster. Beispiel:<br>
 <kbd>[Strg + O][][][]MeineDatei.txt</kbd></p>
 
-<p>Um ein Programm während einer Textausgabe zu starten, wird der Befehl in doppelte Klammern gesetzti<br/>
-<kbd>[Strg+C][[notepad.exe]][][Strg+V]</kbd><br/>
+<p>Um ein Programm während einer Textausgabe zu starten, wird der Befehl in doppelte Klammern gesetzti<br>
+<kbd>[Strg+C][[notepad.exe]][][Strg+V]</kbd><br>
 Diese Verknüpfung kopiert den ausgewählten Text in die Zwischenablage, öffnet den Windows Editor und fügt den Text dort ein. Die Klammer <kbd>[]</kbd> ist sehr wicktig; sie bestimmt, dass Clavier+ den Text in das <em>neue</em> aktive Fenster (des Editors) einfügt.</p>
 
 
@@ -164,7 +164,7 @@ Rollen-Feststell=<i>Bedingung</i>
 
 <p>Die Optionen <kbd>Text</kbd> einerseits und <kbd>Befehl</kbd> sowie <kbd>Fenster</kbd> andererseits schliessen sich gegenseitig aus. Verknüpfungen können keinen Text ausgeben und gleichzeitig ein Programm ausführen.</p>
 
-<p>Der Name des Tastendrucks folgt dem gleichen Format wie in der Liste in Clavier+.<br/>
+<p>Der Name des Tastendrucks folgt dem gleichen Format wie in der Liste in Clavier+.<br>
 Beispiel: <kbd>Win + Umschalt + A</kbd></p>
 
 <p>Die Option <kbd>Ordner</kbd> bestimmt den Startordner für den Befehl. Falls kein Ordner angegeben ist, benutzt Clavier+ den eigenen Programmordner.</p>
