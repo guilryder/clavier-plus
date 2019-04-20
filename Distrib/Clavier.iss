@@ -57,6 +57,7 @@ Name: french; MessagesFile: compiler:Languages\French.isl
 Name: italian; MessagesFile: compiler:Languages\Italian.isl
 Name: polish; MessagesFile: compiler:Languages\Polish.isl
 Name: portuguese; MessagesFile: compiler:Languages\BrazilianPortuguese.isl
+Name: slovak; MessagesFile: compiler:Languages\Slovak.isl
 Name: greek; MessagesFile: compiler:Languages\Greek.isl
 Name: russian; MessagesFile: compiler:Languages\Russian.isl
 
@@ -69,6 +70,7 @@ Source: {#BinDir}\Clavier_fr.ini; DestDir: {app}; Flags: ignoreversion onlyifdoe
 Source: {#BinDir}\Clavier_it.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: italian
 Source: {#BinDir}\Clavier_pl.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: polish
 Source: {#BinDir}\Clavier_pt-BR.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: portuguese
+Source: {#BinDir}\Clavier_sk.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: slovak
 Source: {#BinDir}\Clavier_el.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: greek
 Source: {#BinDir}\Clavier_ru.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: russian
 
@@ -81,6 +83,7 @@ Name: {group}\Aide; Filename: {#HelpFileBaseUrl}fr.html; Languages: french
 Name: {group}\Aiuto; Filename: {#HelpFileBaseUrl}it.html; Languages: italian
 Name: {group}\Pomoc; Filename: {#HelpFileBaseUrl}pl.html; Languages: polish
 Name: {group}\Ajuda; Filename: {#HelpFileBaseUrl}pt-BR.html; Languages: portuguese
+Name: {group}\Pomoc; Filename: {#HelpFileBaseUrl}sk.html; Languages: slovak
 Name: {group}\Βοήθεια; Filename: {#HelpFileBaseUrl}el.html; Languages: greek
 Name: {group}\Помощь; Filename: {#HelpFileBaseUrl}ru.html; Languages: russian
 Name: {group}\{cm:ProgramOnTheWeb,{#AppName}}; Filename: {#AppURL}

@@ -492,6 +492,248 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
+// Slovak resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_SKY)
+#ifdef _WIN32
+LANGUAGE LANG_SLOVAK, SUBLANG_DEFAULT
+#pragma code_page(1250)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 157, 144
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "O†Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    CONTROL         "Clavier+ 10.8.2",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
+    LTEXT           "Copyright (C) 2000-2017\nGuillaume Ryder\nSoftvÈr s†licenciou GPLv3",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    GROUPBOX        "Autor",IDC_STATIC,6,48,145,44
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    CONTROL         "Preklad: Roman Horv·th",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
+END
+
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Program na spustenie"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&PrÌkazov˝ riadok:",IDC_STATIC,6,8,56,8
+    EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
+    LTEXT           "P&rieËinok:",IDC_STATIC,6,26,32,8
+    EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
+    LTEXT           "&Okno:",IDC_STATIC,6,44,20,8
+    COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Zmeniù prieËinok v†dialÛgoch na v˝ber s˙boru (ÑprÌkazov˝ riadokì by mal byù prieËinkom)",IDCCHK_SUPPORTFILEOPEN,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,181,18
+    PUSHBUTTON      "Zruöiù",IDCANCEL,78,93,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+END
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Kl·vesov· skratka"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Kl·vesov· skratka:",IDC_STATIC,7,8,62,8
+    EDITTEXT        IDCTXT,72,6,148,12,ES_AUTOHSCROLL
+    CONTROL         "&Rozliöovaù medzi prav˝mi a†æav˝mi modifik·tormi",IDCCHK_DISTINGUISH_LEFT_RIGHT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,170,10
+    LTEXT           "Pozn·mky:\nñ mÙûete vyuûiù aj kl·ves Windows,\nñ niektorÈ rezervovanÈ skratky sa nedaj˙ pouûiù.",IDC_STATIC,6,42,216,38,SS_NOPREFIX
+    GROUPBOX        "Podmienky aktiv·cie ",IDC_STATIC,6,84,214,66
+    LTEXT           "Stav &Caps Lock:",IDC_STATIC,12,98,54,8
+    COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Stav &Num Lock:",IDC_STATIC,12,116,53,8
+    COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Stav Scr&oll Lock:",IDC_STATIC,12,134,56,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Zruöiù",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
+END
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "Pridaù",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "Vymazaù",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "Upraviù",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "Pam‰tajte na to, ûe dokedy je zobrazenÈ toto okno, tak s˙ vöetky skratky vypnutÈ.",IDCLBL_HELP,78,114,137,17,0,WS_EX_STATICEDGE
+    LTEXT           "PoËet skratiek:",IDCLBL_SHORTCUTSCOUNT,228,114,48,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,280,114,30,8,SS_NOPREFIX
+    CONTROL         "Spustiù Clavier+ pri öt&arte Windows",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,130,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
+    CONTROL         "Vloûiù te&xt",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,49,10
+    CONTROL         "&Spustiù program alebo zobraziù webov˙ str·nku",IDCOPT_COMMAND,
+                    "Button",BS_AUTORADIOBUTTON,216,138,168,10
+    EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
+    ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
+    PUSHBUTTON      "PokroËilÈ nasta&venia",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "&Test",IDCCMD_TEST,354,168,48,14
+    LTEXT           "&Povoliù pre:",IDCLBL_PROGRAMS,6,194,38,8
+    COMBOBOX        IDCCBO_PROGRAMS,54,192,102,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,158,192,232,12,ES_AUTOHSCROLL
+    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    LTEXT           "StruËn˝ op&is:",IDCLBL_DESCRIPTION,6,210,43,8
+    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
+    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "Po&moc",IDCCMD_HELP,60,227,30,14
+    PUSHBUTTON      "K&opÌrovaù zoznam",IDCCMD_COPYLIST,92,227,66,14
+    PUSHBUTTON      "Ja&zyk...",IDCCMD_LANGUAGE,160,227,48,14
+    PUSHBUTTON      "O†uti&lite...",IDCCMD_ABOUT,210,227,48,14
+    PUSHBUTTON      "&UkonËiù",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "Zruöiù",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
+END
+
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Simulovaù ˙der na kl·ves"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "⁄&der na kl·ves:",IDC_STATIC,7,8,51,8
+    EDITTEXT        IDCTXT,66,6,167,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Zruöiù",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_DONATE              BITMAP                  "DonateEN.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_CONTEXT MENU 
+BEGIN
+    POPUP " "
+    BEGIN
+        POPUP "&Program"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Obæ˙ben· adresa"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "äp&eci·lny znak"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Otvoriù p&rieËinok...",       ID_ADD_FOLDER
+        MENUITEM "&Vloûiù text...",             ID_ADD_TEXT
+        MENUITEM "&Spustiù program...",         ID_ADD_COMMAND
+        MENUITEM "&Zobraziù webov˙ str·nku...", ID_ADD_WEBSITE
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM "&Simulovaù ˙der na kl·ves: [...]", ID_TEXT_SENDKEYS
+        MENUITEM "Spustiù &program: [[...]]",   ID_TEXT_COMMAND
+        MENUITEM "»&akaù 100†ms a†overiù zameranie: []", ID_TEXT_WAIT
+        MENUITEM "V&loûiù text v†nÌzko˙rovÚovom reûime: [|...|]", ID_TEXT_LOWLEVEL
+        MENUITEM SEPARATOR
+        POPUP "Vloûiù &znak"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Vloûiù öp&eci·lny znak"
+        BEGIN
+            MENUITEM "Vloûiù &sp‰tn˙ lomku: \\\\",  ID_TEXT_BACKSLASH
+            MENUITEM "V&loûiù æav˙ &hranat˙ z·tvorku: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Vloûiù prav˙ hranat˙ z·tvor&ku: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Vloûiù æ&av˙ zloûen˙ z·tvorku: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Vloûiù prav˙ zloûen˙ z·&tvorku: \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Vloûiù &zvisl˙ Ëiaru: \\|",   ID_TEXT_PIPE
+        END
+        POPUP "Vyk&onaù öpeci·lny prÌkaz"
+        BEGIN
+            MENUITEM "»&akaù: [{Wait,<dÂûka>}]",    ID_TEXT_CMD_WAIT
+            MENUITEM "&Detegovaù okno maj˙ce vstup: [{Focus,<Ëakanie>,<n·zov okna>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&KopÌrovaù do schr·nky: [{Copy,<text>}]", ID_TEXT_CMD_COPY
+            MENUITEM "&TlaËidlo myöi: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "Posun˙ù myö na (a&bs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "Posun˙ù myö na (&rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Posun˙ù myö &o: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "Ko&liesko myöi: [{MouseWheel,<+/- poËet krokov>}]", ID_TEXT_CMD_MOUSE_WHEEL
+        END
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Nastavenia...",              ID_TRAY_SETTINGS
+        MENUITEM "&KopÌrovaù zoznam",           ID_TRAY_COPYLIST
+        MENUITEM "PreËÌt&aù konfigur·ciu...",   ID_TRAY_INI_LOAD
+        MENUITEM "&Zl˙Ëiù konfigur·ciu s...",   ID_TRAY_INI_MERGE
+        MENUITEM "U&loûiù konfigur·ciu...",     ID_TRAY_INI_SAVE
+        MENUITEM "&UkonËiù",                    ID_TRAY_QUIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ERR_INVALID_SHORTCUT    "Zadan· skratka musÌ byù platn·."
+    ERR_SHORTCUT_DUPLICATE  "T·to kl·vesov· skratka uû jestvuje: %s.\nProsÌm, zmeÚte alebo odstr·Úte jeden z†duplik·tov."
+    ERR_SAVING_INI          "Nepodarilo sa uloûiù nastavenia."
+    ERR_LOADING_INI         "Nepodarilo sa preËÌtaù nastavenia."
+    ERR_TARGET              "Nebol zvolen˝ ûiadny program.\nProsÌm, drûte stlaËenÈ tlaËidlo myöi a†potiahnite kurzor\nna okno programu, ktor˝ chcete zvoliù."
+    ASK_QUIT                "SkutoËne chcete ukonËiù Clavier+?\nT·to akcia vypne vöetky vaöe skratky.\n\n(KeÔ nechcete, aby sa t·to spr·va nabud˙ce zobrazila,\ndrûte pri stlaËenÌ tlaËidla ÑUkonËiùì kl·ves Shift.)"
+    ASK_DELETE              "Naozaj chcete vymazaù t˙to skratku?\n\n(KeÔ nechcete, aby sa t·to spr·va nabud˙ce zobrazila,\ndrûte pri stlaËenÌ tlaËidla na vymazanie kl·ves Shift.)"
+    MSG_COPYLIST            "Zoznam skratiek bol skopÌrovan˝ do schr·nky.\n\nMÙûete ho s†pomocou kl·vesovej skratky Ctrl†+ V\nvloûiù do textovÈho alebo tabuækovÈho procesora."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TOKENS              "SlovenËina;"
+    IDS_COLUMNS             "Obsah;Kl·vesov· skratka;Podmienky;PoËet pouûitÌ;StruËn˝ opis;"
+    IDS_LANGUAGE_CODE       "sk"
+    IDS_CONDITIONS          "ûiadna podmienka;musÌ byù zapnut˝;musÌ byù vypnut˝;"
+    IDS_CONDITION_KEYS      "CNS"
+    IDS_INI_FILTER          "S˙bory INI|*.ini|"
+    IDS_BROWSEDIR           "Zvoæte pre zvolen˝ prÌkaz ötartovacÌ prieËinok."
+    IDS_PROGRAMS            "vöetky programy, okrem;len nasleduj˙ce programy;"
+    IDS_TOOLTIPS            "Pridaù nov˙ skratku;Vymazaù zvolen˙ skratku;Upraviù zvolen˙ skratku;Podrûte tlaËidlo myöi a†potiahnite kurzor myöi na okno programu, ktor˝ chcete zvoliù;"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
+    IDS_SHOW_OPTIONS        "Norm·lne okno;MinimalizovanÈ;MaximalizovanÈ;"
+END
+
+#endif    // Slovak resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // Russian resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
