@@ -70,7 +70,7 @@ BEGIN
     LTEXT           "Ώμ½έΌό(&S):",IDC_STATIC,7,8,37,8
     EDITTEXT        IDCTXT,48,6,172,12,ES_AUTOHSCROLL
     CONTROL         "Ηψ·ΦΧσΣÒΜΨΚβΌό(&D)",IDCCHK_DISTINGUISH_LEFT_RIGHT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,82,10
-    LTEXT           "ΧΆ:\n- ΔϊΏΙÒΤΚΉΣΓ Windows Όό\n- Ò»Π©ΜΨΚβµΔΏμ½έ·½Κ½²»ΏΙΣΓ",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    LTEXT           "ΧΆ:\n¨C ΔϊΏΙÒΤΚΉΣΓ Windows Όό\n¨C Ò»Π©ΜΨΚβµΔΏμ½έ·½Κ½²»ΏΙΣΓ",IDC_STATIC,6,42,216,29,SS_NOPREFIX
     GROUPBOX        "Ό¤»ξΜυΌώ",IDC_STATIC,6,84,214,66
     LTEXT           "&Caps Lock Χ΄Μ¬:",IDC_STATIC,12,98,54,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -309,7 +309,7 @@ BEGIN
     EDITTEXT        IDCTXT,42,6,178,12,ES_AUTOHSCROLL
     CONTROL         "&RozrσΏnij lewe i prawe klawisze specjalne ",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,163,10
-    LTEXT           "Uwagi:\n- moΏesz uΏyζ klawisz Windows\n- niektσre skrσty specjalne nie sΉ dostκpne",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    LTEXT           "Uwagi:\n– moΏesz uΏyζ klawisz Windows\n– niektσre skrσty specjalne nie sΉ dostκpne",IDC_STATIC,6,42,216,29,SS_NOPREFIX
     GROUPBOX        "Warunki aktywacji",IDC_STATIC,6,84,214,66
     LTEXT           "Stan &Caps Lock:",IDC_STATIC,12,98,54,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -567,7 +567,7 @@ BEGIN
     EDITTEXT        IDCTXT,42,6,178,12,ES_AUTOHSCROLL
     CONTROL         "&Πΰηλθχθε μεζδσ λεβξι θ οπΰβξι ροεφθΰλόνϋμθ κλΰβθψΰμθ",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,218,10
-    LTEXT           "Ηΰμεςκθ:\n- βϋ μξζεςε θροξλόηξβΰςό κλΰβθψσ Windows\n- νεκξςξπϋε ροεφθΰλόνϋε ÿπλϋκθ νεδξρςσονϋ",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    LTEXT           "Ηΰμεςκθ:\n– βϋ μξζεςε θροξλόηξβΰςό κλΰβθψσ Windows\n– νεκξςξπϋε ροεφθΰλόνϋε ÿπλϋκθ νεδξρςσονϋ",IDC_STATIC,6,42,216,29,SS_NOPREFIX
     GROUPBOX        "Σρλξβθε ΰκςθβΰφθθ",IDC_STATIC,6,84,214,66
     LTEXT           "&Caps Lock ρξρςξÿνθε:",IDC_STATIC,12,98,73,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -864,7 +864,7 @@ BEGIN
     EDITTEXT        IDCTXT,36,6,184,12,ES_AUTOHSCROLL
     CONTROL         "Zwischen den linken und rechten speziellen Tasten &unterscheiden",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,6,24,180,18
-    LTEXT           "Hinweis:\n- Windows Taste ist benutzbar\n- Strg + Alt = Alt Gr\n- einige besondere Hotkeys sind nicht verfόgbar",IDC_STATIC,6,45,216,33,SS_NOPREFIX
+    LTEXT           "Hinweis:\n– Windows Taste ist benutzbar\n– Strg + Alt = Alt Gr\n– einige besondere Hotkeys sind nicht verfόgbar",IDC_STATIC,6,45,216,33,SS_NOPREFIX
     GROUPBOX        "Aktivierungsbedingung",IDC_STATIC,6,84,214,66
     LTEXT           "&Feststelltaste:",IDC_STATIC,12,98,47,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -1087,7 +1087,7 @@ BEGIN
     EDITTEXT        IDCTXT,42,6,178,12,ES_AUTOHSCROLL
     CONTROL         "&Distinguish between left and right special keys",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,163,10
-    LTEXT           "Notes:\n- you can use the Windows key\n- some special shortcuts are not available",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    LTEXT           "Notes:\n– you can use the Windows key\n– some special shortcuts are not available",IDC_STATIC,6,42,216,29,SS_NOPREFIX
     GROUPBOX        "Activation condition",IDC_STATIC,6,84,214,66
     LTEXT           "&Caps Lock state:",IDC_STATIC,12,98,54,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -1370,13 +1370,13 @@ BEGIN
     EDITTEXT        IDCTXT,48,6,172,12,ES_AUTOHSCROLL
     CONTROL         "Distin&guer les touches de gauche et de droite",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,161,10
-    LTEXT           "Notes :\n- vous pouvez utiliser la touche Windows\n- les touches Ctrl + Alt et Alt Gr sont ιquivalentes\n- certains raccourcis spιciaux sont indisponibles",IDC_STATIC,6,42,216,38,SS_NOPREFIX
+    LTEXT           "Notes :\n– vous pouvez utiliser la touche Windows\n– les touches Ctrl + Alt et Alt Gr sont ιquivalentes\n– certains raccourcis spιciaux sont indisponibles",IDC_STATIC,6,42,216,38,SS_NOPREFIX
     GROUPBOX        "Conditions d'activation :",IDC_STATIC,6,84,214,66
-    LTEXT           "Ιtat de Verr. &Maj. :",IDC_STATIC,12,98,60,8
+    LTEXT           "Ιtat de Verr. &Maj. :",IDC_STATIC,12,98,63,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Ιtat de Verr. &Num. :",IDC_STATIC,12,116,63,8
+    LTEXT           "Ιtat de Verr. &Num. :",IDC_STATIC,12,116,66,8
     COMBOBOX        IDCCBO_NUMLOCK,114,114,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Ιtat d'Arrκt &Dιfil. :",IDC_STATIC,12,134,58,8
+    LTEXT           "Ιtat d'Arrκt &Dιfil. :",IDC_STATIC,12,134,62,8
     COMBOBOX        IDCCBO_SCROLLLOCK,114,132,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Annuler",IDCANCEL,101,159,56,14
     DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
@@ -1611,7 +1611,7 @@ BEGIN
     EDITTEXT        IDCTXT,54,6,166,12,ES_AUTOHSCROLL
     CONTROL         "&Distingui tra i tasti speciali di sinistra e destra",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,159,10
-    LTEXT           "Nota :\n- puoi usare il tasto Windows\n- alcune scorciatoie speciali non sono disponibili",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    LTEXT           "Nota :\n– puoi usare il tasto Windows\n– alcune scorciatoie speciali non sono disponibili",IDC_STATIC,6,42,216,29,SS_NOPREFIX
     GROUPBOX        "Condizioni d'attivazione",IDC_STATIC,6,84,214,66
     LTEXT           "Stato &Caps Lock :",IDC_STATIC,12,98,57,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -1870,7 +1870,7 @@ BEGIN
     EDITTEXT        IDCTXT,36,6,184,12,ES_AUTOHSCROLL
     CONTROL         "&Fazer distinηγo de teclas especiais\n(se sγo do lado direito ou esquerdo do teclado)",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,6,24,168,18
-    LTEXT           "Atenηγo:\n- vocκ pode usar a tecla Windows (Win key)\n- mas outras teclas especiais nγo",IDC_STATIC,6,48,216,30,SS_NOPREFIX
+    LTEXT           "Atenηγo:\n– vocκ pode usar a tecla Windows (Win key)\n– mas outras teclas especiais nγo",IDC_STATIC,6,48,216,30,SS_NOPREFIX
     GROUPBOX        "Condiηγo do acionamento",IDC_STATIC,6,84,214,66
     LTEXT           "Status da &Caps Lock:",IDC_STATIC,12,98,68,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -2110,7 +2110,7 @@ BEGIN
     EDITTEXT        IDCTXT,50,6,170,12,ES_AUTOHSCROLL
     CONTROL         "&Διάκριση μεταξύ αριστερών και δεξιών ειδικών πλήκτρων",IDCCHK_DISTINGUISH_LEFT_RIGHT,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,196,10
-    LTEXT           "Σημείωση:\n- μπορείτε να χρησιμοποιήσετε το πλήκτρο των Windows\n- τα Ctrl+Alt και δεξί Alt είναι ισοδύναμα\n- κάποιες ειδικές συντομεύσεις δεν είναι διαθέσιμες",IDC_STATIC,6,42,216,36,SS_NOPREFIX
+    LTEXT           "Σημείωση:\n– μπορείτε να χρησιμοποιήσετε το πλήκτρο των Windows\n– τα Ctrl+Alt και δεξί Alt είναι ισοδύναμα\n– κάποιες ειδικές συντομεύσεις δεν είναι διαθέσιμες",IDC_STATIC,6,42,216,36,SS_NOPREFIX
     GROUPBOX        "Κατάσταση ενεργοποίησης",IDC_STATIC,6,84,214,66
     LTEXT           "&Κατάσταση Caps Lock:",IDC_STATIC,12,98,78,8
     COMBOBOX        IDCCBO_CAPSLOCK,114,96,100,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP

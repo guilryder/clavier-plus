@@ -81,7 +81,7 @@ Name: {group}\Aide; Filename: {#HelpFileBaseUrl}fr.html; Languages: french
 Name: {group}\Aiuto; Filename: {#HelpFileBaseUrl}it.html; Languages: italian
 Name: {group}\Pomoc; Filename: {#HelpFileBaseUrl}pl.html; Languages: polish
 Name: {group}\Ajuda; Filename: {#HelpFileBaseUrl}pt-BR.html; Languages: portuguese
-Name: {group}\Βοήθεια; Filename: {#HelpFileBaseUrl}en.html; Languages: greek
+Name: {group}\Βοήθεια; Filename: {#HelpFileBaseUrl}el.html; Languages: greek
 Name: {group}\Помощь; Filename: {#HelpFileBaseUrl}ru.html; Languages: russian
 Name: {group}\{cm:ProgramOnTheWeb,{#AppName}}; Filename: {#AppURL}
 Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}

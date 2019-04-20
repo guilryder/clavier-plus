@@ -445,13 +445,7 @@
 			Name="Distrib"
 			>
 			<File
-				RelativePath=".\Distrib\Aide.html"
-				DeploymentContent="true"
-				>
-			</File>
-			<File
-				RelativePath=".\Distrib\Ajuda.html"
-				DeploymentContent="true"
+				RelativePath=".\Distrib\Clavier.ini"
 				>
 			</File>
 			<File
@@ -459,34 +453,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Distrib\ClavierEnglish.ini"
-				>
-			</File>
-			<File
-				RelativePath=".\Distrib\ClavierFrench.ini"
-				>
-			</File>
-			<File
-				RelativePath=".\Distrib\ClavierGerman.ini"
-				>
-			</File>
-			<File
-				RelativePath=".\Distrib\ClavierPortuguese.ini"
-				>
-			</File>
-			<File
-				RelativePath=".\Distrib\Help.html"
-				DeploymentContent="true"
-				>
-			</File>
-			<File
-				RelativePath=".\Distrib\HelpRU.html"
-				DeploymentContent="true"
-				>
-			</File>
-			<File
-				RelativePath=".\Distrib\Hilfe.html"
-				DeploymentContent="true"
+				RelativePath=".\Distrib\Clavier64.iss"
 				>
 			</File>
 		</Filter>
