@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#include "App.h"
 #include "Global.h"
 
 class MacrosTest : public CxxTest::TestSuite {
@@ -203,6 +204,97 @@ public:
 		bool result;
 		executeVERIFV(condition, result);
 		TS_ASSERT_EQUALS(1, condition);
+	}
+};
+
+
+class TokensTest : public CxxTest::TestSuite {
+public:
+	
+	void testAllTokensSet() {
+		for (int lang = 0; lang < i18n::langCount; lang++) {
+			i18n::setLanguage(lang);
+			for (int tok = 0; tok < tokNotFound; tok++) {
+				TS_ASSERT(*getToken(tok));
+			}
+		}
+	}
+	
+	void testLanguageTokensAllDifferent() {
+		for (int tok = 0; tok < tokNotFound; tok++) {
+			TS_ASSERT(*getToken(tok));
+		}
+	}
+	
+	void testSomeFrenchTokensDifferentFromEnglish() {
+		for (int tok = 0; tok < tokNotFound; tok++) {
+			if (tok != tokShortcut && tok != tokAllProgramsBut) {
+				continue;
+			}
+			i18n::setLanguage(i18n::langEN);
+			LPCTSTR english_token = getToken(tok);
+			i18n::setLanguage(i18n::langFR);
+			LPCTSTR french_token = getToken(tok);
+			TS_ASSERT_DIFFERS(0, lstrcmpi(english_token, french_token));
+		}
+	}
+	
+	void testPolishTokensDefaultToEnglish() {
+		for (int tok = 0; tok < tokNotFound; tok++) {
+			if (tok == tokLanguageName) {
+				continue;
+			}
+			i18n::setLanguage(i18n::langEN);
+			LPCTSTR english_token = getToken(tok);
+			i18n::setLanguage(i18n::langPL);
+			LPCTSTR polish_token = getToken(tok);
+			TS_ASSERT_EQUALS(0, lstrcmpi(english_token, polish_token));
+		}
+	}
+};
+
+
+class GetSemiColonTokenTest : public CxxTest::TestSuite {
+public:
+	
+	void testFirstToken() {
+		TCHAR tokens[] = _T("current;next;");
+		LPTSTR next_token = tokens;
+		LPCTSTR current_token = getSemiColonToken(next_token);
+		TS_ASSERT_EQUALS(0, lstrcmp(current_token, _T("current")));
+		TS_ASSERT_SAME_DATA(tokens, _T("current\0next"), 14);
+		TS_ASSERT_EQUALS(current_token, tokens);
+		TS_ASSERT_EQUALS(next_token, tokens + 8);
+	}
+	
+	void testMiddleToken() {
+		TCHAR tokens[] = _T("previous\0current;next;");
+		LPTSTR next_token = tokens + 9;
+		LPCTSTR current_token = getSemiColonToken(next_token);
+		TS_ASSERT_EQUALS(0, lstrcmp(current_token, _T("current")));
+		TS_ASSERT_SAME_DATA(tokens, _T("previous\0current\0next"), 23);
+		TS_ASSERT_EQUALS(current_token, tokens + 9);
+		TS_ASSERT_EQUALS(next_token, tokens + 17);
+	}
+	
+	void testLastToken() {
+		TCHAR tokens[] = _T("previous\0current;next;");
+		LPTSTR next_token = tokens + 9;
+		LPCTSTR current_token = getSemiColonToken(next_token);
+		TS_ASSERT_EQUALS(0, lstrcmp(current_token, _T("current")));
+		TS_ASSERT_SAME_DATA(tokens, _T("previous\0current\0next"), 23);
+		TS_ASSERT_EQUALS(current_token, tokens + 9);
+		TS_ASSERT_EQUALS(next_token, tokens + 17);
+	}
+	
+	void testEmptyToken() {
+		TCHAR tokens[] = _T("previous\0;next;");
+		LPTSTR next_token = tokens + 9;
+		LPCTSTR current_token = getSemiColonToken(next_token);
+		TS_ASSERT_EQUALS(0, lstrcmp(current_token, _T("")));
+		TS_ASSERT_SAME_DATA(tokens, _T("previous\0\0next;"), 16);
+		TS_ASSERT_EQUALS(current_token, tokens + 9);
+		TS_ASSERT_EQUALS(next_token, tokens + 10);
 	}
 };
 

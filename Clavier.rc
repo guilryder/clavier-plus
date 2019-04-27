@@ -233,7 +233,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "¼òÌåÖÐÎÄ;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages;"
+    IDS_TOKENS              "¼òÌåÖÐÎÄ;"
     IDS_COLUMNS             "ÄÚÈÝ;¿ì½Ý¼ü;Ìõ¼þ;Ê¹ÓÃ´ÎÊý;ÃèÊö;"
     IDS_LANGUAGE_CODE       "zh-CN"
     IDS_CONDITIONS          "Ã»ÓÐÌõ¼þ;±ØÐë´ò¿ª;±ØÐë¹Ø±Õ;"
@@ -474,7 +474,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Polski;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normalne;Zminimalizowane;Zmaksymalizowane;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages;"
+    IDS_TOKENS              "Polski;"
     IDS_COLUMNS             "Zawartoœæ;Skrót;Warunki;U¿ycia;Opis;"
     IDS_LANGUAGE_CODE       "pl"
     IDS_CONDITIONS          "brak warunku;musi byæ w³¹czony;musi byæ wy³¹czony;"
@@ -484,6 +484,7 @@ BEGIN
     IDS_PROGRAMS            "wszystkie programy oprócz;tylko te programy;"
     IDS_TOOLTIPS            "Dodaj nowy skrót;Usuñ wybrany skrót;Edytuj wybrany skrót;Przeci¹gnij i upuœæ, aby wybraæ okno programu;"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
+    IDS_SHOW_OPTIONS        "Normalne;Zminimalizowane;Zmaksymalizowane;"
 END
 
 #endif    // Polish resources

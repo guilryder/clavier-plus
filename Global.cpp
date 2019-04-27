@@ -645,6 +645,22 @@ bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path) {
 
 
 //------------------------------------------------------------------------
+// Strings
+//------------------------------------------------------------------------
+
+LPCTSTR getSemiColonToken(LPTSTR& token_start) {
+	const LPTSTR token_start_copy = token_start;
+	LPTSTR current = token_start_copy;
+	while (*current != _T(';')) {
+		current++;
+	}
+	*current = _T('\0');
+	token_start = current + 1;
+	return token_start_copy;
+}
+
+
+//------------------------------------------------------------------------
 // Command line parsing and executing
 //------------------------------------------------------------------------
 

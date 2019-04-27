@@ -38,7 +38,8 @@ enum {
 	langPT,
 	langGR,
 	langRU,
-	langCount
+	langCount,
+	langDefault = langEN,
 };
 
 
@@ -89,7 +90,5 @@ void formatInteger(int number, String* output);
 
 // Converts a LOCALE_SGROUPING string into its NUMBERFMT.Grouping equivalent.
 int parseNumberGroupingString(LPCTSTR input);
-
-
 
 }  // i18n namespace

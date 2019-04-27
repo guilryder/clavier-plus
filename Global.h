@@ -227,6 +227,10 @@ int findToken(LPCTSTR token);
 //     place, which is possible because the unescaping process can only reduce the string length.
 void skipUntilComma(TCHAR*& chr_ptr, bool unescape = false);
 
+// Isolates the next ';'-separated token with a '\0'.
+// Returns token_start, then modifies token_start to point to the start of the next token.
+LPCTSTR getSemiColonToken(LPTSTR& token_start);
+
 
 //------------------------------------------------------------------------
 // Strings translation
@@ -240,28 +244,31 @@ public:
 	
 	// Loads the translation of the string for the current language.
 	void load(UINT id) {
-		i18n::loadStringAuto(id, m_translations[i18n::getLanguage()]);
+		m_translations[i18n::getLanguage()].loadString(id);
 	}
 	
 	// Sets the translation of the string for the current language.
 	void set(LPCTSTR strbuf) {
-		lstrcpy(m_translations[i18n::getLanguage()], strbuf);
+		m_translations[i18n::getLanguage()] = strbuf;
 	}
 	
-	// Returns the translation of the string for a given language.
+	// Returns the translation of the string for a given language,
+	// an empty string when the translation should use the default.
 	LPCTSTR get(int lang) const {
 		return m_translations[lang];
 	}
 	
 	// Returns the translation of the string for the current language.
+	// Falls back to the default default if the translation is empty.
 	LPCTSTR get() const {
-		return get(i18n::getLanguage());
+		LPCTSTR translation = get(i18n::getLanguage());
+		return *translation ? translation : get(i18n::langDefault);
 	}
 	
 private:
 	
 	// Translations of the string, indexed by language.
-	TCHAR m_translations[i18n::langCount][bufString];
+	String m_translations[i18n::langCount];
 };
 
 

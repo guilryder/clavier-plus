@@ -158,15 +158,9 @@ void initializeLanguages() {
 		
 		// Load all tokens in the current language.
 		i18n::loadStringAuto(IDS_TOKENS, tokens);
-		TCHAR* token_start = tokens;
-		for (int token_index = 0; token_index < tokNotFound; token_index++) {
-			TCHAR* token_end = token_start;
-			while (*token_end != _T(';')) {
-				token_end++;
-			}
-			*token_end = _T('\0');
-			s_asToken[token_index].set(token_start);
-			token_start = token_end + 1;
+		TCHAR* next_token = tokens;
+		for (int token_index = 0; *next_token; token_index++) {
+			s_asToken[token_index].set(getSemiColonToken(next_token));
 		}
 		
 		dialogs::initializeCurrentLanguage();

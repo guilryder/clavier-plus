@@ -951,18 +951,14 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				
 				// Add columns to the list
 				i18n::loadStringAuto(IDS_COLUMNS, pszText);
-				TCHAR *pcText = pszText;
+				TCHAR *next_column = pszText;
 				LVCOLUMN lvc;
 				lvc.mask = LVCF_FMT | LVCF_TEXT | LVCF_SUBITEM;
 				for (lvc.iSubItem = 0; lvc.iSubItem < colCount; lvc.iSubItem++) {
 					lvc.fmt = (lvc.iSubItem == colUsageCount)
 						? LVCFMT_RIGHT
 						: LVCFMT_LEFT;
-					lvc.pszText = pcText;
-					while (*pcText != _T(';')) {
-						pcText++;
-					}
-					*pcText++ = _T('\0');
+					lvc.pszText = const_cast<LPTSTR>(getSemiColonToken(next_column));
 					ListView_InsertColumn(s_hwnd_list, lvc.iSubItem, &lvc);
 				}
 				
@@ -998,15 +994,10 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				const HWND hcboPrograms = GetDlgItem(hDlg, IDCCBO_PROGRAMS);
 				TCHAR pszPrograms[bufString];
 				i18n::loadStringAuto(IDS_PROGRAMS, pszPrograms);
-				TCHAR *pcStart = pszPrograms;
+				TCHAR *next_program = pszPrograms;
 				for (int i = 0; i < 2; i++) {
-					TCHAR *pc = pcStart;
-					while (*pc != _T(';')) {
-						pc++;
-					}
-					*pc = _T('\0');
-					SendMessage(hcboPrograms, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(pcStart));
-					pcStart = pc + 1;
+					SendMessage(hcboPrograms, CB_ADDSTRING, 0,
+						reinterpret_cast<LPARAM>(getSemiColonToken(next_program)));
 				}
 				
 				updateList();
@@ -1023,7 +1014,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 					SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 				
 				i18n::loadStringAuto(IDS_TOOLTIPS, pszText);
-				pcText = pszText;
+				TCHAR *next_tooltip = pszText;
 				TOOLINFO ti;
 				ti.cbSize = sizeof(ti);
 				ti.uFlags = TTF_SUBCLASS | TTF_IDISHWND;
@@ -1039,11 +1030,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 					
 					ti.hwnd = hctl;
 					ti.uId = reinterpret_cast<UINT_PTR>(hctl);
-					ti.lpszText = pcText;
-					while (*pcText != _T(';')) {
-						pcText++;
-					}
-					*pcText++ = _T('\0');
+					ti.lpszText = const_cast<LPTSTR>(getSemiColonToken(next_tooltip));
 					SendMessage(hwndTT, TTM_ADDTOOL, 0, reinterpret_cast<LPARAM>(&ti));
 				}
 				
@@ -1365,9 +1352,14 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MY_U
 				centerParent(hDlg);
 				
 				// Fill "command line show" list
+				String show_options(IDS_SHOW_OPTIONS);
+				TCHAR* next_show_option = show_options.get();
 				for (int i = 0; i < shortcut::nbShowOption; i++) {
+					LPCTSTR show_option = show_options.isEmpty()
+						? getToken(tokShowNormal + i)
+						: getSemiColonToken(next_show_option);
 					SendDlgItemMessage(hDlg, IDCCBO_SHOW, CB_ADDSTRING, 0,
-							reinterpret_cast<LPARAM>(getToken(tokShowNormal + i)));
+							reinterpret_cast<LPARAM>(show_option));
 				}
 				
 				SetDlgItemText(hDlg, IDCTXT_COMMAND, s_psh->m_sCommand);
