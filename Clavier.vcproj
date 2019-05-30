@@ -385,31 +385,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DonateDE.bmp"
-				>
-			</File>
-			<File
 				RelativePath="DonateEN.bmp"
 				>
 			</File>
 			<File
 				RelativePath="DonateFR.bmp"
-				>
-			</File>
-			<File
-				RelativePath="DonateEL.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\DonateIT.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\DonatePT.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\DonateRU.bmp"
 				>
 			</File>
 			<File
