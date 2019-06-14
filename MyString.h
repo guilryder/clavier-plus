@@ -206,7 +206,8 @@ public:
 			return false;
 		}
 		
-		resource->copy(getBuffer(resource->length), resource->length);
+		int buf_length = resource->length + 1;
+		resource->copy(getBuffer(buf_length), buf_length);
 		return true;
 	}
 	
