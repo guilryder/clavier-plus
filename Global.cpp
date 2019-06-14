@@ -652,6 +652,10 @@ LPCTSTR getSemiColonToken(LPTSTR& token_start) {
 	const LPTSTR token_start_copy = token_start;
 	LPTSTR current = token_start_copy;
 	while (*current != _T(';')) {
+		if (!*current) {
+			token_start = current;
+			return token_start_copy;
+		}
 		current++;
 	}
 	*current = _T('\0');

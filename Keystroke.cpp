@@ -68,10 +68,7 @@ INT_PTR CALLBACK prcKeystroke(HWND hDlg, UINT message, WPARAM wParam, LPARAM) {
 				i18n::loadStringAuto(IDS_CONDITIONS, conditions);
 				TCHAR* current_condition = conditions;
 				for (int cond = 0; cond < condCount; cond++) {
-					while (*current_condition != _T(';')) {
-						current_condition++;
-					}
-					*current_condition++ = _T('\0');
+					getSemiColonToken(current_condition);
 				}
 				
 				// Initialize the condition combo-boxes

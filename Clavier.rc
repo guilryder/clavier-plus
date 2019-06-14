@@ -233,15 +233,15 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "ΌςΜεΦΠΞΔ;"
-    IDS_COLUMNS             "ΔΪΘέ;Ώμ½έΌό;ΜυΌώ;ΚΉΣΓ΄ΞΚύ;ΓθΚφ;"
+    IDS_TOKENS              "ΌςΜεΦΠΞΔ"
+    IDS_COLUMNS             "ΔΪΘέ;Ώμ½έΌό;ΜυΌώ;ΚΉΣΓ΄ΞΚύ;ΓθΚφ"
     IDS_LANGUAGE_CODE       "zh-CN"
-    IDS_CONDITIONS          "Γ»ΣΠΜυΌώ;±ΨΠλ΄ςΏª;±ΨΠλΉΨ±Υ;"
+    IDS_CONDITIONS          "Γ»ΣΠΜυΌώ;±ΨΠλ΄ςΏª;±ΨΠλΉΨ±Υ"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "INI ΞΔΌώ|*.ini|"
     IDS_BROWSEDIR           "Ρ΅ΤρΓόΑξµΔΖτ¶―ΔΏΒΌ."
-    IDS_PROGRAMS            "ΛωΣΠ³ΜΠς;½φΦΈ¶¨µΔ³ΜΠς;"
-    IDS_TOOLTIPS            "ΜνΌΣΠΒµΔΏμ½έ·½Κ½;ΙΎ³ύΛωΡ΅µΔΏμ½έ·½Κ½;±ΰΌ­ΛωΡ΅µΔΏμ½έ·½Κ½;µγ»χ²ΆΝΟ·ΕÒΤΡ΅Τρ³ΜΠςµΔ΄°ΏΪ;"
+    IDS_PROGRAMS            "ΛωΣΠ³ΜΠς;½φΦΈ¶¨µΔ³ΜΠς"
+    IDS_TOOLTIPS            "ΜνΌΣΠΒµΔΏμ½έ·½Κ½;ΙΎ³ύΛωΡ΅µΔΏμ½έ·½Κ½;±ΰΌ­ΛωΡ΅µΔΏμ½έ·½Κ½;µγ»χ²ΆΝΟ·ΕÒΤΡ΅Τρ³ΜΠςµΔ΄°ΏΪ"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
 END
 
@@ -467,17 +467,17 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Polski;"
-    IDS_COLUMNS             "Zawartoζ;Skrσt;Warunki;UΏycia;Opis;"
+    IDS_TOKENS              "Polski"
+    IDS_COLUMNS             "Zawartoζ;Skrσt;Warunki;UΏycia;Opis"
     IDS_LANGUAGE_CODE       "pl"
-    IDS_CONDITIONS          "brak warunku;musi byζ w³Ήczony;musi byζ wy³Ήczony;"
+    IDS_CONDITIONS          "brak warunku;musi byζ w³Ήczony;musi byζ wy³Ήczony"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "Pliki INI|*.ini|"
     IDS_BROWSEDIR           "Wybierz katalog startowy polecenia."
-    IDS_PROGRAMS            "wszystkie programy oprσcz;tylko te programy;"
-    IDS_TOOLTIPS            "Dodaj nowy skrσt;Usuρ wybrany skrσt;Edytuj wybrany skrσt;PrzeciΉgnij i upuζ, aby wybraζ okno programu;"
+    IDS_PROGRAMS            "wszystkie programy oprσcz;tylko te programy"
+    IDS_TOOLTIPS            "Dodaj nowy skrσt;Usuρ wybrany skrσt;Edytuj wybrany skrσt;PrzeciΉgnij i upuζ, aby wybraζ okno programu"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
-    IDS_SHOW_OPTIONS        "Normalne;Zminimalizowane;Zmaksymalizowane;"
+    IDS_SHOW_OPTIONS        "Normalne;Zminimalizowane;Zmaksymalizowane"
 END
 
 #endif    // Polish resources
@@ -702,17 +702,17 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Slovenθina;"
-    IDS_COLUMNS             "Obsah;Klαvesovα skratka;Podmienky;Poθet pouitν;Struθnύ opis;"
+    IDS_TOKENS              "Slovenθina"
+    IDS_COLUMNS             "Obsah;Klαvesovα skratka;Podmienky;Poθet pouitν;Struθnύ opis"
     IDS_LANGUAGE_CODE       "sk"
-    IDS_CONDITIONS          "iadna podmienka;musν by zapnutύ;musν by vypnutύ;"
+    IDS_CONDITIONS          "iadna podmienka;musν by zapnutύ;musν by vypnutύ"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "Sϊbory INI|*.ini|"
     IDS_BROWSEDIR           "ZvoΎte pre zvolenύ prνkaz tartovacν prieθinok."
-    IDS_PROGRAMS            "vetky programy, okrem;len nasledujϊce programy;"
-    IDS_TOOLTIPS            "Prida novϊ skratku;Vymaza zvolenϊ skratku;Upravi zvolenϊ skratku;Podrte tlaθidlo myi a potiahnite kurzor myi na okno programu, ktorύ chcete zvoli;"
+    IDS_PROGRAMS            "vetky programy, okrem;len nasledujϊce programy"
+    IDS_TOOLTIPS            "Prida novϊ skratku;Vymaza zvolenϊ skratku;Upravi zvolenϊ skratku;Podrte tlaθidlo myi a potiahnite kurzor myi na okno programu, ktorύ chcete zvoli"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
-    IDS_SHOW_OPTIONS        "Normαlne okno;Minimalizovanι;Maximalizovanι;"
+    IDS_SHOW_OPTIONS        "Normαlne okno;Minimalizovanι;Maximalizovanι"
 END
 
 #endif    // Slovak resources
@@ -937,15 +937,15 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Πσρρκθι;ίπλϋκ;Κξδ;ΠΰηλθχΰςόΛεβΰÿΟπΰβΰÿ;Ξοθρΰνθε;Κξμΰνδΰ;Òεκρς;Δθπεκςξπθÿ;Ξκνξ;ΟξδδεπζκΰΞςκπϋςθÿΤΰιλΰ;Οπξγπΰμμϋ;ΒρευΟπξγπΰμμΚπξμε;Νες;ίηϋκ;Πΰημεπ;Ρςξλαφϋ;Ρξπςθπξβκΰ;Νξπμΰλόνξ;Ρβεπνσςξ;Πΰηβεπνσςξ;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Δΰ;Νες;Θροξλόηξβΰνθι;"
-    IDS_COLUMNS             "Ρξδεπζθμξε;ίπλϋκ;Σρλξβθÿ;Θροξλόηξβΰνθι;Ξοθρΰνθε;"
+    IDS_TOKENS              "Πσρρκθι;ίπλϋκ;Κξδ;ΠΰηλθχΰςόΛεβΰÿΟπΰβΰÿ;Ξοθρΰνθε;Κξμΰνδΰ;Òεκρς;Δθπεκςξπθÿ;Ξκνξ;ΟξδδεπζκΰΞςκπϋςθÿΤΰιλΰ;Οπξγπΰμμϋ;ΒρευΟπξγπΰμμΚπξμε;Νες;ίηϋκ;Πΰημεπ;Ρςξλαφϋ;Ρξπςθπξβκΰ;Νξπμΰλόνξ;Ρβεπνσςξ;Πΰηβεπνσςξ;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Δΰ;Νες;Θροξλόηξβΰνθι"
+    IDS_COLUMNS             "Ρξδεπζθμξε;ίπλϋκ;Σρλξβθÿ;Θροξλόηξβΰνθι;Ξοθρΰνθε"
     IDS_LANGUAGE_CODE       "ru"
-    IDS_CONDITIONS          "νες σρλξβθι;δξλζνξ αϋςό βκλ.;δξλζνξ αϋςό βϋκλ.;"
+    IDS_CONDITIONS          "νες σρλξβθι;δξλζνξ αϋςό βκλ.;δξλζνξ αϋςό βϋκλ."
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "INI τΰιλϋ|*.ini|"
     IDS_BROWSEDIR           "Βϋαεπθςε οΰοκσ ηΰοσρκΰ κξμΰνδϋ."
-    IDS_PROGRAMS            "βρευ οπξγπΰμμ κπξμε;ςξλόκξ ύςθυ οπξγπΰμμ;"
-    IDS_TOOLTIPS            "Δξαΰβθςό νξβϋι ÿπλϋκ;Σδΰλθςό βϋαπΰννϋι ÿπλϋκ;Θημενθςό βϋαπΰννϋι ÿπλϋκ;Νΰζμθςε θ οεπεςÿνθςε δλÿ βϋαξπΰ ξκνΰ οπξγπΰμμϋ;"
+    IDS_PROGRAMS            "βρευ οπξγπΰμμ κπξμε;ςξλόκξ ύςθυ οπξγπΰμμ"
+    IDS_TOOLTIPS            "Δξαΰβθςό νξβϋι ÿπλϋκ;Σδΰλθςό βϋαπΰννϋι ÿπλϋκ;Θημενθςό βϋαπΰννϋι ÿπλϋκ;Νΰζμθςε θ οεπεςÿνθςε δλÿ βϋαξπΰ ξκνΰ οπξγπΰμμϋ"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
 END
 
@@ -1264,15 +1264,15 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Deutsch;Verknόpfung;Code;LinksRechtsUnterscheiden;Beschreibung;Befehl;Text;Ordner;Fenster;DateiΦffnenStόtzen;Programme;AlleProgrammeAber;Kein;Sprache;Grφsse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Links;Rechts;Feststell;Num;Rollen;Ja;Nein;Verwendungszδhlung;"
-    IDS_COLUMNS             "Inhalt;Hotkey;Bedingung;Verwendungszδhlung;Beschreibung;"
+    IDS_TOKENS              "Deutsch;Verknόpfung;Code;LinksRechtsUnterscheiden;Beschreibung;Befehl;Text;Ordner;Fenster;DateiΦffnenStόtzen;Programme;AlleProgrammeAber;Kein;Sprache;Grφsse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Links;Rechts;Feststell;Num;Rollen;Ja;Nein;Verwendungszδhlung"
+    IDS_COLUMNS             "Inhalt;Hotkey;Bedingung;Verwendungszδhlung;Beschreibung"
     IDS_LANGUAGE_CODE       "de"
-    IDS_CONDITIONS          "ohne Bedingung;eingeschaltet;ausgeschaltet;"
+    IDS_CONDITIONS          "ohne Bedingung;eingeschaltet;ausgeschaltet"
     IDS_CONDITION_KEYS      "FNR"
     IDS_INI_FILTER          "INI Dateien|*.ini|"
     IDS_BROWSEDIR           "Startordner zum Ausfόhren des Befehls auswδhlen."
-    IDS_PROGRAMS            "alle Programme aber;nur diese Programme;"
-    IDS_TOOLTIPS            "Hinzufόgen;Lφschen;Δndern;Programm wδhlen;"
+    IDS_PROGRAMS            "alle Programme aber;nur diese Programme"
+    IDS_TOOLTIPS            "Hinzufόgen;Lφschen;Δndern;Programm wδhlen"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
 END
 
@@ -1497,15 +1497,15 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "English;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages;"
-    IDS_COLUMNS             "Contents;Shortcut;Conditions;Usages;Description;"
+    IDS_TOKENS              "English;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages"
+    IDS_COLUMNS             "Contents;Shortcut;Conditions;Usages;Description"
     IDS_LANGUAGE_CODE       "en"
-    IDS_CONDITIONS          "no condition;must be on;must be off;"
+    IDS_CONDITIONS          "no condition;must be on;must be off"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "INI files|*.ini|"
     IDS_BROWSEDIR           "Choose the startup directory of the command."
-    IDS_PROGRAMS            "all programs but;only those programs;"
-    IDS_TOOLTIPS            "Add a new shortcut;Delete the selected shortcut;Edit the selected shortcut;Click and drag-drop to select the window of a program;"
+    IDS_PROGRAMS            "all programs but;only those programs"
+    IDS_TOOLTIPS            "Add a new shortcut;Delete the selected shortcut;Edit the selected shortcut;Click and drag-drop to select the window of a program"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
 END
 
@@ -1762,15 +1762,15 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Franηais;Raccourci;Code;DistinguerGaucheDroite;Description;Commande;Texte;Rιpertoire;Fenκtre;GιrerFichierOuvrir;Programmes;TousProgrammesSauf;Aucun;Langue;Taille;Colonnes;Tri;Normale;Rιduite;Agrandie;Win;Ctrl;Maj;Alt;Gauche;Droite;VerrMaj;VerrNum;ArrκtDιfil;Oui;Non;Utilisations;"
-    IDS_COLUMNS             "Contenu;Raccourci;Conditions;Utilisations;Description;"
+    IDS_TOKENS              "Franηais;Raccourci;Code;DistinguerGaucheDroite;Description;Commande;Texte;Rιpertoire;Fenκtre;GιrerFichierOuvrir;Programmes;TousProgrammesSauf;Aucun;Langue;Taille;Colonnes;Tri;Normale;Rιduite;Agrandie;Win;Ctrl;Maj;Alt;Gauche;Droite;VerrMaj;VerrNum;ArrκtDιfil;Oui;Non;Utilisations"
+    IDS_COLUMNS             "Contenu;Raccourci;Conditions;Utilisations;Description"
     IDS_LANGUAGE_CODE       "fr"
-    IDS_CONDITIONS          "pas de condition;doit κtre activι;doit κtre dιsactivι;"
+    IDS_CONDITIONS          "pas de condition;doit κtre activι;doit κtre dιsactivι"
     IDS_CONDITION_KEYS      "MND"
     IDS_INI_FILTER          "Fichiers INI|*.ini|"
     IDS_BROWSEDIR           "Choisissez le rιpertoire de dιmarrage de la commande."
-    IDS_PROGRAMS            "tous les programmes sauf;seulement ces programmes;"
-    IDS_TOOLTIPS            "Ajouter un nouveau raccourci;Supprimer le raccourci sιlectionnι;Ιditer le raccourci sιlectionnι;Cliquer et faire glisser le curseur pour sιlectionner la fenκtre d'un programme;"
+    IDS_PROGRAMS            "tous les programmes sauf;seulement ces programmes"
+    IDS_TOOLTIPS            "Ajouter un nouveau raccourci;Supprimer le raccourci sιlectionnι;Ιditer le raccourci sιlectionnι;Cliquer et faire glisser le curseur pour sιlectionner la fenκtre d'un programme"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
 END
 
@@ -1996,15 +1996,15 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Italiano;Scorciatoia;Codice;DistinguiSinistraDestra;Descrizione;Comando;Testo;Cartella;Finestra;SupportaAperturaFile;Programmi;TuttiprogrammiEccetto;Nessuno;Lingua;Grandezza;Colonne;Ordinamento;Normale;Ridotta;Ingrandita;Win;Ctrl;Shift;Alt;Sinistra;Destra;CapsLock;NumLock;ScrollLock;Si;No;Usi;"
-    IDS_COLUMNS             "Contenuto;Scorciatoia;Condizioni;Usi;Descrizione;"
+    IDS_TOKENS              "Italiano;Scorciatoia;Codice;DistinguiSinistraDestra;Descrizione;Comando;Testo;Cartella;Finestra;SupportaAperturaFile;Programmi;TuttiprogrammiEccetto;Nessuno;Lingua;Grandezza;Colonne;Ordinamento;Normale;Ridotta;Ingrandita;Win;Ctrl;Shift;Alt;Sinistra;Destra;CapsLock;NumLock;ScrollLock;Si;No;Usi"
+    IDS_COLUMNS             "Contenuto;Scorciatoia;Condizioni;Usi;Descrizione"
     IDS_LANGUAGE_CODE       "it"
-    IDS_CONDITIONS          "nessuna condizione;deve essere attivato;deve essere disattivato;"
+    IDS_CONDITIONS          "nessuna condizione;deve essere attivato;deve essere disattivato"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "Files di configurazione|*.ini|"
     IDS_BROWSEDIR           "Scegli la cartella di esecuzione per il comando."
-    IDS_PROGRAMS            "tutti i programmi eccetto;esclusivamente in questo programma;"
-    IDS_TOOLTIPS            "Aggiungi una nuova scorciatoia;Elimina la scorciatoia selezionata;Modificala scorciatoia selezionata;Clicca e trascina per selezionare la finestra di un programma;"
+    IDS_PROGRAMS            "tutti i programmi eccetto;esclusivamente in questo programma"
+    IDS_TOOLTIPS            "Aggiungi una nuova scorciatoia;Elimina la scorciatoia selezionata;Modificala scorciatoia selezionata;Clicca e trascina per selezionare la finestra di un programma"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
 END
 
@@ -2229,15 +2229,15 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Portuguκs brasileiro;Atalho;Cσdigo;DistinguirEsquerdaDireita;Descriηγo;Comando;Texto;Pasta;Janela;SuportaAberturaArquivo;Programas;TodosProgramasExceto;Nenhum;Idioma;Tamanho;Colunas;Ordenaηγo;Normal;Minimizada;Maximizada;Win;Ctrl;Shift;Alt;Esquerda;Direita;CapsLock;NumLock;ScrollLock;Sim;Nγo;Usos;"
-    IDS_COLUMNS             "Conteϊdo;Atalho;Condiηυes;Usos;Descriηγo;"
+    IDS_TOKENS              "Portuguκs brasileiro;Atalho;Cσdigo;DistinguirEsquerdaDireita;Descriηγo;Comando;Texto;Pasta;Janela;SuportaAberturaArquivo;Programas;TodosProgramasExceto;Nenhum;Idioma;Tamanho;Colunas;Ordenaηγo;Normal;Minimizada;Maximizada;Win;Ctrl;Shift;Alt;Esquerda;Direita;CapsLock;NumLock;ScrollLock;Sim;Nγo;Usos"
+    IDS_COLUMNS             "Conteϊdo;Atalho;Condiηυes;Usos;Descriηγo"
     IDS_LANGUAGE_CODE       "pt-BR"
-    IDS_CONDITIONS          "nenhuma condiηγo;deve estar ativada;deve estar desativada;"
+    IDS_CONDITIONS          "nenhuma condiηγo;deve estar ativada;deve estar desativada"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "Arquivos INI|*.ini|"
     IDS_BROWSEDIR           "Especifique a pasta de abertura do comando."
-    IDS_PROGRAMS            "com qualquer programa, exceto;sσ com estes;"
-    IDS_TOOLTIPS            "Criar atalho;Apagar o atalho selecionado;Editar o atalho selecionado;Clique, arraste e solte para escolher a janela de um programa;"
+    IDS_PROGRAMS            "com qualquer programa, exceto;sσ com estes"
+    IDS_TOOLTIPS            "Criar atalho;Apagar o atalho selecionado;Editar o atalho selecionado;Clique, arraste e solte para escolher a janela de um programa"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
 END
 
@@ -2463,15 +2463,15 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_TOKENS              "Ελληνικά;Συντόμευση;Κώδικας;ΔιάκρισηΑριστερούΔεξιού;Περιγραφή;Εντολή;Κείμενο;Κατάλογος;Παράθυρο;ΥποστήριξηΑνοίγματοςΑρχείου;Προγράμματα;ΌλαΤαΠρογράμματαΕκτός;Κανένα;Γλώσσα;Μέγεθος;Στήλες;Ταξινόμηση;Κανονικό παράθυρο;Ελαχιστοποιημένο;Μεγιστοποιημένο;Win;Ctrl;Shift;Alt;Αριστερό;Δεξί;CapsLock;NumLock;ScrollLock;Ναι;Όχι;Χρήσεις;"
-    IDS_COLUMNS             "Περιεχόμενα;Συντόμευση;Συνθήκες;Χρήσεις;Περιγραφή;"
+    IDS_TOKENS              "Ελληνικά;Συντόμευση;Κώδικας;ΔιάκρισηΑριστερούΔεξιού;Περιγραφή;Εντολή;Κείμενο;Κατάλογος;Παράθυρο;ΥποστήριξηΑνοίγματοςΑρχείου;Προγράμματα;ΌλαΤαΠρογράμματαΕκτός;Κανένα;Γλώσσα;Μέγεθος;Στήλες;Ταξινόμηση;Κανονικό παράθυρο;Ελαχιστοποιημένο;Μεγιστοποιημένο;Win;Ctrl;Shift;Alt;Αριστερό;Δεξί;CapsLock;NumLock;ScrollLock;Ναι;Όχι;Χρήσεις"
+    IDS_COLUMNS             "Περιεχόμενα;Συντόμευση;Συνθήκες;Χρήσεις;Περιγραφή"
     IDS_LANGUAGE_CODE       "el"
-    IDS_CONDITIONS          "χωρίς όρους;πρέπει να είναι ανοιχτό;πρέπει να είναι κλειστό;"
+    IDS_CONDITIONS          "χωρίς όρους;πρέπει να είναι ανοιχτό;πρέπει να είναι κλειστό"
     IDS_CONDITION_KEYS      "CNS"
     IDS_INI_FILTER          "Αρχεία INI|*.ini|"
     IDS_BROWSEDIR           "Επιλέξτε τον κατάλογο εκκίνησης της εντολής."
-    IDS_PROGRAMS            "όλα τα προγράμματα, εκτός;μόνο αυτά τα προγράμματα;"
-    IDS_TOOLTIPS            "Προσθήκη νέας συντόμευσης;Διαγραφή της επιλεγμένης συντόμευσης;Επεξεργασία της επιλεγμένης συντόμευσης;Κλικ και Μεταφορά-Απόθεση για επιλογή του παραθύρου ενός προγράμματος;"
+    IDS_PROGRAMS            "όλα τα προγράμματα, εκτός;μόνο αυτά τα προγράμματα"
+    IDS_TOOLTIPS            "Προσθήκη νέας συντόμευσης;Διαγραφή της επιλεγμένης συντόμευσης;Επεξεργασία της επιλεγμένης συντόμευσης;Κλικ και Μεταφορά-Απόθεση για επιλογή του παραθύρου ενός προγράμματος"
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
 END
 
