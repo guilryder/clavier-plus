@@ -1,6 +1,6 @@
 // Clavier+
 // Keyboard shortcuts manager
-//
+//recovery file
 // Copyright (C) 2000-2008 Guillaume Ryder
 //
 // This program is free software: you can redistribute it and/or modify
