@@ -835,7 +835,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDI_APP,IDC_STATIC,6,6,20,20
     CONTROL         "Clavier+ 10.8.3",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,42,6,108,8
-    LTEXT           "Правообладатель © 2000-2019\nGuillaume Ryder\nПрограмма под GPL лицензией",IDC_STATIC,42,20,108,28,SS_NOPREFIX
+    LTEXT           "Правообладатель © 2000-2019\nGuillaume Ryder\nПрограмма под GPLv3 лицензией",IDC_STATIC,42,20,108,28,SS_NOPREFIX
     GROUPBOX        "Автор",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,64,8,SS_NOPREFIX
