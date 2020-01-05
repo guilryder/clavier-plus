@@ -55,6 +55,7 @@ Name: german; MessagesFile: compiler:Languages\German.isl
 Name: english; MessagesFile: compiler:Default.isl
 Name: french; MessagesFile: compiler:Languages\French.isl
 Name: italian; MessagesFile: compiler:Languages\Italian.isl
+Name: dutch; MessagesFile: compiler:Languages\Dutch.isl
 Name: polish; MessagesFile: compiler:Languages\Polish.isl
 Name: portuguese; MessagesFile: compiler:Languages\BrazilianPortuguese.isl
 Name: slovak; MessagesFile: compiler:Languages\Slovak.isl
@@ -68,6 +69,7 @@ Source: {#BinDir}\Clavier_de.ini; DestDir: {app}; Flags: ignoreversion onlyifdoe
 Source: {#BinDir}\Clavier_en.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: english
 Source: {#BinDir}\Clavier_fr.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: french
 Source: {#BinDir}\Clavier_it.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: italian
+Source: {#BinDir}\Clavier_nl.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: dutch
 Source: {#BinDir}\Clavier_pl.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: polish
 Source: {#BinDir}\Clavier_pt-BR.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: portuguese
 Source: {#BinDir}\Clavier_sk.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: slovak
@@ -81,6 +83,7 @@ Name: {group}\Hilfe; Filename: {#HelpFileBaseUrl}de.html; Languages: german
 Name: {group}\Help; Filename: {#HelpFileBaseUrl}en.html; Languages: english
 Name: {group}\Aide; Filename: {#HelpFileBaseUrl}fr.html; Languages: french
 Name: {group}\Aiuto; Filename: {#HelpFileBaseUrl}it.html; Languages: italian
+Name: {group}\Help; Filename: {#HelpFileBaseUrl}nl.html; Languages: dutch
 Name: {group}\Pomoc; Filename: {#HelpFileBaseUrl}pl.html; Languages: polish
 Name: {group}\Ajuda; Filename: {#HelpFileBaseUrl}pt-BR.html; Languages: portuguese
 Name: {group}\Pomoc; Filename: {#HelpFileBaseUrl}sk.html; Languages: slovak

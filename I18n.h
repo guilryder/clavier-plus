@@ -34,6 +34,7 @@ enum {
 	langEN,
 	langFR,
 	langIT,
+	langNL,
 	langPL,
 	langPT,
 	langSK,
