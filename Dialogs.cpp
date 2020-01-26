@@ -67,7 +67,7 @@ static INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
 static LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static WNDPROC s_prcProgramsTarget;
 
-// ID of the next menu item to add to the "Add" sub-menus (programs and favorites)
+// ID of the next menu item to add to the "Add program" sub-menus
 static UINT s_idAddMenuId;
 
 static bool browseForCommandLine(HWND hwnd_parent, LPTSTR pszFile, bool bForceExist);
@@ -229,11 +229,10 @@ void addCreatedShortcut(Shortcut* psh) {
 class FileMenuItem {
 public:
 	
-	FileMenuItem(bool bStartMenu, bool bIsDir, LPCTSTR pszLabel, LPCTSTR pszPath, int iconIndex)
-		: m_bStartMenu(bStartMenu), m_bIsDir(bIsDir),
-		m_sLabel(pszLabel), m_sPath(pszPath), m_iconIndex(iconIndex) {}
+	FileMenuItem(bool is_dir, LPCTSTR path, int icon_index)
+		: m_is_dir(is_dir), m_path(path), m_icon_index(icon_index) {}
 	
-	bool isDir() const { return m_bIsDir; }
+	bool isDir() const { return m_is_dir; }
 	void measureItem(MEASUREITEMSTRUCT& mis);
 	void drawItem(DRAWITEMSTRUCT& dis);
 	void populate(HMENU hMenu);
@@ -241,11 +240,9 @@ public:
 	
 private:
 	
-	bool m_bStartMenu;
-	bool m_bIsDir;
-	String m_sLabel;
-	String m_sPath;
-	int m_iconIndex;
+	bool m_is_dir;
+	String m_path;
+	int m_icon_index;
 	
 	enum{ kIconMarginPixel = 3 };
 };
@@ -305,24 +302,14 @@ void FileMenuItem::populate(HMENU hMenu) {
 	
 	UINT posFolder = 0;
 	
-	// Start menu: two passes needed: all-users start menu, user start menu.
-	// Favorites: one pass needed.
+	// Two passes: 1) all-users start menu; 2) user start menu.
 	for (int iSource = 0; iSource < 2; iSource++) {
 		TCHAR pszFolder[MAX_PATH];
-		
-		if (m_bStartMenu) {
-			if (!getSpecialFolderPath(iSource ? CSIDL_COMMON_STARTMENU : CSIDL_STARTMENU, pszFolder)) {
-				continue;
-			}
-			if (m_sPath.isSome()) {
-				PathAppend(pszFolder, m_sPath);
-			}
-		} else if (iSource > 0) {
-			// Favorites need only one pass.
-			break;
-		} else {
-			// Favorite.
-			lstrcpyn(pszFolder, m_sPath, arrayLength(pszFolder));
+		if (!getSpecialFolderPath(iSource ? CSIDL_COMMON_STARTMENU : CSIDL_STARTMENU, pszFolder)) {
+			continue;
+		}
+		if (m_path.isSome()) {
+			PathAppend(pszFolder, m_path);
 		}
 		
 		// Enumerate files in the directory.
@@ -352,7 +339,7 @@ void FileMenuItem::populate(HMENU hMenu) {
 					continue;
 				}
 				
-				lstrcpyn(pszRelativeFolder, m_sPath, arrayLength(pszRelativeFolder));
+				lstrcpyn(pszRelativeFolder, m_path, arrayLength(pszRelativeFolder));
 				PathAppend(pszRelativeFolder, wfd.cFileName);
 				pszItemPath = pszRelativeFolder;
 				
@@ -364,7 +351,7 @@ void FileMenuItem::populate(HMENU hMenu) {
 							continue;
 						}
 						const FileMenuItem &fmiOther = *reinterpret_cast<const FileMenuItem*>(miiGetData.dwItemData);
-						if (fmiOther.isDir() && !lstrcmpi(fmiOther.m_sPath, pszRelativeFolder)) {
+						if (fmiOther.isDir() && !lstrcmpi(fmiOther.m_path, pszRelativeFolder)) {
 							// Folder already created: nothing to do.
 							goto Next;
 						}
@@ -390,7 +377,7 @@ void FileMenuItem::populate(HMENU hMenu) {
 			}
 			
 			miiReal.dwItemData = reinterpret_cast<ULONG_PTR>(
-				new FileMenuItem(m_bStartMenu, bIsDir, wfd.cFileName, pszItemPath, shfi.iIcon));
+				new FileMenuItem(bIsDir, pszItemPath, shfi.iIcon));
 			miiReal.dwTypeData = wfd.cFileName;
 			miiReal.hbmpItem = HBMMENU_CALLBACK;
 			
@@ -432,7 +419,7 @@ void FileMenuItem::measureItem(MEASUREITEMSTRUCT& mis) {
 
 void FileMenuItem::drawItem(DRAWITEMSTRUCT& dis) {
 	ImageList_Draw(
-		s_hSysImageList, m_iconIndex, dis.hDC,
+		s_hSysImageList, m_icon_index, dis.hDC,
 		dis.rcItem.left - GetSystemMetrics(SM_CXSMICON),
 		(dis.rcItem.top + dis.rcItem.bottom - GetSystemMetrics(SM_CYSMICON)) / 2,
 		ILD_TRANSPARENT);
@@ -441,8 +428,8 @@ void FileMenuItem::drawItem(DRAWITEMSTRUCT& dis) {
 
 void FileMenuItem::execute() {
 	TCHAR pszPath[MAX_PATH];
-	if (!getShellLinkTarget(m_sPath, pszPath)) {
-		lstrcpy(pszPath, m_sPath);
+	if (!getShellLinkTarget(m_path, pszPath)) {
+		lstrcpy(pszPath, m_path);
 	}
 	createAndAddShortcut(pszPath);
 }
@@ -587,7 +574,6 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				const HMENU hAllMenus = i18n::loadMenu(IDM_CONTEXT);
 				
 				HMENU hMenu = GetSubMenu(hAllMenus, 0);
-				TCHAR pszFolder[MAX_PATH];
 				
 				s_idAddMenuId = ID_ADD_PROGRAM_FIRST;
 				
@@ -603,19 +589,12 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				
 				// Programs
 				mii.dwItemData = miiPhantom.dwItemData =
-					reinterpret_cast<ULONG_PTR>(new FileMenuItem(true, true, NULL, NULL, 0));
+					reinterpret_cast<ULONG_PTR>(new FileMenuItem(
+						/* is_dir= */ true, /* path= */ NULL, /* icon_index= */ 0));
 				SetMenuItemInfo(hMenu, 0, TRUE, &mii);
 				SetMenuItemInfo(GetSubMenu(hMenu, 0), 0, TRUE, &miiPhantom);
 				
-				// Favorites
-				if (getSpecialFolderPath(CSIDL_FAVORITES, pszFolder)) {
-					mii.dwItemData = miiPhantom.dwItemData =
-						reinterpret_cast<ULONG_PTR>(new FileMenuItem(false, true, NULL, pszFolder, 0));
-					SetMenuItemInfo(hMenu, 1, TRUE, &mii);
-					SetMenuItemInfo(GetSubMenu(hMenu, 1), 0, TRUE, &miiPhantom);
-				}
-				
-				fillSpecialCharsMenu(hMenu, 2, ID_ADD_SPECIALCHAR_FIRST);
+				fillSpecialCharsMenu(hMenu, 1, ID_ADD_SPECIALCHAR_FIRST);
 				
 				// Show the context menu
 				RECT rc;

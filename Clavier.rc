@@ -155,10 +155,6 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
-        POPUP "»¥ÁªÍøÊÕ²Ø(&I)"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
         POPUP "ÌØÊâ×Ö·û(&S)"
         BEGIN
             MENUITEM SEPARATOR
@@ -386,10 +382,6 @@ BEGIN
     POPUP " "
     BEGIN
         POPUP "&Program"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        POPUP "&Ulubione"
         BEGIN
             MENUITEM SEPARATOR
         END
@@ -624,10 +616,6 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
-        POPUP "&Ob¾úbená adresa"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
         POPUP "Šp&eciálny znak"
         BEGIN
             MENUITEM SEPARATOR
@@ -856,10 +844,6 @@ BEGIN
     POPUP " "
     BEGIN
         POPUP "&Ïðîãðàììû"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        POPUP "&Èçáðàííîå èíòåðíåòà"
         BEGIN
             MENUITEM SEPARATOR
         END
@@ -1186,10 +1170,6 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
-        POPUP "&Internet Favoriten"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
         POPUP "&Sonderzeichen"
         BEGIN
             MENUITEM SEPARATOR
@@ -1416,10 +1396,6 @@ BEGIN
     POPUP " "
     BEGIN
         POPUP "&Program"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        POPUP "&Internet Favorite"
         BEGIN
             MENUITEM SEPARATOR
         END
@@ -1657,10 +1633,6 @@ BEGIN
     POPUP " "
     BEGIN
         POPUP "&Programme"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        POPUP "&Favori Internet"
         BEGIN
             MENUITEM SEPARATOR
         END
@@ -1918,10 +1890,6 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
-        POPUP "Preferito &Internet"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
         POPUP "Carattere &speciale"
         BEGIN
             MENUITEM SEPARATOR
@@ -2148,10 +2116,6 @@ BEGIN
     POPUP " "
     BEGIN
         POPUP "&Programa"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        POPUP "&Favoritos"
         BEGIN
             MENUITEM SEPARATOR
         END
@@ -2382,10 +2346,6 @@ BEGIN
     POPUP " "
     BEGIN
         POPUP "&Ðñüãñáììá"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        POPUP "&ÁãáðçìÝíï äéáäéêôýïõ"
         BEGIN
             MENUITEM SEPARATOR
         END
