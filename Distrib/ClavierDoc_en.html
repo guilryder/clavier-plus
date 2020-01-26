@@ -86,7 +86,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 <ul>
 <li>launch a program: Microsoft Word, calculator, Internet browser, etc.</li>
 <li>display a website</li>
-<li>open a folder: <i>My documents</i>, <kbd>C:</kbd>, CD-Rom drive, etc.</li>
+<li>open a folder: <i>My documents</i>, <kbd>C:</kbd>, external hard drive, etc.</li>
 <li>write special characters: ® and © symbols, currency symbols like € or ¥, etc.</li>
 <li>write text: E-mail address, company name, etc. in any program (Microsoft Word, Internet browser, Notepad)</li>
 <li>simulate keystrokes, for example to execute a command in the menus of a program</li>
@@ -101,7 +101,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <p>Likewise, the action of a keyboard shortcut can depend of the state of the toggle keys, i.e. the keys having small lights in the keyboard: Caps Lock, Num Lock, Scroll Lock. For example, this allows writing special characters instead of digits when the caps lock mode is set.</p>
 
-<p>The Clavier+ website shows <a href="http://utilfr42.free.fr/util/Clavier.php#examples">a few examples of shortcuts</a>.</p>
+<p><a href="#examples">Shortcuts examples</a></p>
 
 
 <h2 id="add">Create a keyboard shortcut</h2>
@@ -115,8 +115,8 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 <li><b>Special Character:</b> write a special character</li>
 <li><b>Folder:</b> open a folder with Windows Explorer</li>
 <li><b>Write text:</b> simulate typing some text, and/or sending keystrokes (for example the <kbd>Tab</kbd> key to navigate across form fields)</li>
-<li><b>Launch a Program</b>: launch a program missing in the Start menu, or execute a command line</li>
-<li><b>Display a Website</b>: open a website with your Internet browser</li>
+<li><b>Launch a Program:</b> launch a program missing in the Start menu, or execute a command line</li>
+<li><b>Display a Website:</b> open a website with your Internet browser</li>
 </ul>
 
 <p>A dialog box appears for you to specify the keyboard shortcut. Type it in the dedicated area: its text name should be written in the textbox. Then, click the <i>OK</i> button.</p>
@@ -184,7 +184,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 <p>This syntax allows launching several programs with the same shortcut. For example, to launch Notepad and the calculator:<br>
 <kbd>[[notepad.exe]][[calc.exe]]</kbd></p>
 
-<p>The command line can contain <kbd>%</kbd>-enclosed environment variables, like in <kbd>explorer.exe %WINDIR%</kbd> to open the Windows directory with the Explorer.<p>
+<p>The command line can contain <kbd>%</kbd>-enclosed environment variables, like in <kbd>explorer.exe %WINDIR%</kbd> to open the Windows directory with the Explorer.</p>
 
 <p>Clavier+ sets the <kbd>%CLIPBOARD%</kbd> environment variable to the text currently stored in the clipboard. For example, to open the selected URL with Internet Explorer:<br>
 <kbd>[Ctrl+C][][[iexplore.exe %CLIPBOARD%]]</kbd></p>
@@ -431,7 +431,7 @@ F12
 
 <p>The special keys “Refresh browser”, “increase volume”, etc. are partially supported. Shortcuts using them can be created, and it is possible to modify their original behavior. However the action of these keys is executed when they are pressed in the <i>Add</i> dialog box. Moreover, as Windows does not provide a generic method to get the name of these special keys, they are named with a number (for example: <kbd>#183</kbd>).</p>
 
-<p>Windows system shortcuts cannot be modified. As of Windows 8 it includes most <kbd>Win + <i>letter</i></kbd> and <kbd>Win + <i>digit</i></kbd> shortcuts. The <a href="https://windows.microsoft.com/en-us/windows-10/keyboard-shortcuts">Microsoft documentation</a> lists them all.</p>
+<p>Windows system shortcuts cannot be modified. As of Windows 8 it includes most <kbd>Win + <i>letter</i></kbd> and <kbd>Win + <i>digit</i></kbd> shortcuts. The <a href="https://support.microsoft.com/en-us/help/12445/windows-keyboard-shortcuts">Microsoft documentation</a> lists them all.</p>
 
 
 <h3 id="limits-side-effects">Discouraged shortcuts</h3>
