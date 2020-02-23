@@ -592,7 +592,7 @@ void updateTrayIcon(DWORD message) {
 	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	nid.uCallbackMessage = msgClavierNotifyIcon;
 	if (message != NIM_DELETE) {
-		nid.hIcon = (HICON)LoadImage(e_hInst, MAKEINTRESOURCE(IDI_APP), IMAGE_ICON, 16,16, 0);
+		nid.hIcon = i18n::loadNeutralIcon(IDI_APP, 16,16);
 		lstrcpy(nid.szTip, pszApp);
 	}
 	Shell_NotifyIcon(message, &nid);

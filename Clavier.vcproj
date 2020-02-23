@@ -381,6 +381,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Combo.ico"
+				>
+			</File>
+			<File
 				RelativePath="Delete.ico"
 				>
 			</File>

@@ -84,6 +84,9 @@ HMENU loadMenu(UINT id);
 // Loads a bitmap from a resource, for getLanguage() locale.
 HBITMAP loadBitmap(UINT id);
 
+// Loads a neutral locale icon from a resource.
+HICON loadNeutralIcon(UINT id, int cx, int cy);
+
 
 const size_t bufIntegerCount = 40;
 

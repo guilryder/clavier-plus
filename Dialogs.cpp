@@ -916,8 +916,8 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				SendDlgItemMessage(hDlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
 					reinterpret_cast<LPARAM>(i18n::loadBitmap(IDB_DONATE)));
 				
-				SendDlgItemMessage(hDlg, IDCCMD_TEXT_MENU, BM_SETIMAGE, IMAGE_BITMAP,
-					reinterpret_cast<LPARAM>(LoadBitmap(NULL, MAKEINTRESOURCE(OBM_COMBO))));
+				SendDlgItemMessage(hDlg, IDCCMD_TEXT_MENU, BM_SETIMAGE, IMAGE_ICON,
+					reinterpret_cast<LPARAM>(i18n::loadNeutralIcon(IDI_COMBO, 11,6)));
 				
 				// Get the handle of the system image list for small icons
 				SHFILEINFO shfi;
@@ -1003,8 +1003,8 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 					
 					const HWND hctl = GetDlgItem(hDlg, id);
 					if (i < 3) {
-						SendMessage(hctl, BM_SETIMAGE, IMAGE_ICON, reinterpret_cast<LPARAM>(LoadImage(
-							e_hInst, MAKEINTRESOURCE(IDI_ADD + i), IMAGE_ICON, 15,15, 0)));
+						SendMessage(hctl, BM_SETIMAGE, IMAGE_ICON,
+							reinterpret_cast<LPARAM>(i18n::loadNeutralIcon(IDI_ADD + i, 15,15)));
 					}
 					
 					ti.hwnd = hctl;
@@ -1018,10 +1018,10 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				
 				s_bProcessGuiEvents = true;
 				
-				SendMessage(hDlg, WM_SETICON, FALSE, reinterpret_cast<LPARAM>(
-					LoadImage(e_hInst, MAKEINTRESOURCE(IDI_APP), IMAGE_ICON, 16,16, 0)));
-				SendMessage(hDlg, WM_SETICON, TRUE, reinterpret_cast<LPARAM>(
-					LoadIcon(e_hInst, MAKEINTRESOURCE(IDI_APP))));
+				SendMessage(hDlg, WM_SETICON, ICON_SMALL,
+					reinterpret_cast<LPARAM>(i18n::loadNeutralIcon(IDI_APP, 16,16)));
+				SendMessage(hDlg, WM_SETICON, ICON_BIG,
+					reinterpret_cast<LPARAM>(i18n::loadNeutralIcon(IDI_APP, 32,32)));
 				
 				// Restore window size from settings
 				if (e_sizeMainDialog.cx < sizeMinimum.cx || e_sizeMainDialog.cy < sizeMinimum.cy) {

@@ -141,6 +141,12 @@ HBITMAP loadBitmap(UINT id) {
 }
 
 
+HICON loadNeutralIcon(UINT id, int cx, int cy) {
+	return reinterpret_cast<HICON>(
+		LoadImage(e_hInst, MAKEINTRESOURCE(id), IMAGE_ICON, cx,cy, 0));
+}
+
+
 void formatInteger(int number, String* output) {
 	const LCID locale = LOCALE_USER_DEFAULT;
 	

@@ -980,6 +980,7 @@ IDI_APP                 ICON                    "App.ico"
 IDI_ADD                 ICON                    "Add.ico"
 IDI_DELETE              ICON                    "Delete.ico"
 IDI_EDIT                ICON                    "Edit.ico"
+IDI_COMBO               ICON                    "Combo.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
