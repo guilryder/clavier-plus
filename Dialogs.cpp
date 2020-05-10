@@ -599,17 +599,17 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				// Show the context menu
 				RECT rc;
 				GetWindowRect(hWnd, &rc);
-				const UINT id = (UINT)TrackPopupMenu(hMenu,
+				const UINT selected_cmd_id = (UINT)TrackPopupMenu(hMenu,
 					TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 					rc.left, rc.bottom, 0, e_hdlgMain, NULL);
-				FileMenuItem *const pItem = findItemAndCleanMenu(hMenu, id);
+				FileMenuItem *const pItem = findItemAndCleanMenu(hMenu, selected_cmd_id);
 				DestroyMenu(hAllMenus);
 				
 				if (pItem) {
 					pItem->execute();
 					delete pItem;
-				} else if (id) {
-					SendMessage(e_hdlgMain, WM_COMMAND, id, 0);
+				} else if (selected_cmd_id) {
+					SendMessage(e_hdlgMain, WM_COMMAND, selected_cmd_id, 0);
 				}
 			}
 			break;
@@ -1269,14 +1269,14 @@ LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 			if (s_bCapturingProgram && s_psh) {
 				POINT pt;
 				GetCursorPos(&pt);
-				const HWND hWnd = WindowFromPoint(pt);
+				const HWND targeted_window = WindowFromPoint(pt);
 				
 				String rs = s_sOldPrograms;
 				DWORD idProcess;
 				TCHAR pszPath[MAX_PATH];
-				if (GetWindowThreadProcessId(hWnd, &idProcess) &&
+				if (GetWindowThreadProcessId(targeted_window, &idProcess) &&
 						idProcess != GetCurrentProcessId() &&
-						getWindowProcessName(hWnd, pszPath)) {
+						getWindowProcessName(targeted_window, pszPath)) {
 					if (rs.isSome()) {
 						rs += _T(';');
 					}

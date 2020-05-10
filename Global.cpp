@@ -754,21 +754,22 @@ void skipUntilComma(TCHAR*& chr_ptr, bool unescape) {
 	}
 	chr_ptr = current;
 	
-	if (unescape) {
-		const TCHAR* input = start;
-		TCHAR* output = start;
-		bool escaping = false;
-		while (*input) {
-			if (*input == _T('\\') && !escaping) {
-				escaping = true;
-			} else{
-				escaping = false;
-				*output++ = *input;
-			}
-			input++;
-		}
-		*output = _T('\0');
+	if (!unescape) {
+		return;
 	}
+	const TCHAR* input = start;
+	TCHAR* output = start;
+	escaping = false;
+	while (*input) {
+		if (*input == _T('\\') && !escaping) {
+			escaping = true;
+		} else{
+			escaping = false;
+			*output++ = *input;
+		}
+		input++;
+	}
+	*output = _T('\0');
 }
 
 

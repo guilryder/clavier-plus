@@ -659,8 +659,8 @@ bool Shortcut::execute(bool bFromHotkey) {
 								
 								Keystroke ksDigit;
 								ks.m_sided_mod_code = MOD_ALT;
-								for (size_t i = 0; pszCode[i]; i++) {
-									ks.m_vk = VK_NUMPAD0 + (BYTE)(pszCode[i] - _T('0'));
+								for (size_t code_index = 0; pszCode[code_index]; code_index++) {
+									ks.m_vk = VK_NUMPAD0 + (BYTE)(pszCode[code_index] - _T('0'));
 									ks.simulateTyping(hwndFocus, false);
 								}
 								
