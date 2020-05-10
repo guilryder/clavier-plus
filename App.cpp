@@ -118,6 +118,7 @@ void entryPoint() {
 	}
 #endif  // ALLOW_MULTIPLE_INSTANCES
 	
+	e_hInst = static_cast<HINSTANCE>(GetModuleHandle(NULL));
 	app::initialize();
 	
 	const CMDLINE_OPTION cmdopt = execCmdLine(cmdline, true);
@@ -138,7 +139,6 @@ void initialize() {
 	CoInitialize(NULL);
 	shortcut::initialize();
 	
-	e_hInst = static_cast<HINSTANCE>(GetModuleHandle(NULL));
 	e_hHeap = GetProcessHeap();
 	e_hdlgModal = NULL;
 	

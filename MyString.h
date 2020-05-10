@@ -25,7 +25,9 @@
 #include <stdarg.h>
 #include "I18n.h"
 
+namespace MyStringTest {
 class StringTest;
+}
 
 extern HANDLE e_hHeap;
 
@@ -46,7 +48,7 @@ inline void strMove(LPTSTR dest, LPCTSTR src, int length) {
 
 
 class String {
-	friend class ::StringTest;
+	friend class ::MyStringTest::StringTest;
 	
 public:
 	

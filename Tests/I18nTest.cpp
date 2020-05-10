@@ -16,47 +16,52 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "I18n.h"
-#include "MyString.h"
 
+#include "StdAfx.h"
+#include "../I18n.h"
+#include "../MyString.h"
 
-class FormatIntegerTest : public CxxTest::TestSuite {
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+
+namespace I18nTest {
+
+TEST_CLASS(FormatIntegerTest) {
 public:
 	
-	void testEnglishUsPositive() {
+	TEST_METHOD(EnglishUsPositive) {
 		String output;
 		i18n::formatInteger(123456789, &output);
-		TS_ASSERT_SAME_DATA(_T("123,456,789"), (LPCTSTR) output, 12 * sizeof(TCHAR));
+		Assert::AreEqual(_T("123,456,789"), output);
 	}
 	
-	void testEnglishUsNegative() {
+	TEST_METHOD(EnglishUsNegative) {
 		String output;
 		i18n::formatInteger(-123456789, &output);
-		TS_ASSERT_SAME_DATA(_T("-123,456,789"), (LPCTSTR) output, 13 * sizeof(TCHAR));
+		Assert::AreEqual(_T("-123,456,789"), output);
 	}
 };
 
 
-class ParseNumberGroupingStringTest : public CxxTest::TestSuite {
+TEST_CLASS(ParseNumberGroupingStringTest) {
 public:
 	
-	void testEmpty() {
+	TEST_METHOD(Empty) {
 		check(_T(""), 0, _T("123456789"));
 	}
 	
-	void testOneGroup() {
+	TEST_METHOD(OneGroup) {
 		check(_T("3"), 30, _T("123456,789"));
 	}
 	
-	void testRepeatedGroup() {
+	TEST_METHOD(RepeatedGroup) {
 		check(_T("3;0"), 3, _T("123,456,789"));
 	}
 	
-	void testTwoGroupsNotRepeated() {
+	TEST_METHOD(TwoGroupsNotRepeated) {
 		check(_T("3;2"), 320, _T("1234,56,789"));
 	}
 	
-	void testTwoGroupsRepeated() {
+	TEST_METHOD(TwoGroupsRepeated) {
 		check(_T("3;2;0"), 32, _T("12,34,56,789"));
 	}
 	
@@ -64,7 +69,7 @@ private:
 	
 	void check(LPCTSTR input, int expected_grouping, LPCTSTR expected_formatted_number) {
 		// Check parseNumberGroupingString().
-		TS_ASSERT_EQUALS(expected_grouping, i18n::parseNumberGroupingString(input));
+		Assert::AreEqual(expected_grouping, i18n::parseNumberGroupingString(input));
 		
 		// Check the result of GetNumberFormat() with the grouping.
 		NUMBERFMT format;
@@ -80,9 +85,8 @@ private:
 			LOCALE_USER_DEFAULT, 0,
 			_T("123456789"), &format,
 			formatted_number, arrayLength(formatted_number));
-		TS_ASSERT_SAME_DATA(
-			expected_formatted_number,
-			formatted_number,
-			lstrlen(expected_formatted_number) * sizeof(TCHAR));
+		Assert::AreEqual(expected_formatted_number, formatted_number);
 	}
 };
+
+}

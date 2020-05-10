@@ -16,12 +16,43 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#pragma once
 
-#define TESTING
+#include "StdAfx.h"
+#include "../App.h"
 
-#include "../StdAfx.h"
+#include <signal.h>
 
-#include "CppUnitTest.h"
+namespace testing {
 
-#include "TestUtil.h"
+TEST_MODULE_INITIALIZE(clavierSetUp) {
+	// Translate Win32 exceptions into std::runtime_error.
+	_set_se_translator([](UINT, PEXCEPTION_POINTERS) {
+		throw std::runtime_error("Win32 exception");
+	});
+	
+	// Set e_hInst to the tests DLL instead of the test runner process.
+	e_hInst = NULL;
+	GetModuleHandleEx(
+		GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
+		reinterpret_cast<LPCTSTR>(clavierSetUp),
+		&e_hInst);
+
+	app::initialize();
+}
+
+TEST_MODULE_CLEANUP(clavierTearDown) {
+	app::terminate();
+}
+
+
+int normalizeCompareResult(int result) {
+	if (result < 0) {
+		return -1;
+	} else if (result > 0) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+}

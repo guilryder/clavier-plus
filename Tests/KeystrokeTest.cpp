@@ -16,119 +16,92 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "Keystroke.h"
 
+#include "StdAfx.h"
+#include "../Keystroke.h"
 
-class KeystrokeCompareTest : public CxxTest::TestSuite {
-private:
-	
-	Keystroke* m_keystroke1;
-	Keystroke* m_keystroke2;
-	
-	void checkCompare(int expected_result) {
-		checkCompare(+expected_result, *m_keystroke1, *m_keystroke2);
-		checkCompare(-expected_result, *m_keystroke2, *m_keystroke1);
-	}
-	
-	void checkCompare(int expected_result, const Keystroke& keystroke1, const Keystroke& keystroke2) {
-		expected_result = testing::normalizeCompareResult(expected_result);
-		
-		char message[50 + bufHotKey * 2];
-		TCHAR name1[bufHotKey], name2[bufHotKey];
-		keystroke1.getKeyName(name1);
-		keystroke2.getKeyName(name2);
-		wsprintfA(message, "Comparing %ws and %ws -- expected %d",
-				name1, name2, expected_result);
-		
-		TSM_ASSERT_EQUALS(message, expected_result,
-			testing::normalizeCompareResult(Keystroke::compare(keystroke1, keystroke2)));
-	}
-	
-	void setKeystroke(Keystroke* keystroke, BYTE vk, bool sided, int sided_mod_code) {
-		keystroke->m_vk = vk;
-		keystroke->m_sided = sided;
-		keystroke->m_sided_mod_code = sided_mod_code;
-	}
-	
+namespace KeystrokeTest {
+
+TEST_CLASS(KeystrokeCompareTest) {
 public:
 	
-	void setUp() {
+	TEST_METHOD_INITIALIZE(setUp) {
 		m_keystroke1 = new Keystroke();
 		m_keystroke2 = new Keystroke();
 	}
 	
-	void tearDown() {
+	TEST_METHOD_CLEANUP(tearDown) {
 		delete m_keystroke1;
 		delete m_keystroke2;
 	}
 	
-	void testEqual() {
+	TEST_METHOD(Equal) {
 		setKeystroke(m_keystroke1, 'A', false, 0);
 		setKeystroke(m_keystroke2, 'A', false, 0);
 		checkCompare(0);
 	}
 	
-	void testNoModCode() {
+	TEST_METHOD(NoModCode) {
 		setKeystroke(m_keystroke1, 'A', false, 0);
 		setKeystroke(m_keystroke2, 'B', false, 0);
 		checkCompare(-1);
 	}
 	
-	void testSameModCode() {
+	TEST_METHOD(SameModCode) {
 		setKeystroke(m_keystroke1, 'A', false, MOD_CONTROL | MOD_SHIFT);
 		setKeystroke(m_keystroke2, 'B', false, MOD_CONTROL | MOD_SHIFT);
 		checkCompare(-1);
 	}
 	
-	void testWinBeforeControl() {
+	TEST_METHOD(WinBeforeControl) {
 		setKeystroke(m_keystroke1, 'A', false, MOD_WIN);
 		setKeystroke(m_keystroke2, 'A', false, MOD_CONTROL);
 		checkCompare(-1);
 	}
 	
-	void testControlBeforeShift() {
+	TEST_METHOD(ControlBeforeShift) {
 		setKeystroke(m_keystroke1, 'A', false, MOD_CONTROL);
 		setKeystroke(m_keystroke2, 'A', false, MOD_SHIFT);
 		checkCompare(-1);
 	}
 	
-	void testShiftBeforeAlt() {
+	TEST_METHOD(ShiftBeforeAlt) {
 		setKeystroke(m_keystroke1, 'A', false, MOD_SHIFT);
 		setKeystroke(m_keystroke2, 'A', false, MOD_ALT);
 		checkCompare(-1);
 	}
 	
-	void testWinControlBeforeWinControlShift() {
+	TEST_METHOD(WinControlBeforeWinControlShift) {
 		setKeystroke(m_keystroke1, 'A', false, MOD_WIN | MOD_CONTROL);
 		setKeystroke(m_keystroke2, 'A', false, MOD_WIN | MOD_CONTROL | MOD_SHIFT);
 		checkCompare(-1);
 	}
 	
-	void testWinControlShiftBeforeWinControlAlt() {
+	TEST_METHOD(WinControlShiftBeforeWinControlAlt) {
 		setKeystroke(m_keystroke1, 'A', false, MOD_WIN | MOD_CONTROL | MOD_SHIFT);
 		setKeystroke(m_keystroke2, 'A', false, MOD_WIN | MOD_CONTROL | MOD_ALT);
 		checkCompare(-1);
 	}
 	
-	void testNoneBeforeUnsided() {
+	TEST_METHOD(NoneBeforeUnsided) {
 		setKeystroke(m_keystroke1, 'A', false, 0);
 		setKeystroke(m_keystroke2, 'A', false, MOD_ALT);
 		checkCompare(-1);
 	}
 	
-	void testUnsidedBeforeLeft() {
+	TEST_METHOD(UnsidedBeforeLeft) {
 		setKeystroke(m_keystroke1, 'A', false, MOD_ALT);
 		setKeystroke(m_keystroke2, 'A', true, MOD_ALT);
 		checkCompare(-1);
 	}
 	
-	void testLeftBeforeRight() {
+	TEST_METHOD(LeftBeforeRight) {
 		setKeystroke(m_keystroke1, 'A', true, MOD_ALT);
 		setKeystroke(m_keystroke2, 'A', true, MOD_ALT << kRightModCodeOffset);
 		checkCompare(-1);
 	}
 	
-	void testSortedList() {
+	TEST_METHOD(SortedList) {
 		Keystroke keystrokes[21];
 		Keystroke* keystroke = keystrokes;
 		
@@ -160,7 +133,7 @@ public:
 		
 		setKeystroke(keystroke++, 'Y', false, 0);
 		
-		TS_ASSERT_EQUALS(static_cast<int>(keystroke - keystrokes), arrayLength(keystrokes));
+		Assert::AreEqual(static_cast<size_t>(keystroke - keystrokes), arrayLength(keystrokes));
 		
 		for (int i = 0; i < arrayLength(keystrokes); i++) {
 			for (int j = 0; j < arrayLength(keystrokes); j++) {
@@ -168,16 +141,48 @@ public:
 			}
 		}
 	}
+	
+private:
+	
+	Keystroke* m_keystroke1;
+	Keystroke* m_keystroke2;
+	
+	void checkCompare(int expected_result) {
+		checkCompare(+expected_result, *m_keystroke1, *m_keystroke2);
+		checkCompare(-expected_result, *m_keystroke2, *m_keystroke1);
+	}
+	
+	void checkCompare(int expected_result, const Keystroke& keystroke1, const Keystroke& keystroke2) {
+		expected_result = testing::normalizeCompareResult(expected_result);
+		int actual_result = testing::normalizeCompareResult(Keystroke::compare(keystroke1, keystroke2));
+		
+		// Generate a nice test failure message.
+		TCHAR message[50 + bufHotKey * 2];
+		TCHAR name1[bufHotKey], name2[bufHotKey];
+		keystroke1.getKeyName(name1);
+		keystroke2.getKeyName(name2);
+		wsprintf(message, _T("Comparing %ws and %ws -- expected %d"),
+			name1, name2, expected_result);
+		
+		Assert::AreEqual(expected_result, actual_result, message);
+	}
+	
+	void setKeystroke(Keystroke* keystroke, BYTE vk, bool sided, int sided_mod_code) {
+		keystroke->m_vk = vk;
+		keystroke->m_sided = sided;
+		keystroke->m_sided_mod_code = sided_mod_code;
+	}
 };
 
-
-class SpecialKeyTest : public CxxTest::TestSuite {
+TEST_CLASS(SpecialKeyTest) {
 public:
 	
-	void testVkRight() {
+	TEST_METHOD(VkRight) {
 		for (int i = 0; i < arrayLength(e_special_keys); i++) {
 			const SpecialKey& special_key = e_special_keys[i];
-			TS_ASSERT_EQUALS(static_cast<BYTE>(special_key.vk_left + 1), special_key.vk_right);
+			Assert::AreEqual(static_cast<BYTE>(special_key.vk_left + 1), special_key.vk_right);
 		}
 	}
 };
+
+}

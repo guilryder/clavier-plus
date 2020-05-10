@@ -28,10 +28,12 @@
 #define STRICT  1
 #include <sdkddkver.h>
 
+#ifndef TESTING
 // Disable some Microsoft standard library extensions.
 #define __STDC_WANT_SECURE_LIB__  0
 #define _CRT_DISABLE_PERFCRIT_LOCKS
 #define _STRALIGN_USE_SECURE_CRT  0
+#endif
 
 // Do not include some Windows APIs we don't need.
 #define VC_EXTRALEAN
@@ -63,6 +65,20 @@
 
 #include <tchar.h>
 
+// Test-friendly assert().
+#ifdef _DEBUG
+#include <stdexcept>
+
+#define assert(expression) \
+	(void)(!!(expression) || reportFailedAssert("assert: " #expression));
+
+inline bool reportFailedAssert(const char* message) {
+	throw std::runtime_error(message);
+}
+
+#else
+#define assert(expression)  __noop
+#endif
 
 // Memory leaks detection
 #ifdef _DEBUG

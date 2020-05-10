@@ -16,12 +16,32 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
 #pragma once
 
-#define TESTING
-
-#include "../StdAfx.h"
-
 #include "CppUnitTest.h"
+#include "../MyString.h"
 
-#include "TestUtil.h"
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+
+namespace testing {
+
+// Normalizes a <0 / =0 / >0 comparison result into -1 / 0 /+1.
+int normalizeCompareResult(int result);
+
+}
+
+
+namespace Microsoft {
+namespace VisualStudio {
+namespace CppUnitTestFramework {
+
+template<> inline std::wstring ToString<String>(const String& s) { RETURN_WIDE_STRING(s); }
+
+template<> inline std::wstring ToString<IShellLink>(IShellLink* t) {
+	RETURN_WIDE_STRING(static_cast<const void*>(t));
+}
+
+}
+}
+}

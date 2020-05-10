@@ -16,9 +16,371 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "MyString.h"
 
-class StringTest : public CxxTest::TestSuite {
+#include "StdAfx.h"
+#include "../MyString.h"
+
+namespace MyStringTest {
+
+TEST_CLASS(StringTest) {
+public:
+	
+	StringTest() : m_test_buf(_T("test")), m_old_value_buf(_T("old value")),
+		m_replace_buf(_T("one word two words")) {
+	}
+	
+	TEST_METHOD_INITIALIZE(setUp) {
+		m_empty = m_test_buf;
+		m_empty[0] = _T('\0');
+		m_null.empty();
+		m_test = m_test_buf;
+		m_old_value = m_old_value_buf;
+		m_mixed_case = _T("MiXeD cAsE");
+		m_replace = m_replace_buf;
+	}
+	
+	TEST_METHOD_CLEANUP(tearDown) {
+		m_empty.empty();
+		m_null.empty();
+		m_test.empty();
+		m_old_value.empty();
+		m_mixed_case.empty();
+		m_replace.empty();
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	// Construction, destruction
+	//--------------------------------------------------------------------------------------------------
+	
+	TEST_METHOD(ConstructEmpty) {
+		Assert::AreEqual(_T(""), String());
+	}
+	
+	
+	TEST_METHOD(ConstructAffect) {
+		String str = m_test_buf;
+		Assert::AreEqual(m_test_buf, str);
+	}
+	
+	TEST_METHOD(ConstructAffect_empty) {
+		String str = _T("");  // Use implicit constructor
+		Assert::AreEqual(_T(""), str);
+	}
+	
+	TEST_METHOD(ConstructAffect_null) {
+		String str = (LPCTSTR)NULL;  // Use implicit constructor
+		Assert::AreEqual(_T(""), str);
+	}
+	
+	
+	TEST_METHOD(ConstructAffectObject_other) {
+		String str = m_test;  // Use implicit constructor
+		Assert::AreEqual(m_test_buf, str);
+	}
+	
+	TEST_METHOD(ConstructAffectObject_empty) {
+		String str = m_empty;  // Use implicit constructor
+		Assert::AreEqual(_T(""), str);
+	}
+	
+	TEST_METHOD(ConstructAffectObject_null) {
+		String str = m_null;  // Use implicit constructor
+		Assert::AreEqual(_T(""), str);
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	// Getters
+	//--------------------------------------------------------------------------------------------------
+	
+	TEST_METHOD(GetCstr_sameString) {
+		Assert::AreEqual(m_test.get(), (LPCTSTR)m_test);
+	}
+	
+	TEST_METHOD(GetCstr_neverNull) {
+		Assert::IsNull(m_null.get());
+		Assert::IsNotNull(static_cast<LPCTSTR>(m_null));
+	}
+	
+	TEST_METHOD(GetCstr_emptyStringIfNull) {
+		Assert::AreEqual(_T('\0'), *static_cast<LPCTSTR>(m_null));
+	}
+	
+	
+	TEST_METHOD(GetSafe_sameString) {
+		Assert::AreEqual(m_test.get(), m_test.getSafe());
+	}
+	
+	TEST_METHOD(GetSafe_neverNull) {
+		Assert::IsNull(m_null.get());
+		Assert::IsNotNull(m_null.getSafe());
+	}
+	
+	TEST_METHOD(GetSafe_emptyStringIfNull) {
+		Assert::AreEqual(_T('\0'), *m_null.getSafe());
+	}
+	
+	TEST_METHOD(GetSafe_hangsIfInstanceHasNullAddress) {
+		String *pstring = NULL;
+		Assert::ExpectException<std::runtime_error>([&]{ pstring->getSafe(); });
+	}
+	
+	
+	TEST_METHOD(AccessCharSigned_notNull) {
+		Assert::AreEqual(_T('s'), m_test[int(2)]);
+	}
+	
+	TEST_METHOD(AccessCharUnsigned_notNull) {
+		Assert::AreEqual(_T('s'), m_test[size_t(2)]);
+	}
+	
+	TEST_METHOD(AccessCharSigned_null) {
+		const String& const_null = m_null;
+		Assert::AreEqual(_T('\0'), const_null[int(0)]);
+	}
+	
+	TEST_METHOD(AccessCharUnsigned_null) {
+		const String& const_null = m_null;
+		Assert::AreEqual(_T('\0'), const_null[size_t(0)]);
+	}
+	
+	TEST_METHOD(AccessCharSignedModify_notNull) {
+		m_test[int(2)] = _T('X');
+		Assert::AreEqual(m_test, _T("teXt"));
+	}
+	
+	TEST_METHOD(AccessCharUnsignedModify_notNull) {
+		m_test[size_t(2)] = _T('X');
+		Assert::AreEqual(m_test, _T("teXt"));
+	}
+	
+	TEST_METHOD(AccessCharSignedModify_nullFails) {
+		Assert::ExpectException<std::exception>([&]{ m_null[int(0)] = _T('X'); });
+	}
+	
+	TEST_METHOD(AccessCharUnsignedModify_nullFails) {
+		Assert::ExpectException<std::exception>([&]{ m_null[size_t(0)] = _T('X'); });
+	}
+	
+	
+	TEST_METHOD(GetLength_empty) {
+		Assert::AreEqual(0, m_empty.getLength());
+	}
+	
+	TEST_METHOD(GetLength_null) {
+		Assert::AreEqual(0, m_null.getLength());
+	}
+	
+	TEST_METHOD(GetLength_notEmpty) {
+		Assert::AreEqual(4, m_test.getLength());
+	}
+	
+	
+	TEST_METHOD(IsEmpty_whenEmpty) {
+		Assert::AreEqual(0, m_empty.getLength());
+	}
+	
+	TEST_METHOD(IsEmpty_whenNull) {
+		Assert::AreEqual(0, m_null.getLength());
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	// Affectation
+	//--------------------------------------------------------------------------------------------------
+	
+	TEST_METHOD(Affect_shorter) {
+		m_old_value = m_test_buf;
+		Assert::AreEqual(m_test_buf, m_old_value);
+	}
+	
+	TEST_METHOD(Affect_onger) {
+		String str = m_old_value_buf;
+		str = _T("test with a longer string");
+		Assert::AreEqual(_T("test with a longer string"), str);
+	}
+	
+	TEST_METHOD(Affect_self) {
+		m_test = (LPCTSTR)m_test;
+		Assert::AreEqual(m_test_buf, m_test);
+	}
+	
+	TEST_METHOD(Affect_selfSuffix) {
+		m_test = ((LPCTSTR)m_test) + 2;
+		Assert::AreEqual(_T("st"), m_test);
+	}
+	
+	TEST_METHOD(Affect_empty) {
+		m_test = _T("");
+		Assert::AreEqual(_T(""), m_test);
+	}
+	
+	TEST_METHOD(Affect_null) {
+		m_test = (LPCTSTR)NULL;
+		Assert::AreEqual(_T(""), m_test);
+	}
+	
+	
+	TEST_METHOD(AffectObject_other) {
+		String str = m_old_value_buf;
+		str = String(m_test_buf);
+		Assert::AreEqual(m_test_buf, str);
+	}
+	
+	TEST_METHOD(AffectObject_keepsSourceUnchanged) {
+		String sDest = m_old_value_buf;
+		{
+			String sSource = m_test_buf;
+			sDest = sSource;
+			Assert::AreEqual(m_test_buf, sSource);
+		}
+		Assert::AreEqual(m_test_buf, sDest);
+	}
+	
+	TEST_METHOD(AffectObject_self) {
+		m_test = m_test;
+		Assert::AreEqual(m_test_buf, m_test);
+	}
+	
+	TEST_METHOD(AffectObject_empty) {
+		m_test = m_empty;
+		Assert::AreEqual(_T(""), m_test);
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	// Appending
+	//--------------------------------------------------------------------------------------------------
+	
+	TEST_METHOD(Append_notEmptyToNotEmpty) {
+		m_test += _T(" more");
+		Assert::AreEqual(_T("test more"), m_test);
+	}
+	
+	TEST_METHOD(Append_toEmpty) {
+		m_empty += m_test_buf;
+		Assert::AreEqual(m_test_buf, m_empty);
+	}
+	
+	TEST_METHOD(Append_toNull) {
+		m_null += m_test_buf;
+		Assert::AreEqual(m_test_buf, m_null);
+	}
+	
+	TEST_METHOD(Append_empty) {
+		m_test += _T("");
+		Assert::AreEqual(m_test_buf, m_test);
+	}
+	
+	TEST_METHOD(Append_null) {
+		m_test += (LPCTSTR)NULL;
+		Assert::AreEqual(m_test_buf, m_test);
+	}
+	
+	TEST_METHOD(Append_returnsSelf) {
+		String& resultRef = (m_test += _T("other"));
+		Assert::AreSame(m_test, resultRef);
+	}
+	
+	TEST_METHOD(Append_selfNotEmpty) {
+		m_test += (LPCTSTR)m_test;
+		Assert::AreEqual(_T("testtest"), m_test);
+	}
+	
+	TEST_METHOD(Append_selfEmpty) {
+		m_empty += (LPCTSTR)m_empty;
+		Assert::AreEqual(_T(""), m_empty);
+	}
+	
+	TEST_METHOD(Append_selfNull) {
+		m_null += (LPCTSTR)m_null;
+		Assert::AreEqual(_T(""), m_null);
+	}
+	
+	TEST_METHOD(Append_selfSuffix) {
+		m_test += ((LPCTSTR)m_test) + 2;
+		Assert::AreEqual(_T("testst"), m_test);
+	}
+	
+	
+	TEST_METHOD(AppendObject_notEmptyToNotEmpty) {
+		m_test += String(_T(" more"));
+		Assert::AreEqual(_T("test more"), m_test);
+	}
+	
+	TEST_METHOD(AppendObject_empty) {
+		m_test += m_empty;
+		Assert::AreEqual(m_test_buf, m_test);
+	}
+	
+	TEST_METHOD(AppendObject_selfEmpty) {
+		m_empty += m_empty;
+		Assert::AreEqual(_T(""), m_empty);
+	}
+	
+	TEST_METHOD(AppendObject_selfNotEmpty) {
+		m_test += m_test;
+		Assert::AreEqual(_T("testtest"), m_test);
+	}
+	
+	TEST_METHOD(AppendObject_returnsSelf) {
+		String& resultRef = (m_test += m_test);
+		Assert::AreSame(m_test, resultRef);
+	}
+	
+	
+	TEST_METHOD(AppendChar) {
+		m_test += _T('X');
+		Assert::AreEqual(_T("testX"), m_test);
+	}
+	
+	TEST_METHOD(AppendChar_toEmpty) {
+		m_empty += _T('X');
+		Assert::AreEqual(_T("X"), m_empty);
+	}
+	
+	TEST_METHOD(AppendChar_toNull) {
+		m_null += _T('X');
+		Assert::AreEqual(_T("X"), m_null);
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	// Operations
+	//--------------------------------------------------------------------------------------------------
+	
+	TEST_METHOD(GetBuffer_noopIfNeedsSmaller) {
+		const int bufLengthOld = m_test.getBufferSize();
+		m_test.getBuffer(2);
+		Assert::AreEqual(bufLengthOld, m_test.getBufferSize());
+	}
+	
+	TEST_METHOD(GetBuffer_enlargeIfNeedsLarger) {
+		m_test.getBuffer(100);
+		Assert::IsTrue(m_test.getBufferSize() >= 100);
+	}
+	
+	TEST_METHOD(GetBuffer_returnsBuffer) {
+		Assert::AreEqual(_T("test"), m_test.getBuffer(10));
+	}
+	
+	//--------------------------------------------------------------------------------------------------
+	// Memory management
+	//--------------------------------------------------------------------------------------------------
+	
+	TEST_METHOD(BufferAllocFree) {
+		const LPTSTR strbuf = String::bufferAlloc(11);
+		lstrcpy(strbuf, _T("0123456789"));
+		String::bufferFree(strbuf);
+	}
+	
+	TEST_METHOD(BufferReallocFree) {
+		LPTSTR strbuf = String::bufferAlloc(11);
+		lstrcpy(strbuf, _T("0123456789"));
+		strbuf = String::bufferRealloc(strbuf, 20);
+		Assert::AreEqual(_T("0123456789"), strbuf);
+		strbuf = String::bufferRealloc(strbuf, 5);
+		strbuf[4] = _T('\0');
+		Assert::AreEqual(_T("0123"), strbuf);
+		String::bufferFree(strbuf);
+	}
+	
 private:
 	
 	const LPCTSTR m_test_buf;
@@ -30,366 +392,6 @@ private:
 	String m_old_value;
 	String m_mixed_case;
 	String m_replace;
-	
-public:
-	
-	StringTest() : m_test_buf(_T("test")), m_old_value_buf(_T("old value")),
-		m_replace_buf(_T("one word two words")) {
-	}
-	
-	void setUp() {
-		m_empty = m_test_buf;
-		m_empty[0] = _T('\0');
-		m_null.empty();
-		m_test = m_test_buf;
-		m_old_value = m_old_value_buf;
-		m_mixed_case = _T("MiXeD cAsE");
-		m_replace = m_replace_buf;
-	}
-	
-	void tearDown() {
-		m_empty.empty();
-		m_null.empty();
-		m_test.empty();
-		m_old_value.empty();
-		m_mixed_case.empty();
-		m_replace.empty();
-	}
-	
-	void checkStringEqual(LPCTSTR expected, LPCTSTR got) {
-		char error_message[1024];
-		wsprintfA(error_message, "Expected: \"%ws\", found: \"%ws\"", expected, got);
-		TSM_ASSERT_EQUALS(error_message, 0, lstrcmp(expected, got));
-	}
-	
-	//--------------------------------------------------------------------------------------------------
-	// Construction, destruction
-	//--------------------------------------------------------------------------------------------------
-	
-	void testConstructEmpty() {
-		checkStringEqual(_T(""), String());
-	}
-	
-	
-	void testConstructAffect() {
-		String str = m_test_buf;
-		checkStringEqual(m_test_buf, str);
-	}
-	
-	void testConstructAffect_empty() {
-		String str = _T("");  // Use implicit constructor
-		checkStringEqual(_T(""), str);
-	}
-	
-	void testConstructAffect_null() {
-		String str = (LPCTSTR)NULL;  // Use implicit constructor
-		checkStringEqual(_T(""), str);
-	}
-	
-	
-	void testConstructAffectObject_other() {
-		String str = m_test;  // Use implicit constructor
-		checkStringEqual(m_test_buf, str);
-	}
-	
-	void testConstructAffectObject_empty() {
-		String str = m_empty;  // Use implicit constructor
-		checkStringEqual(_T(""), str);
-	}
-	
-	void testConstructAffectObject_null() {
-		String str = m_null;  // Use implicit constructor
-		checkStringEqual(_T(""), str);
-	}
-	
-	//--------------------------------------------------------------------------------------------------
-	// Getters
-	//--------------------------------------------------------------------------------------------------
-	
-	void testGetCstr_sameString() {
-		TS_ASSERT_EQUALS(m_test.get(), (LPCTSTR)m_test);
-	}
-	
-	void testGetCstr_neverNull() {
-		TS_ASSERT_EQUALS((LPCTSTR)NULL, m_null.get());
-		TS_ASSERT_DIFFERS((LPCTSTR)NULL, (LPCTSTR)m_null);
-	}
-	
-	void testGetCstr_emptyStringIfNull() {
-		TS_ASSERT_EQUALS(_T('\0'), *(LPCTSTR)m_null);
-	}
-	
-	
-	void testGetSafe_sameString() {
-		TS_ASSERT_EQUALS(m_test.get(), m_test.getSafe());
-	}
-	
-	void testGetSafe_neverNull() {
-		TS_ASSERT_EQUALS((LPCTSTR)NULL, m_null.get());
-		TS_ASSERT_DIFFERS((LPCTSTR)NULL, m_null.getSafe());
-	}
-	
-	void testGetSafe_emptyStringIfNull() {
-		TS_ASSERT_EQUALS(_T('\0'), *m_null.getSafe());
-	}
-	
-	void testGetSafe_hangsIfInstanceHasNullAddress() {
-		String *pstring = NULL;
-		TS_ASSERT_THROWS(pstring->getSafe(), testing::SeException);
-	}
-	
-	
-	void testAccessCharSigned_notNull() const {
-		TS_ASSERT_EQUALS('s', m_test[(int)2]);
-	}
-	
-	void testAccessCharUnsigned_notNull() const {
-		TS_ASSERT_EQUALS(_T('s'), (TCHAR)m_test[(size_t)2]);
-	}
-	
-	void testAccessCharSigned_null() const {
-		TS_ASSERT_EQUALS(_T('\0'), (TCHAR)m_null[(int)0]);
-	}
-	
-	void testAccessCharUnsigned_null() const {
-		TS_ASSERT_EQUALS(_T('\0'), (TCHAR)m_null[(size_t)0]);
-	}
-	
-	void testAccessCharSignedModify_notNull() {
-		m_test[(int)2] = _T('X');
-		checkStringEqual(m_test, _T("teXt"));
-	}
-	
-	void testAccessCharUnsignedModify_notNull() {
-		m_test[(size_t)2] = _T('X');
-		checkStringEqual(m_test, _T("teXt"));
-	}
-	
-	void testAccessCharSignedModify_nullFails() {
-		TS_ASSERT_THROWS_ANYTHING(m_null[(int)0] = _T('X'));
-	}
-	
-	void testAccessCharUnsignedModify_nullFails() {
-		TS_ASSERT_THROWS_ANYTHING(m_null[(size_t)0] = _T('X'));
-	}
-	
-	
-	void testGetLength_empty() {
-		TS_ASSERT_EQUALS(0, m_empty.getLength());
-	}
-	
-	void testGetLength_null() {
-		TS_ASSERT_EQUALS(0, m_null.getLength());
-	}
-	
-	void testGetLength_notEmpty() {
-		TS_ASSERT_EQUALS(4, m_test.getLength());
-	}
-	
-	
-	void testIsEmpty_whenEmpty() {
-		TS_ASSERT_EQUALS(0, m_empty.getLength());
-	}
-	
-	void testIsEmpty_whenNull() {
-		TS_ASSERT_EQUALS(0, m_null.getLength());
-	}
-	
-	//--------------------------------------------------------------------------------------------------
-	// Affectation
-	//--------------------------------------------------------------------------------------------------
-	
-	void testAffect_shorter() {
-		m_old_value = m_test_buf;
-		checkStringEqual(m_test_buf, m_old_value);
-	}
-	
-	void testAffect_onger() {
-		String str = m_old_value_buf;
-		str = _T("test with a longer string");
-		checkStringEqual(_T("test with a longer string"), str);
-	}
-	
-	void testAffect_self() {
-		m_test = (LPCTSTR)m_test;
-		checkStringEqual(m_test_buf, m_test);
-	}
-	
-	void testAffect_selfSuffix() {
-		m_test = ((LPCTSTR)m_test) + 2;
-		checkStringEqual(_T("st"), m_test);
-	}
-	
-	void testAffect_empty() {
-		m_test = _T("");
-		checkStringEqual(_T(""), m_test);
-	}
-	
-	void testAffect_null() {
-		m_test = (LPCTSTR)NULL;
-		checkStringEqual(_T(""), m_test);
-	}
-	
-	
-	void testAffectObject_other() {
-		String str = m_old_value_buf;
-		str = String(m_test_buf);
-		checkStringEqual(m_test_buf, str);
-	}
-	
-	void testAffectObject_keepsSourceUnchanged() {
-		String sDest = m_old_value_buf;
-		{
-			String sSource = m_test_buf;
-			sDest = sSource;
-			checkStringEqual(m_test_buf, sSource);
-		}
-		checkStringEqual(m_test_buf, sDest);
-	}
-	
-	void testAffectObject_self() {
-		m_test = m_test;
-		checkStringEqual(m_test_buf, m_test);
-	}
-	
-	void testAffectObject_empty() {
-		m_test = m_empty;
-		checkStringEqual(_T(""), m_test);
-	}
-	
-	//--------------------------------------------------------------------------------------------------
-	// Appending
-	//--------------------------------------------------------------------------------------------------
-	
-	void testAppend_notEmptyToNotEmpty() {
-		m_test += _T(" more");
-		checkStringEqual(_T("test more"), m_test);
-	}
-	
-	void testAppend_toEmpty() {
-		m_empty += m_test_buf;
-		checkStringEqual(m_test_buf, m_empty);
-	}
-	
-	void testAppend_toNull() {
-		m_null += m_test_buf;
-		checkStringEqual(m_test_buf, m_null);
-	}
-	
-	void testAppend_empty() {
-		m_test += _T("");
-		checkStringEqual(m_test_buf, m_test);
-	}
-	
-	void testAppend_null() {
-		m_test += (LPCTSTR)NULL;
-		checkStringEqual(m_test_buf, m_test);
-	}
-	
-	void testAppend_returnsSelf() {
-		String& resultRef = (m_test += _T("other"));
-		TS_ASSERT_EQUALS(&m_test, &resultRef);
-	}
-	
-	void testAppend_selfNotEmpty() {
-		m_test += (LPCTSTR)m_test;
-		checkStringEqual(_T("testtest"), m_test);
-	}
-	
-	void testAppend_selfEmpty() {
-		m_empty += (LPCTSTR)m_empty;
-		checkStringEqual(_T(""), m_empty);
-	}
-	
-	void testAppend_selfNull() {
-		m_null += (LPCTSTR)m_null;
-		checkStringEqual(_T(""), m_null);
-	}
-	
-	void testAppend_selfSuffix() {
-		m_test += ((LPCTSTR)m_test) + 2;
-		checkStringEqual(_T("testst"), m_test);
-	}
-	
-	
-	void testAppendObject_notEmptyToNotEmpty() {
-		m_test += String(_T(" more"));
-		checkStringEqual(_T("test more"), m_test);
-	}
-	
-	void testAppendObject_empty() {
-		m_test += m_empty;
-		checkStringEqual(m_test_buf, m_test);
-	}
-	
-	void testAppendObject_selfEmpty() {
-		m_empty += m_empty;
-		checkStringEqual(_T(""), m_empty);
-	}
-	
-	void testAppendObject_selfNotEmpty() {
-		m_test += m_test;
-		checkStringEqual(_T("testtest"), m_test);
-	}
-	
-	void testAppendObject_returnsSelf() {
-		String& resultRef = (m_test += m_test);
-		TS_ASSERT_EQUALS(&m_test, &resultRef);
-	}
-	
-	
-	void testAppendChar() {
-		m_test += _T('X');
-		checkStringEqual(_T("testX"), m_test);
-	}
-	
-	void testAppendChar_toEmpty() {
-		m_empty += _T('X');
-		checkStringEqual(_T("X"), m_empty);
-	}
-	
-	void testAppendChar_toNull() {
-		m_null += _T('X');
-		checkStringEqual(_T("X"), m_null);
-	}
-	
-	//--------------------------------------------------------------------------------------------------
-	// Operations
-	//--------------------------------------------------------------------------------------------------
-	
-	void testGetBuffer_noopIfNeedsSmaller() {
-		const int bufLengthOld = m_test.getBufferSize();
-		m_test.getBuffer(2);
-		TS_ASSERT_EQUALS(bufLengthOld, m_test.getBufferSize());
-	}
-	
-	void testGetBuffer_enlargeIfNeedsLarger() {
-		m_test.getBuffer(100);
-		TS_ASSERT_LESS_THAN_EQUALS(100, m_test.getBufferSize());
-	}
-	
-	void testGetBuffer_returnsBuffer() {
-		checkStringEqual(_T("test"), m_test.getBuffer(10));
-	}
-	
-	//--------------------------------------------------------------------------------------------------
-	// Memory management
-	//--------------------------------------------------------------------------------------------------
-	
-	void testBufferAllocFree() {
-		const LPTSTR strbuf = String::bufferAlloc(11);
-		lstrcpy(strbuf, _T("0123456789"));
-		String::bufferFree(strbuf);
-	}
-	
-	void testBufferReallocFree() {
-		LPTSTR strbuf = String::bufferAlloc(11);
-		lstrcpy(strbuf, _T("0123456789"));
-		strbuf = String::bufferRealloc(strbuf, 20);
-		checkStringEqual(_T("0123456789"), strbuf);
-		strbuf = String::bufferRealloc(strbuf, 5);
-		strbuf[4] = _T('\0');
-		checkStringEqual(_T("0123"), strbuf);
-		String::bufferFree(strbuf);
-	}
 };
+
+}
