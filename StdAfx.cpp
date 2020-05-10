@@ -19,6 +19,10 @@
 
 #include "StdAfx.h"
 
+#pragma comment(lib, "comctl32.lib")
+#pragma comment(lib, "msi.lib")
+#pragma comment(lib, "psapi.lib")
+#pragma comment(lib, "shlwapi.lib")
 
 #ifndef _DEBUG
 

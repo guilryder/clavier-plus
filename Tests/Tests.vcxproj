@@ -51,7 +51,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(TargetDir)\..;$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>advapi32.lib;comctl32.lib;comdlg32.lib;msi.lib;psapi.lib;shell32.lib;shlwapi.lib;%(AdditionalDependencies);App.obj;Dialogs.obj;Global.obj;I18n.obj;Intrinsics.obj;Keystroke.obj;Shortcut.obj;StdAfx.obj;Clavier.res</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);App.obj;Dialogs.obj;Global.obj;I18n.obj;Intrinsics.obj;Keystroke.obj;Shortcut.obj;StdAfx.obj;Clavier.res</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
