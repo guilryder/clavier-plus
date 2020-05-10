@@ -12,13 +12,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (P.R.C.) resources
+// Chinese (Simplified, PRC) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
-#ifdef _WIN32
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 #pragma code_page(936)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -39,7 +37,7 @@ BEGIN
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     CONTROL         "·­Òλ: Bluebell",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "Θ·¶¨",IDOK,101,124,50,14,WS_GROUP
 END
 
@@ -110,10 +108,10 @@ BEGIN
     LTEXT           "ΖτΣΓ(&E):",IDCLBL_PROGRAMS,6,194,29,8
     COMBOBOX        IDCCBO_PROGRAMS,54,192,90,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,146,192,244,12,ES_AUTOHSCROLL
-    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "ΓθΚφ(&D):",IDCLBL_DESCRIPTION,6,210,30,8
     EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
     PUSHBUTTON      "°οΦϊ(&H)",IDCCMD_HELP,60,227,48,14
     PUSHBUTTON      "Έ΄ΦΖΑΠ±ν(&O)",IDCCMD_COPYLIST,110,227,48,14
     PUSHBUTTON      "ΣοΡΤ(&G)...",IDCCMD_LANGUAGE,160,227,48,14
@@ -142,12 +140,13 @@ END
 
 IDB_DONATE              BITMAP                  "DonateZH_CN.bmp"
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDM_CONTEXT MENU 
+IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
@@ -215,7 +214,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ERR_INVALID_SHORTCUT    "ΠθÒªΣΠΠ§µΔΏμ½έΌό."
     ERR_SHORTCUT_DUPLICATE  "ΦΨΈ΄µΔΌόΕΜΏμ½έΌό: %s.\nΗλΠήΈΔ»ςÒΖ³ύΖδΦΠÒ»ΈφΦΨΈ΄Οξ1."
@@ -227,7 +226,7 @@ BEGIN
     MSG_COPYLIST            "Ώμ½έ·½Κ½ΑΠ±νÒΡΈ΄ΦΖµ½ΌτΜω°ε.\n\nΔϊΏΙÒΤΚΉΣΓ Ctrl+V ½«ΖδΥ³Μωµ½ΞΔ±Ύ΄¦ΐνΖχ»ςµηΧΣ±νΈρ."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TOKENS              "ΌςΜεΦΠΞΔ"
     IDS_COLUMNS             "ΔΪΘέ;Ώμ½έΌό;ΜυΌώ;ΚΉΣΓ΄ΞΚύ;ΓθΚφ"
@@ -241,18 +240,16 @@ BEGIN
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
 END
 
-#endif    // Chinese (P.R.C.) resources
+#endif    // Chinese (Simplified, PRC) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Polish resources
+// Polish (Poland) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PLK)
-#ifdef _WIN32
 LANGUAGE LANG_POLISH, SUBLANG_DEFAULT
 #pragma code_page(1250)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -273,7 +270,7 @@ BEGIN
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     CONTROL         "T³umaczenie: Grzegorz Miros",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
 
@@ -347,10 +344,10 @@ BEGIN
     LTEXT           "W³Ήcz &dla:",IDCLBL_PROGRAMS,6,194,34,8
     COMBOBOX        IDCCBO_PROGRAMS,48,192,108,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,158,192,232,12,ES_AUTOHSCROLL
-    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Opis:",IDCLBL_DESCRIPTION,6,210,18,8
     EDITTEXT        IDCTXT_DESCRIPTION,48,208,360,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
     PUSHBUTTON      "&Pomoc",IDCCMD_HELP,60,227,36,14
     PUSHBUTTON      "&Kopiuj listκ",IDCCMD_COPYLIST,98,227,48,14
     PUSHBUTTON      "&Jκzyk...",IDCCMD_LANGUAGE,148,227,48,14
@@ -377,7 +374,7 @@ END
 // Menu
 //
 
-IDM_CONTEXT MENU 
+IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
@@ -445,7 +442,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ERR_INVALID_SHORTCUT    "Wymagany poprawny skrσt."
     ERR_SHORTCUT_DUPLICATE  "Skrσt klawiszowy jest zduplikowany: %s.\nProszκ zmodyfikowaζ lub usunΉζ jeden z duplikatσw."
@@ -457,7 +454,7 @@ BEGIN
     MSG_COPYLIST            "Lista skrσtσw zosta³a skopiowana do schowka.\n\nMoΏesz teraz wkleiζ jΉ (Ctrl+V) do edytora tekstowego lub arkusza."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TOKENS              "Polski"
     IDS_COLUMNS             "Zawartoζ;Skrσt;Warunki;UΏycia;Opis"
@@ -472,18 +469,16 @@ BEGIN
     IDS_SHOW_OPTIONS        "Normalne;Zminimalizowane;Zmaksymalizowane"
 END
 
-#endif    // Polish resources
+#endif    // Polish (Poland) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Slovak resources
+// Slovak (Slovakia) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_SKY)
-#ifdef _WIN32
 LANGUAGE LANG_SLOVAK, SUBLANG_DEFAULT
 #pragma code_page(1250)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -504,7 +499,7 @@ BEGIN
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     CONTROL         "Preklad: Roman Horvαth",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
 
@@ -578,10 +573,10 @@ BEGIN
     LTEXT           "&Povoli pre:",IDCLBL_PROGRAMS,6,194,38,8
     COMBOBOX        IDCCBO_PROGRAMS,54,192,102,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,158,192,232,12,ES_AUTOHSCROLL
-    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "Struθnύ op&is:",IDCLBL_DESCRIPTION,6,210,43,8
     EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
     PUSHBUTTON      "Po&moc",IDCCMD_HELP,60,227,30,14
     PUSHBUTTON      "K&opνrova zoznam",IDCCMD_COPYLIST,92,227,66,14
     PUSHBUTTON      "Ja&zyk...",IDCCMD_LANGUAGE,160,227,48,14
@@ -608,7 +603,7 @@ END
 // Menu
 //
 
-IDM_CONTEXT MENU 
+IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
@@ -676,7 +671,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ERR_INVALID_SHORTCUT    "Zadanα skratka musν by platnα."
     ERR_SHORTCUT_DUPLICATE  "Tαto klαvesovα skratka u jestvuje: %s.\nProsνm, zmeςte alebo odstrαςte jeden z duplikαtov."
@@ -688,7 +683,7 @@ BEGIN
     MSG_COPYLIST            "Zoznam skratiek bol skopνrovanύ do schrαnky.\n\nMτete ho s pomocou klαvesovej skratky Ctrl + V\nvloi do textovιho alebo tabuΎkovιho procesora."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TOKENS              "Slovenθina"
     IDS_COLUMNS             "Obsah;Klαvesovα skratka;Podmienky;Poθet pouitν;Struθnύ opis"
@@ -703,18 +698,16 @@ BEGIN
     IDS_SHOW_OPTIONS        "Normαlne okno;Minimalizovanι;Maximalizovanι"
 END
 
-#endif    // Slovak resources
+#endif    // Slovak (Slovakia) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Russian resources
+// Russian (Russia) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
-#ifdef _WIN32
 LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
 #pragma code_page(1251)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -762,10 +755,10 @@ BEGIN
     LTEXT           "&Βκλώχθςό δλÿ:",IDCLBL_PROGRAMS,6,194,51,8
     COMBOBOX        IDCCBO_PROGRAMS,62,192,90,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,154,192,236,12,ES_AUTOHSCROLL
-    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Ξοθρΰνθε:",IDCLBL_DESCRIPTION,6,210,38,8
     EDITTEXT        IDCTXT_DESCRIPTION,62,208,346,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
     PUSHBUTTON      "&Οξμξωό",IDCCMD_HELP,60,227,40,14
     PUSHBUTTON      "Κ&ξοθπξβΰςό ροθρξκ",IDCCMD_COPYLIST,102,227,72,14
     PUSHBUTTON      "ίηϋ&κ...",IDCCMD_LANGUAGE,176,227,36,14
@@ -829,7 +822,7 @@ BEGIN
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,64,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,68,8,SS_NOPREFIX
     CONTROL         "Οεπεβξδ: Βΰλεπθι Πξμΰνξβρκθι",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,120,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,46,16
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,46,16
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
 
@@ -839,7 +832,7 @@ END
 // Menu
 //
 
-IDM_CONTEXT MENU 
+IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
@@ -907,7 +900,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ERR_INVALID_SHORTCUT    "Νσζεν δειρςβθςελόνϋι ÿπλϋκ."
     ERR_SHORTCUT_DUPLICATE  "Κξμαθνΰφθθ δσαλθπσώςρÿ: %s.\nΘημενθςε θλθ σδΰλθςε ξδθν θη δσαλθκΰςξβ."
@@ -919,7 +912,7 @@ BEGIN
     MSG_COPYLIST            "Ροθρξκ ÿπλϋκξβ αϋλ ρκξοθπξβΰν β αστεπ.\n\nΒϋ μξζεςε βρςΰβθςό εγξ χεπεη Ctrl+V β ςεκρςξβϋι δξκσμενς."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TOKENS              "Πσρρκθι;ίπλϋκ;Κξδ;ΠΰηλθχΰςόΛεβΰÿΟπΰβΰÿ;Ξοθρΰνθε;Κξμΰνδΰ;Òεκρς;Δθπεκςξπθÿ;Ξκνξ;ΟξδδεπζκΰΞςκπϋςθÿΤΰιλΰ;Οπξγπΰμμϋ;ΒρευΟπξγπΰμμΚπξμε;Νες;ίηϋκ;Πΰημεπ;Ρςξλαφϋ;Ρξπςθπξβκΰ;Νξπμΰλόνξ;Ρβεπνσςξ;Πΰηβεπνσςξ;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Δΰ;Νες;Θροξλόηξβΰνθι"
     IDS_COLUMNS             "Ρξδεπζθμξε;ίπλϋκ;Σρλξβθÿ;Θροξλόηξβΰνθι;Ξοθρΰνθε"
@@ -933,7 +926,7 @@ BEGIN
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
 END
 
-#endif    // Russian resources
+#endif    // Russian (Russia) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -941,10 +934,8 @@ END
 // Neutral resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
-#ifdef _WIN32
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -967,7 +958,9 @@ END
 //
 
 IDB_DONATE              BITMAP                  "DonateEN.bmp"
+
 IDB_TARGET              BITMAP                  "Target.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -977,10 +970,15 @@ IDB_TARGET              BITMAP                  "Target.bmp"
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_APP                 ICON                    "App.ico"
+
 IDI_ADD                 ICON                    "Add.ico"
+
 IDI_DELETE              ICON                    "Delete.ico"
+
 IDI_EDIT                ICON                    "Edit.ico"
+
 IDI_COMBO               ICON                    "Combo.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1027,6 +1025,7 @@ END
 //
 
 IDC_TARGET              CURSOR                  "Target.cur"
+
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1035,10 +1034,8 @@ IDC_TARGET              CURSOR                  "Target.cur"
 // German (Germany) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
-#ifdef _WIN32
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1059,7 +1056,7 @@ BEGIN
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     CONTROL         "άbersetzungen: Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
 
@@ -1114,10 +1111,10 @@ BEGIN
     LTEXT           "Er&mφglichen fόr:",IDCLBL_PROGRAMS,6,194,53,8
     COMBOBOX        IDCCBO_PROGRAMS,62,192,94,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,158,192,232,12,ES_AUTOHSCROLL
-    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Beschreibung:",IDCLBL_DESCRIPTION,6,210,46,8
     EDITTEXT        IDCTXT_DESCRIPTION,62,208,346,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
     PUSHBUTTON      "&Hilfe",IDCCMD_HELP,60,227,48,14
     PUSHBUTTON      "L&iste kopieren",IDCCMD_COPYLIST,110,227,48,14
     PUSHBUTTON      "S&prache...",IDCCMD_LANGUAGE,160,227,48,14
@@ -1163,7 +1160,7 @@ END
 // Menu
 //
 
-IDM_CONTEXT MENU 
+IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
@@ -1231,7 +1228,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ERR_INVALID_SHORTCUT    "Gόltige Hotkey wird benφtigt."
     ERR_SHORTCUT_DUPLICATE  "Ein Hotkey wird zweimal benutzt: %s. Eins der Duplikate bitte entfernen."
@@ -1243,7 +1240,7 @@ BEGIN
     MSG_COPYLIST            "Die Hotkeyliste ist zum Klemmbrett kopiert worden."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TOKENS              "Deutsch;Verknόpfung;Code;LinksRechtsUnterscheiden;Beschreibung;Befehl;Text;Ordner;Fenster;DateiΦffnenStόtzen;Programme;AlleProgrammeAber;Kein;Sprache;Grφsse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Links;Rechts;Feststell;Num;Rollen;Ja;Nein;Verwendungszδhlung"
     IDS_COLUMNS             "Inhalt;Hotkey;Bedingung;Verwendungszδhlung;Beschreibung"
@@ -1262,13 +1259,11 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1326,10 +1321,10 @@ BEGIN
     LTEXT           "&Enable for:",IDCLBL_PROGRAMS,6,194,36,8
     COMBOBOX        IDCCBO_PROGRAMS,54,192,90,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,146,192,244,12,ES_AUTOHSCROLL
-    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Description:",IDCLBL_DESCRIPTION,6,210,38,8
     EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
     PUSHBUTTON      "&Help",IDCCMD_HELP,60,227,48,14
     PUSHBUTTON      "C&opy list",IDCCMD_COPYLIST,110,227,48,14
     PUSHBUTTON      "Lan&guage...",IDCCMD_LANGUAGE,160,227,48,14
@@ -1352,7 +1347,7 @@ BEGIN
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,99,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,99,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,104,50,14,WS_GROUP
 END
 
@@ -1392,7 +1387,7 @@ END
 // Menu
 //
 
-IDM_CONTEXT MENU 
+IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
@@ -1460,7 +1455,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ERR_INVALID_SHORTCUT    "Valid shortcut required."
     ERR_SHORTCUT_DUPLICATE  "A keyboard shortcut is duplicated: %s.\nPlease modify or remove one of the duplicates."
@@ -1472,7 +1467,7 @@ BEGIN
     MSG_COPYLIST            "The shortcuts list has been copied to the clipboard.\n\nYou can paste it with Ctrl+V to a text processor or a spreadsheet."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TOKENS              "English;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages"
     IDS_COLUMNS             "Contents;Shortcut;Conditions;Usages;Description"
@@ -1486,7 +1481,7 @@ BEGIN
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -1494,10 +1489,8 @@ END
 // French (France) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
-#ifdef _WIN32
 LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1534,10 +1527,10 @@ BEGIN
     LTEXT           "Activer po&ur :",IDCLBL_PROGRAMS,6,194,45,8
     COMBOBOX        IDCCBO_PROGRAMS,54,192,114,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,170,192,220,12,ES_AUTOHSCROLL
-    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Description :",IDCLBL_DESCRIPTION,6,210,40,8
     EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
     PUSHBUTTON      "&Aide",IDCCMD_HELP,60,227,48,14
     PUSHBUTTON      "C&opier liste",IDCCMD_COPYLIST,110,227,48,14
     PUSHBUTTON      "Lan&gue...",IDCCMD_LANGUAGE,160,227,48,14
@@ -1582,7 +1575,7 @@ BEGIN
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,99,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,99,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,104,50,14,WS_GROUP
 END
 
@@ -1624,12 +1617,13 @@ END
 
 IDB_DONATE              BITMAP                  "DonateFR.bmp"
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDM_CONTEXT MENU 
+IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
@@ -1708,11 +1702,6 @@ BEGIN
     "#include ""afxRes.h""\0"
 END
 
-3 TEXTINCLUDE 
-BEGIN
-    "\0"
-END
-
 #endif    // APSTUDIO_INVOKED
 
 
@@ -1721,7 +1710,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ERR_INVALID_SHORTCUT    "Vous devez entrer un raccourci clavier valide."
     ERR_SHORTCUT_DUPLICATE  "Un raccourci clavier est en double : %s.\nVeuillez modifier ou supprimer un des doublons."
@@ -1733,7 +1722,7 @@ BEGIN
     MSG_COPYLIST            "La liste des raccourcis a ιtι copiιe dans le presse-papiers.\n\nVous pouvez la coller avec Ctrl+V dans un logiciel de traitement de texte ou un tableur."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TOKENS              "Franηais;Raccourci;Code;DistinguerGaucheDroite;Description;Commande;Texte;Rιpertoire;Fenκtre;GιrerFichierOuvrir;Programmes;TousProgrammesSauf;Aucun;Langue;Taille;Colonnes;Tri;Normale;Rιduite;Agrandie;Win;Ctrl;Maj;Alt;Gauche;Droite;VerrMaj;VerrNum;ArrκtDιfil;Oui;Non;Utilisations"
     IDS_COLUMNS             "Contenu;Raccourci;Conditions;Utilisations;Description"
@@ -1755,10 +1744,8 @@ END
 // Italian (Italy) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ITA)
-#ifdef _WIN32
 LANGUAGE LANG_ITALIAN, SUBLANG_ITALIAN
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1835,10 +1822,10 @@ BEGIN
     LTEXT           "A&bilita per :",IDCLBL_PROGRAMS,6,194,38,8
     COMBOBOX        IDCCBO_PROGRAMS,54,192,144,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,200,192,190,12,ES_AUTOHSCROLL
-    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Descrizione :",IDCLBL_DESCRIPTION,6,210,42,8
     EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
     PUSHBUTTON      "&Aiuto",IDCCMD_HELP,60,227,32,14
     PUSHBUTTON      "&Copia lista",IDCCMD_COPYLIST,94,227,48,14
     PUSHBUTTON      "Lin&gua...",IDCCMD_LANGUAGE,143,227,41,14
@@ -1873,7 +1860,7 @@ BEGIN
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     CONTROL         "Traduzione : Andrea Zanella",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
 
@@ -1883,7 +1870,7 @@ END
 // Menu
 //
 
-IDM_CONTEXT MENU 
+IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
@@ -1951,7 +1938,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ERR_INVALID_SHORTCUT    "Θ richiesta una scorciatoia valida."
     ERR_SHORTCUT_DUPLICATE  "Una scorciatoia da tastiera θ duplicata : %s.\nPrego modificate o eliminate uno dei duplicati."
@@ -1963,7 +1950,7 @@ BEGIN
     MSG_COPYLIST            "La lista delle scorciatoie θ stata copiata negli appunti.\n\nPotete incollarla con Ctrl+V in qualsiasi text processor o foglio di calcolo."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TOKENS              "Italiano;Scorciatoia;Codice;DistinguiSinistraDestra;Descrizione;Comando;Testo;Cartella;Finestra;SupportaAperturaFile;Programmi;TuttiprogrammiEccetto;Nessuno;Lingua;Grandezza;Colonne;Ordinamento;Normale;Ridotta;Ingrandita;Win;Ctrl;Shift;Alt;Sinistra;Destra;CapsLock;NumLock;ScrollLock;Si;No;Usi"
     IDS_COLUMNS             "Contenuto;Scorciatoia;Condizioni;Usi;Descrizione"
@@ -1985,10 +1972,8 @@ END
 // Portuguese (Brazil) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PTB)
-#ifdef _WIN32
 LANGUAGE LANG_PORTUGUESE, SUBLANG_PORTUGUESE_BRAZILIAN
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2009,7 +1994,7 @@ BEGIN
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     CONTROL         "Traduηγo : Milton Chaves de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,123,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
 
@@ -2082,10 +2067,10 @@ BEGIN
     LTEXT           "A&tivar:",IDCLBL_PROGRAMS,6,194,23,8
     COMBOBOX        IDCCBO_PROGRAMS,44,192,121,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,167,192,223,12,ES_AUTOHSCROLL
-    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Descriηγo:",IDCLBL_DESCRIPTION,6,210,34,8
     EDITTEXT        IDCTXT_DESCRIPTION,44,208,364,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
     PUSHBUTTON      "&Ajuda",IDCCMD_HELP,60,227,48,14
     PUSHBUTTON      "C&opiar lista",IDCCMD_COPYLIST,110,227,48,14
     PUSHBUTTON      "&Idioma...",IDCCMD_LANGUAGE,160,227,48,14
@@ -2112,7 +2097,7 @@ END
 // Menu
 //
 
-IDM_CONTEXT MENU 
+IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
@@ -2180,7 +2165,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ERR_INVALID_SHORTCUT    "Necessαrio um atalho vαlido."
     ERR_SHORTCUT_DUPLICATE  "Existe duplicidade com uma combinaηγo de teclas: %s.\nAltere ou remova uma das duplicatas."
@@ -2192,7 +2177,7 @@ BEGIN
     MSG_COPYLIST            "A lista de atalhos foi copiada na Αrea de Armazenamento.\n\nVocκ pode colα-la (com Ctrl+V) num processador de texto ou numa planilha."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TOKENS              "Portuguκs brasileiro;Atalho;Cσdigo;DistinguirEsquerdaDireita;Descriηγo;Comando;Texto;Pasta;Janela;SuportaAberturaArquivo;Programas;TodosProgramasExceto;Nenhum;Idioma;Tamanho;Colunas;Ordenaηγo;Normal;Minimizada;Maximizada;Win;Ctrl;Shift;Alt;Esquerda;Direita;CapsLock;NumLock;ScrollLock;Sim;Nγo;Usos"
     IDS_COLUMNS             "Conteϊdo;Atalho;Condiηυes;Usos;Descriηγo"
@@ -2214,10 +2199,8 @@ END
 // Dutch (Belgium) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NLB)
-#ifdef _WIN32
 LANGUAGE LANG_DUTCH, SUBLANG_DUTCH_BELGIAN
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2238,7 +2221,7 @@ BEGIN
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
     CONTROL         "Vertaling Van Hees",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,144,8
 END
@@ -2313,10 +2296,10 @@ BEGIN
     LTEXT           "&Activeren om:",IDCLBL_PROGRAMS,6,194,46,8
     COMBOBOX        IDCCBO_PROGRAMS,54,192,114,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,170,192,220,12,ES_AUTOHSCROLL
-    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "&Beschrijving:",IDCLBL_DESCRIPTION,6,210,42,8
     EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
     PUSHBUTTON      "&Help",IDCCMD_HELP,60,227,48,14
     PUSHBUTTON      "Lijst &kopiλren",IDCCMD_COPYLIST,110,227,48,14
     PUSHBUTTON      "Taa&l...",IDCCMD_LANGUAGE,160,227,48,14
@@ -2343,7 +2326,7 @@ END
 // Menu
 //
 
-IDM_CONTEXT MENU 
+IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
@@ -2411,7 +2394,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ERR_INVALID_SHORTCUT    "Je moet een geldige sneltoets indrukken."
     ERR_SHORTCUT_DUPLICATE  "Er is een dubbele sneltoets: %s.\nGelieve er ιιn van te wijzigen of uit te schakelen."
@@ -2423,7 +2406,7 @@ BEGIN
     MSG_COPYLIST            "De lijst met sneltoetsen is naar het klembord gekopieerd.\n\nJe kan het met Ctrl+V plakken in een tekstverwerkings-programma of tabulator."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TOKENS              "Nederlands (Belgiλ)"
     IDS_COLUMNS             "Inhoud;Sneltoets;Voorwaarden;Gebruik;Beschrijving"
@@ -2443,13 +2426,11 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Greek resources
+// Greek (Greece) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ELL)
-#ifdef _WIN32
 LANGUAGE LANG_GREEK, SUBLANG_DEFAULT
 #pragma code_page(1253)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2470,7 +2451,7 @@ BEGIN
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
     CONTROL         "Μετάφραση : geogeo  (www.geogeo.gr)",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,130,8
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "Εντάξει",IDOK,101,124,50,14,WS_GROUP
 END
 
@@ -2544,10 +2525,10 @@ BEGIN
     LTEXT           "Ενεργ&οπ. για:",IDCLBL_PROGRAMS,6,194,47,8
     COMBOBOX        IDCCBO_PROGRAMS,54,192,105,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDCTXT_PROGRAMS,161,192,230,12,ES_AUTOHSCROLL
-    CONTROL         130,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
     LTEXT           "Περιγρα&φή:",IDCLBL_DESCRIPTION,6,210,38,8
     EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
-    CONTROL         125,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
     PUSHBUTTON      "&Βοήθεια",IDCCMD_HELP,60,227,48,14
     PUSHBUTTON      "&Αντιγ. λίστας",IDCCMD_COPYLIST,110,227,48,14
     PUSHBUTTON      "Γ&λώσσα/Lang",IDCCMD_LANGUAGE,160,227,48,14
@@ -2574,7 +2555,7 @@ END
 // Menu
 //
 
-IDM_CONTEXT MENU 
+IDM_CONTEXT MENU
 BEGIN
     POPUP " "
     BEGIN
@@ -2642,7 +2623,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ERR_INVALID_SHORTCUT    "Απαιτείται έγκυρη συντόμευση."
     ERR_SHORTCUT_DUPLICATE  "Μια συντόμευση πληκτρολογίου είναι διπλή: %s.\nΠαρακαλώ τροποποιήστε ή αφαιρέστε τη μία από αυτές."
@@ -2654,7 +2635,7 @@ BEGIN
     MSG_COPYLIST            "Ο κατάλογος συντομεύσεων έχει αντιγραφεί στο πρόχειρο.\n\nΜπορείτε να τον επικολλήσετε με Ctrl+V σε έναν επεξεργαστή κειμένου ή ένα υπολογιστικό φύλλο."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TOKENS              "Ελληνικά;Συντόμευση;Κώδικας;ΔιάκρισηΑριστερούΔεξιού;Περιγραφή;Εντολή;Κείμενο;Κατάλογος;Παράθυρο;ΥποστήριξηΑνοίγματοςΑρχείου;Προγράμματα;ΌλαΤαΠρογράμματαΕκτός;Κανένα;Γλώσσα;Μέγεθος;Στήλες;Ταξινόμηση;Κανονικό παράθυρο;Ελαχιστοποιημένο;Μεγιστοποιημένο;Win;Ctrl;Shift;Alt;Αριστερό;Δεξί;CapsLock;NumLock;ScrollLock;Ναι;Όχι;Χρήσεις"
     IDS_COLUMNS             "Περιεχόμενα;Συντόμευση;Συνθήκες;Χρήσεις;Περιγραφή"
@@ -2668,7 +2649,7 @@ BEGIN
     IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
 END
 
-#endif    // Greek resources
+#endif    // Greek (Greece) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
