@@ -16,7 +16,3 @@
 # Distrib
 /Distrib/*.exe
 /Distrib/*.zip
-
-# Tests
-/Tests/*Test.cpp
-/Tests/output
