@@ -4,14 +4,16 @@
 *.ncb
 *.suo
 *.user
+.vs
 
 # Other
 *.pyc
 
 # Root
 /output
+/packages
 
-# Distrub
+# Distrib
 /Distrib/*.exe
 /Distrib/*.zip
 

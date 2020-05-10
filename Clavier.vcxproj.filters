@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{23e0f4c7-9484-4a8b-8835-04c690a17bdb}</UniqueIdentifier>
+      <Extensions>ico;bmp;rc</Extensions>
+    </Filter>
+    <Filter Include="Distrib">
+      <UniqueIdentifier>{47495e69-9be1-4a92-a520-93fe36bcf48e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="*.bmp;*.ico">
+      <Filter>Resource</Filter>
+    </Image>
+    <None Include="*.cur">
+      <Filter>Resource</Filter>
+    </None>
+    <ResourceCompile Include="Clavier.rc">
+      <Filter>Resource</Filter>
+    </ResourceCompile>
+    <Manifest Include="Clavier.manifest">
+      <Filter>Resource</Filter>
+    </Manifest>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Distrib\*">
+      <Filter>Distrib</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="*.h" />
+    <ClCompile Include="*.cpp" />
+  </ItemGroup>
+</Project>

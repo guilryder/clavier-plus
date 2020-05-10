@@ -35,4 +35,20 @@ void operator delete(void* p) {
 	HeapFree(e_hHeap, 0, p);
 }
 
+void operator delete(void* p, size_t) {
+	::operator delete(p);
+}
+
+void* operator new[](size_t size) {
+	return ::operator new(size);
+}
+
+void operator delete[](void* p) {
+	return ::operator delete(p);
+}
+
+void operator delete[](void* p, size_t) {
+	return ::operator delete(p);
+}
+
 #endif  // !_DEBUG
