@@ -21,11 +21,10 @@
 
 #pragma warning (disable: 4710 4711)
 
-// Require compatibility with Windows 2000 or later.
-#define NTDDI_VERSION NTDDI_WIN2K
-#define _WIN32_IE       _WIN32_IE_IE60
-#define _WIN32_WINNT    _WIN32_WINNT_WIN2K
 #define STRICT  1
+
+// Require compatibility with Windows 7 or later.
+#define _WIN32_WINNT    _WIN32_WINNT_WIN7
 #include <sdkddkver.h>
 
 #ifndef TESTING
