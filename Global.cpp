@@ -19,6 +19,7 @@
 
 #include "StdAfx.h"
 #include "Global.h"
+#include "Com.h"
 
 #include <intshcut.h>
 #include <msi.h>
@@ -344,12 +345,8 @@ bool browseForFolder(HWND hwnd_parent, LPCTSTR title, LPTSTR directory) {
 	bi.ulFlags = BIF_RETURNONLYFSDIRS;
 	bi.lpfn = prcBrowseForFolderCallback;
 	bi.lParam = (LPARAM)directory;
-	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
-	if (!pidl || !SHGetPathFromIDList(pidl, directory)) {
-		return false;
-	}
-	CoTaskMemFree(pidl);
-	return true;
+	CoBuffer<LPITEMIDLIST> pidl(SHBrowseForFolder(&bi));
+	return pidl && SHGetPathFromIDList(pidl, directory);
 }
 
 int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM lpData) {
@@ -574,8 +571,8 @@ bool SetDialogBoxDirectory::tryWindowsFileOpen() {
 //------------------------------------------------------------------------
 
 // Wrapper for SHGetSpecialFolderPath
-bool getSpecialFolderPath(int index, LPTSTR path) {
-	return toBool(SHGetSpecialFolderPath(NULL, path, index, TRUE));
+bool getSpecialFolderPath(int csidl, LPTSTR path) {
+	return toBool(SHGetSpecialFolderPath(NULL, path, csidl, TRUE));
 }
 
 
@@ -600,43 +597,32 @@ bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path) {
 	}
 	
 	// Resolve the shortcut using the IUniformResourceLocator and IPersistFile interfaces
-	IUniformResourceLocator *purl;
-	if (SUCCEEDED(CoCreateInstance(CLSID_InternetShortcut, NULL, CLSCTX_INPROC_SERVER,
-			IID_IUniformResourceLocator, (LPVOID*)&purl))) {
-		IPersistFile *ppf;
-		if (SUCCEEDED(purl->QueryInterface(IID_IPersistFile, (void**)&ppf))) {
-			LPTSTR pszURL;
-			HRESULT hr1, hr2;
-			if (SUCCEEDED(hr1 = ppf->Load(link_file, STGM_READ)) &&
-					SUCCEEDED(hr2 = purl->GetURL(&pszURL))) {
-				lstrcpyn(target_path, pszURL, MAX_PATH);
-				CoTaskMemFree(pszURL);
+	CoPtr<IUniformResourceLocator> url_locator(CLSID_InternetShortcut);
+	if (url_locator) {
+		auto persist_file = url_locator.queryInterface<IPersistFile>();
+		if (persist_file) {
+			CoBuffer<LPTSTR> url;
+			if (SUCCEEDED(persist_file->Load(link_file, STGM_READ)) &&
+					SUCCEEDED(url_locator->GetURL(&url)) &&
+					url && *url) {
+				lstrcpyn(target_path, url, MAX_PATH);
+				return true;
 			}
-			ppf->Release();
-		}
-		purl->Release();
-		
-		if (*target_path) {
-			return true;
 		}
 	}
 	
 	// Resolve the shortcut using the IShellLink and IPersistFile interfaces
-	IShellLink *psl;
-	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
-			IID_IShellLink, (LPVOID*)&psl))) {
-		IPersistFile *ppf;
-		if (SUCCEEDED(psl->QueryInterface(IID_IPersistFile, (void**)&ppf))) {
-			if (SUCCEEDED(ppf->Load(link_file, STGM_READ)) &&
-					SUCCEEDED(psl->Resolve(NULL, MAKELONG(SLR_NO_UI | SLR_NOUPDATE, 1000)))) {
-				psl->GetPath(target_path, MAX_PATH, NULL, 0);
+	CoPtr<IShellLink> shell_link(CLSID_ShellLink);
+	if (shell_link) {
+		auto persist_file = shell_link.queryInterface<IPersistFile>();
+		if (persist_file) {
+			if (SUCCEEDED(persist_file->Load(link_file, STGM_READ)) &&
+					SUCCEEDED(shell_link->Resolve(NULL, MAKELONG(SLR_NO_UI | SLR_NOUPDATE, 1000)))) {
+				shell_link->GetPath(target_path, MAX_PATH, NULL, 0);
+				if (*target_path) {
+					return true;
+				}
 			}
-			ppf->Release();
-		}
-		psl->Release();
-		
-		if (*target_path) {
-			return true;
 		}
 	}
 	

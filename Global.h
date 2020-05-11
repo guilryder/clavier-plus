@@ -196,7 +196,7 @@ bool setDialogBoxDirectory(HWND hwnd, LPCTSTR directory);
 // Shell API tools
 //------------------------------------------------------------------------
 
-bool getSpecialFolderPath(int index, LPTSTR path);
+bool getSpecialFolderPath(int csidl, LPTSTR path);
 bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path);
 
 
