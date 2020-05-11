@@ -80,7 +80,7 @@
 #define IDCLBL_SHORTCUTSCOUNT           1059
 #define IDCTXT_SHORTCUTSCOUNT           1060
 #define ID_ADD_SPECIALCHAR_FIRST        10000
-#define ID_ADD_PROGRAM_FIRST            11000
+#define ID_ADD_ITEM_FIRST               11000
 #define ID_TEXT_SPECIALCHAR_FIRST       12000
 #define ID_ADD_FOLDER                   40015
 #define ID_ADD_TEXT                     40018

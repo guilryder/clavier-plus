@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <functional>
+
 #include "Resource.h"
 
 #include "MyString.h"
@@ -203,6 +205,7 @@ bool setDialogBoxDirectory(HWND hwnd, LPCTSTR directory);
 
 bool getSpecialFolderPath(int csidl, LPTSTR path);
 void resolveLinkFile(LPCTSTR link_file, shortcut::Shortcut* shortcut);
+void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST pidl)> app_callback);
 
 
 //------------------------------------------------------------------------

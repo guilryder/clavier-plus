@@ -67,7 +67,7 @@ static INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
 static LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static WNDPROC s_prcProgramsTarget;
 
-// ID of the next menu item to add to the "Add program" sub-menus
+// ID of the next program or app menu item to add to the "Add" sub-menus.
 static UINT s_idAddMenuId;
 
 static bool browseForCommandLine(HWND hwnd_parent, LPTSTR pszFile, bool bForceExist);
@@ -225,41 +225,82 @@ void addCreatedShortcut(Shortcut* psh) {
 }
 
 
-class FileMenuItem {
+// Base class for dynamic entries in "Add" sub-menus.
+class BaseMenuItem {
 public:
 	
-	FileMenuItem(bool is_dir, LPCTSTR path, int icon_index)
-		: m_is_dir(is_dir), m_path(path), m_icon_index(icon_index) {}
+	static BaseMenuItem* forItemData(ULONG_PTR item_data) {
+		return reinterpret_cast<BaseMenuItem*>(item_data);
+	}
 	
-	bool isDir() const { return m_is_dir; }
+	ULONG_PTR asItemData() const {
+		return reinterpret_cast<ULONG_PTR>(this);
+	}
+	
+	virtual ~BaseMenuItem() {}
+	
+	void initializeRoot(HMENU menu, int item_index);
+	
+	static BaseMenuItem* findItemAndCleanMenu(HMENU menu, UINT id);
+	
 	void measureItem(MEASUREITEMSTRUCT& mis);
 	void drawItem(DRAWITEMSTRUCT& dis);
-	void populate(HMENU hMenu);
-	void execute();
+	virtual void populate(HMENU menu) = 0;
+	virtual void execute() = 0;
+	
+protected:
+	
+	BaseMenuItem(int icon_index) : m_icon_index(icon_index) {}
 	
 private:
 	
-	bool m_is_dir;
-	String m_path;
 	int m_icon_index;
 	
-	enum{ kIconMarginPixel = 3 };
+	static constexpr int kIconMarginPixel = 3;
 };
-
-
-static FileMenuItem* findItemAndCleanMenu(HMENU hMenu, UINT id);
 
 static HIMAGELIST s_hSysImageList = NULL;
 
+void BaseMenuItem::initializeRoot(HMENU menu, int item_index) {
+	// Attach this item to the sub-menu.
+	MENUITEMINFO mii_root;
+	mii_root.cbSize = sizeof(mii_root);
+	mii_root.fMask = MIIM_DATA;
+	mii_root.dwItemData = asItemData();
+	SetMenuItemInfo(menu, item_index, /* byPosition= */ true, &mii_root);
+	
+	// Add a phantom item to the sub-menu.
+	MENUITEMINFO mii_phantom;
+	mii_phantom.cbSize = sizeof(mii_phantom);
+	mii_phantom.fMask = MIIM_TYPE | MIIM_DATA;
+	mii_phantom.fType = MFT_SEPARATOR;
+	mii_phantom.dwTypeData = _T("");
+	mii_phantom.dwItemData = asItemData();
+	SetMenuItemInfo(GetSubMenu(menu, item_index), 0, /* byPosition= */ true, &mii_phantom);
+}
 
-FileMenuItem* findItemAndCleanMenu(HMENU hMenu, UINT id) {
+void BaseMenuItem::measureItem(MEASUREITEMSTRUCT& mis) {
+	mis.itemWidth = 2 * kIconMarginPixel;
+	mis.itemHeight = 2 * kIconMarginPixel + GetSystemMetrics(SM_CYSMICON);
+}
+
+void BaseMenuItem::drawItem(DRAWITEMSTRUCT& dis) {
+	ImageList_Draw(
+		s_hSysImageList, m_icon_index, dis.hDC,
+		dis.rcItem.left - GetSystemMetrics(SM_CXSMICON),
+		(dis.rcItem.top + dis.rcItem.bottom - GetSystemMetrics(SM_CYSMICON)) / 2,
+		ILD_TRANSPARENT);
+}
+
+
+BaseMenuItem* BaseMenuItem::findItemAndCleanMenu(HMENU hMenu, UINT id) {
 	MENUITEMINFO mii;
 	mii.cbSize = sizeof(mii);
 	mii.fMask = MIIM_FTYPE | MIIM_DATA | MIIM_ID | MIIM_SUBMENU;
 	
-	FileMenuItem *pItemToExecute = NULL;
+	BaseMenuItem *pItemToExecute = NULL;
 	for (UINT pos = 0; GetMenuItemInfo(hMenu, pos, TRUE, &mii); pos++) {
-		FileMenuItem *pItem = reinterpret_cast<FileMenuItem*>(mii.dwItemData);
+		BaseMenuItem *pItem = reinterpret_cast<BaseMenuItem*>(mii.dwItemData);
 		if (pItem) {
 			if (mii.wID == id && id) {
 				pItemToExecute = pItem;
@@ -279,8 +320,25 @@ FileMenuItem* findItemAndCleanMenu(HMENU hMenu, UINT id) {
 }
 
 
+// File or directory entry in the "Add > Program" sub-menu.
+// Also instantiated with dummy values for the sub-menu item itself.
+class FileMenuItem : public BaseMenuItem {
+public:
+	
+	FileMenuItem(bool is_dir, LPCTSTR path, int icon_index)
+		: BaseMenuItem(icon_index), m_is_dir(is_dir), m_path(path) {}
+	
+	bool isDir() const { return m_is_dir; }
+	void populate(HMENU menu) override;
+	void execute() override;
+	
+private:
+	
+	bool m_is_dir;
+	String m_path;
+};
 
-void FileMenuItem::populate(HMENU hMenu) {
+void FileMenuItem::populate(HMENU menu) {
 	// For retrieving item data.
 	MENUITEMINFO miiGetData;
 	miiGetData.cbSize = sizeof(miiGetData);
@@ -344,13 +402,14 @@ void FileMenuItem::populate(HMENU hMenu) {
 				
 				if (iSource) {
 					// Second pass: the first pass may have already created a menu for the directory.
-					const int nbItem = GetMenuItemCount(hMenu);
+					const int nbItem = GetMenuItemCount(menu);
 					for (int i = 0; i < nbItem; i++) {
-						if (!GetMenuItemInfo(hMenu, i, TRUE, &miiGetData)) {
+						if (!GetMenuItemInfo(menu, i, TRUE, &miiGetData)) {
 							continue;
 						}
-						const FileMenuItem &fmiOther = *reinterpret_cast<const FileMenuItem*>(miiGetData.dwItemData);
-						if (fmiOther.isDir() && !lstrcmpi(fmiOther.m_path, pszRelativeFolder)) {
+						const FileMenuItem *fmiOther =
+							static_cast<const FileMenuItem*>(BaseMenuItem::forItemData(miiGetData.dwItemData));
+						if (fmiOther->isDir() && !lstrcmpi(fmiOther->m_path, pszRelativeFolder)) {
 							// Folder already created: nothing to do.
 							goto Next;
 						}
@@ -375,8 +434,7 @@ void FileMenuItem::populate(HMENU hMenu) {
 				shfi.iIcon = -1;
 			}
 			
-			miiReal.dwItemData = reinterpret_cast<ULONG_PTR>(
-				new FileMenuItem(bIsDir, pszItemPath, shfi.iIcon));
+			miiReal.dwItemData = (new FileMenuItem(bIsDir, pszItemPath, shfi.iIcon))->asItemData();
 			miiReal.dwTypeData = wfd.cFileName;
 			miiReal.hbmpItem = HBMMENU_CALLBACK;
 			
@@ -387,7 +445,7 @@ void FileMenuItem::populate(HMENU hMenu) {
 				InsertMenuItem(miiReal.hSubMenu, 0, TRUE, &miiPhantom);
 			}
 			
-			InsertMenuItem(hMenu, pos, TRUE, &miiReal);
+			InsertMenuItem(menu, pos, TRUE, &miiReal);
 			
 		Next:
 			;
@@ -401,35 +459,68 @@ void FileMenuItem::populate(HMENU hMenu) {
 	MENUITEMINFO miiMenuBarBreak;
 	miiMenuBarBreak.cbSize = sizeof(miiGetData);
 	miiMenuBarBreak.fMask = MIIM_TYPE;
-	int nbItem = GetMenuItemCount(hMenu);
+	int nbItem = GetMenuItemCount(menu);
 	for (int i = nbItemPerColumn; i < nbItem; i += nbItemPerColumn) {
-		GetMenuItemInfo(hMenu, i, TRUE, &miiMenuBarBreak);
+		GetMenuItemInfo(menu, i, TRUE, &miiMenuBarBreak);
 		miiMenuBarBreak.fType |= MFT_MENUBARBREAK;
-		SetMenuItemInfo(hMenu, i, TRUE, &miiMenuBarBreak);
+		SetMenuItemInfo(menu, i, TRUE, &miiMenuBarBreak);
 	}
 }
-
-
-void FileMenuItem::measureItem(MEASUREITEMSTRUCT& mis) {
-	mis.itemWidth = 2*kIconMarginPixel;
-	mis.itemHeight = 2*kIconMarginPixel + GetSystemMetrics(SM_CYSMICON);
-}
-
-
-void FileMenuItem::drawItem(DRAWITEMSTRUCT& dis) {
-	ImageList_Draw(
-		s_hSysImageList, m_icon_index, dis.hDC,
-		dis.rcItem.left - GetSystemMetrics(SM_CXSMICON),
-		(dis.rcItem.top + dis.rcItem.bottom - GetSystemMetrics(SM_CYSMICON)) / 2,
-		ILD_TRANSPARENT);
-}
-
 
 void FileMenuItem::execute() {
 	Shortcut *const shortcut = createShortcut();
 	VERIFV(shortcut);
 	resolveLinkFile(m_path, shortcut);
 	addCreatedShortcut(shortcut);
+}
+
+
+// Entry in the "Add > Application" sub-menu.
+// Also instantiated with dummy values for the sub-menu item itself.
+class AppMenuItem : public BaseMenuItem {
+public:
+	
+	AppMenuItem(LPCTSTR app_id, int icon_index)
+		: BaseMenuItem(icon_index), m_app_id(app_id) {}
+	
+	void populate(HMENU menu) override;
+	void execute() override;
+	
+private:
+	
+	String m_app_id;
+};
+
+void AppMenuItem::populate(HMENU menu) {
+	MENUITEMINFO mii;
+	mii.cbSize = sizeof(mii);
+	mii.fMask = MIIM_BITMAP | MIIM_DATA | MIIM_STRING | MIIM_ID;
+	mii.hbmpItem = HBMMENU_CALLBACK;
+	
+	int index = 0;
+	listUwpApps(
+		[&, menu](LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST pidl) {
+			// Retrieve the app's icon.
+			SHFILEINFO shfi;
+			if (!SHGetFileInfo(
+					reinterpret_cast<LPCTSTR>(pidl),
+					/* dwFileAttributes= */ 0,
+					&shfi, sizeof(shfi),
+					SHGFI_PIDL | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_SYSICONINDEX)) {
+				shfi.iIcon =-1;
+			}
+			
+			mii.wID = s_idAddMenuId++;
+			mii.dwItemData = (new AppMenuItem(app_id, shfi.iIcon))->asItemData();
+			mii.dwTypeData = const_cast<LPTSTR>(name);
+			InsertMenuItem(menu, index++, /* byPosition= */ true, &mii);
+		});
+}
+
+void AppMenuItem::execute() {
+	String path = _T("explorer.exe shell:appsFolder\\");
+	path += m_app_id;
+	createAndAddShortcut(path);
 }
 
 
@@ -569,39 +660,32 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		// Display "Add" menu
 		case IDCCMD_ADD:
 			{
-				const HMENU hAllMenus = i18n::loadMenu(IDM_CONTEXT);
+				const HMENU context_menus = i18n::loadMenu(IDM_CONTEXT);
 				
-				HMENU hMenu = GetSubMenu(hAllMenus, 0);
+				HMENU menu = GetSubMenu(context_menus, 0);
 				
-				s_idAddMenuId = ID_ADD_PROGRAM_FIRST;
+				s_idAddMenuId = ID_ADD_ITEM_FIRST;
+				int item_index = 0;
 				
-				MENUITEMINFO mii;
-				mii.cbSize = sizeof(mii);
-				mii.fMask = MIIM_DATA;
+				// Programs sub-menu.
+				(new FileMenuItem(/* is_dir= */ true, /* path= */ nullptr, /* icon_index= */ 0))
+					->initializeRoot(menu, item_index++);
 				
-				MENUITEMINFO miiPhantom;
-				miiPhantom.cbSize = sizeof(miiPhantom);
-				miiPhantom.fMask = MIIM_TYPE | MIIM_DATA;
-				miiPhantom.fType = MFT_SEPARATOR;
-				miiPhantom.dwTypeData = _T("");
+				// Apps sub-menu.
+				(new AppMenuItem(/* appId= */ _T(""), /* icon_index= */ 0))
+					->initializeRoot(menu, item_index++);
 				
-				// Programs
-				mii.dwItemData = miiPhantom.dwItemData =
-					reinterpret_cast<ULONG_PTR>(new FileMenuItem(
-						/* is_dir= */ true, /* path= */ NULL, /* icon_index= */ 0));
-				SetMenuItemInfo(hMenu, 0, TRUE, &mii);
-				SetMenuItemInfo(GetSubMenu(hMenu, 0), 0, TRUE, &miiPhantom);
-				
-				fillSpecialCharsMenu(hMenu, 1, ID_ADD_SPECIALCHAR_FIRST);
+				// Special characters sub-menu.
+				fillSpecialCharsMenu(menu, item_index, ID_ADD_SPECIALCHAR_FIRST);
 				
 				// Show the context menu
 				RECT rc;
 				GetWindowRect(hWnd, &rc);
-				const UINT selected_cmd_id = (UINT)TrackPopupMenu(hMenu,
+				const UINT selected_cmd_id = (UINT)TrackPopupMenu(menu,
 					TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 					rc.left, rc.bottom, 0, e_hdlgMain, NULL);
-				FileMenuItem *const pItem = findItemAndCleanMenu(hMenu, selected_cmd_id);
-				DestroyMenu(hAllMenus);
+				BaseMenuItem *const pItem = BaseMenuItem::findItemAndCleanMenu(menu, selected_cmd_id);
+				DestroyMenu(context_menus);
 				
 				if (pItem) {
 					pItem->execute();
@@ -852,7 +936,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 			break;
 		
 		default:
-			if (ID_ADD_SPECIALCHAR_FIRST <= id && id < ID_ADD_PROGRAM_FIRST) {
+			if (ID_ADD_SPECIALCHAR_FIRST <= id && id < ID_ADD_ITEM_FIRST) {
 				Shortcut *const psh = createShortcut();
 				if (psh) {
 					const TCHAR pszText[] = { static_cast<TCHAR>(id - ID_ADD_SPECIALCHAR_FIRST), _T('\0') };
@@ -1201,7 +1285,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 						GetMenuItemInfo(hMenu, 0, TRUE, &mii) &&
 						(mii.fType & MFT_SEPARATOR)) {
 					RemoveMenu(hMenu, 0, MF_BYPOSITION);
-					reinterpret_cast<FileMenuItem*>(mii.dwItemData)->populate(hMenu);
+					BaseMenuItem::forItemData(mii.dwItemData)->populate(hMenu);
 				}
 			}
 			break;
@@ -1211,7 +1295,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			{
 				MEASUREITEMSTRUCT &mis = *reinterpret_cast<MEASUREITEMSTRUCT*>(lParam);
 				if (mis.CtlType == ODT_MENU && mis.itemData) {
-					reinterpret_cast<FileMenuItem*>(mis.itemData)->measureItem(mis);
+					BaseMenuItem::forItemData(mis.itemData)->measureItem(mis);
 					return TRUE;
 				}
 			}
@@ -1222,7 +1306,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			{
 				DRAWITEMSTRUCT &dis = *reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
 				if (dis.CtlType == ODT_MENU && dis.itemData) {
-					reinterpret_cast<FileMenuItem*>(dis.itemData)->drawItem(dis);
+					BaseMenuItem::forItemData(dis.itemData)->drawItem(dis);
 					return TRUE;
 				}
 			}

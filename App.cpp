@@ -88,6 +88,14 @@ void WinMainCRTStartup() {
 	app::entryPoint();
 }
 
+extern "C" void abort() {
+	ExitProcess(3);
+}
+
+extern "C" int _purecall() {
+	abort();
+}
+
 #endif  // _DEBUG
 
 

@@ -21,6 +21,7 @@
 
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(lib, "msi.lib")
+#pragma comment(lib, "propsys.lib")
 #pragma comment(lib, "psapi.lib")
 #pragma comment(lib, "shlwapi.lib")
 

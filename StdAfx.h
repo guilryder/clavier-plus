@@ -27,11 +27,15 @@
 #define _WIN32_WINNT    _WIN32_WINNT_WIN7
 #include <sdkddkver.h>
 
+// Microsoft standard library configuration.
+#define _HAS_STATIC_RTTI  0
 #ifndef TESTING
-// Disable some Microsoft standard library extensions.
 #define __STDC_WANT_SECURE_LIB__  0
 #define _CRT_DISABLE_PERFCRIT_LOCKS
 #define _STRALIGN_USE_SECURE_CRT  0
+#endif
+#ifndef _DEBUG
+#define _CRT_SECURE_INVALID_PARAMETER  __noop
 #endif
 
 // Do not include some Windows APIs we don't need.
@@ -89,6 +93,8 @@ inline bool reportFailedAssert(const char* message) {
 #endif
 
 #define new DEBUG_NEW
+
+#define memcpy_s(dest, dest_size, src, size)  memcpy(dest, src, size)
 
 
 #ifndef UNICODE

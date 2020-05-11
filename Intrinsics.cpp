@@ -55,4 +55,8 @@ extern "C" int atexit(void (__cdecl*)()) {
 	return 0;
 }
 
+namespace std {
+void __cdecl _Xbad_function_call() {}
+}
+
 #endif  // !_DEBUG

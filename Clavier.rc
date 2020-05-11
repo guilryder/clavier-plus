@@ -154,6 +154,10 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
+        POPUP "У¦УГіМКЅ(&A)"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
         POPUP "МШКвЧЦ·ы(&S)"
         BEGIN
             MENUITEM SEPARATOR
@@ -379,6 +383,10 @@ BEGIN
     POPUP " "
     BEGIN
         POPUP "&Program"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Aplikacji"
         BEGIN
             MENUITEM SEPARATOR
         END
@@ -611,6 +619,10 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
+        POPUP "&Aplikбcia"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
         POPUP "Љp&eciбlny znak"
         BEGIN
             MENUITEM SEPARATOR
@@ -840,15 +852,19 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
+        POPUP "П&риложение"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
         POPUP "&Спецсимволы"
         BEGIN
             MENUITEM SEPARATOR
         END
         MENUITEM SEPARATOR
-        MENUITEM "Открыть &папку...",           ID_ADD_FOLDER
+        MENUITEM "О&ткрыть папку...",           ID_ADD_FOLDER
         MENUITEM "&Написать текст...",          ID_ADD_TEXT
         MENUITEM "&Запустить программу...",     ID_ADD_COMMAND
-        MENUITEM "&Показать веб-сайт...",       ID_ADD_WEBSITE
+        MENUITEM "П&оказать веб-сайт...",       ID_ADD_WEBSITE
     END
     POPUP " "
     BEGIN
@@ -857,25 +873,25 @@ BEGIN
         MENUITEM "&Ждать 100 мс до обнаружения фокуса: []", ID_TEXT_WAIT
         MENUITEM "&Написать текст в режиме нижнего уровня", ID_TEXT_LOWLEVEL
         MENUITEM SEPARATOR
-        POPUP "&Написать символ"
+        POPUP "Н&аписать символ"
         BEGIN
             MENUITEM SEPARATOR
         END
-        POPUP "&Написать спецсимвол"
+        POPUP "На&писать спецсимвол"
         BEGIN
             MENUITEM "Черта с обратным наклоном: \\\\", ID_TEXT_BACKSLASH
             MENUITEM "Открывающая &скобка: \\[",    ID_TEXT_BRACKET_OPEN
             MENUITEM "Закрывающая скоб&ка: \\]",    ID_TEXT_BRACKET_CLOSE
             MENUITEM "Открывающая фигурная ск&обка: \\{", ID_TEXT_BRACE_OPEN
-            MENUITEM "Закрывающая фигурная ск&обка: \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Закрывающая фигурная ско&бка: \\}", ID_TEXT_BRACE_CLOSE
             MENUITEM "Вертикальная &черта: \\|",    ID_TEXT_PIPE
         END
         POPUP "Выполнить специальную к&оманду"
         BEGIN
             MENUITEM "&Ожидать: [{Wait,<длительность>}]", ID_TEXT_CMD_WAIT
-            MENUITEM "&Обнаруживать сфокусированное окно: [{Focus,<задержка>,<имя окна>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "О&бнаруживать сфокусированное окно: [{Focus,<задержка>,<имя окна>}]", ID_TEXT_CMD_FOCUS
             MENUITEM "&Копировать в буфер: [{Copy,<текст>}]", ID_TEXT_CMD_COPY
-            MENUITEM "&Кнопка мыши: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "К&нопка мыши: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "Двигать мы&шь к (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Дви&гать мышь в фокус (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Двигать мышь н&а: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
@@ -1168,6 +1184,10 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
+        POPUP "&App"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
         POPUP "&Sonderzeichen"
         BEGIN
             MENUITEM SEPARATOR
@@ -1392,6 +1412,10 @@ BEGIN
     POPUP " "
     BEGIN
         POPUP "&Program"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&App"
         BEGIN
             MENUITEM SEPARATOR
         END
@@ -1628,6 +1652,10 @@ BEGIN
     POPUP " "
     BEGIN
         POPUP "&Programme"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Application"
         BEGIN
             MENUITEM SEPARATOR
         END
@@ -1878,6 +1906,10 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
+        POPUP "&App"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
         POPUP "Carattere &speciale"
         BEGIN
             MENUITEM SEPARATOR
@@ -2102,6 +2134,10 @@ BEGIN
     POPUP " "
     BEGIN
         POPUP "&Programa"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Apli&cativo"
         BEGIN
             MENUITEM SEPARATOR
         END
@@ -2334,6 +2370,10 @@ BEGIN
         BEGIN
             MENUITEM SEPARATOR
         END
+        POPUP "&App"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
         POPUP "&Bijzondere karakters"
         BEGIN
             MENUITEM SEPARATOR
@@ -2560,6 +2600,10 @@ BEGIN
     POPUP " "
     BEGIN
         POPUP "&Рсьгсбммб"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Ец&бсмпгЮ"
         BEGIN
             MENUITEM SEPARATOR
         END

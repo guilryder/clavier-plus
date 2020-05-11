@@ -255,7 +255,23 @@ public:
 		}
 	}
 };
+
+TEST_CLASS(ShellApiTest) {
+public:
 	
+	TEST_METHOD(listUwpApps_succeeds) {
+		int app_count;
+		listUwpApps(
+			[&](LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST pidl) {
+				app_count++;
+				Assert::AreNotEqual(_T(""), name);
+				Assert::AreNotEqual(_T(""), app_id);
+				Assert::IsNotNull(pidl);
+			});
+		Assert::AreNotEqual(0, app_count);
+	}
+};
+
 TEST_CLASS(GetSemiColonTokenTest) {
 public:
 	

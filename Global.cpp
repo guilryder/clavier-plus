@@ -22,10 +22,13 @@
 #include "Com.h"
 #include "Shortcut.h"
 
+#include <algorithm>
 #include <intshcut.h>
 #include <msi.h>
 #include <tlhelp32.h>
 #include <psapi.h>
+#include <propsys.h>
+#include <propvarutil.h>
 
 #include <dlgs.h>
 #undef psh1
@@ -643,6 +646,105 @@ void resolveLinkFile(LPCTSTR link_file, Shortcut* shortcut) {
 	cmdline = link_file;
 	PathQuoteSpaces(cmdline.getBuffer(MAX_PATH));
 }
+
+
+void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST pidl)> app_callback) {
+	constexpr ULONG kMaxAppItemCount = 100;
+	constexpr size_t kMaxAppIdLength = 1000;
+	
+	// Retrieve a folder manager.
+	CoPtr<IKnownFolderManager> manager(CLSID_KnownFolderManager);
+	VERIFV(manager);
+	
+	// Retrieve the apps folder.
+	CoPtr<IKnownFolder> known_folder;
+	CoPtr<IShellItem> folder_item;
+	VERIFV(SUCCEEDED(manager->GetFolder(FOLDERID_AppsFolder, &known_folder)) &&
+		SUCCEEDED(known_folder->GetShellItem(KF_FLAG_DEFAULT, IID_PPV_ARGS(&folder_item))));
+	
+	// Property set only on non-UWP apps.
+	PROPERTYKEY non_uwp_prop_key;
+	VERIFV(SUCCEEDED(PSGetPropertyKeyFromName(_T("System.Link.TargetParsingPath"), &non_uwp_prop_key)));
+	
+	// Contains the app ID for UWP apps.
+	PROPERTYKEY id_prop_key;
+	VERIFV(SUCCEEDED(PSGetPropertyKeyFromName(_T("System.AppUserModel.ID"), &id_prop_key)));
+	
+	// Enumerate the apps folder children, UWP and non-UWP apps alike.
+	CoPtr<IEnumShellItems> enum_apps;
+	VERIFV(SUCCEEDED(folder_item->BindToHandler(nullptr, BHID_StorageEnum, IID_PPV_ARGS(&enum_apps))));
+	
+	// Collect the first kMaxAppItemCount UWP apps.
+	struct UwpApp {
+		CoPtr<IShellItem> item;
+		CoPtr<IPropertyStore> props;
+	};
+	UwpApp uwp_apps[kMaxAppItemCount];
+	ULONG uwp_app_count = 0;
+	while (uwp_app_count < kMaxAppItemCount) {
+		// Retrieve the item.
+		CoPtr<IShellItem> app_item;
+		if (FAILED(enum_apps->Next(1, &app_item, nullptr)) || !app_item) {
+			break;
+		}
+		
+		// Retrieve the properties of the app.
+		CoPtr<IPropertyStore> app_props;
+		if (FAILED(app_item->BindToHandler(nullptr, BHID_PropertyStore, IID_PPV_ARGS(&app_props)))) {
+			continue;
+		}
+		
+		// Check that the non_uwp_prop_key property value is empty, indicating an UWP app.
+		PROPVARIANT non_uwp_prop_value;
+		if (SUCCEEDED(app_props->GetValue(non_uwp_prop_key, &non_uwp_prop_value)) &&
+				non_uwp_prop_value.vt != VT_EMPTY) {
+			continue;
+		}
+		
+		// UWP app found.
+		UwpApp& uwp_app = uwp_apps[uwp_app_count++];
+		uwp_app.item = std::move(app_item);
+		uwp_app.props = std::move(app_props);
+	}
+	
+	// Sort the apps by display name.
+	std::sort(
+		uwp_apps, uwp_apps + uwp_app_count,
+		[](const UwpApp& app1, const UwpApp& app2) {
+			int order = 0;
+			app1.item.get()->Compare(app2.item.get(), SICHINT_DISPLAY, &order);  // ignore errors
+			return order < 0;
+		});
+	
+	// Pass the apps to the callback.
+	for (ULONG i = 0; i < uwp_app_count; i++) {
+		UwpApp& uwp_app = uwp_apps[i];
+		
+		// Retrieve the name of the app.
+		String output;
+		CoBuffer<LPTSTR> app_name;
+		if (FAILED(uwp_app.item->GetDisplayName(SIGDN_NORMALDISPLAY, &app_name))) {
+			continue;
+		}
+		
+		// Retrieve the ID of the app.
+		TCHAR app_id[kMaxAppIdLength];
+		PROPVARIANT id_prop_value;
+		if (FAILED(uwp_app.props->GetValue(id_prop_key, &id_prop_value)) ||
+				FAILED(PropVariantToString(id_prop_value, app_id, arrayLength(app_id)))) {
+			continue;
+		}
+		
+		// Retrieve the PIDL of the app.
+		CoBuffer<PIDLIST_ABSOLUTE> app_pidl;
+		if (FAILED(SHGetIDListFromObject(uwp_app.item.get(), &app_pidl))) {
+			continue;
+		}
+		
+		app_callback(app_name, app_id, app_pidl);
+	}
+}
+
 
 
 //------------------------------------------------------------------------
