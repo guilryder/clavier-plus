@@ -21,6 +21,8 @@
 #include "I18n.h"
 #include "Shortcut.h"
 
+#include <algorithm>
+
 namespace shortcut {
 
 static Shortcut* s_first_shortcut;
@@ -417,8 +419,7 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 			
 			// Usage count
 			case tokUsageCount:
-				m_nbUsage = StrToInt(pcSep);
-				m_nbUsage = max(0, m_nbUsage);
+				m_nbUsage = std::max(0, StrToInt(pcSep));
 				break;
 		}
 	}

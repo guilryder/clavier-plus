@@ -76,27 +76,6 @@ public:
 	}
 	
 	
-	TEST_METHOD(Max_integers) {
-		Assert::AreEqual(5, max(3, 5));
-	}
-	
-	TEST_METHOD(Max_unsafeIntegers) {
-		int a = 4;
-		int b = 4;
-		Assert::AreNotEqual(4, max(a++, (--b)--));
-	}
-	
-	TEST_METHOD(Max_usesLessOperator) {
-		Assert::AreEqual(5, max(HasLess(3), HasLess(5)).getValue());
-	}
-	
-	TEST_METHOD(Max_returnsCopy) {
-		int construction_counter = 0;
-		max(HasLess(42, &construction_counter), HasLess(3, &construction_counter));
-		Assert::IsTrue(2 < construction_counter);
-	}
-	
-	
 	int executeVERIFP(bool condition) {
 		VERIFP(condition, 1);
 		return 2;
@@ -573,8 +552,8 @@ private:
 	
 	HWND m_hdlgSendKeys;
 	
-	static INT_PTR CALLBACK dialogProc(HWND MY_UNUSED(hdlg), UINT MY_UNUSED(message),
-		WPARAM MY_UNUSED(wParam), LPARAM MY_UNUSED(lParam)) {
+	static INT_PTR CALLBACK dialogProc(
+			HWND UNUSED(hdlg), UINT UNUSED(message), WPARAM UNUSED(wParam), LPARAM UNUSED(lParam)) {
 		return FALSE;
 	}
 };

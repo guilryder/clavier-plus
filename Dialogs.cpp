@@ -1405,7 +1405,7 @@ LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 
 // Command line shortcut settings
-INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM MY_UNUSED(lParam)) {
+INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM UNUSED(lParam)) {
 	switch (uMsg) {
 		
 		case WM_INITDIALOG:

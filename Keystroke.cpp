@@ -409,7 +409,7 @@ void Keystroke::keybdEvent(UINT vk, bool down) {
 
 
 // Simulate the typing of the keystroke
-void Keystroke::simulateTyping(HWND MY_UNUSED(hwndFocus), bool bSpecialKeys) const {
+void Keystroke::simulateTyping(HWND UNUSED(hwndFocus), bool bSpecialKeys) const {
 	const DWORD mod_code = getUnsidedModCode();
 	
 	// Press the special keys

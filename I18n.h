@@ -52,16 +52,14 @@ int getDefaultLanguage();
 
 // Memory representation of a string resource. Should only be used for low-level string resource
 // loading, when callers need to know the string length.
-#pragma warning(disable: 4200)
 struct STRING_RESOURCE {
 	WORD length;
-	WCHAR strbuf[];
+	WCHAR strbuf[] SUPPRESS_WARNING(4200);
 	
 	void copy(LPTSTR dest_strbuf, int buf_length) const {
 		lstrcpyn(dest_strbuf, strbuf, buf_length);
 	}
 };
-#pragma warning(default: 4200)
 
 // Loads a string for getLanguage() locale.
 const STRING_RESOURCE* loadStringResource(UINT id);
