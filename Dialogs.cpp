@@ -186,20 +186,19 @@ static SIZEPOS aSizePos[] = {
 };
 
 
-static void createAndAddShortcut(LPCTSTR pszCommand = NULL, bool bSupportFileOpen = false);
+static void createAndAddShortcut(LPCTSTR pszCommand = nullptr, bool support_file_open = false);
 static Shortcut* createShortcut();
 static void addCreatedShortcut(Shortcut* psh);
 
 
-void createAndAddShortcut(LPCTSTR pszCommand, bool bSupportFileOpen) {
+void createAndAddShortcut(LPCTSTR pszCommand, bool support_file_open) {
 	Shortcut *const psh = createShortcut();
 	if (psh) {
 		if (pszCommand) {
 			psh->m_bCommand = true;
 			psh->m_sCommand = pszCommand;
-			PathQuoteSpaces(psh->m_sCommand.getBuffer(MAX_PATH));
 		}
-		psh->m_bSupportFileOpen = bSupportFileOpen;
+		psh->m_bSupportFileOpen = support_file_open;
 		addCreatedShortcut(psh);
 	}
 }
@@ -427,11 +426,10 @@ void FileMenuItem::drawItem(DRAWITEMSTRUCT& dis) {
 
 
 void FileMenuItem::execute() {
-	TCHAR pszPath[MAX_PATH];
-	if (!getShellLinkTarget(m_path, pszPath)) {
-		lstrcpy(pszPath, m_path);
-	}
-	createAndAddShortcut(pszPath);
+	Shortcut *const shortcut = createShortcut();
+	VERIFV(shortcut);
+	resolveLinkFile(m_path, shortcut);
+	addCreatedShortcut(shortcut);
 }
 
 
@@ -616,9 +614,10 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		
 		case ID_ADD_FOLDER:
 			{
-				TCHAR pszFolder[MAX_PATH] = _T("");
-				if (browseForFolder(e_hdlgMain, NULL, pszFolder)) {
-					createAndAddShortcut(pszFolder, true);
+				TCHAR folder[MAX_PATH] = _T("");
+				if (browseForFolder(e_hdlgMain, NULL, folder)) {
+					PathQuoteSpaces(folder);
+					createAndAddShortcut(folder, /* support_file_open= */ true);
 				}
 			}
 			break;

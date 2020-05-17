@@ -20,6 +20,7 @@
 #include "StdAfx.h"
 #include "Global.h"
 #include "Com.h"
+#include "Shortcut.h"
 
 #include <intshcut.h>
 #include <msi.h>
@@ -576,23 +577,24 @@ bool getSpecialFolderPath(int csidl, LPTSTR path) {
 }
 
 
-// Get the target of a file:
-// If the file is a shortcut, return its target; handle all known cases:
+// Populates a shortcut with the target of a link file.
+// Handles special cases natively:
 // - installer shortcuts (MSI API)
 // - IUniformResourceLocator shortcuts
 // - IShellLink shortcuts
-// If the file is a normal file, return its path unchanged
-bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path) {
-	*target_path = _T('\0');
+// Does not natively handle shortcuts to UWP apps.
+void resolveLinkFile(LPCTSTR link_file, Shortcut* shortcut) {
+	shortcut->m_bCommand = true;
+	String& cmdline = shortcut->m_sCommand;
 	
 	TCHAR pszProductCode[39];
 	TCHAR pszComponentCode[39];
-	if (MsiGetShortcutTarget(link_file, pszProductCode, NULL, pszComponentCode)) {
+	if (!MsiGetShortcutTarget(link_file, pszProductCode, NULL, pszComponentCode)) {
 		DWORD buf = MAX_PATH;
-		MsiGetComponentPath(pszProductCode, pszComponentCode, target_path, &buf);
-		
-		if (*target_path) {
-			return true;
+		MsiGetComponentPath(pszProductCode, pszComponentCode, cmdline.getBuffer(buf), &buf);
+		if (cmdline.isSome()) {
+			PathQuoteSpaces(cmdline.get());
+			return;
 		}
 	}
 	
@@ -605,8 +607,8 @@ bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path) {
 			if (SUCCEEDED(persist_file->Load(link_file, STGM_READ)) &&
 					SUCCEEDED(url_locator->GetURL(&url)) &&
 					url && *url) {
-				lstrcpyn(target_path, url, MAX_PATH);
-				return true;
+				cmdline = url;
+				return;
 			}
 		}
 	}
@@ -615,18 +617,31 @@ bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path) {
 	CoPtr<IShellLink> shell_link(CLSID_ShellLink);
 	if (shell_link) {
 		auto persist_file = shell_link.queryInterface<IPersistFile>();
-		if (persist_file) {
-			if (SUCCEEDED(persist_file->Load(link_file, STGM_READ)) &&
-					SUCCEEDED(shell_link->Resolve(NULL, MAKELONG(SLR_NO_UI | SLR_NOUPDATE, 1000)))) {
-				shell_link->GetPath(target_path, MAX_PATH, NULL, 0);
-				if (*target_path) {
-					return true;
+		if (persist_file &&
+				SUCCEEDED(persist_file->Load(link_file, STGM_READ)) &&
+				SUCCEEDED(shell_link->Resolve(nullptr, MAKELONG(SLR_NO_UI | SLR_NOUPDATE, 1000))) &&
+				SUCCEEDED(shell_link->GetPath(cmdline.getBuffer(MAX_PATH), MAX_PATH, nullptr, SLGP_RAWPATH))) {
+			PathQuoteSpaces(cmdline.get());
+			
+			TCHAR args[MAX_PATH];
+			if (SUCCEEDED(shell_link->GetArguments(args, arrayLength(args))) && args[0]) {
+				cmdline += _T(' ');
+				cmdline += args;
+			}
+			if (cmdline.isSome()) {
+				shell_link->GetWorkingDirectory(shortcut->m_sDirectory.getBuffer(MAX_PATH), MAX_PATH);
+				int show;
+				if (SUCCEEDED(shell_link->GetShowCmd(&show))) {
+					shortcut->m_nShow = show;
 				}
+				return;
 			}
 		}
 	}
 	
-	return false;
+	// Unsupported link file type: use its path as-is.
+	cmdline = link_file;
+	PathQuoteSpaces(cmdline.getBuffer(MAX_PATH));
 }
 
 

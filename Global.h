@@ -24,6 +24,11 @@
 #include "MyString.h"
 
 
+namespace shortcut {
+class Shortcut;
+}
+
+
 const size_t bufString = 128;
 const size_t bufHotKey = 128;
 const size_t bufCode = 32;
@@ -197,7 +202,7 @@ bool setDialogBoxDirectory(HWND hwnd, LPCTSTR directory);
 //------------------------------------------------------------------------
 
 bool getSpecialFolderPath(int csidl, LPTSTR path);
-bool getShellLinkTarget(LPCTSTR link_file, LPTSTR target_path);
+void resolveLinkFile(LPCTSTR link_file, shortcut::Shortcut* shortcut);
 
 
 //------------------------------------------------------------------------
