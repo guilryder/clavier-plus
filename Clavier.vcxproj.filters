@@ -10,12 +10,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="*.bmp;*.ico">
-      <Filter>Resource</Filter>
-    </Image>
-    <None Include="*.cur">
-      <Filter>Resource</Filter>
-    </None>
     <ResourceCompile Include="Clavier.rc">
       <Filter>Resource</Filter>
     </ResourceCompile>
@@ -24,12 +18,122 @@
     </Manifest>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Distrib\*">
-      <Filter>Distrib</Filter>
-    </None>
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="Dialogs.cpp" />
+    <ClCompile Include="Global.cpp" />
+    <ClCompile Include="I18n.cpp" />
+    <ClCompile Include="Intrinsics.cpp" />
+    <ClCompile Include="Keystroke.cpp" />
+    <ClCompile Include="Shortcut.cpp" />
+    <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="*.h" />
-    <ClCompile Include="*.cpp" />
+    <ClInclude Include="App.h" />
+    <ClInclude Include="Com.h" />
+    <ClInclude Include="Dialogs.h" />
+    <ClInclude Include="Global.h" />
+    <ClInclude Include="I18n.h" />
+    <ClInclude Include="Keystroke.h" />
+    <ClInclude Include="MyString.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="Shortcut.h" />
+    <ClInclude Include="StdAfx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Add.ico">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="App.ico">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="Combo.ico">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="Delete.ico">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="DonateEN.bmp">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="DonateFR.bmp">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="DonateZH_CN.bmp">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="Edit.ico">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="Target.bmp">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="TargetOn.bmp">
+      <Filter>Resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Distrib\Clavier.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier.iss">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_de.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_el.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_en.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_fr.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_it.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_nl.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_pl.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_pt-BR.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_ru.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_sk.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_zh-CN.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier64.iss">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\ClavierDoc_de.html">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\ClavierDoc_en.html">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\ClavierDoc_fr.html">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\ClavierDoc_nl.html">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\ClavierDoc_pt-BR.html">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\ClavierDoc_ru.html">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Target.cur">
+      <Filter>Resource</Filter>
+    </None>
   </ItemGroup>
 </Project>

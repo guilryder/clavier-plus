@@ -107,24 +107,70 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Image Include="*.bmp;*.ico" />
-    <None Include="*.cur" />
     <ResourceCompile Include="Clavier.rc" />
     <Manifest Include="Clavier.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Distrib\*" Exclude="Distrib\*.mus;Distrib\*.bat" />
+    <None Include="Distrib\Clavier.ini" />
+    <None Include="Distrib\Clavier.iss" />
+    <None Include="Distrib\Clavier64.iss" />
+    <None Include="Distrib\ClavierDoc_de.html" />
+    <None Include="Distrib\ClavierDoc_en.html" />
+    <None Include="Distrib\ClavierDoc_fr.html" />
+    <None Include="Distrib\ClavierDoc_nl.html" />
+    <None Include="Distrib\ClavierDoc_pt-BR.html" />
+    <None Include="Distrib\ClavierDoc_ru.html" />
+    <None Include="Distrib\Clavier_de.ini" />
+    <None Include="Distrib\Clavier_el.ini" />
+    <None Include="Distrib\Clavier_en.ini" />
+    <None Include="Distrib\Clavier_fr.ini" />
+    <None Include="Distrib\Clavier_it.ini" />
+    <None Include="Distrib\Clavier_nl.ini" />
+    <None Include="Distrib\Clavier_pl.ini" />
+    <None Include="Distrib\Clavier_pt-BR.ini" />
+    <None Include="Distrib\Clavier_ru.ini" />
+    <None Include="Distrib\Clavier_sk.ini" />
+    <None Include="Distrib\Clavier_zh-CN.ini" />
+    <None Include="Target.cur" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="*.h" />
-    <ClCompile Include="*.cpp" Exclude="Intrinsics.cpp;StdAfx.cpp" />
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="Dialogs.cpp" />
+    <ClCompile Include="Global.cpp" />
+    <ClCompile Include="I18n.cpp" />
     <ClCompile Include="Intrinsics.cpp">
       <PrecompiledHeader />
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
+    <ClCompile Include="Keystroke.cpp" />
+    <ClCompile Include="Shortcut.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App.h" />
+    <ClInclude Include="Com.h" />
+    <ClInclude Include="Dialogs.h" />
+    <ClInclude Include="Global.h" />
+    <ClInclude Include="I18n.h" />
+    <ClInclude Include="Keystroke.h" />
+    <ClInclude Include="MyString.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="Shortcut.h" />
+    <ClInclude Include="StdAfx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Add.ico" />
+    <Image Include="App.ico" />
+    <Image Include="Combo.ico" />
+    <Image Include="Delete.ico" />
+    <Image Include="DonateEN.bmp" />
+    <Image Include="DonateFR.bmp" />
+    <Image Include="DonateZH_CN.bmp" />
+    <Image Include="Edit.ico" />
+    <Image Include="Target.bmp" />
+    <Image Include="TargetOn.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

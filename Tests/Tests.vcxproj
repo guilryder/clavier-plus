@@ -55,8 +55,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="*.h" />
-    <ClCompile Include="*.cpp" Exclude="StdAfx.cpp" />
+    <ClCompile Include="TestUtil.cpp" />
+    <ClCompile Include="ComTest.cpp" />
+    <ClCompile Include="GlobalTest.cpp" />
+    <ClCompile Include="I18nTest.cpp" />
+    <ClCompile Include="KeystrokeTest.cpp" />
+    <ClCompile Include="MyStringTest.cpp" />
+    <ClCompile Include="ShortcutTest.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -65,6 +70,10 @@
     <ProjectReference Include="..\Clavier.vcxproj">
       <Project>{66754282-6fa1-49d0-97c3-8793c5c3a757}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="TestUtil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

@@ -1,7 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="*.h" />
-    <ClCompile Include="*.cpp" />
+    <ClCompile Include="TestUtil.cpp" />
+    <ClCompile Include="ComTest.cpp" />
+    <ClCompile Include="GlobalTest.cpp" />
+    <ClCompile Include="I18nTest.cpp" />
+    <ClCompile Include="KeystrokeTest.cpp" />
+    <ClCompile Include="MyStringTest.cpp" />
+    <ClCompile Include="ShortcutTest.cpp" />
+    <ClCompile Include="StdAfx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="TestUtil.h" />
   </ItemGroup>
 </Project>
