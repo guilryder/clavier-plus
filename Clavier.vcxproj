@@ -123,6 +123,7 @@
     <None Include="Distrib\Clavier_de.ini" />
     <None Include="Distrib\Clavier_el.ini" />
     <None Include="Distrib\Clavier_en.ini" />
+    <None Include="Distrib\Clavier_es.ini" />
     <None Include="Distrib\Clavier_fr.ini" />
     <None Include="Distrib\Clavier_it.ini" />
     <None Include="Distrib\Clavier_nl.ini" />

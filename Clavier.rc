@@ -2466,6 +2466,239 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
+// Spanish (Venezuela) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESV)
+LANGUAGE LANG_SPANISH, SUBLANG_SPANISH_VENEZUELA
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Acceso directo"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Acceso directo:",IDC_STATIC,7,8,50,8
+    EDITTEXT        IDCTXT,66,6,154,12,ES_AUTOHSCROLL
+    CONTROL         "Di&ferenciar teclas especiales a la izquierda y a la derecha",IDCCHK_DISTINGUISH_LEFT_RIGHT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,197,10
+    LTEXT           "Nota:\n– puede usarse tecla Windows\n– no se dispone de algunos accesos directos especiales",IDC_STATIC,6,42,216,29,SS_NOPREFIX
+    GROUPBOX        "Condición para activar",IDC_STATIC,6,84,214,66
+    LTEXT           "Tecla Bloq&Mayús:",IDC_STATIC,12,98,56,8
+    COMBOBOX        IDCCBO_CAPSLOCK,120,96,94,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Tecla Bloq&Num:",IDC_STATIC,12,116,50,8
+    COMBOBOX        IDCCBO_NUMLOCK,120,114,94,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Tecla Bloq&Despl",IDC_STATIC,12,134,50,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,120,132,94,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Cancelar",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "Aceptar",IDOK,163,159,57,14
+END
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Clavier+"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "Agregar",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "Borrar",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "Editar",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "Aviso: De ser visible esta ventana se inhabilita todo acceso directo.",IDCLBL_HELP,90,114,123,17,0,WS_EX_STATICEDGE
+    LTEXT           "Cifra de accesos directos:",IDCLBL_SHORTCUTSCOUNT,228,114,84,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,314,114,30,8,SS_NOPREFIX
+    CONTROL         "&Ejecutar Clavier+ al inicio de Windows",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,228,124,137,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
+    CONTROL         "Escribir &texto",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,58,10
+    CONTROL         "E&jecutar programa o mostrar sitio de Internet",IDCOPT_COMMAND,
+                    "Button",BS_AUTORADIOBUTTON,216,138,161,10
+    EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
+    ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
+    PUSHBUTTON      "Opciones a&vanzadas...",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "&Prueba",IDCCMD_TEST,354,168,48,14
+    LTEXT           "&Habilitar para:",IDCLBL_PROGRAMS,6,194,46,8
+    COMBOBOX        IDCCBO_PROGRAMS,54,192,106,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,162,192,228,12,ES_AUTOHSCROLL
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    LTEXT           "&Descripción:",IDCLBL_DESCRIPTION,6,210,40,8
+    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "&Ayuda",IDCCMD_HELP,60,227,48,14
+    PUSHBUTTON      "C&opiar lista",IDCCMD_COPYLIST,110,227,48,14
+    PUSHBUTTON      "Idio&ma...",IDCCMD_LANGUAGE,160,227,48,14
+    PUSHBUTTON      "Detalle&s...",IDCCMD_ABOUT,210,227,48,14
+    PUSHBUTTON      "Sal&ir",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "Aceptar",IDOK,360,227,48,14
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 157, 144
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "Acerca de Clavier"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    CONTROL         "Clavier+ 11.0.0",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,34,6,101,8
+    LTEXT           "Derechos reservados © 2000-2020\nGuillaume Ryder\nPrograma bajo licencia GPLv3",IDC_STATIC,34,20,116,28,SS_NOPREFIX
+    GROUPBOX        "Autor",IDC_STATIC,6,48,145,44
+    CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
+    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    CONTROL         "Traducción: Ricardo A. Rivas",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    DEFPUSHBUTTON   "Aceptar",IDOK,101,124,50,14,WS_GROUP
+END
+
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Programa a ejecutar"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Línea de comandos:",IDC_STATIC,6,8,64,8
+    EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
+    LTEXT           "&Directorio:",IDC_STATIC,6,26,34,8
+    EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
+    LTEXT           "&Ventana:",IDC_STATIC,6,44,30,8
+    COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Cambiar directorio en recuadros Archivo/Abrir (línea de comandos debería ser una carpeta)",IDCCHK_SUPPORTFILEOPEN,
+                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,168,18
+    PUSHBUTTON      "Cancelar",IDCANCEL,78,93,56,14
+    DEFPUSHBUTTON   "Aceptar",IDOK,140,93,57,14
+END
+
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Simular pulsar tecla"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Pulsación:",IDC_STATIC,7,8,33,8
+    EDITTEXT        IDCTXT,48,6,185,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Cancelar",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "Aceptar",IDOK,176,30,57,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_CONTEXT MENU
+BEGIN
+    POPUP " "
+    BEGIN
+        POPUP "&Programa"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Aplicación"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Carácter especial"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "A&brir carpeta...",           ID_ADD_FOLDER
+        MENUITEM "&Escribir texto...",          ID_ADD_TEXT
+        MENUITEM "E&jecutar programa...",       ID_ADD_COMMAND
+        MENUITEM "&Mostrar sitio de Internet...", ID_ADD_WEBSITE
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM "&Simular pulsar tecla: [...]", ID_TEXT_SENDKEYS
+        MENUITEM "Ejecutar &programa: [[...]]", ID_TEXT_COMMAND
+        MENUITEM "Esp&erar 100 ms antes de detectar foco: []", ID_TEXT_WAIT
+        MENUITEM "Escribir &texto en modo de bajo nivel: [|...|]", ID_TEXT_LOWLEVEL
+        MENUITEM SEPARATOR
+        POPUP "Escribir &carácter"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Escribir c&arácter especial "
+        BEGIN
+            MENUITEM "E&scribir barras invertidas: \\\\", ID_TEXT_BACKSLASH
+            MENUITEM "Escribir &corchete de apertura: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Esc&ribir corchete de cierre: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Escribir llave de &apertura: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Escribir &llave de cierre: \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Escribir trazo &vertical: \\|", ID_TEXT_PIPE
+        END
+        POPUP "Ejecutar c&omando especial "
+        BEGIN
+            MENUITEM "&Esperar: [{Wait,<duración>}]", ID_TEXT_CMD_WAIT
+            MENUITEM "&Detectar ventana enfocada: [{Focus,<demora>,<ventana>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Copiar: [{Copy,<texto>}]",   ID_TEXT_CMD_COPY
+            MENUITEM "&Botón de ratón: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "&Mover ratón a (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "Mo&ver ratón a (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Mover &rató&n a: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "R&ueda de ratón: [{MouseWheel,<+/- cifra de pulsaciones>}]", ID_TEXT_CMD_MOUSE_WHEEL
+        END
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Configuración...",           ID_TRAY_SETTINGS
+        MENUITEM "C&opiar lista",               ID_TRAY_COPYLIST
+        MENUITEM "Ca&rgar configuración...",    ID_TRAY_INI_LOAD
+        MENUITEM "&Unir configuración con...",  ID_TRAY_INI_MERGE
+        MENUITEM "&Guardar configuración...",   ID_TRAY_INI_SAVE
+        MENUITEM "&Salir",                      ID_TRAY_QUIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    ERR_INVALID_SHORTCUT    "Se requiere acceso directo válido."
+    ERR_SHORTCUT_DUPLICATE  "Acceso directo por tecla duplicado: %s.\nEs necesario modificarlo o borrar uno de los duplicados."
+    ERR_SAVING_INI          "Imposible guardar configuración."
+    ERR_LOADING_INI         "Imposible cargar configuración."
+    ERR_TARGET              "No se ha elegido programa alguno.\nEs necesario usar ratón para arrastrar cursor\n a ventana de programa a elegir."
+    ASK_QUIT                "¿Salir de Clavier+?\nEso inhabilita todo acceso directo personalizado.\n\n(Pulsar tecla Shift junto con botón\npara ignorar este mensaje)."
+    ASK_DELETE              "¿Borrar este acceso directo?\n\n(Pulsar tecla Shift junto con botón\npara ignorar este mensaje)."
+    MSG_COPYLIST            "Se ha copiado lista de accesos directos.\n\nPuede pegarse con Ctrl+V en un procesador/editor de textos u hoja de cálculo."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_TOKENS              "Español (Venezuela)"
+    IDS_COLUMNS             "Acción;Acceso directo;Condiciones;Usos;Descripción"
+    IDS_LANGUAGE_CODE       "es"
+    IDS_CONDITIONS          "ninguna;debe estar activa;debe estar inactiva"
+    IDS_CONDITION_KEYS      "MND"
+    IDS_INI_FILTER          "Archivos INI|*.ini|"
+    IDS_BROWSEDIR           "Elegir directorio de inicio de comando."
+    IDS_PROGRAMS            "todo programa excepto;solamente estos programas"
+    IDS_TOOLTIPS            "Agregar acceso directo;Borrar acceso directo seleccionado;Editar acceso directo seleccionado;Pulsar y arrastrar para seleccionar ventana de programa"
+    IDS_DONATEURL           "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD"
+    IDS_SHOW_OPTIONS        "Ventana normal;Minimizada;Maximizada"
+END
+
+#endif    // Spanish (Venezuela) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // Greek (Greece) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ELL)

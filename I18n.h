@@ -32,6 +32,7 @@ enum {
 	langZH_CN,
 	langDE,
 	langEN,
+	langES,
 	langFR,
 	langIT,
 	langNL,

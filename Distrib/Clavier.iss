@@ -53,6 +53,7 @@ ArchitecturesAllowed=x64
 Name: chinesesimpl; MessagesFile: compiler:Languages\ChineseSimplified.isl
 Name: german; MessagesFile: compiler:Languages\German.isl
 Name: english; MessagesFile: compiler:Default.isl
+Name: spanish; MessagesFile: compiler:Languages\Spanish.isl
 Name: french; MessagesFile: compiler:Languages\French.isl
 Name: italian; MessagesFile: compiler:Languages\Italian.isl
 Name: dutch; MessagesFile: compiler:Languages\Dutch.isl
@@ -67,6 +68,7 @@ Source: {#BinDir}\{#CompilOutputDir}{#AppExeName}; DestDir: {app}; Flags: ignore
 Source: {#BinDir}\Clavier_zh-CN.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: chinesesimpl
 Source: {#BinDir}\Clavier_de.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: german
 Source: {#BinDir}\Clavier_en.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: english
+Source: {#BinDir}\Clavier_es.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: spanish
 Source: {#BinDir}\Clavier_fr.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: french
 Source: {#BinDir}\Clavier_it.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: italian
 Source: {#BinDir}\Clavier_nl.ini; DestDir: {app}; Flags: ignoreversion onlyifdoesntexist; DestName: {#IniFile}; Languages: dutch
@@ -81,6 +83,7 @@ Name: {group}\{#AppName}; Filename: {app}\{#AppExeName}
 Name: {group}\帮助; Filename: {#HelpFileBaseUrl}zh-CN.html; Languages: chinesesimpl
 Name: {group}\Hilfe; Filename: {#HelpFileBaseUrl}de.html; Languages: german
 Name: {group}\Help; Filename: {#HelpFileBaseUrl}en.html; Languages: english
+Name: {group}\Ayuda; Filename: {#HelpFileBaseUrl}en.html; Languages: spanish
 Name: {group}\Aide; Filename: {#HelpFileBaseUrl}fr.html; Languages: french
 Name: {group}\Aiuto; Filename: {#HelpFileBaseUrl}it.html; Languages: italian
 Name: {group}\Help; Filename: {#HelpFileBaseUrl}nl.html; Languages: dutch
