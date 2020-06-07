@@ -930,7 +930,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Πσρρκθι;ίπλϋκ;Κξδ;ΠΰηλθχΰςόΛεβΰÿΟπΰβΰÿ;Ξοθρΰνθε;Κξμΰνδΰ;Òεκρς;Δθπεκςξπθÿ;Ξκνξ;ΟξδδεπζκΰΞςκπϋςθÿΤΰιλΰ;Οπξγπΰμμϋ;ΒρευΟπξγπΰμμΚπξμε;Νες;ίηϋκ;Πΰημεπ;Ρςξλαφϋ;Ρξπςθπξβκΰ;Νξπμΰλόνξ;Ρβεπνσςξ;Πΰηβεπνσςξ;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Δΰ;Νες;Θροξλόηξβΰνθι"
+    IDS_TOKENS              "Πσρρκθι;ίπλϋκ;Κξδ;ΠΰηλθχΰςόΛεβΰÿΟπΰβΰÿ;Ξοθρΰνθε;Κξμΰνδΰ;Òεκρς;Δθπεκςξπθÿ;Ξκνξ;ΟξδδεπζκΰΞςκπϋςθÿΤΰιλΰ;Οπξγπΰμμϋ;ΒρευΟπξγπΰμμΚπξμε;ίηϋκ;Πΰημεπ;Ρςξλαφϋ;Ρξπςθπξβκΰ;Νξπμΰλόνξ;Ρβεπνσςξ;Πΰηβεπνσςξ;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Δΰ;Νες;Θροξλόηξβΰνθι"
     IDS_COLUMNS             "Ρξδεπζθμξε;ίπλϋκ;Σρλξβθÿ;Θροξλόηξβΰνθι;Ξοθρΰνθε"
     IDS_LANGUAGE_CODE       "ru"
     IDS_CONDITIONS          "νες σρλξβθι;δξλζνξ αϋςό βκλ.;δξλζνξ αϋςό βϋκλ."
@@ -1262,7 +1262,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Deutsch;Verknόpfung;Code;LinksRechtsUnterscheiden;Beschreibung;Befehl;Text;Ordner;Fenster;DateiΦffnenStόtzen;Programme;AlleProgrammeAber;Kein;Sprache;Grφsse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Links;Rechts;Feststell;Num;Rollen;Ja;Nein;Verwendungszδhlung"
+    IDS_TOKENS              "Deutsch;Verknόpfung;Code;LinksRechtsUnterscheiden;Beschreibung;Befehl;Text;Ordner;Fenster;DateiΦffnenStόtzen;Programme;AlleProgrammeAber;Sprache;Grφsse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Links;Rechts;Feststell;Num;Rollen;Ja;Nein;Verwendungszδhlung"
     IDS_COLUMNS             "Inhalt;Hotkey;Bedingung;Verwendungszδhlung;Beschreibung"
     IDS_LANGUAGE_CODE       "de"
     IDS_CONDITIONS          "ohne Bedingung;eingeschaltet;ausgeschaltet"
@@ -1493,7 +1493,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "English;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;None;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages"
+    IDS_TOKENS              "English;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages"
     IDS_COLUMNS             "Contents;Shortcut;Conditions;Usages;Description"
     IDS_LANGUAGE_CODE       "en"
     IDS_CONDITIONS          "no condition;must be on;must be off"
@@ -1752,7 +1752,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Franηais;Raccourci;Code;DistinguerGaucheDroite;Description;Commande;Texte;Rιpertoire;Fenκtre;GιrerFichierOuvrir;Programmes;TousProgrammesSauf;Aucun;Langue;Taille;Colonnes;Tri;Normale;Rιduite;Agrandie;Win;Ctrl;Maj;Alt;Gauche;Droite;VerrMaj;VerrNum;ArrκtDιfil;Oui;Non;Utilisations"
+    IDS_TOKENS              "Franηais;Raccourci;Code;DistinguerGaucheDroite;Description;Commande;Texte;Rιpertoire;Fenκtre;GιrerFichierOuvrir;Programmes;TousProgrammesSauf;Langue;Taille;Colonnes;Tri;Normale;Rιduite;Agrandie;Win;Ctrl;Maj;Alt;Gauche;Droite;VerrMaj;VerrNum;ArrκtDιfil;Oui;Non;Utilisations"
     IDS_COLUMNS             "Contenu;Raccourci;Conditions;Utilisations;Description"
     IDS_LANGUAGE_CODE       "fr"
     IDS_CONDITIONS          "pas de condition;doit κtre activι;doit κtre dιsactivι"
@@ -1984,7 +1984,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Italiano;Scorciatoia;Codice;DistinguiSinistraDestra;Descrizione;Comando;Testo;Cartella;Finestra;SupportaAperturaFile;Programmi;TuttiprogrammiEccetto;Nessuno;Lingua;Grandezza;Colonne;Ordinamento;Normale;Ridotta;Ingrandita;Win;Ctrl;Shift;Alt;Sinistra;Destra;CapsLock;NumLock;ScrollLock;Si;No;Usi"
+    IDS_TOKENS              "Italiano;Scorciatoia;Codice;DistinguiSinistraDestra;Descrizione;Comando;Testo;Cartella;Finestra;SupportaAperturaFile;Programmi;TuttiprogrammiEccetto;Lingua;Grandezza;Colonne;Ordinamento;Normale;Ridotta;Ingrandita;Win;Ctrl;Shift;Alt;Sinistra;Destra;CapsLock;NumLock;ScrollLock;Si;No;Usi"
     IDS_COLUMNS             "Contenuto;Scorciatoia;Condizioni;Usi;Descrizione"
     IDS_LANGUAGE_CODE       "it"
     IDS_CONDITIONS          "nessuna condizione;deve essere attivato;deve essere disattivato"
@@ -2215,7 +2215,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Portuguκs brasileiro;Atalho;Cσdigo;DistinguirEsquerdaDireita;Descriηγo;Comando;Texto;Pasta;Janela;SuportaAberturaArquivo;Programas;TodosProgramasExceto;Nenhum;Idioma;Tamanho;Colunas;Ordenaηγo;Normal;Minimizada;Maximizada;Win;Ctrl;Shift;Alt;Esquerda;Direita;CapsLock;NumLock;ScrollLock;Sim;Nγo;Usos"
+    IDS_TOKENS              "Portuguκs brasileiro;Atalho;Cσdigo;DistinguirEsquerdaDireita;Descriηγo;Comando;Texto;Pasta;Janela;SuportaAberturaArquivo;Programas;TodosProgramasExceto;Idioma;Tamanho;Colunas;Ordenaηγo;Normal;Minimizada;Maximizada;Win;Ctrl;Shift;Alt;Esquerda;Direita;CapsLock;NumLock;ScrollLock;Sim;Nγo;Usos"
     IDS_COLUMNS             "Conteϊdo;Atalho;Condiηυes;Usos;Descriηγo"
     IDS_LANGUAGE_CODE       "pt-BR"
     IDS_CONDITIONS          "nenhuma condiηγo;deve estar ativada;deve estar desativada"
@@ -2681,7 +2681,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Ελληνικά;Συντόμευση;Κώδικας;ΔιάκρισηΑριστερούΔεξιού;Περιγραφή;Εντολή;Κείμενο;Κατάλογος;Παράθυρο;ΥποστήριξηΑνοίγματοςΑρχείου;Προγράμματα;ΌλαΤαΠρογράμματαΕκτός;Κανένα;Γλώσσα;Μέγεθος;Στήλες;Ταξινόμηση;Κανονικό παράθυρο;Ελαχιστοποιημένο;Μεγιστοποιημένο;Win;Ctrl;Shift;Alt;Αριστερό;Δεξί;CapsLock;NumLock;ScrollLock;Ναι;Όχι;Χρήσεις"
+    IDS_TOKENS              "Ελληνικά;Συντόμευση;Κώδικας;ΔιάκρισηΑριστερούΔεξιού;Περιγραφή;Εντολή;Κείμενο;Κατάλογος;Παράθυρο;ΥποστήριξηΑνοίγματοςΑρχείου;Προγράμματα;ΌλαΤαΠρογράμματαΕκτός;Γλώσσα;Μέγεθος;Στήλες;Ταξινόμηση;Κανονικό παράθυρο;Ελαχιστοποιημένο;Μεγιστοποιημένο;Win;Ctrl;Shift;Alt;Αριστερό;Δεξί;CapsLock;NumLock;ScrollLock;Ναι;Όχι;Χρήσεις"
     IDS_COLUMNS             "Περιεχόμενα;Συντόμευση;Συνθήκες;Χρήσεις;Περιγραφή"
     IDS_LANGUAGE_CODE       "el"
     IDS_CONDITIONS          "χωρίς όρους;πρέπει να είναι ανοιχτό;πρέπει να είναι κλειστό"

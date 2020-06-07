@@ -45,7 +45,6 @@ enum {
 	tokSupportFileOpen,
 	tokPrograms,
 	tokAllProgramsBut,
-	tokNone,
 	tokLanguage,
 	tokSize,
 	tokColumns,

@@ -195,10 +195,6 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			{
 				TCHAR pszHotKey[bufHotKey];
 				s_keystroke.getKeyName(pszHotKey);
-				if (!*pszHotKey) {
-					lstrcpy(pszHotKey, getToken(tokNone));
-				}
-				
 				SetWindowText(hWnd, pszHotKey);
 				const int len = lstrlen(pszHotKey);
 				Edit_SetSel(hWnd, len,len);
