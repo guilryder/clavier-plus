@@ -50,7 +50,7 @@ ArchitecturesAllowed=x64
 #endif
 
 [Languages]
-Name: chinesesimpl; MessagesFile: compiler:Languages\ChineseSimplified.isl
+Name: chinesesimpl; MessagesFile: compiler:issrc\Files\Languages\Unofficial\ChineseSimplified.isl
 Name: german; MessagesFile: compiler:Languages\German.isl
 Name: english; MessagesFile: compiler:Default.isl
 Name: spanish; MessagesFile: compiler:Languages\Spanish.isl
@@ -60,7 +60,7 @@ Name: dutch; MessagesFile: compiler:Languages\Dutch.isl
 Name: polish; MessagesFile: compiler:Languages\Polish.isl
 Name: portuguese; MessagesFile: compiler:Languages\BrazilianPortuguese.isl
 Name: slovak; MessagesFile: compiler:Languages\Slovak.isl
-Name: greek; MessagesFile: compiler:Languages\Greek.isl
+Name: greek; MessagesFile: compiler:issrc\Files\Languages\Unofficial\Greek.isl
 Name: russian; MessagesFile: compiler:Languages\Russian.isl
 
 [Files]
