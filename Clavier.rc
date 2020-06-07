@@ -2025,7 +2025,7 @@ BEGIN
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
-    CONTROL         "Traduηγo : Milton Chaves de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,123,8
+    CONTROL         "Traduηγo: Milton Chaves de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,123,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
@@ -2257,9 +2257,9 @@ BEGIN
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    CONTROL         "Vertaling: Van Hees",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,144,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
-    CONTROL         "Vertaling Van Hees",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,144,8
 END
 
 IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
@@ -2490,7 +2490,7 @@ BEGIN
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
     LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
-    CONTROL         "Μετάφραση : geogeo  (www.geogeo.gr)",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,130,8
+    CONTROL         "Μετάφραση: geogeo (www.geogeo.gr)",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,126,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "Εντάξει",IDOK,101,124,50,14,WS_GROUP
 END
