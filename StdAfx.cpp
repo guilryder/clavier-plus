@@ -30,14 +30,14 @@
 // Implement the new and delete operators with a Windows heap.
 // Needed to remove all dependencies to Visual C++ runtime DLLs.
 
-extern HANDLE e_hHeap;
+extern HANDLE e_heap;
 
 void* operator new(size_t size) {
-	return HeapAlloc(e_hHeap, 0, size);
+	return HeapAlloc(e_heap, 0, size);
 }
 
 void operator delete(void* p) {
-	HeapFree(e_hHeap, 0, p);
+	HeapFree(e_heap, 0, p);
 }
 
 void operator delete(void* p, size_t) {

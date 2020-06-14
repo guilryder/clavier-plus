@@ -31,19 +31,20 @@ inline bool isAsyncKeyDown(UINT vk) {
 	return toBool(GetAsyncKeyState(vk) & 0x8000);
 }
 
-const BYTE keyDownMask = 0x80;
+constexpr BYTE keyDownMask = 0x80;
 
-const int kRightModCodeOffset = 16;
+constexpr int kRightModCodeOffset = 16;
+constexpr DWORD kModCodeAll = ~0U;
 
 
-enum {
+enum KeystrokeConditionType {
 	condTypeShiftLock,
 	condTypeNumLock,
 	condTypeScrollLock,
 	condTypeCount
 };
 
-enum {
+enum KeystrokeCondition {
 	condIgnore,
 	condYes,
 	condNo,
@@ -60,11 +61,13 @@ public:
 	// Bitmask of the special keys mode codes of this shortcut.
 	// Bits 0..kRightModCodeOffset-1 are for the left special keys.
 	// Bits kRightModCodeOffset..2*kRightModCodeOffset-1 are for the right special keys.
+	// Each bitset follows the MOD_* constants convention.
 	// If m_sided is false, left and right special keys are not distinguished and only bits
 	// 0..kRightModCodeOffset-1 are taken into account.
 	DWORD m_sided_mod_code;
 	
-	int m_aCond[condTypeCount];
+	// Indexed by KeystrokeConditionType.
+	KeystrokeCondition m_conditions[condTypeCount];
 	
 	// True if m_sided_mod_code distinguishes between left and right special keys.
 	bool m_sided;
@@ -72,55 +75,93 @@ public:
 public:
 	
 	Keystroke() {
-		resetAll();
+		clear();
 	}
 	
-	void reset() {
+	// Completely resets this keystroke to the empty state.
+	void clear() {
+		clearKeys();
+		m_sided = false;
+		for (int i = 0; i < condTypeCount; i++) {
+			m_conditions[i] = condIgnore;
+		}
+	}
+	
+	// Resets the keys of this keystroke, but not the conditions or sided-ness.
+	void clearKeys() {
 		m_vk = 0;
 		m_sided_mod_code = 0;
 	}
 	
-	void resetAll() {
-		reset();
-		m_sided = false;
-		for (int i = 0; i < condTypeCount; i++) {
-			m_aCond[i] = condIgnore;
-		}
-	}
-	
 	
 	WORD getUnsidedModCode() const {
-		return (WORD)m_sided_mod_code | (WORD)(m_sided_mod_code >> kRightModCodeOffset);
+		return static_cast<WORD>(m_sided_mod_code) |
+		       static_cast<WORD>(m_sided_mod_code >> kRightModCodeOffset);
 	}
 	
-	void getKeyName(LPTSTR pszHotKey) const;
+	// Gets the human readable name of this keystroke.
+	void getDisplayName(LPTSTR output) const;
 	
-	void serialize(LPTSTR psz);
-	void simulateTyping(HWND hwndFocus, bool bSpecialKeys = true) const;
+	// Appends the display name of a virtual key code to output.
+	static void appendKeyName(UINT vk, LPTSTR output);
 	
-	void registerHotKey();
-	bool unregisterHotKey();
+	// Parses the given human readable name. Accepts the output of getDisplayName().
+	// May modify the input. Assumes the keystroke is initially cleared.
+	void parseDisplayName(LPTSTR input);
 	
-	bool match(const Keystroke& ks) const;
 	
+	// Simulate typing the keystroke: presses the keys down and up.
+	// Simulates special keys as unsided.
+	// If the keystroke is registered as a global hotkey, unregisters it before simulating it
+	// and re-registers it afterwards to avoid recursive calls.
+	// special_keys: whether to simulate the special keys too.
+	void simulateTyping(bool special_keys = true) const;
+	
+	// Simulates pressing or releasing a virtual key. Wrapper for keybd_event().
+	static void keybdEvent(UINT vk, bool down);
+	
+	
+	// Registers a global shortcut for this keystroke.
+	void registerHotKey() const;
+	
+	// Cancels an invocation of registerHotKey().
+	// Returns true if a hotkey was actually unregistered, false on noop.
+	bool unregisterHotKey() const;
+	
+	
+	// Returns true if this keystroke is a special case (a subset) of the given keystroke.
+	// Allows telling if two keystrokes conflict.
+	bool isSubset(const Keystroke& other) const;
+	
+	// Returns whether the system can release the special keys of this keystroke.
+	// Media keys do not support special keys releasing.
 	bool canReleaseSpecialKeys() const {
 		return (VK_BROWSER_BACK > m_vk) ||  // first media key
 		       (m_vk > VK_LAUNCH_APP2);     // last media key
 	}
 	
-	static bool askSendKeys(HWND hwnd_parent, Keystroke& rks);
-	
-	
-	static void keybdEvent(UINT vk, bool down);
-	static BYTE filterVK(BYTE vk) {
+	// Returns the canonical code of a virtual key code.
+	static BYTE canonicalizeKey(BYTE vk) {
 		return (vk == VK_CLEAR) ? VK_NUMPAD5 : vk;
 	}
+	
+	// Returns whether a virtual key code is extended
+	// according to the lParam argument of GetKeyNameText().
 	static bool isKeyExtended(UINT vk);
-	static void getKeyName(UINT vk, LPTSTR pszHotKey);
-	static HWND getKeyboardFocus();
-	static void catchKeyboardFocus(HWND& rhwndFocus, DWORD& ridThread);
-	static void detachKeyboardFocus(DWORD idThread);
-	static void releaseSpecialKeys(BYTE abKeyboard[]);
+	
+	// Returns the window that has the input focus.
+	static HWND getInputFocus();
+	
+	// Attaches the input focus to the current foreground window.
+	// Retrieves the new input window and thread.
+	static void catchKeyboardFocus(HWND* new_input_window, DWORD* new_input_thread);
+	
+	// Detaches the input focus from the given thread.
+	static void detachKeyboardFocus(DWORD input_thread);
+	
+	// Releases the special keys up in the given keyboard state.
+	// keyboard_state: see GetKeyboardState().
+	static void releaseSpecialKeys(BYTE keyboard_state[]);
 	
 	// Compares two keystrokes.
 	//
@@ -145,11 +186,26 @@ public:
 	//       and has some of the mod codes in remaining_mod_codes_mask.
 	int getModCodeSortKey(int mod_code, DWORD remaining_mod_codes_mask) const;
 	
+	// Asks the user to supply a keystroke. Blocks.
+	// Shows this keystroke as initial value in the dialog box.
+	// Stores the result in this instance.
+	// Returns true on success, false on cancellation.
+	//
+	// hwnd_parent: window to use as parent for the dialog box.
+	bool showEditDialog(HWND hwnd_parent);
+	
+	// Asks the user for a keystroke to simulate.
+	// Stores the result in this instance.
+	// Returns true on success, false on cancellation.
+	//
+	// hwnd_parent: window to use as parent for the dialog box.
+	bool showSendKeysDialog(HWND hwnd_parent);
+	
 private:
 	
-	static INT_PTR CALLBACK prcSendKeys(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	
-	static void releaseSpecialKey(BYTE vk, BYTE abKeyboard[]);
+	// Releases a key if it is down in the given keyboard state.
+	// keyboard_state: the state to read & update; see GetKeyboardState().
+	static void releaseKey(BYTE vk, BYTE keyboard_state[]);
 };
 
 
@@ -161,8 +217,9 @@ struct SpecialKey {
 	int tok;  // Token index of the name of the key
 };
 
-const int kSpecialKeysCount = 4;
-extern const SpecialKey e_special_keys[kSpecialKeysCount];
-
-
-bool askKeystroke(HWND hwnd_parent, Keystroke* edited_keystroke, Keystroke& result_keystroke);
+constexpr SpecialKey e_special_keys[4] = {
+	{ VK_LWIN, VK_LWIN, VK_RWIN, MOD_WIN, tokWin },
+	{ VK_CONTROL, VK_LCONTROL, VK_RCONTROL, MOD_CONTROL, tokCtrl },
+	{ VK_SHIFT, VK_LSHIFT, VK_RSHIFT, MOD_SHIFT, tokShift },
+	{ VK_MENU, VK_LMENU, VK_RMENU, MOD_ALT, tokAlt },
+};

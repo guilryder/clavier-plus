@@ -68,7 +68,7 @@ public:
 	}
 	
 	TEST_METHOD(ConstructAffect_null) {
-		String str = (LPCTSTR)NULL;  // Use implicit constructor
+		String str = static_cast<LPCTSTR>(nullptr);  // Use implicit constructor
 		Assert::AreEqual(_T(""), str);
 	}
 	
@@ -93,7 +93,7 @@ public:
 	//--------------------------------------------------------------------------------------------------
 	
 	TEST_METHOD(GetCstr_sameString) {
-		Assert::AreEqual(m_test.get(), (LPCTSTR)m_test);
+		Assert::AreEqual(m_test.get(), static_cast<LPCTSTR>(m_test));
 	}
 	
 	TEST_METHOD(GetCstr_neverNull) {
@@ -120,7 +120,7 @@ public:
 	}
 	
 	TEST_METHOD(GetSafe_hangsIfInstanceHasNullAddress) {
-		String *pstring = NULL;
+		String *pstring = nullptr;
 		Assert::ExpectException<std::runtime_error>([&]{ pstring->getSafe(); });
 	}
 	
@@ -199,12 +199,12 @@ public:
 	}
 	
 	TEST_METHOD(Affect_self) {
-		m_test = (LPCTSTR)m_test;
+		m_test = static_cast<LPCTSTR>(m_test);
 		Assert::AreEqual(m_test_buf, m_test);
 	}
 	
 	TEST_METHOD(Affect_selfSuffix) {
-		m_test = ((LPCTSTR)m_test) + 2;
+		m_test = static_cast<LPCTSTR>(m_test) + 2;
 		Assert::AreEqual(_T("st"), m_test);
 	}
 	
@@ -214,7 +214,7 @@ public:
 	}
 	
 	TEST_METHOD(Affect_null) {
-		m_test = (LPCTSTR)NULL;
+		m_test = static_cast<LPCTSTR>(nullptr);
 		Assert::AreEqual(_T(""), m_test);
 	}
 	
@@ -270,7 +270,7 @@ public:
 	}
 	
 	TEST_METHOD(Append_null) {
-		m_test += (LPCTSTR)NULL;
+		m_test += static_cast<LPCTSTR>(nullptr);
 		Assert::AreEqual(m_test_buf, m_test);
 	}
 	
@@ -280,22 +280,22 @@ public:
 	}
 	
 	TEST_METHOD(Append_selfNotEmpty) {
-		m_test += (LPCTSTR)m_test;
+		m_test += static_cast<LPCTSTR>(m_test);
 		Assert::AreEqual(_T("testtest"), m_test);
 	}
 	
 	TEST_METHOD(Append_selfEmpty) {
-		m_empty += (LPCTSTR)m_empty;
+		m_empty += static_cast<LPCTSTR>(m_empty);
 		Assert::AreEqual(_T(""), m_empty);
 	}
 	
 	TEST_METHOD(Append_selfNull) {
-		m_null += (LPCTSTR)m_null;
+		m_null += static_cast<LPCTSTR>(m_null);
 		Assert::AreEqual(_T(""), m_null);
 	}
 	
 	TEST_METHOD(Append_selfSuffix) {
-		m_test += ((LPCTSTR)m_test) + 2;
+		m_test += static_cast<LPCTSTR>(m_test) + 2;
 		Assert::AreEqual(_T("testst"), m_test);
 	}
 	

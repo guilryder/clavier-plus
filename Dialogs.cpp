@@ -30,60 +30,86 @@
 static TranslatedString s_sCondKeys;
 
 namespace shortcut {
+
+// Get several icons, then delete the GETFILEICON* array.
 static DWORD WINAPI threadGetFilesIcon(GETFILEICON* apgfi[]);
+
+// Get an icon, then give it to the main window by posting a WM_GETFILEICON message.
 static DWORD WINAPI threadGetFileIcon(GETFILEICON& gfi);
+
 }  // shortcut namespace
 
 struct GETFILEICON {
-	Shortcut* psh;
+	Shortcut* shortcut;
 	SHFILEINFO shfi;
-	TCHAR pszExecutable[MAX_PATH];
-	UINT uFlags;
-	bool bOK;
+	TCHAR executable[MAX_PATH];
+	UINT flags;
+	bool ok;
 };
 
 namespace dialogs {
 
-static Shortcut *s_psh = NULL;  // Shortcut being edited
+static Shortcut *s_shortcut = nullptr;  // Shortcut being edited
 
 static HWND s_hwnd_list = NULL;  // Shortcuts list
 
 // Process GUI events to update shortcuts data from the dialog box controls
-static bool s_bProcessGuiEvents;
-
-const LPCTSTR pszValueAutoStart = pszApp;
+static bool s_process_gui_events;
 
 HWND e_hdlgMain;
 
-const LPCTSTR pszHelpUrlFormat = _T("http://utilfr42.free.fr/util/ClavierDoc_%s.html");
-static TCHAR pszDonateURL[256];
+static constexpr LPCTSTR kHelpUrlFormat = _T("http://utilfr42.free.fr/util/ClavierDoc_%s.html");
+static TCHAR s_donate_url[256];
 
-static INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+// Main dialog box.
+static INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam);
 
-static INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+// Command line shortcut settings dialog bux.
+static INT_PTR CALLBACK prcCmdSettings(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam);
 
-static LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+// Language selection dialog box.
+static INT_PTR CALLBACK prcLanguage(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam);
+
+// "About" dialog box.
+static INT_PTR CALLBACK prcAbout(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam);
+
+// IDCIMG_PROGRAMS procedure.
+static LRESULT CALLBACK prcProgramsTarget(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 static WNDPROC s_prcProgramsTarget;
 
 // ID of the next program or app menu item to add to the "Add" sub-menus.
-static UINT s_idAddMenuId;
+static UINT s_add_menu_next_id;
 
-static bool browseForCommandLine(HWND hwnd_parent, LPTSTR pszFile, bool bForceExist);
-static bool browseForCommandLine(HWND hDlg);
-static void onMainCommand(UINT id, WORD wNotify, HWND hWnd);
+static bool browseForCommandLine(HWND hwnd_parent, LPTSTR file, bool force_exist);
+static bool browseForCommandLine(HWND hdlg);
+static void onMainCommand(UINT id, WORD notify, HWND hwnd);
 
 static Shortcut* getSelectedShortcut();
+
+// Redraws the selected item.
 static void updateItem();
+
+// Update the dialog box to reflect the current shortcut state
 static void updateList();
-static int addItem(Shortcut* psh, bool bSelected);
-static void onItemUpdated(int mskColumns);
+
+// Adds a new item to the shortcut list. Returns its ID.
+static int addItem(Shortcut* shortcut, bool selected);
+
+// Called when some columns of an item are updated.
+static void onItemUpdated(int columns_mask);
+
+// Called when a shortcut is added or removed.
+// Updates the shortcut counts label.
 static void onShortcutsCountChanged();
 
-static void fillSpecialCharsMenu(HMENU hMenu, int pos, UINT idFirst);
-static void escapeString(LPCTSTR, String& rs);
-static void appendText(LPCTSTR pszText);
+static void fillSpecialCharsMenu(HMENU menu, int pos, UINT first_id);
+
+// Appends the escaped version of the input string to the output.
+static void escapeString(LPCTSTR input, String* output);
+
+// Appends text to the current shortcut text in the dialog bux.
+static void appendText(LPCTSTR text);
 
 
 void initializeCurrentLanguage() {
@@ -92,7 +118,7 @@ void initializeCurrentLanguage() {
 
 
 INT_PTR showMainDialogModal(UINT initial_command) {
-	return i18n::dialogBox(IDD_MAIN, NULL, prcMain, initial_command);
+	return i18n::dialogBox(IDD_MAIN, /* hwnd_parent= */ NULL, prcMain, initial_command);
 }
 
 
@@ -138,7 +164,7 @@ struct SIZEPOS {
 			sizeNew.cy += dy;
 		}
 		
-		MoveWindow(hctl, ptNew.x, ptNew.y, sizeNew.cx, sizeNew.cy, FALSE);
+		MoveWindow(hctl, ptNew.x, ptNew.y, sizeNew.cx, sizeNew.cy, /* bRepaint= */ false);
 	}
 };
 
@@ -186,42 +212,42 @@ static SIZEPOS aSizePos[] = {
 };
 
 
-static void createAndAddShortcut(LPCTSTR pszCommand = nullptr, bool support_file_open = false);
+static void createAndAddShortcut(LPCTSTR command = nullptr, bool support_file_open = false);
 static Shortcut* createShortcut();
-static void addCreatedShortcut(Shortcut* psh);
+static void addCreatedShortcut(Shortcut* shortcut);
 
 
-void createAndAddShortcut(LPCTSTR pszCommand, bool support_file_open) {
-	Shortcut *const psh = createShortcut();
-	if (psh) {
-		if (pszCommand) {
-			psh->m_bCommand = true;
-			psh->m_sCommand = pszCommand;
+void createAndAddShortcut(LPCTSTR command, bool support_file_open) {
+	Shortcut *const shortcut = createShortcut();
+	if (shortcut) {
+		if (command) {
+			shortcut->m_type = Shortcut::Type::Command;
+			shortcut->m_command = command;
 		}
-		psh->m_bSupportFileOpen = support_file_open;
-		addCreatedShortcut(psh);
+		shortcut->m_support_file_open = support_file_open;
+		addCreatedShortcut(shortcut);
 	}
 }
 
 Shortcut* createShortcut() {
 	SetFocus(s_hwnd_list);
 	Keystroke ks;
-	return askKeystroke(dialogs::e_hdlgMain, NULL, ks)
-		? new Shortcut(ks) : NULL;
+	return ks.showEditDialog(dialogs::e_hdlgMain) ? new Shortcut(ks) : nullptr;
 }
 
-void addCreatedShortcut(Shortcut* psh) {
-	addItem(psh, true);
+void addCreatedShortcut(Shortcut* shortcut) {
+	addItem(shortcut, /* selected= */ true);
 	onItemUpdated(~0);
 	updateList();
 	onShortcutsCountChanged();
 	
-	const HWND hWnd = GetDlgItem(e_hdlgMain, psh->m_bCommand ? IDCTXT_COMMAND : IDCTXT_TEXT);
-	if (psh->m_bCommand) {
-		const int len = psh->m_sCommand.getLength();
-		Edit_SetSel(hWnd, len, len);
+	const HWND edit_control = GetDlgItem(
+		e_hdlgMain, (shortcut->m_type == Shortcut::Type::Command) ? IDCTXT_COMMAND : IDCTXT_TEXT);
+	if (shortcut->m_type == Shortcut::Type::Command) {
+		const int len = shortcut->m_command.getLength();
+		Edit_SetSel(edit_control, len, len);
 	}
-	SetFocus(hWnd);
+	SetFocus(edit_control);
 }
 
 
@@ -243,8 +269,8 @@ public:
 	
 	static BaseMenuItem* findItemAndCleanMenu(HMENU menu, UINT id);
 	
-	void measureItem(MEASUREITEMSTRUCT& mis);
-	void drawItem(DRAWITEMSTRUCT& dis);
+	void measureItem(MEASUREITEMSTRUCT* mis);
+	void drawItem(const DRAWITEMSTRUCT& dis);
 	virtual void populate(HMENU menu) = 0;
 	virtual void execute() = 0;
 	
@@ -259,7 +285,7 @@ private:
 	static constexpr int kIconMarginPixel = 3;
 };
 
-static HIMAGELIST s_hSysImageList = NULL;
+static HIMAGELIST s_sys_imagelist = NULL;
 
 void BaseMenuItem::initializeRoot(HMENU menu, int item_index) {
 	// Attach this item to the sub-menu.
@@ -279,44 +305,44 @@ void BaseMenuItem::initializeRoot(HMENU menu, int item_index) {
 	SetMenuItemInfo(GetSubMenu(menu, item_index), 0, /* byPosition= */ true, &mii_phantom);
 }
 
-void BaseMenuItem::measureItem(MEASUREITEMSTRUCT& mis) {
-	mis.itemWidth = 2 * kIconMarginPixel;
-	mis.itemHeight = 2 * kIconMarginPixel + GetSystemMetrics(SM_CYSMICON);
+void BaseMenuItem::measureItem(MEASUREITEMSTRUCT* mis) {
+	mis->itemWidth = 2 * kIconMarginPixel;
+	mis->itemHeight = 2 * kIconMarginPixel + GetSystemMetrics(SM_CYSMICON);
 }
 
-void BaseMenuItem::drawItem(DRAWITEMSTRUCT& dis) {
+void BaseMenuItem::drawItem(const DRAWITEMSTRUCT& dis) {
 	ImageList_Draw(
-		s_hSysImageList, m_icon_index, dis.hDC,
+		s_sys_imagelist, m_icon_index, dis.hDC,
 		dis.rcItem.left - GetSystemMetrics(SM_CXSMICON),
 		(dis.rcItem.top + dis.rcItem.bottom - GetSystemMetrics(SM_CYSMICON)) / 2,
 		ILD_TRANSPARENT);
 }
 
 
-BaseMenuItem* BaseMenuItem::findItemAndCleanMenu(HMENU hMenu, UINT id) {
+BaseMenuItem* BaseMenuItem::findItemAndCleanMenu(HMENU menu, UINT id) {
 	MENUITEMINFO mii;
 	mii.cbSize = sizeof(mii);
 	mii.fMask = MIIM_FTYPE | MIIM_DATA | MIIM_ID | MIIM_SUBMENU;
 	
-	BaseMenuItem *pItemToExecute = NULL;
-	for (UINT pos = 0; GetMenuItemInfo(hMenu, pos, TRUE, &mii); pos++) {
-		BaseMenuItem *pItem = reinterpret_cast<BaseMenuItem*>(mii.dwItemData);
-		if (pItem) {
+	BaseMenuItem *item_to_execute = nullptr;
+	for (UINT pos = 0; GetMenuItemInfo(menu, pos, /* fByPosition= */ true, &mii); pos++) {
+		BaseMenuItem *item = reinterpret_cast<BaseMenuItem*>(mii.dwItemData);
+		if (item) {
 			if (mii.wID == id && id) {
-				pItemToExecute = pItem;
+				item_to_execute = item;
 			} else if (!(mii.fType & MFT_SEPARATOR)) {
-				delete pItem;
+				delete item;
 			}
 		}
 		if (mii.hSubMenu) {
-			pItem = findItemAndCleanMenu(mii.hSubMenu, id);
-			if (pItem && !pItemToExecute) {
-				pItemToExecute = pItem;
+			item = findItemAndCleanMenu(mii.hSubMenu, id);
+			if (item && !item_to_execute) {
+				item_to_execute = item;
 			}
 		}
 	}
 	
-	return pItemToExecute;
+	return item_to_execute;
 }
 
 
@@ -340,40 +366,40 @@ private:
 
 void FileMenuItem::populate(HMENU menu) {
 	// For retrieving item data.
-	MENUITEMINFO miiGetData;
-	miiGetData.cbSize = sizeof(miiGetData);
-	miiGetData.fMask = MIIM_DATA;
+	MENUITEMINFO mii_get_data;
+	mii_get_data.cbSize = sizeof(mii_get_data);
+	mii_get_data.fMask = MIIM_DATA;
 	
 	// For inserting real items.
-	MENUITEMINFO miiReal;
-	miiReal.cbSize = sizeof(miiReal);
-	miiReal.fMask = MIIM_BITMAP | MIIM_STRING;
-	miiReal.hSubMenu = NULL;
+	MENUITEMINFO mii_real;
+	mii_real.cbSize = sizeof(mii_real);
+	mii_real.fMask = MIIM_BITMAP | MIIM_STRING;
+	mii_real.hSubMenu = NULL;
 	
 	// For inserting phantom items.
-	MENUITEMINFO miiPhantom;
-	miiPhantom.cbSize = sizeof(miiPhantom);
-	miiPhantom.fMask = MIIM_TYPE | MIIM_DATA;
-	miiPhantom.fType = MFT_SEPARATOR;
-	miiPhantom.dwTypeData = _T("");
+	MENUITEMINFO mii_phantom;
+	mii_phantom.cbSize = sizeof(mii_phantom);
+	mii_phantom.fMask = MIIM_TYPE | MIIM_DATA;
+	mii_phantom.fType = MFT_SEPARATOR;
+	mii_phantom.dwTypeData = _T("");
 	
-	UINT posFolder = 0;
+	UINT pos_folder = 0;
 	
 	// Two passes: 1) all-users start menu; 2) user start menu.
-	for (int iSource = 0; iSource < 2; iSource++) {
-		TCHAR pszFolder[MAX_PATH];
-		if (!getSpecialFolderPath(iSource ? CSIDL_COMMON_STARTMENU : CSIDL_STARTMENU, pszFolder)) {
+	for (int pass_index = 0; pass_index < 2; pass_index++) {
+		TCHAR folder[MAX_PATH];
+		if (!getSpecialFolderPath(pass_index ? CSIDL_COMMON_STARTMENU : CSIDL_STARTMENU, folder)) {
 			continue;
 		}
 		if (m_path.isSome()) {
-			PathAppend(pszFolder, m_path);
+			PathAppend(folder, m_path);
 		}
 		
 		// Enumerate files in the directory.
-		TCHAR pszPath[MAX_PATH];
-		PathCombine(pszPath, pszFolder, _T("*"));
+		TCHAR path[MAX_PATH];
+		PathCombine(path, folder, _T("*"));
 		WIN32_FIND_DATA wfd;
-		const HANDLE hff = FindFirstFile(pszPath, &wfd);
+		const HANDLE hff = FindFirstFile(path, &wfd);
 		if (hff == INVALID_HANDLE_VALUE) {
 			continue;
 		}
@@ -381,71 +407,71 @@ void FileMenuItem::populate(HMENU menu) {
 			if (wfd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) {
 				continue;
 			}
-			PathCombine(pszPath, pszFolder, wfd.cFileName);
+			PathCombine(path, folder, wfd.cFileName);
 			
-			TCHAR pszRelativeFolder[MAX_PATH];
-			LPTSTR pszItemPath;
+			TCHAR relative_folder[MAX_PATH];
+			LPTSTR item_path;
 			
-			const bool bIsDir = toBool(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+			const bool is_dir = toBool(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 			
 			UINT pos;
-			if (bIsDir) {
+			if (is_dir) {
 				// Directory: skip "." and ".." directories.
 				if (wfd.cFileName[0] == _T('.') &&
 						(wfd.cFileName[1] == _T('.') || !wfd.cFileName[1])) {
 					continue;
 				}
 				
-				lstrcpyn(pszRelativeFolder, m_path, arrayLength(pszRelativeFolder));
-				PathAppend(pszRelativeFolder, wfd.cFileName);
-				pszItemPath = pszRelativeFolder;
+				lstrcpyn(relative_folder, m_path, arrayLength(relative_folder));
+				PathAppend(relative_folder, wfd.cFileName);
+				item_path = relative_folder;
 				
-				if (iSource) {
+				if (pass_index) {
 					// Second pass: the first pass may have already created a menu for the directory.
-					const int nbItem = GetMenuItemCount(menu);
-					for (int i = 0; i < nbItem; i++) {
-						if (!GetMenuItemInfo(menu, i, TRUE, &miiGetData)) {
+					const int item_count = GetMenuItemCount(menu);
+					for (int i = 0; i < item_count; i++) {
+						if (!GetMenuItemInfo(menu, i, /* fByPosition= */ true, &mii_get_data)) {
 							continue;
 						}
-						const FileMenuItem *fmiOther =
-							static_cast<const FileMenuItem*>(BaseMenuItem::forItemData(miiGetData.dwItemData));
-						if (fmiOther->isDir() && !lstrcmpi(fmiOther->m_path, pszRelativeFolder)) {
+						const FileMenuItem *fmi_other =
+							static_cast<const FileMenuItem*>(BaseMenuItem::forItemData(mii_get_data.dwItemData));
+						if (fmi_other->isDir() && !lstrcmpi(fmi_other->m_path, relative_folder)) {
 							// Folder already created: nothing to do.
 							goto Next;
 						}
 					}
 				}
-				miiReal.fMask = MIIM_BITMAP | MIIM_DATA | MIIM_STRING | MIIM_SUBMENU;
-				miiReal.hSubMenu = CreatePopupMenu();
-				pos = posFolder++;
+				mii_real.fMask = MIIM_BITMAP | MIIM_DATA | MIIM_STRING | MIIM_SUBMENU;
+				mii_real.hSubMenu = CreatePopupMenu();
+				pos = pos_folder++;
 			} else {
 				// File.
-				miiReal.fMask = MIIM_BITMAP | MIIM_DATA | MIIM_STRING | MIIM_ID;
-				miiReal.wID = s_idAddMenuId++;
+				mii_real.fMask = MIIM_BITMAP | MIIM_DATA | MIIM_STRING | MIIM_ID;
+				mii_real.wID = s_add_menu_next_id++;
 				pos = (UINT)-1;
 				PathRemoveExtension(wfd.cFileName);
-				pszItemPath = pszPath;
+				item_path = path;
 			}
 			
 			// Get the small icon
 			SHFILEINFO shfi;
-			if (!getFileInfo(pszPath, wfd.dwFileAttributes, shfi,
+			if (!getFileInfo(path, wfd.dwFileAttributes, shfi,
 					SHGFI_ICON | SHGFI_SMALLICON | SHGFI_SYSICONINDEX)) {
 				shfi.iIcon = -1;
 			}
 			
-			miiReal.dwItemData = (new FileMenuItem(bIsDir, pszItemPath, shfi.iIcon))->asItemData();
-			miiReal.dwTypeData = wfd.cFileName;
-			miiReal.hbmpItem = HBMMENU_CALLBACK;
+			mii_real.dwItemData = (new FileMenuItem(is_dir, item_path, shfi.iIcon))->asItemData();
+			mii_real.dwTypeData = wfd.cFileName;
+			mii_real.hbmpItem = HBMMENU_CALLBACK;
 			
 			// Create the phantom sub-item used by WM_INITMENUPOPUP
 			// to get the parent of the popup to initialize
-			if (bIsDir) {
-				miiPhantom.dwItemData = miiReal.dwItemData;
-				InsertMenuItem(miiReal.hSubMenu, 0, TRUE, &miiPhantom);
+			if (is_dir) {
+				mii_phantom.dwItemData = mii_real.dwItemData;
+				InsertMenuItem(mii_real.hSubMenu, 0, /* fByPosition= */ true, &mii_phantom);
 			}
 			
-			InsertMenuItem(menu, pos, TRUE, &miiReal);
+			InsertMenuItem(menu, pos, /* fByPosition= */ true, &mii_real);
 			
 		Next:
 			;
@@ -454,16 +480,16 @@ void FileMenuItem::populate(HMENU menu) {
 	}
 	
 	// Insert menu bar breaks every N items where N = screen height / item height.
-	const int nbItemPerColumn =
+	const int nb_item_per_column =
 		(GetSystemMetrics(SM_CYSCREEN) - 10) / GetSystemMetrics(SM_CYMENU);
-	MENUITEMINFO miiMenuBarBreak;
-	miiMenuBarBreak.cbSize = sizeof(miiGetData);
-	miiMenuBarBreak.fMask = MIIM_TYPE;
-	int nbItem = GetMenuItemCount(menu);
-	for (int i = nbItemPerColumn; i < nbItem; i += nbItemPerColumn) {
-		GetMenuItemInfo(menu, i, TRUE, &miiMenuBarBreak);
-		miiMenuBarBreak.fType |= MFT_MENUBARBREAK;
-		SetMenuItemInfo(menu, i, TRUE, &miiMenuBarBreak);
+	MENUITEMINFO mii_menu_bar_break;
+	mii_menu_bar_break.cbSize = sizeof(mii_get_data);
+	mii_menu_bar_break.fMask = MIIM_TYPE;
+	int item_count = GetMenuItemCount(menu);
+	for (int i = nb_item_per_column; i < item_count; i += nb_item_per_column) {
+		GetMenuItemInfo(menu, i, /* fByPosition= */ true, &mii_menu_bar_break);
+		mii_menu_bar_break.fType |= MFT_MENUBARBREAK;
+		SetMenuItemInfo(menu, i, /* fByPosition= */ true, &mii_menu_bar_break);
 	}
 }
 
@@ -510,7 +536,7 @@ void AppMenuItem::populate(HMENU menu) {
 				shfi.iIcon =-1;
 			}
 			
-			mii.wID = s_idAddMenuId++;
+			mii.wID = s_add_menu_next_id++;
 			mii.dwItemData = (new AppMenuItem(app_id, shfi.iIcon))->asItemData();
 			mii.dwTypeData = const_cast<LPTSTR>(name);
 			InsertMenuItem(menu, index++, /* byPosition= */ true, &mii);
@@ -524,40 +550,40 @@ void AppMenuItem::execute() {
 }
 
 
-bool browseForCommandLine(HWND hwnd_parent, LPTSTR pszFile, bool bForceExist) {
-	PathUnquoteSpaces(pszFile);
+bool browseForCommandLine(HWND hwnd_parent, LPTSTR file, bool force_exist) {
+	PathUnquoteSpaces(file);
 	
 	// Ask for the file
 	OPENFILENAME ofn;
 	ZeroMemory(&ofn, OPENFILENAME_SIZE_VERSION_400);
 	ofn.lStructSize = OPENFILENAME_SIZE_VERSION_400;
 	ofn.hwndOwner = hwnd_parent;
-	ofn.lpstrFile = pszFile;
+	ofn.lpstrFile = file;
 	ofn.nMaxFile = MAX_PATH;
-	ofn.Flags = bForceExist ? OFN_FILEMUSTEXIST | OFN_HIDEREADONLY : OFN_HIDEREADONLY;
+	ofn.Flags = force_exist ? OFN_FILEMUSTEXIST | OFN_HIDEREADONLY : OFN_HIDEREADONLY;
 	VERIF(GetOpenFileName(&ofn));
 	
-	PathQuoteSpaces(pszFile);
+	PathQuoteSpaces(file);
 	return true;
 }
 
 
-bool browseForCommandLine(HWND hDlg) {
-	TCHAR pszFile[MAX_PATH];
-	GetDlgItemText(hDlg, IDCTXT_COMMAND, pszFile, arrayLength(pszFile));
-	PathRemoveArgs(pszFile);
+bool browseForCommandLine(HWND hdlg) {
+	TCHAR file[MAX_PATH];
+	GetDlgItemText(hdlg, IDCTXT_COMMAND, file, arrayLength(file));
+	PathRemoveArgs(file);
 	
-	VERIF(browseForCommandLine(hDlg, pszFile, true));
+	VERIF(browseForCommandLine(hdlg, file, /* force_exist= */ true));
 	
-	SetDlgItemText(hDlg, IDCTXT_COMMAND, pszFile);
+	SetDlgItemText(hdlg, IDCTXT_COMMAND, file);
 	return true;
 }
 
 
-static bool s_bCapturingProgram = false;
-static String s_sOldPrograms;
+static bool s_capturing_program = false;
+static String s_old_programs;
 
-static const LPCTSTR apszWrite[] = {
+static constexpr LPCTSTR write_commands[] = {
 	_T("[|...|]"),
 	_T("[]"),
 	_T("\\\\"),
@@ -577,7 +603,7 @@ static const LPCTSTR apszWrite[] = {
 };
 
 
-void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
+void onMainCommand(UINT id, WORD notify, HWND hwnd) {
 	switch (id) {
 		
 		case IDCANCEL:
@@ -604,7 +630,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 			{
 				// Test for cancellation before doing anything else.
 				if (id == IDCCMD_LANGUAGE) {
-					if (i18n::dialogBox(IDD_LANGUAGE, e_hdlgModal, prcLanguage) == IDCANCEL) {
+					if (i18n::dialogBox(IDD_LANGUAGE, e_modal_dialog, prcLanguage) == IDCANCEL) {
 						break;
 					}
 				} else if (id == IDCCMD_QUIT) {
@@ -615,37 +641,37 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				}
 				
 				// Get all shortcuts from the list, check unicity
-				const int nbItem = ListView_GetItemCount(s_hwnd_list);
-				Shortcut **const ash = new Shortcut*[nbItem];
+				const int item_count = ListView_GetItemCount(s_hwnd_list);
+				Shortcut **const shortcuts = new Shortcut*[item_count];
 				LVITEM lvi;
 				lvi.mask = LVIF_PARAM;
-				for (lvi.iItem = 0; lvi.iItem < nbItem; lvi.iItem++) {
+				for (lvi.iItem = 0; lvi.iItem < item_count; lvi.iItem++) {
 					ListView_GetItem(s_hwnd_list, &lvi);
-					Shortcut *const psh = ash[lvi.iItem] = reinterpret_cast<Shortcut*>(lvi.lParam);
-					String* const asProgram = psh->getPrograms();
+					Shortcut *const shortcut = shortcuts[lvi.iItem] = reinterpret_cast<Shortcut*>(lvi.lParam);
+					String* const programs = shortcut->getPrograms();
 					for (int i = 0; i < lvi.iItem; i++) {
-						if (ash[i]->testConflict(*psh, asProgram, psh->m_bProgramsOnly)) {
-							TCHAR pszHotKey[bufHotKey];
-							psh->getKeyName(pszHotKey);
-							messageBox(e_hdlgMain, ERR_SHORTCUT_DUPLICATE, MB_ICONERROR, pszHotKey);
-							delete [] asProgram;
-							delete [] ash;
+						if (shortcuts[i]->testConflict(*shortcut, programs, shortcut->m_programs_only)) {
+							TCHAR shortcut_display_name[bufHotKey];
+							shortcut->getDisplayName(shortcut_display_name);
+							messageBox(e_hdlgMain, ERR_SHORTCUT_DUPLICATE, MB_ICONERROR, shortcut_display_name);
+							delete [] programs;
+							delete [] shortcuts;
 							return;
 						}
 					}
-					delete [] asProgram;
+					delete [] programs;
 				}
 				
 				// Create a valid linked list from the list box
 				// and register the hot keys
 				shortcut::clearShortcuts();
-				for (int i = nbItem; --i >= 0;) {
-					Shortcut *const psh = ash[i];
-					psh->resetIcons();
-					psh->registerHotKey();
-					psh->addToList();
+				for (int i = item_count; --i >= 0;) {
+					Shortcut *const shortcut = shortcuts[i];
+					shortcut->clearIcons();
+					shortcut->registerHotKey();
+					shortcut->addToList();
 				}
-				delete [] ash;
+				delete [] shortcuts;
 				
 				if (id != IDCCMD_QUIT) {
 					shortcut::saveShortcuts();
@@ -664,7 +690,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				
 				HMENU menu = GetSubMenu(context_menus, 0);
 				
-				s_idAddMenuId = ID_ADD_ITEM_FIRST;
+				s_add_menu_next_id = ID_ADD_ITEM_FIRST;
 				int item_index = 0;
 				
 				// Programs sub-menu.
@@ -672,7 +698,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 					->initializeRoot(menu, item_index++);
 				
 				// Apps sub-menu.
-				(new AppMenuItem(/* appId= */ _T(""), /* icon_index= */ 0))
+				(new AppMenuItem(/* app_id= */ _T(""), /* icon_index= */ 0))
 					->initializeRoot(menu, item_index++);
 				
 				// Special characters sub-menu.
@@ -680,16 +706,17 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				
 				// Show the context menu
 				RECT rc;
-				GetWindowRect(hWnd, &rc);
-				const UINT selected_cmd_id = (UINT)TrackPopupMenu(menu,
+				GetWindowRect(hwnd, &rc);
+				const UINT selected_cmd_id = static_cast<UINT>(TrackPopupMenu(
+					menu,
 					TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
-					rc.left, rc.bottom, 0, e_hdlgMain, NULL);
-				BaseMenuItem *const pItem = BaseMenuItem::findItemAndCleanMenu(menu, selected_cmd_id);
+					rc.left, rc.bottom, 0, e_hdlgMain, /* prcRect= */ nullptr));
+				BaseMenuItem *const item = BaseMenuItem::findItemAndCleanMenu(menu, selected_cmd_id);
 				DestroyMenu(context_menus);
 				
-				if (pItem) {
-					pItem->execute();
-					delete pItem;
+				if (item) {
+					item->execute();
+					delete item;
 				} else if (selected_cmd_id) {
 					SendMessage(e_hdlgMain, WM_COMMAND, selected_cmd_id, 0);
 				}
@@ -699,7 +726,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		case ID_ADD_FOLDER:
 			{
 				TCHAR folder[MAX_PATH] = _T("");
-				if (browseForFolder(e_hdlgMain, NULL, folder)) {
+				if (browseForFolder(e_hdlgMain, /* title= */ nullptr, folder)) {
 					PathQuoteSpaces(folder);
 					createAndAddShortcut(folder, /* support_file_open= */ true);
 				}
@@ -727,7 +754,7 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				}
 				
 				SetFocus(GetDlgItem(e_hdlgMain, IDCCMD_ADD));
-				SendMessage(e_hdlgMain, WM_NEXTDLGCTL, TRUE, FALSE);
+				SendMessage(e_hdlgMain, WM_NEXTDLGCTL, /* previous= */ true, /* absolute= */ false);
 				
 				LVITEM lvi;
 				lvi.iItem = ListView_GetNextItem(s_hwnd_list, -1, LVNI_SELECTED);
@@ -746,8 +773,9 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 				if (lvi.iItem >= ListView_GetItemCount(s_hwnd_list)) {
 					lvi.iItem--;
 				}
-				ListView_SetItemState(s_hwnd_list, lvi.iItem,
-						LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
+				ListView_SetItemState(
+					s_hwnd_list, lvi.iItem,
+					LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
 				updateList();
 				onShortcutsCountChanged();
 				SetFocus(s_hwnd_list);
@@ -757,9 +785,9 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		case IDCCMD_EDIT:
 			SetFocus(s_hwnd_list);
 			{
-				Keystroke ks = *s_psh;
-				if (askKeystroke(e_hdlgMain, s_psh, ks)) {
-					static_cast<Keystroke&>(*s_psh) = ks;
+				Keystroke ks = *s_shortcut;
+				if (ks.showEditDialog(e_hdlgMain)) {
+					static_cast<Keystroke&>(*s_shortcut) = ks;
 					updateItem();
 					onItemUpdated((1 << colKeystroke) | (1 << colCond));
 					updateList();
@@ -771,28 +799,33 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		case ID_TEXT_SENDKEYS:
 			{
 				Keystroke ks;
-				if (Keystroke::askSendKeys(e_hdlgMain, ks)) {
-					TCHAR pszHotKey[bufHotKey];
-					ks.getKeyName(pszHotKey);
+				if (ks.showSendKeysDialog(e_hdlgMain)) {
+					TCHAR keystroke_display_name[bufHotKey];
+					ks.getDisplayName(keystroke_display_name);
 					
-					String s = _T("[");
-					escapeString(pszHotKey, s);
-					s += _T(']');
+					String command = _T("[");
+					escapeString(keystroke_display_name, &command);
+					command += _T(']');
 					
-					appendText(s);
+					appendText(command);
 				}
 			}
 			break;
 		
 		case IDCCMD_HELP:
 			{
-				TCHAR pszLanguageCode[MAX_PATH];
-				i18n::loadStringAuto(IDS_LANGUAGE_CODE, pszLanguageCode);
+				TCHAR language_code[MAX_PATH];
+				i18n::loadStringAuto(IDS_LANGUAGE_CODE, language_code);
 				
-				TCHAR pszUrl[MAX_PATH];
-				wsprintf(pszUrl, pszHelpUrlFormat, pszLanguageCode);
+				TCHAR url[MAX_PATH];
+				wsprintf(url, kHelpUrlFormat, language_code);
 				
-				ShellExecute(NULL, NULL, pszUrl, NULL, NULL, SW_SHOWDEFAULT);
+				ShellExecute(
+					/* hwnd= */ NULL,
+					/* lpOperation= */ nullptr,
+					/* lpFile= */ url, /* lpParameters= */ nullptr,
+					/* lpDirectory= */ nullptr,
+					SW_SHOWDEFAULT);
 			}
 			break;
 		
@@ -804,16 +837,16 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		
 		case IDCCMD_COPYLIST:
 			{
-				String s;
+				String shortcuts_csv;
 				LVITEM lvi;
 				lvi.mask = LVIF_PARAM;
 				for (lvi.iItem = 0;; lvi.iItem++) {
 					if (!ListView_GetItem(s_hwnd_list, &lvi)) {
 						break;
 					}
-					reinterpret_cast<const Shortcut*>(lvi.lParam)->appendCsvLineToString(s);
+					reinterpret_cast<const Shortcut*>(lvi.lParam)->appendCsvLineToString(shortcuts_csv);
 				}
-				setClipboardText(s);
+				setClipboardText(shortcuts_csv);
 				
 				messageBox(e_hdlgMain, MSG_COPYLIST, MB_ICONINFORMATION);
 			}
@@ -825,12 +858,11 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		case IDCOPT_TEXT:
 		case IDCOPT_COMMAND:
 			{
-				const bool bCommand = (id == IDCOPT_COMMAND);
-				s_psh->m_bCommand = bCommand;
-				s_psh->resetIcons();
+				s_shortcut->m_type = (id == IDCOPT_COMMAND) ? Shortcut::Type::Command : Shortcut::Type::Text;
+				s_shortcut->clearIcons();
 				updateList();
 				updateItem();
-				SetFocus(GetDlgItem(e_hdlgMain, bCommand ? IDCTXT_COMMAND : IDCTXT_TEXT));
+				SetFocus(GetDlgItem(e_hdlgMain, (id == IDCOPT_COMMAND) ? IDCTXT_COMMAND : IDCTXT_TEXT));
 				onItemUpdated(1 << colContents);
 			}
 			break;
@@ -841,45 +873,47 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 		case IDCTXT_COMMAND:
 		case IDCTXT_PROGRAMS:
 		case IDCTXT_DESCRIPTION:
-			if (s_bProcessGuiEvents && wNotify == EN_CHANGE) {
-				int iColumn = -1;
-				String* ps;
+			if (s_process_gui_events && notify == EN_CHANGE) {
+				int col_index;
+				String* col_contents;
 				switch (id) {
 					case IDCTXT_TEXT:
-						ps = &s_psh->m_sText;
+						col_contents = &s_shortcut->m_text;
+						col_index = -1;
 						break;
 					case IDCTXT_COMMAND:
-						ps = &s_psh->m_sCommand;
-						iColumn = colContents;
+						col_contents = &s_shortcut->m_command;
+						col_index = colContents;
 						break;
 					case IDCTXT_PROGRAMS:
-						ps = &s_psh->m_sPrograms;
-						iColumn = colCond;
+						col_contents = &s_shortcut->m_programs;
+						col_index = colCond;
 						break;
-					default:  // case IDCTXT_DESCRIPTION
-						ps = &s_psh->m_sDescription;
-						iColumn = colDescription;
+					case IDCTXT_DESCRIPTION:
+					default:
+						col_contents = &s_shortcut->m_description;
+						col_index = colDescription;
 						break;
 				}
 				
-				getDlgItemText(e_hdlgMain, id, *ps);
+				getDlgItemText(e_hdlgMain, id, col_contents);
 				
 				if (id == IDCTXT_COMMAND) {
-					s_psh->resetIcons();
-					s_psh->getIcon();
+					s_shortcut->clearIcons();
+					s_shortcut->getIcon();
 				}
 				
 				updateItem();
 				
-				if (iColumn >= 0) {
-					onItemUpdated(1 << iColumn);
+				if (col_index >= 0) {
+					onItemUpdated(1 << col_index);
 				}
 			}
 			break;
 		
 		case IDCCBO_PROGRAMS:
-			if (wNotify == CBN_SELCHANGE) {
-				s_psh->m_bProgramsOnly = toBool(SendDlgItemMessage(e_hdlgMain,
+			if (notify == CBN_SELCHANGE) {
+				s_shortcut->m_programs_only = toBool(SendDlgItemMessage(e_hdlgMain,
 					IDCCBO_PROGRAMS, CB_GETCURSEL, 0, 0));
 				updateItem();
 			}
@@ -903,188 +937,194 @@ void onMainCommand(UINT id, WORD wNotify, HWND hWnd) {
 			break;
 		
 		case IDCCMD_TEST:
-			s_psh->execute(false);
+			s_shortcut->execute(/* from_hotkey= */ false);
 			break;
 		
 		case IDCCMD_TEXT_MENU:
 			{
-				const HMENU hAllMenus = i18n::loadMenu(IDM_CONTEXT);
-				const HMENU hMenu = GetSubMenu(hAllMenus, 1);
+				const HMENU all_menus = i18n::loadMenu(IDM_CONTEXT);
+				const HMENU menu = GetSubMenu(all_menus, 1);
 				
-				fillSpecialCharsMenu(hMenu, 5, ID_TEXT_SPECIALCHAR_FIRST);
+				fillSpecialCharsMenu(menu, 5, ID_TEXT_SPECIALCHAR_FIRST);
 				
 				RECT rc;
-				GetWindowRect(hWnd, &rc);
+				GetWindowRect(hwnd, &rc);
 				SetFocus(GetDlgItem(e_hdlgMain, IDCTXT_TEXT));
-				TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON,
-					rc.left, rc.bottom, 0, e_hdlgMain, NULL);
+				TrackPopupMenu(
+					menu,
+					TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON,
+					rc.left, rc.bottom,
+					/* nReserved= */ 0,
+					e_hdlgMain,
+					/* prcRect= */ nullptr);
 				
-				DestroyMenu(hAllMenus);
+				DestroyMenu(all_menus);
 			}
 			break;
 		
 		case ID_TEXT_COMMAND:
 			{
-				TCHAR pszFile[MAX_PATH] = _T("");
-				if (browseForCommandLine(e_hdlgMain, pszFile, false)) {
-					String s = _T("[[");
-					escapeString(pszFile, s);
-					s += _T("]]");
-					appendText(s);
+				TCHAR file[MAX_PATH] = _T("");
+				if (browseForCommandLine(e_hdlgMain, file, false)) {
+					String command = _T("[[");
+					escapeString(file, &command);
+					command += _T("]]");
+					appendText(command);
 				}
 			}
 			break;
 		
 		default:
 			if (ID_ADD_SPECIALCHAR_FIRST <= id && id < ID_ADD_ITEM_FIRST) {
-				Shortcut *const psh = createShortcut();
-				if (psh) {
+				Shortcut *const shortcut = createShortcut();
+				if (shortcut) {
 					const TCHAR pszText[] = { static_cast<TCHAR>(id - ID_ADD_SPECIALCHAR_FIRST), _T('\0') };
-					psh->m_bCommand = false;
-					psh->m_sText = pszText;
-					addCreatedShortcut(psh);
+					shortcut->m_type = Shortcut::Type::Text;
+					shortcut->m_text = pszText;
+					addCreatedShortcut(shortcut);
 				}
 			} else if (ID_TEXT_SPECIALCHAR_FIRST <= id && id < ID_TEXT_SPECIALCHAR_FIRST + 256) {
-				const TCHAR pszText[] = { static_cast<TCHAR>(id - ID_TEXT_SPECIALCHAR_FIRST), _T('\0') };
-				String s;
-				escapeString(pszText, s);
-				appendText(s);
-			} else if (ID_TEXT_LOWLEVEL <= id && id < ID_TEXT_LOWLEVEL + arrayLength(apszWrite)) {
-				appendText(apszWrite[id - ID_TEXT_LOWLEVEL]);
+				const TCHAR text[] = { static_cast<TCHAR>(id - ID_TEXT_SPECIALCHAR_FIRST), _T('\0') };
+				String command;
+				escapeString(text, &command);
+				appendText(command);
+			} else if (ID_TEXT_LOWLEVEL <= id && id < ID_TEXT_LOWLEVEL + arrayLength(write_commands)) {
+				appendText(write_commands[id - ID_TEXT_LOWLEVEL]);
 			}
 			break;
 	}
 }
 
 
-// Main dialog box
-INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	static RECT rcClientOrig;
-	static SIZE sizeMinimum;
+INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) {
+	static RECT orig_client_rect;
+	static SIZE min_size;
 	
-	switch (uMsg) {
+	switch (message) {
 		
 		// Initialization
 		case WM_INITDIALOG:
 			{
-				e_hdlgMain = e_hdlgModal = hDlg;
+				e_hdlgMain = e_modal_dialog = hdlg;
 				
-				s_bProcessGuiEvents = false;
+				s_process_gui_events = false;
 				
-				s_prcProgramsTarget = subclassWindow(GetDlgItem(hDlg, IDCIMG_PROGRAMS), prcProgramsTarget);
+				s_prcProgramsTarget = subclassWindow(GetDlgItem(hdlg, IDCIMG_PROGRAMS), prcProgramsTarget);
 				
-				s_hwnd_list = GetDlgItem(hDlg, IDCLST);
+				s_hwnd_list = GetDlgItem(hdlg, IDCLST);
 				ListView_SetExtendedListViewStyle(s_hwnd_list, LVS_EX_FULLROWSELECT);
 				
 				// Get the initial size
-				GetWindowRect(hDlg, &rcClientOrig);
-				sizeMinimum.cx = rcClientOrig.right - rcClientOrig.left;
-				sizeMinimum.cy = rcClientOrig.bottom - rcClientOrig.top;
-				GetClientRect(hDlg, &rcClientOrig);
+				GetWindowRect(hdlg, &orig_client_rect);
+				min_size.cx = orig_client_rect.right - orig_client_rect.left;
+				min_size.cy = orig_client_rect.bottom - orig_client_rect.top;
+				GetClientRect(hdlg, &orig_client_rect);
 				
 				// Get the initial position of controls
 				for (int i = 0; i < arrayLength(aSizePos); i++) {
 					SIZEPOS &sp = aSizePos[i];
-					sp.hctl = GetDlgItem(hDlg, sp.id);
+					sp.hctl = GetDlgItem(hdlg, sp.id);
 					RECT rc;
 					GetWindowRect(sp.hctl, &rc);
 					sp.size.cx = rc.right - rc.left;
 					sp.size.cy = rc.bottom - rc.top;
-					ScreenToClient(hDlg, reinterpret_cast<POINT*>(&rc));
+					ScreenToClient(hdlg, reinterpret_cast<POINT*>(&rc));
 					sp.pt = (POINT&)rc;
 				}
 				
-				i18n::loadStringAuto(IDS_DONATEURL, pszDonateURL);
-				initializeWebLink(hDlg, IDCLBL_DONATE, pszDonateURL);
-				SendDlgItemMessage(hDlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
+				i18n::loadStringAuto(IDS_DONATEURL, s_donate_url);
+				initializeWebLink(hdlg, IDCLBL_DONATE, s_donate_url);
+				SendDlgItemMessage(hdlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
 					reinterpret_cast<LPARAM>(i18n::loadBitmap(IDB_DONATE)));
 				
-				SendDlgItemMessage(hDlg, IDCCMD_TEXT_MENU, BM_SETIMAGE, IMAGE_ICON,
+				SendDlgItemMessage(hdlg, IDCCMD_TEXT_MENU, BM_SETIMAGE, IMAGE_ICON,
 					reinterpret_cast<LPARAM>(i18n::loadNeutralIcon(IDI_COMBO, 11,6)));
 				
 				// Get the handle of the system image list for small icons
 				SHFILEINFO shfi;
-				s_hSysImageList = (HIMAGELIST)SHGetFileInfo(
+				s_sys_imagelist = (HIMAGELIST)SHGetFileInfo(
 					_T("a"), FILE_ATTRIBUTE_NORMAL, &shfi, sizeof(shfi),
 					SHGFI_USEFILEATTRIBUTES | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_SYSICONINDEX);
-				ListView_SetImageList(s_hwnd_list, s_hSysImageList, LVSIL_SMALL);
+				ListView_SetImageList(s_hwnd_list, s_sys_imagelist, LVSIL_SMALL);
 				
-				TCHAR pszText[512];
+				TCHAR text[512];
 				
 				// Add columns to the list
-				i18n::loadStringAuto(IDS_COLUMNS, pszText);
-				TCHAR *next_column = pszText;
+				i18n::loadStringAuto(IDS_COLUMNS, text);
+				TCHAR *next_column = text;
 				LVCOLUMN lvc;
 				lvc.mask = LVCF_FMT | LVCF_TEXT | LVCF_SUBITEM;
 				for (lvc.iSubItem = 0; lvc.iSubItem < colCount; lvc.iSubItem++) {
 					lvc.fmt = (lvc.iSubItem == colUsageCount)
 						? LVCFMT_RIGHT
 						: LVCFMT_LEFT;
-					lvc.pszText = const_cast<LPTSTR>(getSemiColonToken(next_column));
+					lvc.pszText = const_cast<LPTSTR>(getSemiColonToken(&next_column));
 					ListView_InsertColumn(s_hwnd_list, lvc.iSubItem, &lvc);
 				}
 				
 				// Fill shortcuts list and unregister hot keys
-				int nbShortcut = 0, nbShortcutIcon = 0;
+				int shortcut_count = 0, shortcut_icon_count = 0;
 				for (Shortcut *psh = shortcut::getFirst(); psh; psh = psh->getNext()) {
 					Shortcut *const pshCopy = new Shortcut(*psh);
 					pshCopy->unregisterHotKey();
-					addItem(pshCopy, (s_psh == psh));
-					nbShortcut++;
-					if (pshCopy->m_bCommand) {
-						nbShortcutIcon++;
+					addItem(pshCopy, (s_shortcut == psh));
+					shortcut_count++;
+					if (pshCopy->m_type == Shortcut::Type::Command) {
+						shortcut_icon_count++;
 					}
 				}
 				onItemUpdated(~0);
 				onShortcutsCountChanged();
 				
 				// Load small icons
-				GETFILEICON **const apgfi = new GETFILEICON*[nbShortcutIcon + 1];
-				apgfi[nbShortcutIcon] = NULL;
+				GETFILEICON **const apgfi = new GETFILEICON*[shortcut_icon_count + 1];
+				apgfi[shortcut_icon_count] = nullptr;
 				LVITEM lvi;
 				lvi.mask = LVIF_PARAM;
-				for (lvi.iItem = 0; lvi.iItem < nbShortcut ; lvi.iItem++) {
+				for (lvi.iItem = 0; lvi.iItem < shortcut_count ; lvi.iItem++) {
 					ListView_GetItem(s_hwnd_list, &lvi);
 					Shortcut *const psh = reinterpret_cast<Shortcut*>(lvi.lParam);
-					if (psh->m_bCommand) {
-						psh->fillGetFileIcon(apgfi[--nbShortcutIcon] = new GETFILEICON, true);
+					if (psh->m_type == Shortcut::Type::Command) {
+						psh->fillGetFileIcon(apgfi[--shortcut_icon_count] = new GETFILEICON, /* small_icon= */ true);
 					}
 				}
 				startThread((LPTHREAD_START_ROUTINE)shortcut::threadGetFilesIcon, apgfi);
 				
 				// Programs combo box
-				const HWND hcboPrograms = GetDlgItem(hDlg, IDCCBO_PROGRAMS);
-				TCHAR pszPrograms[bufString];
-				i18n::loadStringAuto(IDS_PROGRAMS, pszPrograms);
-				TCHAR *next_program = pszPrograms;
+				const HWND programs_dropdown = GetDlgItem(hdlg, IDCCBO_PROGRAMS);
+				TCHAR programs[bufString];
+				i18n::loadStringAuto(IDS_PROGRAMS, programs);
+				TCHAR *next_program = programs;
 				for (int i = 0; i < 2; i++) {
-					SendMessage(hcboPrograms, CB_ADDSTRING, 0,
-						reinterpret_cast<LPARAM>(getSemiColonToken(next_program)));
+					SendMessage(programs_dropdown, CB_ADDSTRING, 0,
+						reinterpret_cast<LPARAM>(getSemiColonToken(&next_program)));
 				}
 				
 				updateList();
 				
 				// Button icons and tooltips
-				const HWND hwndTT = CreateWindowEx(WS_EX_TOPMOST,
-					TOOLTIPS_CLASS, NULL,
+				const HWND tooltip_hwnd = CreateWindowEx(
+					WS_EX_TOPMOST,
+					TOOLTIPS_CLASS, /* lpWindowName= */ NULL,
 					WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
 					CW_USEDEFAULT, CW_USEDEFAULT,
 					CW_USEDEFAULT, CW_USEDEFAULT,
-					hDlg, NULL, e_hInst, NULL);
-				SetWindowPos(hwndTT,
+					hdlg, /* hMenu= */ NULL, e_instance, /* lpParam= */ nullptr);
+				SetWindowPos(
+					tooltip_hwnd,
 					HWND_TOPMOST, 0, 0, 0, 0,
 					SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 				
-				i18n::loadStringAuto(IDS_TOOLTIPS, pszText);
-				TCHAR *next_tooltip = pszText;
+				i18n::loadStringAuto(IDS_TOOLTIPS, text);
+				TCHAR *next_tooltip = text;
 				TOOLINFO ti;
 				ti.cbSize = sizeof(ti);
 				ti.uFlags = TTF_SUBCLASS | TTF_IDISHWND;
-				ti.hinst = e_hInst;
+				ti.hinst = e_instance;
 				for (int i = 0; i < 4; i++) {
 					const UINT id = (i < 3) ? IDCCMD_ADD + i : IDCIMG_PROGRAMS;
 					
-					const HWND hctl = GetDlgItem(hDlg, id);
+					const HWND hctl = GetDlgItem(hdlg, id);
 					if (i < 3) {
 						SendMessage(hctl, BM_SETIMAGE, IMAGE_ICON,
 							reinterpret_cast<LPARAM>(i18n::loadNeutralIcon(IDI_ADD + i, 15,15)));
@@ -1092,73 +1132,73 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 					
 					ti.hwnd = hctl;
 					ti.uId = reinterpret_cast<UINT_PTR>(hctl);
-					ti.lpszText = const_cast<LPTSTR>(getSemiColonToken(next_tooltip));
-					SendMessage(hwndTT, TTM_ADDTOOL, 0, reinterpret_cast<LPARAM>(&ti));
+					ti.lpszText = const_cast<LPTSTR>(getSemiColonToken(&next_tooltip));
+					SendMessage(tooltip_hwnd, TTM_ADDTOOL, 0, reinterpret_cast<LPARAM>(&ti));
 				}
 				
 				// Auto start
-				CheckDlgButton(hDlg, IDCCHK_AUTOSTART, isAutoStartEnabled());
+				CheckDlgButton(hdlg, IDCCHK_AUTOSTART, isAutoStartEnabled());
 				
-				s_bProcessGuiEvents = true;
+				s_process_gui_events = true;
 				
-				SendMessage(hDlg, WM_SETICON, ICON_SMALL,
+				SendMessage(hdlg, WM_SETICON, ICON_SMALL,
 					reinterpret_cast<LPARAM>(i18n::loadNeutralIcon(IDI_APP, 16,16)));
-				SendMessage(hDlg, WM_SETICON, ICON_BIG,
+				SendMessage(hdlg, WM_SETICON, ICON_BIG,
 					reinterpret_cast<LPARAM>(i18n::loadNeutralIcon(IDI_APP, 32,32)));
 				
 				// Restore window size from settings
-				if (e_sizeMainDialog.cx < sizeMinimum.cx || e_sizeMainDialog.cy < sizeMinimum.cy) {
-					e_sizeMainDialog = sizeMinimum;
+				if (e_sizeMainDialog.cx < min_size.cx || e_sizeMainDialog.cy < min_size.cy) {
+					e_sizeMainDialog = min_size;
 				} else{
 					// Default settings: center window in the default monitor.
 					
-					const HMONITOR hMonitor = MonitorFromWindow(hDlg, MONITOR_DEFAULTTOPRIMARY);
+					const HMONITOR monitor = MonitorFromWindow(hdlg, MONITOR_DEFAULTTOPRIMARY);
 					MONITORINFO mi;
 					mi.cbSize = sizeof(mi);
-					GetMonitorInfo(hMonitor, &mi);
+					GetMonitorInfo(monitor, &mi);
 					
 					WINDOWPLACEMENT wp;
-					GetWindowPlacement(hDlg, &wp);
+					GetWindowPlacement(hdlg, &wp);
 					wp.rcNormalPosition.left = (mi.rcWork.left + mi.rcWork.right - e_sizeMainDialog.cx) / 2;
 					wp.rcNormalPosition.top = (mi.rcWork.top + mi.rcWork.bottom - e_sizeMainDialog.cy) / 2;
 					wp.rcNormalPosition.right = wp.rcNormalPosition.left + e_sizeMainDialog.cx;
 					wp.rcNormalPosition.bottom = wp.rcNormalPosition.top + e_sizeMainDialog.cy;
-					wp.showCmd = e_bMaximizeMainDialog ? SW_MAXIMIZE : SW_RESTORE;
-					SetWindowPlacement(hDlg, &wp);
+					wp.showCmd = e_maximize_main_dialog ? SW_MAXIMIZE : SW_RESTORE;
+					SetWindowPlacement(hdlg, &wp);
 				}
 				
-				centerParent(hDlg);
+				centerParent(hdlg);
 				
-				SendMessage(hDlg, WM_SIZE, 0, 0);
+				SendMessage(hdlg, WM_SIZE, 0, 0);
 				
 				if (lParam) {
-					PostMessage(hDlg, WM_COMMAND, static_cast<WPARAM>(lParam), 0);
+					PostMessage(hdlg, WM_COMMAND, static_cast<WPARAM>(lParam), 0);
 				}
 			}
-			return TRUE;
+			return true;
 		
 		
 		// Command
 		case WM_COMMAND:
-			onMainCommand(LOWORD(wParam), HIWORD(wParam), (HWND)lParam);
+			onMainCommand(LOWORD(wParam), HIWORD(wParam), reinterpret_cast<HWND>(lParam));
 			break;
 		
 		
 		// Draw the bottom-right gripper
 		case WM_PAINT:
 			{
-				RECT rc;
-				GetClientRect(hDlg, &rc);
-				rc.left = rc.right - GetSystemMetrics(SM_CXHSCROLL);
-				rc.top = rc.bottom - GetSystemMetrics(SM_CYVSCROLL);
+				RECT dialog_rect;
+				GetClientRect(hdlg, &dialog_rect);
+				dialog_rect.left = dialog_rect.right - GetSystemMetrics(SM_CXHSCROLL);
+				dialog_rect.top = dialog_rect.bottom - GetSystemMetrics(SM_CYVSCROLL);
 				
-				RECT rcUpdate;
-				if (GetUpdateRect(hDlg, &rcUpdate, TRUE) &&
-						IntersectRect(&rcUpdate, &rc, &rcUpdate)) {
+				RECT update_rect;
+				if (GetUpdateRect(hdlg, &update_rect, /* bErase= */ true) &&
+						IntersectRect(&update_rect, &dialog_rect, &update_rect)) {
 					PAINTSTRUCT ps;
-					const HDC hdc = BeginPaint(hDlg, &ps);
-					DrawFrameControl(hdc, &rc, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
-					EndPaint(hDlg, &ps);
+					const HDC hdc = BeginPaint(hdlg, &ps);
+					DrawFrameControl(hdc, &dialog_rect, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
+					EndPaint(hdlg, &ps);
 				}
 			}
 			break;
@@ -1168,15 +1208,15 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		case WM_NCHITTEST:
 			{
 				RECT rc;
-				GetClientRect(hDlg, &rc);
-				ClientToScreen(hDlg, reinterpret_cast<POINT*>(&rc) + 1);
+				GetClientRect(hdlg, &rc);
+				ClientToScreen(hdlg, reinterpret_cast<POINT*>(&rc) + 1);
 				rc.left = rc.right - GetSystemMetrics(SM_CXHSCROLL);
 				rc.top = rc.bottom - GetSystemMetrics(SM_CYVSCROLL);
 				
 				const POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 				if (PtInRect(&rc, pt)) {
-					SetWindowLongPtr(hDlg, DWLP_MSGRESULT, HTBOTTOMRIGHT);
-					return TRUE;
+					SetWindowLongPtr(hdlg, DWLP_MSGRESULT, HTBOTTOMRIGHT);
+					return true;
 				}
 			}
 			break;
@@ -1189,7 +1229,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				switch (pNMHDR->code) {
 					
 					case LVN_ITEMACTIVATE:
-						PostMessage(hDlg, WM_COMMAND, IDCCMD_EDIT, 0);
+						PostMessage(hdlg, WM_COMMAND, IDCCMD_EDIT, 0);
 						break;
 					
 					case LVN_GETDISPINFO:
@@ -1200,9 +1240,9 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 								lvi.iImage = psh->getSmallIconIndex();
 							}
 							if (lvi.mask & LVIF_TEXT) {
-								String s;
-								psh->getColumnText(lvi.iSubItem, s);
-								lstrcpyn(lvi.pszText, s, lvi.cchTextMax);
+								String column_text;
+								psh->getColumnText(lvi.iSubItem, column_text);
+								lstrcpyn(lvi.pszText, column_text, lvi.cchTextMax);
 							}
 						}
 						break;
@@ -1212,7 +1252,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 						break;
 					
 					case LVN_COLUMNCLICK:
-						Shortcut::s_iSortColumn = reinterpret_cast<const NMLISTVIEW*>(lParam)->iSubItem;
+						Shortcut::s_sort_column = reinterpret_cast<const NMLISTVIEW*>(lParam)->iSubItem;
 						onItemUpdated(~0);
 						break;
 				}
@@ -1222,11 +1262,11 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				// Get columns size
 				LVCOLUMN lvc;
 				lvc.mask = LVCF_WIDTH;
-				RECT rcList;
-				GetClientRect(s_hwnd_list, &rcList);
-				for (lvc.iSubItem = 0; lvc.iSubItem < nbColSize; lvc.iSubItem++) {
+				RECT list_rect;
+				GetClientRect(s_hwnd_list, &list_rect);
+				for (lvc.iSubItem = 0; lvc.iSubItem < kSizedColumnCount; lvc.iSubItem++) {
 					ListView_GetColumn(s_hwnd_list, lvc.iSubItem, &lvc);
-					e_acxCol[lvc.iSubItem] = MulDiv(lvc.cx, 100, rcList.right);
+					e_column_widths[lvc.iSubItem] = MulDiv(lvc.cx, 100, list_rect.right);
 				}
 			}
 			break;
@@ -1234,15 +1274,15 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		
 		case WM_GETMINMAXINFO:
 			reinterpret_cast<MINMAXINFO*>(lParam)->ptMinTrackSize =
-				reinterpret_cast<POINT&>(sizeMinimum);
+				reinterpret_cast<POINT&>(min_size);
 			break;
 		
 		case WM_SIZE:
 			{
-				RECT rcClientNew;
-				GetClientRect(hDlg, &rcClientNew);
-				int dx = rcClientNew.right - rcClientOrig.right;
-				int dy = rcClientNew.bottom - rcClientOrig.bottom;
+				RECT new_client_rect;
+				GetClientRect(hdlg, &new_client_rect);
+				int dx = new_client_rect.right - orig_client_rect.right;
+				int dy = new_client_rect.bottom - orig_client_rect.bottom;
 				
 				for (int i = 0; i < arrayLength(aSizePos); i++) {
 					aSizePos[i].updateGui(dx, dy);
@@ -1251,24 +1291,26 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				// Resize columns
 				LVCOLUMN lvc;
 				lvc.mask = LVCF_WIDTH;
-				RECT rcList;
-				GetClientRect(s_hwnd_list, &rcList);
-				int cxRemain = rcList.right;
+				RECT list_rect;
+				GetClientRect(s_hwnd_list, &list_rect);
+				int remaining_width = list_rect.right;
 				for (lvc.iSubItem = 0; lvc.iSubItem < colCount; lvc.iSubItem++) {
-					lvc.cx = (lvc.iSubItem < nbColSize)
-						? MulDiv(e_acxCol[lvc.iSubItem], rcList.right, 100)
-						: cxRemain;
-					cxRemain -= lvc.cx;
+					lvc.cx = (lvc.iSubItem < kSizedColumnCount)
+						? MulDiv(e_column_widths[lvc.iSubItem], list_rect.right, 100)
+						: remaining_width;
+					remaining_width -= lvc.cx;
 					ListView_SetColumn(s_hwnd_list, lvc.iSubItem, &lvc);
 				}
 				
-				RedrawWindow(hDlg, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_NOFRAME);
+				RedrawWindow(
+					hdlg, /* lprcUpdate= */ nullptr, /* hrgnUpdate= */ NULL,
+					RDW_INVALIDATE | RDW_ERASE | RDW_NOFRAME);
 				
 				WINDOWPLACEMENT wp;
-				GetWindowPlacement(hDlg, &wp);
+				GetWindowPlacement(hdlg, &wp);
 				e_sizeMainDialog.cx = wp.rcNormalPosition.right - wp.rcNormalPosition.left;
 				e_sizeMainDialog.cy = wp.rcNormalPosition.bottom - wp.rcNormalPosition.top;
-				e_bMaximizeMainDialog = (wp.showCmd == SW_MAXIMIZE);
+				e_maximize_main_dialog = (wp.showCmd == SW_MAXIMIZE);
 			}
 			break;
 		
@@ -1276,16 +1318,16 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		// Owner draw menu item: populate
 		case WM_INITMENUPOPUP:
 			if (!HIWORD(lParam)) {
-				const HMENU hMenu = (HMENU)wParam;
+				const HMENU menu = reinterpret_cast<HMENU>(wParam);
 				MENUITEMINFO mii;
 				mii.cbSize = sizeof(mii);
 				mii.fMask = MIIM_DATA | MIIM_TYPE;
 				mii.cch = 0;
-				if (GetMenuItemCount(hMenu) == 1 &&
-						GetMenuItemInfo(hMenu, 0, TRUE, &mii) &&
+				if (GetMenuItemCount(menu) == 1 &&
+						GetMenuItemInfo(menu, 0, /* fByPosition= */ true, &mii) &&
 						(mii.fType & MFT_SEPARATOR)) {
-					RemoveMenu(hMenu, 0, MF_BYPOSITION);
-					BaseMenuItem::forItemData(mii.dwItemData)->populate(hMenu);
+					RemoveMenu(menu, 0, MF_BYPOSITION);
+					BaseMenuItem::forItemData(mii.dwItemData)->populate(menu);
 				}
 			}
 			break;
@@ -1293,10 +1335,10 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		// Owner draw menu item: compute size
 		case WM_MEASUREITEM:
 			{
-				MEASUREITEMSTRUCT &mis = *reinterpret_cast<MEASUREITEMSTRUCT*>(lParam);
-				if (mis.CtlType == ODT_MENU && mis.itemData) {
-					BaseMenuItem::forItemData(mis.itemData)->measureItem(mis);
-					return TRUE;
+				MEASUREITEMSTRUCT* mis = reinterpret_cast<MEASUREITEMSTRUCT*>(lParam);
+				if (mis->CtlType == ODT_MENU && mis->itemData) {
+					BaseMenuItem::forItemData(mis->itemData)->measureItem(mis);
+					return true;
 				}
 			}
 			break;
@@ -1304,10 +1346,10 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		// Owner draw menu item: draw
 		case WM_DRAWITEM:
 			{
-				DRAWITEMSTRUCT &dis = *reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
+				const DRAWITEMSTRUCT &dis = *reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
 				if (dis.CtlType == ODT_MENU && dis.itemData) {
 					BaseMenuItem::forItemData(dis.itemData)->drawItem(dis);
-					return TRUE;
+					return true;
 				}
 			}
 			break;
@@ -1322,7 +1364,7 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				for (lvi.iItem = ListView_GetItemCount(s_hwnd_list); --lvi.iItem >= 0;) {
 					ListView_GetItem(s_hwnd_list, &lvi);
 					Shortcut *const psh = reinterpret_cast<Shortcut*>(lvi.lParam);
-					if (psh == pgfi->psh) {
+					if (psh == pgfi->shortcut) {
 						psh->onGetFileInfo(*pgfi);
 					}
 				}
@@ -1336,25 +1378,24 @@ INT_PTR CALLBACK prcMain(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 }
 
 
-LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	switch (uMsg) {
-		
+LRESULT CALLBACK prcProgramsTarget(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	switch (message) {
 		case WM_LBUTTONDOWN:
-			if (s_psh) {
-				s_bCapturingProgram = true;
-				SetCapture(hWnd);
-				SetCursor(LoadCursor(e_hInst, MAKEINTRESOURCE(IDC_TARGET)));
-				s_sOldPrograms = s_psh->m_sPrograms;
+			if (s_shortcut) {
+				s_capturing_program = true;
+				SetCapture(hwnd);
+				SetCursor(LoadCursor(e_instance, MAKEINTRESOURCE(IDC_TARGET)));
+				s_old_programs = s_shortcut->m_programs;
 			}
 			break;
 		
 		case WM_MOUSEMOVE:
-			if (s_bCapturingProgram && s_psh) {
+			if (s_capturing_program && s_shortcut) {
 				POINT pt;
 				GetCursorPos(&pt);
 				const HWND targeted_window = WindowFromPoint(pt);
 				
-				String rs = s_sOldPrograms;
+				String rs = s_old_programs;
 				DWORD idProcess;
 				TCHAR pszPath[MAX_PATH];
 				if (GetWindowThreadProcessId(targeted_window, &idProcess) &&
@@ -1367,7 +1408,7 @@ LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 				}
 				
 				String sOldPrograms;
-				getDlgItemText(e_hdlgMain, IDCTXT_PROGRAMS, sOldPrograms);
+				getDlgItemText(e_hdlgMain, IDCTXT_PROGRAMS, &sOldPrograms);
 				if (lstrcmp(sOldPrograms, rs)) {
 					SetDlgItemText(e_hdlgMain, IDCTXT_PROGRAMS, rs);
 				}
@@ -1375,76 +1416,74 @@ LRESULT CALLBACK prcProgramsTarget(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 			break;
 		
 		case WM_LBUTTONUP:
-			if (s_bCapturingProgram) {
-				s_bCapturingProgram = false;
+			if (s_capturing_program) {
+				s_capturing_program = false;
 				ReleaseCapture();
-				if (s_psh) {
-					if (lstrcmp(s_psh->m_sPrograms, s_sOldPrograms)) {
-						s_psh->cleanPrograms();
-						SetDlgItemText(e_hdlgMain, IDCTXT_PROGRAMS, s_psh->m_sPrograms);
+				if (s_shortcut) {
+					if (lstrcmp(s_shortcut->m_programs, s_old_programs)) {
+						s_shortcut->cleanPrograms();
+						SetDlgItemText(e_hdlgMain, IDCTXT_PROGRAMS, s_shortcut->m_programs);
 					} else {
-						messageBox(hWnd, ERR_TARGET, MB_ICONEXCLAMATION);
+						messageBox(hwnd, ERR_TARGET, MB_ICONEXCLAMATION);
 					}
 				}
 			}
 			break;
 			
 		case WM_CAPTURECHANGED:
-			if (s_bCapturingProgram) {
-				s_bCapturingProgram = false;
-				if (s_psh) {
-					SetDlgItemText(e_hdlgMain, IDCTXT_PROGRAMS, s_sOldPrograms);
+			if (s_capturing_program) {
+				s_capturing_program = false;
+				if (s_shortcut) {
+					SetDlgItemText(e_hdlgMain, IDCTXT_PROGRAMS, s_old_programs);
 				}
 			}
 			break;
 	}
 	
-	return CallWindowProc(s_prcProgramsTarget, hWnd, uMsg, wParam, lParam);
+	return CallWindowProc(s_prcProgramsTarget, hwnd, message, wParam, lParam);
 }
 
 
 
-// Command line shortcut settings
-INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM UNUSED(lParam)) {
-	switch (uMsg) {
-		
+INT_PTR CALLBACK prcCmdSettings(HWND hdlg, UINT message, WPARAM wParam, LPARAM UNUSED(lParam)) {
+	switch (message) {
 		case WM_INITDIALOG:
 			{
-				e_hdlgModal = hDlg;
-				centerParent(hDlg);
+				e_modal_dialog = hdlg;
+				centerParent(hdlg);
 				
 				// Fill "command line show" list
 				String show_options(IDS_SHOW_OPTIONS);
 				TCHAR* next_show_option = show_options.get();
-				for (int i = 0; i < shortcut::nbShowOption; i++) {
+				for (int i = 0; i < arrayLength(show_options); i++) {
 					LPCTSTR show_option = show_options.isEmpty()
 						? getToken(tokShowNormal + i)
-						: getSemiColonToken(next_show_option);
-					SendDlgItemMessage(hDlg, IDCCBO_SHOW, CB_ADDSTRING, 0,
+						: getSemiColonToken(&next_show_option);
+					SendDlgItemMessage(hdlg, IDCCBO_SHOW, CB_ADDSTRING, 0,
 							reinterpret_cast<LPARAM>(show_option));
 				}
 				
-				SetDlgItemText(hDlg, IDCTXT_COMMAND, s_psh->m_sCommand);
-				SetDlgItemText(hDlg, IDCTXT_DIRECTORY, s_psh->m_sDirectory);
+				SetDlgItemText(hdlg, IDCTXT_COMMAND, s_shortcut->m_command);
+				SetDlgItemText(hdlg, IDCTXT_DIRECTORY, s_shortcut->m_directory);
 				
-				int iShow;
-				for (iShow = 0; iShow < shortcut::nbShowOption; iShow++) {
-					if (shortcut::aiShowOption[iShow] == s_psh->m_nShow) {
+				int show_option_index;
+				for (show_option_index = 0; show_option_index < arrayLength(shortcut::show_options); show_option_index++) {
+					if (shortcut::show_options[show_option_index] == s_shortcut->m_show_option) {
 						break;
 					}
 				}
-				SendDlgItemMessage(hDlg, IDCCBO_SHOW, CB_SETCURSEL, static_cast<WPARAM>(iShow), 0);
+				SendDlgItemMessage(hdlg, IDCCBO_SHOW, CB_SETCURSEL, static_cast<WPARAM>(show_option_index), 0);
 				
-				CheckDlgButton(hDlg, IDCCHK_SUPPORTFILEOPEN, s_psh->m_bSupportFileOpen);
+				CheckDlgButton(hdlg, IDCCHK_SUPPORTFILEOPEN, s_shortcut->m_support_file_open);
 			}
-			return TRUE;
+			return true;
 		
 		case WM_COMMAND:
 			switch (LOWORD(wParam)) {
 				
 				// Browse for command line
 				case IDCCMD_COMMAND:
-					browseForCommandLine(hDlg);
+					browseForCommandLine(hdlg);
 					break;
 				
 				// Browse for directory
@@ -1452,33 +1491,33 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM UNUS
 					{
 						// Get the command line file (without arguments)
 						TCHAR pszDir[MAX_PATH];
-						GetDlgItemText(hDlg, IDCTXT_DIRECTORY, pszDir, arrayLength(pszDir));
+						GetDlgItemText(hdlg, IDCTXT_DIRECTORY, pszDir, arrayLength(pszDir));
 						
 						TCHAR pszTitle[MAX_PATH];
 						i18n::loadStringAuto(IDS_BROWSEDIR, pszTitle);
-						if (!browseForFolder(hDlg, pszTitle, pszDir)) {
+						if (!browseForFolder(hdlg, pszTitle, pszDir)) {
 							break;
 						}
 						
 						// Update internal structures
-						SetDlgItemText(hDlg, IDCTXT_DIRECTORY, pszDir);
-						SendMessage(hDlg, WM_COMMAND, MAKEWPARAM(IDCTXT_DIRECTORY, EN_KILLFOCUS),
-								reinterpret_cast<LPARAM>(GetDlgItem(hDlg, IDCTXT_DIRECTORY)));
+						SetDlgItemText(hdlg, IDCTXT_DIRECTORY, pszDir);
+						SendMessage(hdlg, WM_COMMAND, MAKEWPARAM(IDCTXT_DIRECTORY, EN_KILLFOCUS),
+								reinterpret_cast<LPARAM>(GetDlgItem(hdlg, IDCTXT_DIRECTORY)));
 					}
 					break;
 				
 				case IDOK:
-					getDlgItemText(hDlg, IDCTXT_COMMAND, s_psh->m_sCommand);
-					getDlgItemText(hDlg, IDCTXT_DIRECTORY, s_psh->m_sDirectory);
-					s_psh->m_nShow = shortcut::aiShowOption[
-						SendDlgItemMessage(hDlg, IDCCBO_SHOW, CB_GETCURSEL, 0,0)];
-					s_psh->m_bSupportFileOpen = toBool(IsDlgButtonChecked(hDlg, IDCCHK_SUPPORTFILEOPEN));
-					s_psh->resetIcons();
+					getDlgItemText(hdlg, IDCTXT_COMMAND, &s_shortcut->m_command);
+					getDlgItemText(hdlg, IDCTXT_DIRECTORY, &s_shortcut->m_directory);
+					s_shortcut->m_show_option = shortcut::show_options[
+						SendDlgItemMessage(hdlg, IDCCBO_SHOW, CB_GETCURSEL, 0,0)];
+					s_shortcut->m_support_file_open = toBool(IsDlgButtonChecked(hdlg, IDCCHK_SUPPORTFILEOPEN));
+					s_shortcut->clearIcons();
 					// Fall-through
 					
 				case IDCANCEL:
-					e_hdlgModal = e_hdlgMain;
-					EndDialog(hDlg, LOWORD(wParam));
+					e_modal_dialog = e_hdlgMain;
+					EndDialog(hdlg, LOWORD(wParam));
 					break;
 			}
 			break;
@@ -1488,22 +1527,20 @@ INT_PTR CALLBACK prcCmdSettings(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM UNUS
 }
 
 
-// Language selection dialog box
-INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
-	const HWND hlst = GetDlgItem(hDlg, IDCLST_LANGUAGE);
+INT_PTR CALLBACK prcLanguage(HWND hdlg, UINT message, WPARAM wParam, LPARAM UNUSED(lParam)) {
+	const HWND list_hwnd = GetDlgItem(hdlg, IDCLST_LANGUAGE);
 	
-	switch (uMsg) {
-		
+	switch (message) {
 		case WM_INITDIALOG:
 			{
-				e_hdlgModal = hDlg;
+				e_modal_dialog = hdlg;
 				
 				for (int lang = 0; lang < i18n::langCount; lang++) {
-					ListBox_AddString(hlst, getLanguageName(lang));
+					ListBox_AddString(list_hwnd, getLanguageName(lang));
 				}
-				ListBox_SetCurSel(hlst, i18n::getLanguage());
+				ListBox_SetCurSel(list_hwnd, i18n::getLanguage());
 			}
-			return TRUE;
+			return true;
 		
 		case WM_COMMAND:
 			switch (LOWORD(wParam)) {
@@ -1514,7 +1551,7 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
 				// Fall-through
 				case IDOK:
 					{
-						const int iLang = ListBox_GetCurSel(hlst);
+						const int iLang = ListBox_GetCurSel(list_hwnd);
 						if (i18n::getLanguage() != iLang) {
 							i18n::setLanguage(iLang);
 							shortcut::saveShortcuts();
@@ -1523,7 +1560,7 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
 						}
 					}
 				case IDCANCEL:
-					EndDialog(hDlg, LOWORD(wParam));
+					EndDialog(hdlg, LOWORD(wParam));
 					break;
 			}
 			break;
@@ -1534,45 +1571,45 @@ INT_PTR CALLBACK prcLanguage(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM) {
 
 
 
-// "About" dialog box
-INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	switch (uMsg) {
-		
+INT_PTR CALLBACK prcAbout(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) {
+	switch (message) {
 		case WM_INITDIALOG:
-			e_hdlgModal = hDlg;
-			centerParent(hDlg);
+			e_modal_dialog = hdlg;
+			centerParent(hdlg);
 			
-			initializeWebLink(hDlg, IDCLBL_WEBSITE, _T("http://utilfr42.free.fr/"));
-			initializeWebLink(hDlg, IDCLBL_EMAIL, _T("mailto:guillaume@ryder.fr"));
-			i18n::loadStringAuto(IDS_DONATEURL, pszDonateURL);
-			initializeWebLink(hDlg, IDCLBL_DONATE, pszDonateURL);
-			SendDlgItemMessage(hDlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
+			initializeWebLink(hdlg, IDCLBL_WEBSITE, _T("http://utilfr42.free.fr/"));
+			initializeWebLink(hdlg, IDCLBL_EMAIL, _T("mailto:guillaume@ryder.fr"));
+			i18n::loadStringAuto(IDS_DONATEURL, s_donate_url);
+			initializeWebLink(hdlg, IDCLBL_DONATE, s_donate_url);
+			SendDlgItemMessage(hdlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
 				reinterpret_cast<LPARAM>(i18n::loadBitmap(IDB_DONATE)));
-			return TRUE;
+			return true;
 		
 		case WM_CTLCOLORSTATIC:
 			{
-				const int id = GetDlgCtrlID((HWND)lParam);
+				const HDC hdc = reinterpret_cast<HDC>(wParam);
+				const HWND control_hwnd = reinterpret_cast<HWND>(lParam);
+				const int id = GetDlgCtrlID(control_hwnd);
 				if (id == IDCLBL_EMAIL || id == IDCLBL_WEBSITE) {
-					HFONT hFont = reinterpret_cast<HFONT>(GetWindowLongPtr(hDlg, DWLP_USER));
-					if (!hFont) {
+					HFONT font = reinterpret_cast<HFONT>(GetWindowLongPtr(hdlg, DWLP_USER));
+					if (!font) {
 						LOGFONT lf;
-						GetObject((HFONT)SendMessage((HWND)lParam, WM_GETFONT, 0,0), sizeof(lf), &lf);
-						lf.lfUnderline = TRUE;
-						hFont = CreateFontIndirect(&lf);
-						SetWindowLongPtr(hDlg, DWLP_USER, reinterpret_cast<LONG_PTR>(hFont));
+						GetObject(reinterpret_cast<HFONT>(SendMessage(control_hwnd, WM_GETFONT, 0,0)), sizeof(lf), &lf);
+						lf.lfUnderline = true;
+						font = CreateFontIndirect(&lf);
+						SetWindowLongPtr(hdlg, DWLP_USER, reinterpret_cast<LONG_PTR>(font));
 					}
-					SelectFont((HDC)wParam, hFont);
-					SetTextColor((HDC)wParam, RGB(0,0,255));
-					SetBkMode((HDC)wParam, TRANSPARENT);
-					return (INT_PTR)GetSysColorBrush(COLOR_BTNFACE);
+					SelectFont(hdc, font);
+					SetTextColor(hdc, RGB(0,0,255));
+					SetBkMode(hdc, TRANSPARENT);
+					return reinterpret_cast<INT_PTR>(GetSysColorBrush(COLOR_BTNFACE));
 				}
 			}
 			break;
 		
 		case WM_COMMAND:
-			DeleteFont(reinterpret_cast<HFONT>(GetWindowLongPtr(hDlg, DWLP_USER)));
-			EndDialog(hDlg, IDOK);
+			DeleteFont(reinterpret_cast<HFONT>(GetWindowLongPtr(hdlg, DWLP_USER)));
+			EndDialog(hdlg, IDOK);
 			break;
 	}
 	
@@ -1580,45 +1617,40 @@ INT_PTR CALLBACK prcAbout(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 }
 
 
-// Redraw the selected item
 void updateItem() {
-	const int iItem = ListView_GetNextItem(s_hwnd_list, -1, LVNI_SELECTED);
-	ListView_RedrawItems(s_hwnd_list, iItem,iItem);
+	const int item_index = ListView_GetNextItem(s_hwnd_list, -1, LVNI_SELECTED);
+	ListView_RedrawItems(s_hwnd_list, /* iFirst= */ item_index, /* iLast= */ item_index);
 }
 
 
-
-// Update the dialog box to reflect the current shortcut state
 void updateList() {
-	s_bProcessGuiEvents = false;
+	s_process_gui_events = false;
 	
-	Shortcut *const psh = getSelectedShortcut();
-	const bool bSel = toBool(psh);
+	Shortcut *const shortcut = getSelectedShortcut();
+	const bool selected = toBool(shortcut);
 	
-	HICON hIcon = NULL;
+	HICON icon = NULL;
 	
-	if (bSel) {
+	if (selected) {
 		// Fill shortcut controls
 		
-		s_psh = psh;
+		s_shortcut = shortcut;
 		CheckRadioButton(e_hdlgMain, IDCOPT_TEXT, IDCOPT_COMMAND,
-			s_psh->m_bCommand ? IDCOPT_COMMAND : IDCOPT_TEXT);
+			(s_shortcut->m_type == Shortcut::Type::Command) ? IDCOPT_COMMAND : IDCOPT_TEXT);
 		
-		SetDlgItemText(e_hdlgMain, IDCTXT_TEXT, s_psh->m_sText);
-		SetDlgItemText(e_hdlgMain, IDCTXT_COMMAND, s_psh->m_sCommand);
-		SetDlgItemText(e_hdlgMain, IDCTXT_PROGRAMS, s_psh->m_sPrograms);
-		SetDlgItemText(e_hdlgMain, IDCTXT_DESCRIPTION, s_psh->m_sDescription);
+		SetDlgItemText(e_hdlgMain, IDCTXT_TEXT, s_shortcut->m_text);
+		SetDlgItemText(e_hdlgMain, IDCTXT_COMMAND, s_shortcut->m_command);
+		SetDlgItemText(e_hdlgMain, IDCTXT_PROGRAMS, s_shortcut->m_programs);
+		SetDlgItemText(e_hdlgMain, IDCTXT_DESCRIPTION, s_shortcut->m_description);
 		SendDlgItemMessage(e_hdlgMain, IDCCBO_PROGRAMS, CB_SETCURSEL,
-			s_psh->m_bProgramsOnly, 0);
+			s_shortcut->m_programs_only, 0);
 		
-		hIcon = s_psh->getIcon();
+		icon = s_shortcut->getIcon();
 	}
 	
-	
 	// Enable or disable shortcut controls and Delete button
-	
-	const bool bCommand = toBool(IsDlgButtonChecked(e_hdlgMain, IDCOPT_COMMAND));
-	static const UINT s_aid[] = {
+	const bool is_command = toBool(IsDlgButtonChecked(e_hdlgMain, IDCOPT_COMMAND));
+	static const UINT s_control_ids[] = {
 		IDCCMD_DELETE, IDCCMD_EDIT, IDCFRA_TEXT, IDCFRA_COMMAND,
 		IDCOPT_TEXT, IDCOPT_COMMAND,
 		IDCLBL_DESCRIPTION, IDCTXT_DESCRIPTION,
@@ -1626,42 +1658,40 @@ void updateList() {
 		IDCTXT_TEXT, IDCCMD_TEXT_MENU,
 		IDCTXT_COMMAND, IDCCMD_COMMAND, IDCCMD_CMDSETTINGS, IDCCMD_TEST,
 	};
-	const bool abEnabled[] = {
+	const bool controls_enabled[] = {
 		true, true, true, true,
 		true, true,
 		true, true,
 		true, true, true, true,
-		!bCommand, !bCommand,
-		bCommand, bCommand, bCommand, bCommand,
+		!is_command, !is_command,
+		is_command, is_command, is_command, is_command,
 	};
-	for (int i = 0; i < arrayLength(s_aid); i++) {
-		EnableWindow(GetDlgItem(e_hdlgMain, s_aid[i]), bSel && abEnabled[i]);
+	for (int i = 0; i < arrayLength(s_control_ids); i++) {
+		EnableWindow(GetDlgItem(e_hdlgMain, s_control_ids[i]), selected && controls_enabled[i]);
 	}
 	
-	
 	// Icon
-	SendDlgItemMessage(e_hdlgMain, IDCLBL_ICON, STM_SETICON,
-		reinterpret_cast<WPARAM>(bCommand ? hIcon : NULL), 0);
+	SendDlgItemMessage(
+		e_hdlgMain, IDCLBL_ICON, STM_SETICON,
+		reinterpret_cast<WPARAM>(is_command ? icon : NULL), 0);
 	
-	s_bProcessGuiEvents = true;
+	s_process_gui_events = true;
 }
 
 
-// Insert a new item in the shortcut list
-// Return its ID
-int addItem(Shortcut* psh, bool bSelected) {
+int addItem(Shortcut* shortcut, bool selected) {
 	LVITEM lvi;
 	lvi.iItem = 0;
 	lvi.iSubItem = 0;
 	lvi.pszText = LPSTR_TEXTCALLBACK;
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM | LVIF_STATE;
 	lvi.stateMask = LVIS_SELECTED | LVIS_FOCUSED;
-	lvi.state = bSelected ? LVIS_SELECTED | LVIS_FOCUSED : 0;
-	lvi.lParam = reinterpret_cast<LPARAM>(psh);
+	lvi.state = selected ? LVIS_SELECTED | LVIS_FOCUSED : 0;
+	lvi.lParam = reinterpret_cast<LPARAM>(shortcut);
 	lvi.iImage = I_IMAGECALLBACK;
 	lvi.iItem = ListView_InsertItem(s_hwnd_list, &lvi);
 	lvi.mask = LVIF_TEXT;
-	for (lvi.iSubItem = 1; lvi.iSubItem < arrayLength(e_acxCol); lvi.iSubItem++) {
+	for (lvi.iSubItem = 1; lvi.iSubItem < arrayLength(e_column_widths); lvi.iSubItem++) {
 		ListView_SetItem(s_hwnd_list, &lvi);
 	}
 	
@@ -1669,29 +1699,26 @@ int addItem(Shortcut* psh, bool bSelected) {
 }
 
 
-// Called when some columns of an item are updated.
-void onItemUpdated(int mskColumns) {
-	if (mskColumns & (1 << Shortcut::s_iSortColumn)) {
-		ListView_SortItems(s_hwnd_list, Shortcut::compare, NULL);
+void onItemUpdated(int columns_mask) {
+	if (columns_mask & (1 << Shortcut::s_sort_column)) {
+		ListView_SortItems(s_hwnd_list, Shortcut::compare, /* lParam= */ 0);
 	}
-	ListView_EnsureVisible(s_hwnd_list, ListView_GetSelectionMark(s_hwnd_list), FALSE);
+	ListView_EnsureVisible(s_hwnd_list, ListView_GetSelectionMark(s_hwnd_list), false);
 }
 
 
-// Called when a shortcut is added or removed.
-// Updates the shortcut counts label.
 void onShortcutsCountChanged() {
-	SetDlgItemInt(e_hdlgModal, IDCTXT_SHORTCUTSCOUNT,
-		(UINT)ListView_GetItemCount(s_hwnd_list), TRUE);
+	SetDlgItemInt(
+		e_modal_dialog, IDCTXT_SHORTCUTSCOUNT,
+		static_cast<UINT>(ListView_GetItemCount(s_hwnd_list)), /* bSigned= */ true);
 }
 
 
-// Get the selected shortcut
 Shortcut* getSelectedShortcut() {
 	LVITEM lvi;
 	lvi.iItem = ListView_GetNextItem(s_hwnd_list, -1, LVNI_SELECTED);
 	if (lvi.iItem < 0) {
-		return NULL;
+		return nullptr;
 	}
 	lvi.mask = LVIF_PARAM;
 	ListView_GetItem(s_hwnd_list, &lvi);
@@ -1707,7 +1734,6 @@ Shortcut* getSelectedShortcut() {
 
 namespace shortcut {
 
-// Get several icons, then delete the GETFILEICON* array.
 DWORD WINAPI threadGetFilesIcon(GETFILEICON* apgfi[]) {
 	for (int i = 0; apgfi[i]; i++) {
 		threadGetFileIcon(*apgfi[i]);
@@ -1717,38 +1743,37 @@ DWORD WINAPI threadGetFilesIcon(GETFILEICON* apgfi[]) {
 }
 
 
-// Get an icon, then give it to the main window by posting a WM_GETFILEICON message.
 DWORD WINAPI threadGetFileIcon(GETFILEICON& gfi) {
 	// Use HTML files icon for URLs
-	if (PathIsURL(gfi.pszExecutable)) {
-		lstrcpy(gfi.pszExecutable, _T("a.url"));
-		gfi.uFlags |= SHGFI_USEFILEATTRIBUTES;
+	if (PathIsURL(gfi.executable)) {
+		lstrcpy(gfi.executable, _T("a.url"));
+		gfi.flags |= SHGFI_USEFILEATTRIBUTES;
 	}
 	
-	gfi.bOK = getFileInfo(gfi.pszExecutable, 0, gfi.shfi, gfi.uFlags);
+	gfi.ok = getFileInfo(gfi.executable, 0, gfi.shfi, gfi.flags);
 	
 	PostMessage(dialogs::e_hdlgMain, WM_GETFILEICON, 0, reinterpret_cast<LPARAM>(&gfi));
 	return 0;
 }
 
 
-void Shortcut::findExecutable(LPTSTR pszExecutable) {
-	TCHAR pszFile[MAX_PATH];
-	StrCpyN(pszFile, m_sCommand, arrayLength(pszFile));
-	PathRemoveArgs(pszFile);
-	findFullPath(pszFile, pszExecutable);
+void Shortcut::findExecutable(LPTSTR executable) {
+	TCHAR file[MAX_PATH];
+	StrCpyN(file, m_command, arrayLength(file));
+	PathRemoveArgs(file);
+	findFullPath(file, executable);
 }
 
 
 void Shortcut::onGetFileInfo(GETFILEICON& gfi) {
-	if (gfi.uFlags & SHGFI_SYSICONINDEX) {
+	if (gfi.flags & SHGFI_SYSICONINDEX) {
 		// Small icon index
 		
-		m_iSmallIcon = gfi.bOK ? gfi.shfi.iIcon : iconInvalid;
+		m_small_icon_index = gfi.ok ? gfi.shfi.iIcon : iconInvalid;
 		
 		LVFINDINFO lvfi;
 		lvfi.flags = LVFI_PARAM;
-		lvfi.lParam = reinterpret_cast<LPARAM>(gfi.psh);
+		lvfi.lParam = reinterpret_cast<LPARAM>(gfi.shortcut);
 		const int iItem = ListView_FindItem(dialogs::s_hwnd_list, -1, &lvfi);
 		if (iItem >= 0) {
 			ListView_RedrawItems(dialogs::s_hwnd_list, iItem,iItem);
@@ -1757,41 +1782,41 @@ void Shortcut::onGetFileInfo(GETFILEICON& gfi) {
 	} else {
 		// Big icon
 		
-		m_hIcon = gfi.bOK ? gfi.shfi.hIcon : NULL;
-		if (dialogs::s_psh == this) {
+		m_icon = gfi.ok ? gfi.shfi.hIcon : NULL;
+		if (dialogs::s_shortcut == this) {
 			SendDlgItemMessage(dialogs::e_hdlgMain, IDCLBL_ICON, STM_SETICON,
-				reinterpret_cast<WPARAM>(m_bCommand ? m_hIcon : NULL), 0);
+				reinterpret_cast<WPARAM>((m_type == Shortcut::Type::Command) ? m_icon : nullptr), 0);
 		}
 	}
 }
 
 void Shortcut::findSmallIconIndex() {
-	VERIFV(m_iSmallIcon != iconThreadRunning);
-	m_iSmallIcon = iconThreadRunning;
+	VERIFV(m_small_icon_index != iconThreadRunning);
+	m_small_icon_index = iconThreadRunning;
 	
-	if (m_bCommand) {
-		fillGetFileIcon(NULL, true);
+	if (m_type == Shortcut::Type::Command) {
+		fillGetFileIcon(/* pgfi= */ nullptr, true);
 	}
 }
 
-void Shortcut::fillGetFileIcon(GETFILEICON* pgfi, bool bSmallIcon) {
+void Shortcut::fillGetFileIcon(GETFILEICON* pgfi, bool small_icon) {
 	const bool bStart = !pgfi;
 	if (bStart) {
 		pgfi = new GETFILEICON;
 	}
 	
-	if (bSmallIcon) {
-		m_iSmallIcon = iconThreadRunning;
+	if (small_icon) {
+		m_small_icon_index = iconThreadRunning;
 	}
 	
-	pgfi->psh = this;
-	pgfi->uFlags = bSmallIcon
+	pgfi->shortcut = this;
+	pgfi->flags = small_icon
 		? SHGFI_ICON | SHGFI_SMALLICON | SHGFI_SYSICONINDEX
 		: SHGFI_ICON;
-	findExecutable(pgfi->pszExecutable);
+	findExecutable(pgfi->executable);
 	
 	if (bStart) {
-		if (*pgfi->pszExecutable) {
+		if (*pgfi->executable) {
 			startThread((LPTHREAD_START_ROUTINE)threadGetFileIcon, pgfi);
 		} else {
 			threadGetFileIcon(*pgfi);
@@ -1800,61 +1825,59 @@ void Shortcut::fillGetFileIcon(GETFILEICON* pgfi, bool bSmallIcon) {
 }
 
 void Shortcut::findIcon() {
-	fillGetFileIcon(NULL, false);
+	fillGetFileIcon(/* pgfi= */ nullptr, /* small_icon= */ false);
 }
 
 int Shortcut::getSmallIconIndex() {
-	if (!m_bCommand) {
+	if (m_type != Shortcut::Type::Command) {
 		return -1;
 	}
-	if (m_iSmallIcon == iconNeeded) {
+	if (m_small_icon_index == iconNeeded) {
 		findSmallIconIndex();
 	}
-	return m_iSmallIcon;
+	return m_small_icon_index;
 }
 
-void Shortcut::resetIcons() {
-	m_iSmallIcon = iconNeeded;
-	if (m_hIcon) {
-		DestroyIcon(m_hIcon);
-		m_hIcon = NULL;
+void Shortcut::clearIcons() {
+	m_small_icon_index = iconNeeded;
+	if (m_icon) {
+		DestroyIcon(m_icon);
+		m_icon = NULL;
 	}
 }
 
 
-// Add shortcut tabular representation to the given string
-// Return the new end of the string
-void Shortcut::appendCsvLineToString(String& rs) const {
-	TCHAR pszHotKey[bufHotKey];
-	getKeyName(pszHotKey);
-	rs += pszHotKey;
-	rs += _T('\t');
+void Shortcut::appendCsvLineToString(String& output) const {
+	TCHAR display_name[bufHotKey];
+	getDisplayName(display_name);
+	output += display_name;
+	output += _T('\t');
 	
-	rs += getToken(m_bCommand ? tokCommand : tokText);
-	rs += _T('\t');
+	output += getToken((m_type == Shortcut::Type::Command) ? tokCommand : tokText);
+	output += _T('\t');
 	
-	rs += m_bCommand ? m_sCommand : m_sText;
-	rs += _T('\t');
+	output += (m_type == Shortcut::Type::Command) ? m_command : m_text;
+	output += _T('\t');
 	
 	String sCond;
 	getColumnText(colCond, sCond);
-	rs += sCond;
-	rs += _T('\t');
+	output += sCond;
+	output += _T('\t');
 	
-	rs += m_sDescription;
-	rs += _T("\r\n");
+	output += m_description;
+	output += _T("\r\n");
 }
 
 
-void Shortcut::getColumnText(int iColumn, String& rs) const {
-	switch (iColumn) {
+void Shortcut::getColumnText(int column_text, String& output) const {
+	switch (column_text) {
 		
 		case colContents:
-			rs = m_bCommand ? m_sCommand : m_sText;
+			output = (m_type == Shortcut::Type::Command) ? m_command : m_text;
 			break;
 		
 		case colKeystroke:
-			getKeyName(rs.getBuffer(bufHotKey));
+			getDisplayName(output.getBuffer(bufHotKey));
 			break;
 		
 		case colCond:
@@ -1862,42 +1885,42 @@ void Shortcut::getColumnText(int iColumn, String& rs) const {
 				static const TCHAR s_acCond[] = { _T('\0'), _T('+'), _T('-') };
 				
 				for (int cond = 0; cond < 3; cond++) {
-					if (m_aCond[cond]) {
-						rs += s_acCond[m_aCond[cond]];
-						rs += s_sCondKeys.get()[cond];
+					if (m_conditions[cond]) {
+						output += s_acCond[m_conditions[cond]];
+						output += s_sCondKeys.get()[cond];
 					}
 				}
-				if (m_sPrograms.isSome()) {
-					if (rs.isSome()) {
-						rs += _T(' ');
+				if (m_programs.isSome()) {
+					if (output.isSome()) {
+						output += _T(' ');
 					}
-					rs += m_bProgramsOnly ? _T('+') : _T('-');
-					rs += m_sPrograms;
+					output += m_programs_only ? _T('+') : _T('-');
+					output += m_programs;
 				}
 			}
 			break;
 		
 		case colUsageCount:
-			i18n::formatInteger(m_nbUsage, &rs);
+			i18n::formatInteger(m_usage_count, &output);
 			break;
 		
 		case colDescription:
-			rs = m_sDescription;
+			output = m_description;
 			break;
 	}
 }
 
 
-int Shortcut::s_iSortColumn = colContents;
+int Shortcut::s_sort_column = colContents;
 
-int CALLBACK Shortcut::compare(const Shortcut* shortcut1, const Shortcut* shortcut2, LPARAM) {
+int CALLBACK Shortcut::compare(const Shortcut* shortcut1, const Shortcut* shortcut2, LPARAM UNUSED(lParam)) {
 	
 	// Some columns needing a special treatment
-	switch (s_iSortColumn) {
+	switch (s_sort_column) {
 		case colContents:
-			if (shortcut1->m_bCommand != shortcut2->m_bCommand) {
+			if (shortcut1->m_type != shortcut2->m_type) {
 				// Type has precedence over contents.
-				return static_cast<int>(shortcut1->m_bCommand) - static_cast<int>(shortcut2->m_bCommand);
+				return static_cast<int>(shortcut1->m_type) - static_cast<int>(shortcut2->m_type);
 			}
 			break;
 		
@@ -1905,13 +1928,13 @@ int CALLBACK Shortcut::compare(const Shortcut* shortcut1, const Shortcut* shortc
 			return Keystroke::compare(*shortcut1, *shortcut2);
 		
 		case colUsageCount:
-			return shortcut1->m_nbUsage - shortcut2->m_nbUsage;
+			return shortcut1->m_usage_count - shortcut2->m_usage_count;
 	}
 	
 	// Other columns: sort alphabetically.
 	String text1, text2;
-	shortcut1->getColumnText(s_iSortColumn, text1);
-	shortcut2->getColumnText(s_iSortColumn, text2);
+	shortcut1->getColumnText(s_sort_column, text1);
+	shortcut2->getColumnText(s_sort_column, text2);
 	return lstrcmpi(text1, text2);
 }
 
@@ -1920,23 +1943,25 @@ int CALLBACK Shortcut::compare(const Shortcut* shortcut1, const Shortcut* shortc
 
 namespace dialogs {
 
-void fillSpecialCharsMenu(HMENU hMenu, int pos, UINT idFirst) {
-	const HMENU hSubMenu = GetSubMenu(hMenu, pos);
+void fillSpecialCharsMenu(HMENU menu, int pos, UINT first_id) {
+	const HMENU hSubMenu = GetSubMenu(menu, pos);
 	RemoveMenu(hSubMenu, 0, MF_BYPOSITION);
 	for (int chr = 128; chr < 256; chr++) {
 		TCHAR pszLabel[30];
 		wsprintf(pszLabel, _T("%d - %c"), chr, chr);
 		AppendMenu(hSubMenu,
 			((chr & 15) == 0) ? MF_STRING | MF_MENUBREAK : MF_STRING,
-			idFirst + chr, pszLabel);
+			first_id + chr, pszLabel);
 	}
 }
 
-void escapeString(LPCTSTR psz, String& rs) {
-	rs.getBuffer(lstrlen(psz) + 1);
+void escapeString(LPCTSTR input, String* output) {
+	int output_len = output->getLength();
+	TCHAR* output_end = output->getBuffer(output_len + lstrlen(input) + 1) + output_len;
 	for (;;) {
-		switch (*psz) {
+		switch (*input) {
 			case '\0':
+				*output_end = _T('\0');
 				return;
 			case '\\':
 			case '[':
@@ -1944,17 +1969,17 @@ void escapeString(LPCTSTR psz, String& rs) {
 			case '{':
 			case '}':
 			case '|':
-				rs += _T('\\');
+				*output_end++ = _T('\\');
 			default:
-				rs += *psz++;
+				*output_end++ = *input++;
 				break;
 		}
 	}
 }
 
-void appendText(LPCTSTR pszText) {
+void appendText(LPCTSTR text) {
 	const HWND hctl = GetDlgItem(e_hdlgMain, IDCTXT_TEXT);
-	Edit_ReplaceSel(hctl, pszText);
+	Edit_ReplaceSel(hctl, text);
 	SetFocus(hctl);
 }
 

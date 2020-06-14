@@ -29,7 +29,7 @@ namespace MyStringTest {
 class StringTest;
 }
 
-extern HANDLE e_hHeap;
+extern HANDLE e_heap;
 
 
 // Indicates whether a character buffer is null or empty.
@@ -67,7 +67,7 @@ public:
 	// Constructors, destructor
 	//----------------------------------------------------------------------
 	
-	String() : m_strbuf(NULL), m_buf_length(0) {
+	String() : m_strbuf(nullptr), m_buf_length(0) {
 	}
 	
 	String(CSTR strbuf) {
@@ -78,7 +78,7 @@ public:
 		affectInit((CSTR)str);
 	}
 	
-	String(int resource_id) : m_strbuf(NULL), m_buf_length(0) {
+	String(int resource_id) : m_strbuf(nullptr), m_buf_length(0) {
 		loadString(resource_id);
 	}
 	
@@ -161,8 +161,8 @@ public:
 	}
 	
 	CSTR getSafe() const {
-		static const TCHAR pszEmpty[] = { 0 };
-		return (m_strbuf) ? m_strbuf : pszEmpty;
+		static constexpr TCHAR empty_string[] = { 0 };
+		return (m_strbuf) ? m_strbuf : empty_string;
 	}
 	
 	TCHAR& operator [] (int offset) {
@@ -196,7 +196,7 @@ public:
 	
 	void empty() {
 		destroy();
-		m_strbuf = NULL;
+		m_strbuf = nullptr;
 		m_buf_length = 0;
 	}
 	
@@ -248,7 +248,7 @@ private:
 	
 	void affectInit(CSTR strbuf, int length) {
 		if (length <= 0) {
-			m_strbuf = NULL;
+			m_strbuf = nullptr;
 			m_buf_length = 0;
 		} else {
 			length++;
@@ -295,16 +295,18 @@ private:
 private:
 	
 	static STR bufferAlloc(int buf_length) {
-		return (STR)HeapAlloc(e_hHeap, 0, buf_length * sizeof(TCHAR));
+		return static_cast<STR>(
+			HeapAlloc(e_heap, /* dwFlags= */ 0, buf_length * sizeof(TCHAR)));
 	}
 	
 	static void bufferFree(STR strbuf) {
-		HeapFree(e_hHeap, 0, strbuf);
+		HeapFree(e_heap, /* dwFlags= */ 0, strbuf);
 	}
 	
 	static STR bufferRealloc(STR strbuf, int buf_length) {
-		return (strbuf)
-			? (STR)HeapReAlloc(e_hHeap, 0, strbuf, buf_length * sizeof(TCHAR))
+		return strbuf
+			? static_cast<STR>(
+				HeapReAlloc(e_heap, /* dwFlags= */ 0, strbuf, buf_length * sizeof(TCHAR)))
 			: bufferAlloc(buf_length);
 	}
 };

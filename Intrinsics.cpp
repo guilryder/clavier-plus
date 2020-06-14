@@ -31,18 +31,18 @@ extern "C" void* memcpy(void* dest, const void* src, size_t size);
 typedef unsigned char BYTE;
 
 void* memset(void* dst, int value, size_t size) {
-	BYTE *pdst = (BYTE*)dst;
+	BYTE *pdst = static_cast<BYTE*>(dst);
 	while (size > 0) {
 		size--;
-		*pdst++ = (BYTE)value;
+		*pdst++ = static_cast<BYTE>(value);
 	}
 	
 	return dst;
 }
 
 void* memcpy(void* dst, const void* src, size_t size) {
-	BYTE *pdst = (BYTE*)dst;
-	const BYTE *psrc = (const BYTE*)src;
+	BYTE *pdst = static_cast<BYTE*>(dst);
+	const BYTE *psrc = static_cast<const BYTE*>(src);
 	while (size > 0) {
 		size--;
 		*pdst++ = *psrc++;

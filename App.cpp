@@ -29,12 +29,12 @@
 
 namespace app {
 
-const LPCTSTR kClavierWindowClass = _T("RyderClavierWindow");
+static constexpr LPCTSTR kClavierWindowClass = _T("RyderClavierWindow");
 
 static UINT msgTaskbarCreated;
 static UINT msgClavierNotifyIcon;
 
-const int maxIniFile = 20;
+static constexpr int kMaxIniFile = 20;
 
 static TranslatedString s_asToken[tokNotFound];
 
@@ -111,8 +111,8 @@ void entryPoint() {
 		const HWND hwnd = FindWindow(_T("STATIC"), kClavierWindowClass);
 		if (hwnd) {
 			COPYDATASTRUCT cds;
-			cds.dwData = TRUE;
-			cds.cbData = (lstrlen(cmdline) + 1) * sizeof(TCHAR);
+			cds.dwData = true;
+			cds.cbData = (lstrlen(cmdline) + 1) * sizeof(*cmdline);
 			cds.lpData = const_cast<LPTSTR>(cmdline);
 			SendMessage(hwnd, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cds));
 			
@@ -125,7 +125,7 @@ void entryPoint() {
 	}
 #endif  // ALLOW_MULTIPLE_INSTANCES
 	
-	e_hInst = static_cast<HINSTANCE>(GetModuleHandle(NULL));
+	e_instance = static_cast<HINSTANCE>(GetModuleHandle(/* lpModuleName= */ nullptr));
 	app::initialize();
 	
 	const CMDLINE_OPTION cmdopt = execCmdLine(cmdline, true);
@@ -143,11 +143,11 @@ void initialize() {
 	msgTaskbarCreated = RegisterWindowMessage(_T("TaskbarCreated"));
 	msgClavierNotifyIcon = RegisterWindowMessage(_T("RyderClavierOptions"));
 	
-	CoInitialize(NULL);
+	CoInitialize(/* pvReserved= */ nullptr);
 	shortcut::initialize();
 	
-	e_hHeap = GetProcessHeap();
-	e_hdlgModal = NULL;
+	e_heap = GetProcessHeap();
+	e_modal_dialog = NULL;
 	
 	initializeLanguages();
 }
@@ -167,7 +167,7 @@ void initializeLanguages() {
 		i18n::loadStringAuto(IDS_TOKENS, tokens);
 		TCHAR* next_token = tokens;
 		for (int token_index = 0; *next_token; token_index++) {
-			s_asToken[token_index].set(getSemiColonToken(next_token));
+			s_asToken[token_index].set(getSemiColonToken(&next_token));
 		}
 		
 		dialogs::initializeCurrentLanguage();
@@ -178,9 +178,12 @@ void initializeLanguages() {
 
 void runGui(CMDLINE_OPTION cmdopt) {
 	// Create the invisible window
-	e_hwndInvisible = CreateWindow(_T("STATIC"),
-		kClavierWindowClass, 0, 0,0,0,0, NULL, NULL, e_hInst, NULL);
-	subclassWindow(e_hwndInvisible, prcInvisible);
+	e_invisible_window = CreateWindow(
+		_T("STATIC"), kClavierWindowClass,
+		/* dwStyle=*/ 0,
+		/* x,y,nWidth,nHeight=*/ 0,0,0,0,
+		/* hWndParent= */ NULL, /* hMenu= */ NULL, e_instance, /* lpParam= */ nullptr);
+	subclassWindow(e_invisible_window, prcInvisible);
 	
 	// Create the traybar icon
 	updateTrayIcon(NIM_ADD);
@@ -191,7 +194,7 @@ void runGui(CMDLINE_OPTION cmdopt) {
 	DWORD timeMinimum = 0;
 	DWORD timeLast = GetTickCount();
 	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0)) {
+	while (GetMessage(&msg, /* hWnd= */ NULL, 0, 0)) {
 		if (msg.message == WM_HOTKEY) {
 			// Shortcut
 			
@@ -203,10 +206,10 @@ void runGui(CMDLINE_OPTION cmdopt) {
 			}
 			
 			Keystroke ks;
-			ks.m_vk = Keystroke::filterVK((BYTE)HIWORD(msg.lParam));
+			ks.m_vk = Keystroke::canonicalizeKey(static_cast<BYTE>(HIWORD(msg.lParam)));
 			ks.m_sided_mod_code = LOWORD(msg.lParam);
 			ks.m_sided = true;
-			const HWND hwndFocus = Keystroke::getKeyboardFocus();
+			const HWND input_window = Keystroke::getInputFocus();
 			
 			// Test for right special keys
 			for (int i = 0; i < arrayLength(e_special_keys); i++) {
@@ -220,32 +223,28 @@ void runGui(CMDLINE_OPTION cmdopt) {
 			}
 			
 			// Get the toggle keys state, for conditions checking
-			static const int avkCond[] =
-			{
-				VK_CAPITAL, VK_NUMLOCK, VK_SCROLL,
-			};
+			static constexpr int avkCond[] = { VK_CAPITAL, VK_NUMLOCK, VK_SCROLL };
 			for (int i = 0; i < condTypeCount; i++) {
-				ks.m_aCond[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
+				ks.m_conditions[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
 			}
 			
 			// Get the current program, for conditions checking
-			TCHAR pszProcess[MAX_PATH];
-			if (!getWindowProcessName(hwndFocus, pszProcess)) {
-				*pszProcess = _T('\0');
+			TCHAR process[MAX_PATH];
+			if (!getWindowProcessName(input_window, process)) {
+				*process = _T('\0');
 			}
 			
-			Shortcut *const psh = shortcut::find(ks, (*pszProcess) ? pszProcess : NULL);
+			Shortcut *const psh = shortcut::find(ks, (*process) ? process : nullptr);
 			
 			if (psh) {
-				if (psh->execute(true)) {
+				psh->execute(/* from_hotkey= */ true);
+				if (psh->m_type == Shortcut::Type::Text) {
 					timeMinimum = GetTickCount();
 				}
 			} else {
-				// No matching shortcut found: simulate the keystroke
-				// without catching it with an hotkey, to perform default processing
-				ks.unregisterHotKey();
-				ks.simulateTyping(hwndFocus, false);
-				ks.registerHotKey();
+				// No matching shortcut found: simulate the keystroke back for default processing.
+				// Do not press the special keys again, do not release them.
+				ks.simulateTyping(/* special_keys= */ false);
 			}
 			
 		} else {
@@ -269,7 +268,7 @@ void runGui(CMDLINE_OPTION cmdopt) {
 
 
 // Name of the command-line options. The array is indexed by CMDLINE_OPTION.
-static const LPCTSTR cmdline_options[] = {
+static constexpr LPCTSTR cmdline_options[] = {
 	_T("launch"),
 	_T("settings"),
 	_T("menu"),
@@ -283,8 +282,8 @@ static const LPCTSTR cmdline_options[] = {
 
 
 
-// initial_launch is FALSE if the command line is sent by WM_COPYDATA.
-// Return the action to execute.
+// Returns the action to execute.
+// initial_launch: true for regular execution, false if the command line is sent by WM_COPYDATA.
 CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 	bool new_ini_file = false;  // True if loading a new INI file is asked
 	
@@ -307,7 +306,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 	bool can_auto_quit = true;
 	bool try_auto_quit = false;
 	bool default_action = true;
-	LPTSTR mergeable_ini_files[maxIniFile];
+	String mergeable_ini_files[kMaxIniFile];
 	int mergeable_ini_files_count = 0;
 	
 	int args_count = 0;
@@ -394,16 +393,17 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 				case cmdoptLoad:
 					can_auto_quit = false;
 					new_ini_file = true;
-					GetFullPathName(strbuf_arg, arrayLength(e_pszIniFile), e_pszIniFile, NULL);
+					GetFullPathName(
+						strbuf_arg,
+						arrayLength(e_ini_filepath), e_ini_filepath,
+						/* lpFilePart= */ nullptr);
 					break;
 				
 				// Merge an INI file
 				case cmdoptMerge:
 					can_auto_quit = false;
 					if (mergeable_ini_files_count < arrayLength(mergeable_ini_files)) {
-						const LPTSTR ini_file = new TCHAR[lstrlen(strbuf_arg) + 1];
-						lstrcpy(ini_file, strbuf_arg);
-						mergeable_ini_files[mergeable_ini_files_count++] = ini_file;
+						mergeable_ini_files[mergeable_ini_files_count++] = strbuf_arg;
 					}
 					break;
 				
@@ -413,9 +413,9 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 					{
 						Keystroke ks;
 						Shortcut sh(ks);
-						sh.m_bCommand = false;
-						sh.m_sText = strbuf_arg;
-						sh.execute(false);
+						sh.m_type = Shortcut::Type::Text;
+						sh.m_text = strbuf_arg;
+						sh.execute(/* from_hotkey= */ false);
 					}
 					break;
 				
@@ -437,12 +437,12 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 	// Default INI file
 	if (initial_launch && !new_ini_file && !auto_quit) {
 		new_ini_file = true;
-		GetModuleFileName(e_hInst, e_pszIniFile, arrayLength(e_pszIniFile));
-		PathRemoveFileSpec(e_pszIniFile);
-		PathAppend(e_pszIniFile, _T("Clavier.ini"));
+		GetModuleFileName(e_instance, e_ini_filepath, arrayLength(e_ini_filepath));
+		PathRemoveFileSpec(e_ini_filepath);
+		PathAppend(e_ini_filepath, _T("Clavier.ini"));
 	}
 	
-	if (!e_hdlgModal) {
+	if (!e_modal_dialog) {
 		bool config_changed = false;
 		if (new_ini_file) {
 			shortcut::loadShortcuts();
@@ -451,7 +451,6 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 		
 		for (int ini_file = 0; ini_file < mergeable_ini_files_count; ini_file++) {
 			shortcut::mergeShortcuts(mergeable_ini_files[ini_file]);
-			delete [] mergeable_ini_files[ini_file];
 			config_changed = true;
 		}
 		
@@ -462,9 +461,9 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 	
 	if (cmdoptAction == cmdoptNone) {
 		if (initial_launch) {
-			cmdoptAction = (auto_quit) ? cmdoptQuit : cmdoptLaunch;
+			cmdoptAction = auto_quit ? cmdoptQuit : cmdoptLaunch;
 		} else {
-			cmdoptAction = (default_action) ? cmdoptSettings : cmdoptLaunch;
+			cmdoptAction = default_action ? cmdoptSettings : cmdoptLaunch;
 		}
 	}
 	
@@ -505,7 +504,7 @@ void processCmdLineAction(CMDLINE_OPTION cmdopt) {
 		default:
 			return;
 	}
-	PostMessage(e_hwndInvisible, msgClavierNotifyIcon, wParam_to_send, lParam_to_send);
+	PostMessage(e_invisible_window, msgClavierNotifyIcon, wParam_to_send, lParam_to_send);
 }
 
 
@@ -534,13 +533,13 @@ Destroy:
 			return 0;
 		}
 		
-		if (e_hdlgModal) {
+		if (e_modal_dialog) {
 			// A modal dialog is visible: give it the focus.
 			// Execute the WM_COMMAND (if any), but only
 			// if just the configuration dialog is visible, not a child dialog,
 			// to avoid opening another child dialog.
-			SetForegroundWindow(e_hdlgModal);
-			if (e_hdlgModal == dialogs::e_hdlgMain && lParam == WM_COMMAND && wParam != 0) {
+			SetForegroundWindow(e_modal_dialog);
+			if (e_modal_dialog == dialogs::e_hdlgMain && lParam == WM_COMMAND && wParam != 0) {
 				PostMessage(dialogs::e_hdlgMain, WM_COMMAND, wParam, 0);
 			}
 			return 0;
@@ -550,14 +549,14 @@ Destroy:
 			// Left click or command: display the configuration dialog.
 			
 			for (;;) {
-				HeapCompact(e_hHeap, 0);
+				HeapCompact(e_heap, 0);
 				switch (dialogs::showMainDialogModal(static_cast<UINT>(wParam))) {
 					case IDCCMD_LANGUAGE:
 						break;
 					case IDCCMD_QUIT:
 						goto Destroy;
 					default:
-						HeapCompact(e_hHeap, 0);
+						HeapCompact(e_heap, 0);
 						return 0;
 				}
 			}
@@ -578,9 +577,9 @@ Destroy:
 		
 		const COPYDATASTRUCT& cds = *reinterpret_cast<const COPYDATASTRUCT*>(lParam);
 		if (cds.dwData) {
-			processCmdLineAction(execCmdLine((LPCTSTR)cds.lpData, false));
+			processCmdLineAction(execCmdLine(static_cast<LPCTSTR>(cds.lpData), false));
 		}
-		return TRUE;
+		return true;
 	}
 	
 	return DefWindowProc(hwnd, message, wParam, lParam);
@@ -590,12 +589,12 @@ Destroy:
 
 // Handle the tray icon
 void updateTrayIcon(DWORD message) {
-	VERIFV(e_bIconVisible);
+	VERIFV(e_icon_visible);
 	
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
-	nid.cbSize = sizeof(NOTIFYICONDATA);
-	nid.hWnd = e_hwndInvisible;
+	nid.cbSize = sizeof(nid);
+	nid.hWnd = e_invisible_window;
 	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	nid.uCallbackMessage = msgClavierNotifyIcon;
 	if (message != NIM_DELETE) {
@@ -607,7 +606,7 @@ void updateTrayIcon(DWORD message) {
 
 
 UINT displayTrayIconMenu() {
-	const HWND hwnd = e_hwndInvisible;
+	const HWND hwnd = e_invisible_window;
 	
 	const HMENU all_menus = i18n::loadMenu(IDM_CONTEXT);
 	const HMENU menu = GetSubMenu(all_menus, 2);
@@ -616,13 +615,13 @@ UINT displayTrayIconMenu() {
 	// Append INI file items
 	
 	// 1) Add current INI file
-	LPTSTR ini_files[maxIniFile];
-	ini_files[0] = e_pszIniFile;
+	LPTSTR ini_files[kMaxIniFile];
+	ini_files[0] = e_ini_filepath;
 	UINT ini_files_count = 1;
 	
 	// 2) Ad INI files from Clavier+ directory
 	TCHAR ini_files_spec[MAX_PATH];
-	GetModuleFileName(e_hInst, ini_files_spec, arrayLength(ini_files_spec));
+	GetModuleFileName(e_instance, ini_files_spec, arrayLength(ini_files_spec));
 	PathRemoveFileSpec(ini_files_spec);
 	PathAppend(ini_files_spec, _T("*.ini"));
 	WIN32_FIND_DATA wfd;
@@ -633,9 +632,9 @@ UINT displayTrayIconMenu() {
 			if (!(wfd.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_HIDDEN))) {
 				const LPTSTR path = new TCHAR[MAX_PATH];
 				PathCombine(path, ini_files_spec, wfd.cFileName);
-				if (lstrcmpi(path, e_pszIniFile)) {
+				if (lstrcmpi(path, e_ini_filepath)) {
 					ini_files[ini_files_count++] = path;
-					if (ini_files_count == maxIniFile) {
+					if (ini_files_count == kMaxIniFile) {
 						break;
 					}
 				} else {
@@ -658,8 +657,13 @@ UINT displayTrayIconMenu() {
 	POINT cursor_pos;
 	GetCursorPos(&cursor_pos);
 	SetForegroundWindow(hwnd);
-	UINT id = TrackPopupMenu(menu, TPM_RETURNCMD | TPM_NONOTIFY,
-		cursor_pos.x, cursor_pos.y, 0, hwnd, NULL);
+	UINT id = TrackPopupMenu(
+		menu,
+		TPM_RETURNCMD | TPM_NONOTIFY,
+		cursor_pos.x, cursor_pos.y,
+		/* nReserved= */ 0,
+		hwnd,
+		/* prcRect= */ nullptr);
 	PostMessage(hwnd, WM_NULL, 0, 0);
 	DestroyMenu(all_menus);
 	
@@ -692,8 +696,8 @@ UINT displayTrayIconMenu() {
 					}
 				}
 				
-				TCHAR ini_file[arrayLength(e_pszIniFile)];
-				lstrcpy(ini_file, e_pszIniFile);
+				TCHAR ini_file[arrayLength(e_ini_filepath)];
+				lstrcpy(ini_file, e_ini_filepath);
 				
 				OPENFILENAME ofn;
 				ZeroMemory(&ofn, OPENFILENAME_SIZE_VERSION_400);
@@ -705,14 +709,14 @@ UINT displayTrayIconMenu() {
 				if (id == ID_TRAY_INI_SAVE) {
 					ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
 					if (GetSaveFileName(&ofn)) {
-						lstrcpy(e_pszIniFile, ini_file);
+						lstrcpy(e_ini_filepath, ini_file);
 						shortcut::saveShortcuts();
 					}
 				} else {
 					ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 					if (GetOpenFileName(&ofn)) {
 						if (id == ID_TRAY_INI_LOAD) {
-							lstrcpy(e_pszIniFile, ini_file);
+							lstrcpy(e_ini_filepath, ini_file);
 							shortcut::loadShortcuts();
 						} else {
 							shortcut::mergeShortcuts(ini_file);
@@ -726,7 +730,7 @@ UINT displayTrayIconMenu() {
 		default:
 			if (id > ID_TRAY_INI_FIRSTFILE) {
 				// INI file different than the current one
-				lstrcpy(e_pszIniFile, ini_files[id - ID_TRAY_INI_FIRSTFILE]);
+				lstrcpy(e_ini_filepath, ini_files[id - ID_TRAY_INI_FIRSTFILE]);
 				shortcut::loadShortcuts();
 			}
 			break;

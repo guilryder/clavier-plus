@@ -159,8 +159,8 @@ private:
 		// Generate a nice test failure message.
 		TCHAR message[50 + bufHotKey * 2];
 		TCHAR name1[bufHotKey], name2[bufHotKey];
-		keystroke1.getKeyName(name1);
-		keystroke2.getKeyName(name2);
+		keystroke1.getDisplayName(name1);
+		keystroke2.getDisplayName(name2);
 		wsprintf(message, _T("Comparing %ws and %ws -- expected %d"),
 			name1, name2, expected_result);
 		

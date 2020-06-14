@@ -34,7 +34,7 @@ public:
 	}
 	
 	TEST_METHOD(OnlySeparators) {
-		m_shortcut.m_sPrograms = _T(";");
+		m_shortcut.m_programs = _T(";");
 		String* actual = m_shortcut.getPrograms();
 		Assert::IsNotNull(actual);
 		Assert::AreEqual(_T(""), actual[0]);
@@ -42,7 +42,7 @@ public:
 	}
 	
 	TEST_METHOD(One) {
-		m_shortcut.m_sPrograms = _T("prog1");
+		m_shortcut.m_programs = _T("prog1");
 		String* actual = m_shortcut.getPrograms();
 		Assert::IsNotNull(actual);
 		Assert::AreEqual(_T("prog1"), actual[0]);
@@ -51,7 +51,7 @@ public:
 	}
 	
 	TEST_METHOD(Several) {
-		m_shortcut.m_sPrograms = _T("prog1;prog2");
+		m_shortcut.m_programs = _T("prog1;prog2");
 		String* actual = m_shortcut.getPrograms();
 		Assert::IsNotNull(actual);
 		Assert::AreEqual(_T("prog1"), actual[0]);
@@ -61,7 +61,7 @@ public:
 	}
 	
 	TEST_METHOD(SkipsEmpty) {
-		m_shortcut.m_sPrograms = _T(";prog1;;prog2;");
+		m_shortcut.m_programs = _T(";prog1;;prog2;");
 		String* actual = m_shortcut.getPrograms();
 		Assert::IsNotNull(actual);
 		Assert::AreEqual(_T("prog1"), actual[0]);
@@ -117,9 +117,9 @@ private:
 	Shortcut m_shortcut;
 	
 	void check(LPCTSTR programsBefore, LPCTSTR programsExpectedAfter) {
-		m_shortcut.m_sPrograms = programsBefore;
+		m_shortcut.m_programs = programsBefore;
 		m_shortcut.cleanPrograms();
-		Assert::AreEqual(programsExpectedAfter, m_shortcut.m_sPrograms);
+		Assert::AreEqual(programsExpectedAfter, m_shortcut.m_programs);
 	}
 };
 
@@ -142,10 +142,10 @@ public:
 		Keystroke ks_different(m_ks);
 		ks_different.m_vk = 'B';
 		
-		Assert::IsTrue(shortcut.match(m_ks, NULL));
-		Assert::IsTrue(shortcut.match(ks_matching, NULL));
-		Assert::IsTrue(shortcut.match(m_ks, _T("prog")));
-		Assert::IsFalse(shortcut.match(ks_different, NULL));
+		Assert::IsTrue(shortcut.isSubset(m_ks, /* other_program= */ nullptr));
+		Assert::IsTrue(shortcut.isSubset(ks_matching, /* other_program= */ nullptr));
+		Assert::IsTrue(shortcut.isSubset(m_ks, _T("prog")));
+		Assert::IsFalse(shortcut.isSubset(ks_different, /* other_program= */ nullptr));
 	}
 	
 	TEST_METHOD(ProgramsOnlyTrue) {
@@ -158,20 +158,20 @@ public:
 	
 	void testProgramsOnly(bool programsOnly) {
 		Shortcut shortcut(m_ks);
-		shortcut.m_bProgramsOnly = programsOnly;
-		shortcut.m_sPrograms = _T("prog1;prog2;prog3");
+		shortcut.m_programs_only = programsOnly;
+		shortcut.m_programs = _T("prog1;prog2;prog3");
 		
-		Assert::AreEqual(!programsOnly, shortcut.match(m_ks, NULL));
-		Assert::AreEqual(programsOnly, shortcut.match(m_ks, _T("prog1")));
-		Assert::AreEqual(programsOnly, shortcut.match(m_ks, _T("PrOg1")));
-		Assert::AreEqual(programsOnly, shortcut.match(m_ks, _T("PROG1")));
-		Assert::AreEqual(programsOnly, shortcut.match(m_ks, _T("prog2")));
-		Assert::AreEqual(programsOnly, shortcut.match(m_ks, _T("prog3")));
-		Assert::AreEqual(!programsOnly, shortcut.match(m_ks, _T("prog1.exe")));
-		Assert::AreEqual(!programsOnly, shortcut.match(m_ks, _T("pro")));
-		Assert::AreEqual(!programsOnly, shortcut.match(m_ks, _T("ro")));
-		Assert::AreEqual(!programsOnly, shortcut.match(m_ks, _T("rog2")));
-		Assert::AreEqual(!programsOnly, shortcut.match(m_ks, _T("other")));
+		Assert::AreEqual(!programsOnly, shortcut.isSubset(m_ks, /* other_program= */ nullptr));
+		Assert::AreEqual(programsOnly, shortcut.isSubset(m_ks, _T("prog1")));
+		Assert::AreEqual(programsOnly, shortcut.isSubset(m_ks, _T("PrOg1")));
+		Assert::AreEqual(programsOnly, shortcut.isSubset(m_ks, _T("PROG1")));
+		Assert::AreEqual(programsOnly, shortcut.isSubset(m_ks, _T("prog2")));
+		Assert::AreEqual(programsOnly, shortcut.isSubset(m_ks, _T("prog3")));
+		Assert::AreEqual(!programsOnly, shortcut.isSubset(m_ks, _T("prog1.exe")));
+		Assert::AreEqual(!programsOnly, shortcut.isSubset(m_ks, _T("pro")));
+		Assert::AreEqual(!programsOnly, shortcut.isSubset(m_ks, _T("ro")));
+		Assert::AreEqual(!programsOnly, shortcut.isSubset(m_ks, _T("rog2")));
+		Assert::AreEqual(!programsOnly, shortcut.isSubset(m_ks, _T("other")));
 	}
 	
 private:
@@ -196,22 +196,22 @@ public:
 	
 	
 	TEST_METHOD(Contents_bothAreCommands) {
-		m_shortcut1->m_bCommand = m_shortcut2->m_bCommand = true;
-		m_shortcut1->m_sCommand = _T("AZZZZZ");
-		m_shortcut2->m_sCommand = _T("Baa");
+		m_shortcut1->m_type = m_shortcut2->m_type = Shortcut::Type::Command;
+		m_shortcut1->m_command = _T("AZZZZZ");
+		m_shortcut2->m_command = _T("Baa");
 		checkCompare(colContents, -1);
 	}
 	
 	TEST_METHOD(Contents_bothAreTexts) {
-		m_shortcut1->m_bCommand = m_shortcut2->m_bCommand = false;
-		m_shortcut1->m_sText = _T("Baa");
-		m_shortcut2->m_sText = _T("AZZZZZ");
+		m_shortcut1->m_type = m_shortcut2->m_type = Shortcut::Type::Text;
+		m_shortcut1->m_text = _T("Baa");
+		m_shortcut2->m_text = _T("AZZZZZ");
 		checkCompare(colContents, +1);
 	}
 	
 	TEST_METHOD(Contents_commandAndText) {
-		m_shortcut1->m_bCommand = false;
-		m_shortcut2->m_bCommand = true;
+		m_shortcut1->m_type = Shortcut::Type::Text;
+		m_shortcut2->m_type = Shortcut::Type::Command;
 		checkCompare(colContents, -1);
 	}
 	
@@ -246,20 +246,20 @@ public:
 	}
 	
 	TEST_METHOD(Cond_equal) {
-		m_shortcut1->m_aCond[condTypeShiftLock] = m_shortcut2->m_aCond[condTypeShiftLock] = +1;
-		m_shortcut1->m_sPrograms = m_shortcut2->m_sPrograms = _T("same");
+		m_shortcut1->m_conditions[condTypeShiftLock] = m_shortcut2->m_conditions[condTypeShiftLock] = condYes;
+		m_shortcut1->m_programs = m_shortcut2->m_programs = _T("same");
 		checkCompare(colCond, 0);
 	}
 	
 	TEST_METHOD(Cond_differentCondition) {
-		m_shortcut1->m_aCond[condTypeShiftLock] = +1;
-		m_shortcut2->m_aCond[condTypeNumLock] = -1;
+		m_shortcut1->m_conditions[condTypeShiftLock] = condYes;
+		m_shortcut2->m_conditions[condTypeNumLock] = condNo;
 		checkCompare(colCond, -1);
 	}
 	
 	TEST_METHOD(Cond_differentPrograms) {
-		m_shortcut1->m_sPrograms = _T("aaa");
-		m_shortcut2->m_sPrograms = _T("bbb");
+		m_shortcut1->m_programs = _T("aaa");
+		m_shortcut2->m_programs = _T("bbb");
 		checkCompare(colCond, -1);
 	}
 	
@@ -269,19 +269,19 @@ public:
 	}
 	
 	TEST_METHOD(Description_equal) {
-		m_shortcut1->m_sDescription = m_shortcut2->m_sDescription = _T("same");
+		m_shortcut1->m_description = m_shortcut2->m_description = _T("same");
 		checkCompare(colDescription, 0);
 	}
 	
 	TEST_METHOD(Description_different) {
-		m_shortcut1->m_sDescription = _T("Aaaa");
-		m_shortcut2->m_sDescription = _T("Bbbb");
+		m_shortcut1->m_description = _T("Aaaa");
+		m_shortcut2->m_description = _T("Bbbb");
 		checkCompare(colDescription, -1);
 	}
 	
 	TEST_METHOD(Description_ignoreCase) {
-		m_shortcut1->m_sDescription = _T("AAAA");
-		m_shortcut2->m_sDescription = _T("aaaa");
+		m_shortcut1->m_description = _T("AAAA");
+		m_shortcut2->m_description = _T("aaaa");
 		checkCompare(colDescription, 0);
 	}
 	
@@ -291,7 +291,7 @@ private:
 	Shortcut* m_shortcut2;
 	
 	void checkCompare(int sort_column, int expected_result) {
-		Shortcut::s_iSortColumn = sort_column;
+		Shortcut::s_sort_column = sort_column;
 		Assert::AreEqual(+expected_result,
 			testing::normalizeCompareResult(Shortcut::compare(m_shortcut1, m_shortcut2, 0)));
 		Assert::AreEqual(-expected_result,

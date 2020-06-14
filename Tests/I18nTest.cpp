@@ -74,7 +74,7 @@ private:
 		// Check the result of GetNumberFormat() with the grouping.
 		NUMBERFMT format;
 		format.NumDigits = 0;
-		format.LeadingZero = TRUE;
+		format.LeadingZero = true;
 		format.lpDecimalSep = _T(".");  // unused
 		format.Grouping = expected_grouping;
 		format.lpThousandSep = _T(",");

@@ -31,11 +31,11 @@ TEST_MODULE_INITIALIZE(clavierSetUp) {
 	});
 	
 	// Set e_hInst to the tests DLL instead of the test runner process.
-	e_hInst = NULL;
+	e_instance = NULL;
 	GetModuleHandleEx(
 		GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
 		reinterpret_cast<LPCTSTR>(clavierSetUp),
-		&e_hInst);
+		&e_instance);
 
 	app::initialize();
 }

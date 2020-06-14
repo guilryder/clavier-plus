@@ -21,8 +21,8 @@
 #include "I18n.h"
 #include "MyString.h"
 
-extern HINSTANCE e_hInst;
-extern HWND e_hdlgModal;
+extern HINSTANCE e_instance;
+extern HWND e_modal_dialog;
 
 namespace i18n {
 
@@ -31,7 +31,7 @@ static int s_lang;
 
 static LANGID s_lang_id;
 
-static const LANGID s_lang_ids[] = {
+constexpr LANGID s_lang_ids[] = {
 	MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED),
 	MAKELANGID(LANG_GERMAN, SUBLANG_GERMAN),
 	MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US),
@@ -72,11 +72,11 @@ int getDefaultLanguage() {
 
 
 void* loadResource(UINT id, LPCTSTR type) {
-	const HRSRC hResource = FindResourceEx(e_hInst, type, MAKEINTRESOURCE(id), s_lang_id);
-	VERIFP(hResource, NULL);
+	const HRSRC hResource = FindResourceEx(e_instance, type, MAKEINTRESOURCE(id), s_lang_id);
+	VERIFP(hResource, nullptr);
 	
-	const HGLOBAL hGlobal = LoadResource(e_hInst, hResource);
-	VERIFP(hGlobal, NULL);
+	const HGLOBAL hGlobal = LoadResource(e_instance, hResource);
+	VERIFP(hGlobal, nullptr);
 	
 	return LockResource(hGlobal);
 }
@@ -85,7 +85,7 @@ void* loadResource(UINT id, LPCTSTR type) {
 const STRING_RESOURCE* loadStringResource(UINT id) {
 	const STRING_RESOURCE* resource =
 		reinterpret_cast<const STRING_RESOURCE*>(loadResource(id / 16 + 1, RT_STRING));
-	VERIFP(resource, NULL);
+	VERIFP(resource, nullptr);
 	
 	for (id &= 15; id > 0; id--) {
 		resource = reinterpret_cast<const STRING_RESOURCE*>(resource->strbuf + resource->length);
@@ -110,15 +110,15 @@ void loadString(UINT id, LPTSTR strbuf, int buffer_length) {
 
 
 INT_PTR dialogBox(UINT id, HWND hwnd_parent, DLGPROC window_proc, LPARAM init_param) {
-	const HWND hdlgModalOld = e_hdlgModal;
+	const HWND hdlgModalOld = e_modal_dialog;
 	
-	const INT_PTR iResult = DialogBoxIndirectParam(
-		e_hInst,
+	const INT_PTR result = DialogBoxIndirectParam(
+		e_instance,
 		reinterpret_cast<const DLGTEMPLATE*>(loadResource(id, RT_DIALOG)),
 		hwnd_parent, window_proc, init_param);
 	
-	e_hdlgModal = hdlgModalOld;
-	return iResult;
+	e_modal_dialog = hdlgModalOld;
+	return result;
 }
 
 
@@ -131,12 +131,12 @@ HBITMAP loadBitmap(UINT id) {
 	BITMAPINFO *const pbi = reinterpret_cast<BITMAPINFO*>(loadResource(id, RT_BITMAP));
 	VERIFP(pbi, NULL);
 	
-	const HDC hdc = GetDC(NULL);
+	const HDC hdc = GetDC(/* hWnd= */ NULL);
 	const HBITMAP hBitmap = CreateDIBitmap(
 		hdc, &pbi->bmiHeader, CBM_INIT,
 		pbi->bmiColors + pbi->bmiHeader.biClrUsed,
 		pbi, DIB_RGB_COLORS);
-	ReleaseDC(NULL, hdc);
+	ReleaseDC(/* hWnd= */ NULL, hdc);
 	
 	return hBitmap;
 }
@@ -144,7 +144,7 @@ HBITMAP loadBitmap(UINT id) {
 
 HICON loadNeutralIcon(UINT id, int cx, int cy) {
 	return reinterpret_cast<HICON>(
-		LoadImage(e_hInst, MAKEINTRESOURCE(id), IMAGE_ICON, cx,cy, 0));
+		LoadImage(e_instance, MAKEINTRESOURCE(id), IMAGE_ICON, cx,cy, 0));
 }
 
 
@@ -159,7 +159,7 @@ void formatInteger(int number, String* output) {
 		format_initialized = true;
 		
 		format.NumDigits = 0;
-		format.LeadingZero = TRUE;
+		format.LeadingZero = true;
 		format.lpDecimalSep = _T(".");  // unused
 		
 		// Number groups. Convert the LOCALE_SGROUPING string ("3;2;0") into a number (320).
@@ -171,7 +171,8 @@ void formatInteger(int number, String* output) {
 		GetLocaleInfo(locale, LOCALE_STHOUSAND, thousand_sep_buf, arrayLength(thousand_sep_buf));
 		format.lpThousandSep = thousand_sep_buf;
 		
-		GetLocaleInfo(locale, LOCALE_RETURN_NUMBER | LOCALE_INEGNUMBER,
+		GetLocaleInfo(
+			locale, LOCALE_RETURN_NUMBER | LOCALE_INEGNUMBER,
 			reinterpret_cast<LPTSTR>(&format.NegativeOrder),
 			sizeof(format.NegativeOrder) / sizeof(TCHAR));
 	}

@@ -72,7 +72,7 @@ public:
 	}
 	
 	TEST_METHOD(ToBool_nullIsFalse) {
-		Assert::IsFalse(toBool(NULL));
+		Assert::IsFalse(toBool(nullptr));
 	}
 	
 	
@@ -171,7 +171,7 @@ private:
 	
 	class HasLess {
 	public:
-		HasLess(int value, int* construction_counter = NULL) : m_value(value) {
+		HasLess(int value, int* construction_counter = nullptr) : m_value(value) {
 			if (construction_counter) {
 				(*construction_counter)++;
 			}
@@ -257,7 +257,7 @@ public:
 	TEST_METHOD(FirstToken) {
 		TCHAR tokens[] = _T("first;middle;last;");
 		LPTSTR next_token = tokens;
-		LPCTSTR current_token = getSemiColonToken(next_token);
+		LPCTSTR current_token = getSemiColonToken(&next_token);
 		Assert::AreEqual(_T("first"), current_token);
 		Assert::AreEqual(_T("middle;last;"), next_token);
 		Assert::AreSame(tokens[0], *current_token);
@@ -267,7 +267,7 @@ public:
 	TEST_METHOD(MiddleToken) {
 		TCHAR tokens[] = _T("first\0middle;last;");
 		LPTSTR next_token = tokens + 6;
-		LPCTSTR current_token = getSemiColonToken(next_token);
+		LPCTSTR current_token = getSemiColonToken(&next_token);
 		Assert::AreEqual(_T("middle"), current_token);
 		Assert::AreEqual(_T("last;"), next_token);
 		Assert::AreSame(tokens[6], *current_token);
@@ -277,7 +277,7 @@ public:
 	TEST_METHOD(LastToken) {
 		TCHAR tokens[] = _T("first\0middle\0last;");
 		LPTSTR next_token = tokens + 13;
-		LPCTSTR current_token = getSemiColonToken(next_token);
+		LPCTSTR current_token = getSemiColonToken(&next_token);
 		Assert::AreEqual(_T("last"), current_token);
 		Assert::AreEqual(_T(""), next_token);
 		Assert::AreSame(tokens[13], *current_token);
@@ -287,7 +287,7 @@ public:
 	TEST_METHOD(LastTokenWithoutSeparator) {
 		TCHAR tokens[] = _T("first\0middle\0last");
 		LPTSTR next_token = tokens + 13;
-		LPCTSTR current_token = getSemiColonToken(next_token);
+		LPCTSTR current_token = getSemiColonToken(&next_token);
 		Assert::AreEqual(_T("last"), current_token);
 		Assert::AreEqual(_T(""), next_token);
 		Assert::AreSame(tokens[13], *current_token);
@@ -297,7 +297,7 @@ public:
 	TEST_METHOD(EmptyToken) {
 		TCHAR tokens[] = _T("previous\0;next;");
 		LPTSTR next_token = tokens + 9;
-		LPCTSTR current_token = getSemiColonToken(next_token);
+		LPCTSTR current_token = getSemiColonToken(&next_token);
 		Assert::AreEqual(_T(""), current_token);
 		Assert::AreEqual(_T("previous"), tokens);
 		Assert::AreEqual(_T(""), tokens + 9);
@@ -311,7 +311,7 @@ TEST_CLASS(ClipboardTest) {
 public:
 	
 	TEST_METHOD_INITIALIZE(setUp) {
-		SetEnvironmentVariable(clipboard_env_variable, NULL);
+		SetEnvironmentVariable(clipboard_env_variable, nullptr);
 	}
 	
 	TEST_METHOD(ClipboardToEnvironment_ansi) {
@@ -327,7 +327,7 @@ public:
 	}
 	
 	TEST_METHOD(ClipboardToEnvironment_emptyClipboard) {
-		setClipboardData(CF_TEXT, NULL, 0);
+		setClipboardData(CF_TEXT, nullptr, 0);
 		clipboardToEnvironment();
 		checkClipboardEnvVariable(_T(""));
 	}
@@ -335,7 +335,7 @@ public:
 private:
 	
 	void setClipboardData(UINT format, const void* data, size_t size) {
-		Assert::IsTrue(OpenClipboard(NULL));
+		Assert::IsTrue(OpenClipboard(/* hWndNewOwner= */ NULL));
 		Assert::IsTrue(EmptyClipboard());
 		if (data) {
 			const HGLOBAL clipboard_mem = GlobalAlloc(GMEM_MOVEABLE, size);
@@ -477,7 +477,11 @@ TEST_CLASS(WindowTest) {
 public:
 	
 	TEST_METHOD_INITIALIZE(setUp) {
-		m_hwnd = CreateWindow(_T("Edit"), NULL, 0, 0, 0, 0, 0, NULL, NULL, e_hInst, NULL);
+		m_hwnd = CreateWindow(
+			_T("Edit"), /* lpWindowName= */ nullptr,
+			/* dwStyle=*/ 0,
+			/* x,y,nWidth,nHeight=*/ 0,0,0,0,
+			/* hWndParent= */ NULL, /* hMenu= */ NULL, e_instance, /* lpParam= */ nullptr);
 	}
 	
 	TEST_METHOD_CLEANUP(tearDown) {
@@ -523,7 +527,7 @@ TEST_CLASS(GlobalWindowTest) {
 public:
 	
 	TEST_METHOD_INITIALIZE(setUp) {
-		m_hdlgSendKeys = CreateDialog(e_hInst, MAKEINTRESOURCE(IDD_SENDKEYS), NULL, dialogProc);
+		m_hdlgSendKeys = CreateDialog(e_instance, MAKEINTRESOURCE(IDD_SENDKEYS), /* hWndParent= */ NULL, dialogProc);
 	}
 	
 	TEST_METHOD_CLEANUP(tearDown) {
@@ -533,7 +537,7 @@ public:
 	TEST_METHOD(GetDlgItemText) {
 		SetDlgItemText(m_hdlgSendKeys, IDCTXT, _T("Test"));
 		String str;
-		getDlgItemText(m_hdlgSendKeys, IDCTXT, str);
+		getDlgItemText(m_hdlgSendKeys, IDCTXT, &str);
 		Assert::AreEqual(_T("Test"), str);
 	}
 	
@@ -542,7 +546,7 @@ public:
 		Assert::IsTrue(getWindowProcessName(m_hdlgSendKeys, actual_process_name));
 		
 		TCHAR current_process_name[MAX_PATH];
-		Assert::AreNotEqual(DWORD(0), GetModuleFileName(NULL, current_process_name, MAX_PATH));
+		Assert::AreNotEqual(DWORD(0), GetModuleFileName(/* hModule= */ NULL, current_process_name, MAX_PATH));
 		PathStripPath(current_process_name);
 		
 		Assert::AreEqual(current_process_name, actual_process_name);
@@ -554,7 +558,7 @@ private:
 	
 	static INT_PTR CALLBACK dialogProc(
 			HWND UNUSED(hdlg), UINT UNUSED(message), WPARAM UNUSED(wParam), LPARAM UNUSED(lParam)) {
-		return FALSE;
+		return false;
 	}
 };
 

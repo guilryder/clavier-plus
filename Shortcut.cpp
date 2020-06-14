@@ -27,35 +27,54 @@ namespace shortcut {
 
 static Shortcut* s_first_shortcut;
 
-const int aiShowOption[nbShowOption] = {
-	SW_NORMAL, SW_MINIMIZE, SW_MAXIMIZE,
-};
+static constexpr int s_default_column_widths[] = { 35, 20, 15, 10 };
 
-static const int s_acxColOrig[] = { 35, 20, 15, 10 };
-
-static const WCHAR kUtf16LittleEndianBom = 0xFEFF;
+constexpr WCHAR kUtf16LittleEndianBom = 0xFEFF;
 
 
-enum MOUSEMOVE_TYPE {
-	mouseMoveAbsolute,
-	mouseMoveRelativeToWindow,
-	mouseMoveRelativeToCurrent,
-};
+// []
+// Sleep for 100 milliseconds and catch the focus.
+// Convenience alias for [{Focus,100}].
+// Reads & updates input_thread and input_window.
+static void commandEmpty(DWORD* input_thread, HWND* input_window);
 
-static void commandEmpty(DWORD& ridThread, HWND& rhwndFocus);
-static void commandWait(LPTSTR pszArg);
-static bool commandFocus(DWORD& ridThread, HWND& rhwndFocus, LPTSTR pszArg);
-static void commandCopy(LPTSTR pszArg);
-static void commandMouseButton(LPTSTR pszArg);
-static void commandMouseMove(POINT ptOrigin, LPTSTR pszArg);
-static void commandMouseWheel(LPTSTR pszArg);
+// [{Wait,duration}]
+// Sleep for a given number of milliseconds.
+static void commandWait(LPTSTR arg);
+
+// [{Focus,delay,[!]window_name}]
+// Sleep for delay milliseconds and catch the focus.
+// If window_name does not begin with '!', return false if the window is not found.
+// Reads & updates input_thread and input_window.
+static bool commandFocus(DWORD* input_thread, HWND* input_window, LPTSTR arg);
+
+// [{Copy,text}]
+// Copy the text argument to the clipboard.
+static void commandCopy(LPTSTR arg);
+
+// [{Mouse,state}] where state is 2 letters:
+// 1 letter for button: L (left), M (middle), R (right)
+// 1 letter for state: U (up), D (down)
+// Simulate mouse clicks.
+static void commandMouseButton(LPTSTR arg);
+
+// [{MouseMoveTo,x,y}], [{MouseMoveToFocus,x,y}], [{MouseMoveBy,dx,dy}]
+// Move the mouse cursor.
+// arg: move coordinates relative to origin_point.
+static void commandMouseMove(POINT origin_point, LPTSTR arg);
+
+// [{MouseWheel,offset}]
+// Simulate a mouse wheel scroll.
+static void commandMouseWheel(LPTSTR arg);
+
+static void simulateCharacter(TCHAR c);
 
 
-const LPCTSTR pszLineSeparator = _T("-\r\n");
+constexpr LPCTSTR kLineSeparator = _T("-\r\n");
 
 
 void initialize() {
-	s_first_shortcut = NULL;
+	s_first_shortcut = nullptr;
 }
 
 void terminate() {
@@ -66,10 +85,10 @@ Shortcut* getFirst() {
 }
 
 Shortcut* find(const Keystroke& ks, LPCTSTR program) {
-	Shortcut *best_shortcut = NULL;
+	Shortcut *best_shortcut = nullptr;
 	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
-		if (shortcut->match(ks, program)) {
-			if (!best_shortcut || !best_shortcut->m_bProgramsOnly) {
+		if (shortcut->isSubset(ks, program)) {
+			if (!best_shortcut || !best_shortcut->m_programs_only) {
 				best_shortcut = shortcut;
 			}
 		}
@@ -79,33 +98,33 @@ Shortcut* find(const Keystroke& ks, LPCTSTR program) {
 
 
 Shortcut::Shortcut(const Shortcut& sh) : Keystroke(sh) {
-	m_next_shortcut = NULL;
-	m_bCommand = sh.m_bCommand;
-	m_nShow = sh.m_nShow;
-	m_bSupportFileOpen = sh.m_bSupportFileOpen;
-	m_bProgramsOnly = sh.m_bProgramsOnly;
-	m_iSmallIcon = sh.m_iSmallIcon;
-	m_hIcon = CopyIcon(sh.m_hIcon);
+	m_next_shortcut = nullptr;
+	m_type = sh.m_type;
+	m_show_option = sh.m_show_option;
+	m_support_file_open = sh.m_support_file_open;
+	m_programs_only = sh.m_programs_only;
+	m_small_icon_index = sh.m_small_icon_index;
+	m_icon = CopyIcon(sh.m_icon);
 	
-	m_sDescription = sh.m_sDescription;
-	m_sText = sh.m_sText;
-	m_sCommand = sh.m_sCommand;
-	m_sDirectory = sh.m_sDirectory;
-	m_sPrograms = sh.m_sPrograms;
+	m_description = sh.m_description;
+	m_text = sh.m_text;
+	m_command = sh.m_command;
+	m_directory = sh.m_directory;
+	m_programs = sh.m_programs;
 	
-	m_nbUsage = sh.m_nbUsage;
+	m_usage_count = sh.m_usage_count;
 }
 
 Shortcut::Shortcut(const Keystroke& ks) : Keystroke(ks) {
-	m_next_shortcut = NULL;
-	m_bCommand = false;
-	m_nShow = SW_NORMAL;
-	m_bSupportFileOpen = false;
-	m_bProgramsOnly = false;
-	m_iSmallIcon = iconNeeded;
-	m_hIcon = NULL;
+	m_next_shortcut = nullptr;
+	m_type = Shortcut::Type::Text;
+	m_show_option = SW_NORMAL;
+	m_support_file_open = false;
+	m_programs_only = false;
+	m_small_icon_index = iconNeeded;
+	m_icon = NULL;
 	
-	m_nbUsage = 0;
+	m_usage_count = 0;
 }
 
 void Shortcut::addToList() {
@@ -114,192 +133,184 @@ void Shortcut::addToList() {
 }
 
 
-//------------------------------------------------------------------------
-// Serialization
-//------------------------------------------------------------------------
-
-void Shortcut::save(HANDLE hf) {
+void Shortcut::save(HANDLE file) {
 	cleanPrograms();
 	
-	TCHAR pszHotKey[bufHotKey], pszCode[bufCode];
-	getKeyName(pszHotKey);
-	wsprintf(pszCode, _T("%lu"), ((DWORD)m_vk) | (m_sided_mod_code << 8));
+	TCHAR display_name[bufHotKey], code_text[bufCode];
+	getDisplayName(display_name);
+	wsprintf(code_text, _T("%lu"), static_cast<DWORD>(m_vk) | (m_sided_mod_code << 8));
 	
 	struct LINE {
 		int tokKey;
 		LPCTSTR pszValue;
 	};
-	LINE aLine[3 + 4 + 2 + condTypeCount + 1];
-	aLine[0].tokKey = tokShortcut;
-	aLine[0].pszValue = pszHotKey;
-	aLine[1].tokKey = tokCode;
-	aLine[1].pszValue = pszCode;
-	int nbLine = 2;
+	LINE lines[3 + 4 + 2 + condTypeCount + 1];
+	lines[0].tokKey = tokShortcut;
+	lines[0].pszValue = display_name;
+	lines[1].tokKey = tokCode;
+	lines[1].pszValue = code_text;
+	int line_count = 2;
 	
 	if (m_sided) {
-		aLine[nbLine].tokKey = tokDistinguishLeftRight;
-		aLine[nbLine].pszValue = _T("1");
-		nbLine++;
+		lines[line_count].tokKey = tokDistinguishLeftRight;
+		lines[line_count].pszValue = _T("1");
+		line_count++;
 	}
 	
 	for (int i = 0; i < condTypeCount; i++) {
-		if (m_aCond[i] != condIgnore) {
-			aLine[nbLine].tokKey = tokConditionCapsLock + i;
-			aLine[nbLine].pszValue = getToken(m_aCond[i] - 1 + tokConditionYes);
-			nbLine++;
+		if (m_conditions[i] != condIgnore) {
+			lines[line_count].tokKey = tokConditionCapsLock + i;
+			lines[line_count].pszValue = getToken(m_conditions[i] - 1 + tokConditionYes);
+			line_count++;
 		}
 	}
 	
-	String sText;
+	String text;
 	
-	if (m_bCommand) {
-		// Command
+	switch (m_type) {
+	case Shortcut::Type::Command:
+		lines[line_count].tokKey = tokCommand;
+		lines[line_count].pszValue = m_command;
+		line_count++;
 		
-		aLine[nbLine].tokKey = tokCommand;
-		aLine[nbLine].pszValue = m_sCommand;
-		nbLine++;
-		
-		if (m_sDirectory.isSome()) {
-			aLine[nbLine].tokKey = tokDirectory;
-			aLine[nbLine].pszValue = m_sDirectory;
-			nbLine++;
+		if (m_directory.isSome()) {
+			lines[line_count].tokKey = tokDirectory;
+			lines[line_count].pszValue = m_directory;
+			line_count++;
 		}
 		
-		aLine[nbLine].tokKey = tokWindow;
-		aLine[nbLine].pszValue = _T("");
-		for (int i = 0; i < shortcut::nbShowOption; i++) {
-			if (m_nShow == shortcut::aiShowOption[i]) {
-				aLine[nbLine].pszValue = getToken(tokShowNormal + i);
+		lines[line_count].tokKey = tokWindow;
+		lines[line_count].pszValue = _T("");
+		for (int i = 0; i < arrayLength(shortcut::show_options); i++) {
+			if (m_show_option == shortcut::show_options[i]) {
+				lines[line_count].pszValue = getToken(tokShowNormal + i);
 				break;
 			}
 		}
-		nbLine++;
+		line_count++;
 		
-		if (m_bSupportFileOpen) {
-			aLine[nbLine].tokKey = tokSupportFileOpen;
-			aLine[nbLine].pszValue = _T("1");
-			nbLine++;
+		if (m_support_file_open) {
+			lines[line_count].tokKey = tokSupportFileOpen;
+			lines[line_count].pszValue = _T("1");
+			line_count++;
 		}
+		break;
 		
-		
-	} else {
-		// Text
-		
+	case Shortcut::Type::Text:
 		// Copy the text, replace "\r\n" by "\r\n>"
 		// to handle multiple lines text
-		for (const TCHAR *pcFrom = m_sText; *pcFrom; pcFrom++) {
-			sText += *pcFrom;
+		for (const TCHAR *pcFrom = m_text; *pcFrom; pcFrom++) {
+			text += *pcFrom;
 			if (pcFrom[0] == _T('\r') && pcFrom[1] == _T('\n')) {
-				sText += _T("\n>");
+				text += _T("\n>");
 				pcFrom++;
 			}
 		}
 		
-		aLine[nbLine].tokKey = tokText;
-		aLine[nbLine].pszValue = sText;
-		nbLine++;
+		lines[line_count].tokKey = tokText;
+		lines[line_count].pszValue = text;
+		line_count++;
+		break;
 	}
 	
-	if (m_sPrograms.isSome()) {
-		aLine[nbLine].tokKey = (m_bProgramsOnly) ? tokPrograms : tokAllProgramsBut;
-		aLine[nbLine].pszValue = m_sPrograms;
-		nbLine++;
+	if (m_programs.isSome()) {
+		lines[line_count].tokKey = (m_programs_only) ? tokPrograms : tokAllProgramsBut;
+		lines[line_count].pszValue = m_programs;
+		line_count++;
 	}
 	
-	if (m_sDescription.isSome()) {
-		aLine[nbLine].tokKey = tokDescription;
-		aLine[nbLine].pszValue = m_sDescription;
-		nbLine++;
+	if (m_description.isSome()) {
+		lines[line_count].tokKey = tokDescription;
+		lines[line_count].pszValue = m_description;
+		line_count++;
 	}
 	
 	TCHAR strbuf_usage_count[i18n::bufIntegerCount];
-	wsprintf(strbuf_usage_count, _T("%d"), m_nbUsage);
-	aLine[nbLine].tokKey = tokUsageCount;
-	aLine[nbLine].pszValue = strbuf_usage_count;
-	nbLine++;
+	wsprintf(strbuf_usage_count, _T("%d"), m_usage_count);
+	lines[line_count].tokKey = tokUsageCount;
+	lines[line_count].pszValue = strbuf_usage_count;
+	line_count++;
 	
 	// Write all
-	for (int i = 0; i < nbLine; i++) {
-		writeFile(hf, getToken(aLine[i].tokKey));
-		writeFile(hf, _T("="));
-		writeFile(hf, aLine[i].pszValue);
-		writeFile(hf, _T("\r\n"));
+	for (int i = 0; i < line_count; i++) {
+		writeFile(file, getToken(lines[i].tokKey));
+		writeFile(file, _T("="));
+		writeFile(file, lines[i].pszValue);
+		writeFile(file, _T("\r\n"));
 	}
-	writeFile(hf, pszLineSeparator);
+	writeFile(file, kLineSeparator);
 }
 
-bool Shortcut::load(LPTSTR& rpszCurrent) {
+bool Shortcut::load(LPTSTR* input) {
 	// Read
 	
-	m_vk = 0;
-	m_sided_mod_code = 0;
 	int tokKey = tokNotFound;
 	for (;;) {
 		
 		// Read the line
-		LPTSTR pszLine = rpszCurrent;
-		if (!pszLine) {
+		LPTSTR line_start = *input;
+		if (!line_start) {
 			break;
 		}
-		LPTSTR pszLineEnd = pszLine;
-		while (*pszLineEnd && *pszLineEnd != _T('\n') && *pszLineEnd != _T('\r')) {
-			pszLineEnd++;
+		LPTSTR line_end = line_start;
+		while (*line_end && *line_end != _T('\n') && *line_end != _T('\r')) {
+			line_end++;
 		}
-		if (*pszLineEnd) {
-			*pszLineEnd = _T('\0');
-			rpszCurrent = pszLineEnd + 1;
+		if (*line_end) {
+			*line_end = _T('\0');
+			*input = line_end + 1;
 		} else {
-			rpszCurrent = NULL;
+			*input = nullptr;
 		}
 		
-		INT_PTR len = pszLineEnd - pszLine;
+		INT_PTR line_length = line_end - line_start;
 		
 		// If end of shortcut, stop
-		if (*pszLine == pszLineSeparator[0]) {
+		if (*line_start == kLineSeparator[0]) {
 			break;
 		}
 		
 		// If the line is empty, ignore it
-		if (!len) {
+		if (!line_length) {
 			continue;
 		}
 		
 		// If next line of text, get it
-		if (*pszLine == _T('>') && tokKey == tokText) {
-			m_sText += _T("\r\n");
-			m_sText += pszLine + 1;
+		if (*line_start == _T('>') && tokKey == tokText) {
+			m_text += _T("\r\n");
+			m_text += line_start + 1;
 			continue;
 		}
 		
 		// Get the key name
-		TCHAR *pcSep = pszLine;
-		while (*pcSep && *pcSep != _T(' ') && *pcSep != _T('=')) {
-			pcSep++;
+		TCHAR *next_sep = line_start;
+		while (*next_sep && *next_sep != _T(' ') && *next_sep != _T('=')) {
+			next_sep++;
 		}
-		const TCHAR cOldSel = *pcSep;
-		*pcSep = _T('\0');
+		const TCHAR next_sep_copy = *next_sep;
+		*next_sep = _T('\0');
 		
 		// Identify the key
-		tokKey = findToken(pszLine);
+		tokKey = findToken(line_start);
 		if (tokKey == tokNotFound) {
 			continue;
 		}
 		
 		// Get the value
-		*pcSep = cOldSel;
-		while (*pcSep && *pcSep != _T('=')) {
-			pcSep++;
+		*next_sep = next_sep_copy;
+		while (*next_sep && *next_sep != _T('=')) {
+			next_sep++;
 		}
-		if (*pcSep) {
-			pcSep++;
+		if (*next_sep) {
+			next_sep++;
 		}
-		len -= pcSep - pszLine;
+		line_length -= next_sep - line_start;
 		switch (tokKey) {
 			
 			// Language
 			case tokLanguage:
 				for (int lang = 0; lang < i18n::langCount; lang++) {
-					if (!lstrcmpi(pcSep, getLanguageName(lang))) {
+					if (!lstrcmpi(next_sep, getLanguageName(lang))) {
 						i18n::setLanguage(lang);
 					}
 				}
@@ -307,54 +318,54 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 			
 			// Main window size
 			case tokSize:
-				while (*pcSep == _T(' ')) {
-					pcSep++;
+				while (*next_sep == _T(' ')) {
+					next_sep++;
 				}
-				e_sizeMainDialog.cx = StrToInt(pcSep);
+				e_sizeMainDialog.cx = StrToInt(next_sep);
 				
-				skipUntilComma(pcSep);
-				e_sizeMainDialog.cy = StrToInt(pcSep);
+				skipUntilComma(next_sep);
+				e_sizeMainDialog.cy = StrToInt(next_sep);
 				
-				skipUntilComma(pcSep);
-				e_bMaximizeMainDialog = toBool(StrToInt(pcSep));
+				skipUntilComma(next_sep);
+				e_maximize_main_dialog = toBool(StrToInt(next_sep));
 				
-				skipUntilComma(pcSep);
-				e_bIconVisible = !StrToInt(pcSep);
+				skipUntilComma(next_sep);
+				e_icon_visible = !StrToInt(next_sep);
 				break;
 			
 			// Main window columns width
 			case tokColumns:
 				for (int i = 0; i < colCount - 1; i++) {
-					if (!*pcSep) {
+					if (!*next_sep) {
 						break;
 					}
-					int cx = StrToInt(pcSep);
+					int cx = StrToInt(next_sep);
 					if (cx >= 0) {
-						e_acxCol[i] = cx;
+						e_column_widths[i] = cx;
 					}
-					skipUntilComma(pcSep);
+					skipUntilComma(next_sep);
 				}
 				break;
 			
 			// Sorting column
 			case tokSorting:
-				s_iSortColumn = StrToInt(pcSep);
-				if (s_iSortColumn < 0 || s_iSortColumn >= colCount) {
-					s_iSortColumn = colContents;
+				s_sort_column = StrToInt(next_sep);
+				if (s_sort_column < 0 || s_sort_column >= colCount) {
+					s_sort_column = colContents;
 				}
 				break;
 			
 			// Shortcut
 			case tokShortcut:
-				Keystroke::serialize(pcSep);
+				Keystroke::parseDisplayName(next_sep);
 				break;
 			
 			// Code
 			case tokCode:
 				if (!m_vk) {
-					const DWORD dwCode = (DWORD)StrToInt(pcSep);
+					const DWORD dwCode = static_cast<DWORD>(StrToInt(next_sep));
 					if (dwCode) {
-						m_vk = filterVK(LOBYTE(dwCode));
+						m_vk = canonicalizeKey(LOBYTE(dwCode));
 						m_sided_mod_code = HIBYTE(dwCode);
 					}
 				}
@@ -362,47 +373,52 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 			
 			// Distinguish left/right
 			case tokDistinguishLeftRight:
-				m_sided = toBool(StrToInt(pcSep));
+				m_sided = toBool(StrToInt(next_sep));
 				break;
 			
 			// Description
 			case tokDescription:
-				m_sDescription = pcSep;
+				m_description = next_sep;
 				break;
 			
-			// Text or command
+			// Text
 			case tokText:
+				m_type = Shortcut::Type::Text;
+				m_text = next_sep;
+				break;
+
+			// Command
 			case tokCommand:
-				m_bCommand = (tokKey == tokCommand);
-				((m_bCommand) ? m_sCommand : m_sText) = pcSep;
+				m_type = Shortcut::Type::Command;
+				m_command = next_sep;
 				break;
 			
 			// Directory
 			case tokDirectory:
-				m_sDirectory = pcSep;
+				m_directory = next_sep;
 				break;
 			
 			// Programs
 			case tokPrograms:
 			case tokAllProgramsBut:
-				m_sPrograms = pcSep;
-				m_bProgramsOnly = (tokKey == tokPrograms);
+				m_programs = next_sep;
+				m_programs_only = (tokKey == tokPrograms);
 				cleanPrograms();
 				break;
 			
 			// Window
 			case tokWindow:
 				{
-					const int iShow = findToken(pcSep) - tokShowNormal;
-					if (0 <= iShow && iShow <= shortcut::nbShowOption) {
-						m_nShow = shortcut::aiShowOption[iShow];
+					const int show_option_index = findToken(next_sep) - tokShowNormal;
+					if (0 <= show_option_index && show_option_index < arrayLength(shortcut::show_options)) {
+						m_show_option = shortcut::show_options[show_option_index];
 					}
 				}
 				break;
 			
 			// Folder
 			case tokSupportFileOpen:
-				m_bSupportFileOpen = toBool(StrToInt(pcSep));
+				m_support_file_open = toBool(StrToInt(next_sep));
 				break;
 			
 			// Condition
@@ -410,16 +426,17 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 			case tokConditionNumLock:
 			case tokConditionScrollLock:
 				{
-					int cond = findToken(pcSep);
+					int cond = findToken(next_sep);
 					if (tokConditionYes <= cond && cond <= tokConditionNo) {
-						m_aCond[tokKey - tokConditionCapsLock] = cond - tokConditionYes + condYes;
+						m_conditions[tokKey - tokConditionCapsLock] =
+							static_cast<KeystrokeCondition>(cond - tokConditionYes + condYes);
 					}
 				}
 				break;
 			
 			// Usage count
 			case tokUsageCount:
-				m_nbUsage = std::max(0, StrToInt(pcSep));
+				m_usage_count = std::max(0, StrToInt(next_sep));
 				break;
 		}
 	}
@@ -430,322 +447,309 @@ bool Shortcut::load(LPTSTR& rpszCurrent) {
 	// No conflict between shortcuts, except concerning programs:
 	// there can be one programs-conditions-less shortcut
 	// and any count of shortcuts having different programs conditions
-	String *const asProgram = getPrograms();
+	String *const programs = getPrograms();
 	bool ok = true;
 	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
-		if (shortcut->testConflict(*this, asProgram, m_bProgramsOnly)) {
+		if (shortcut->testConflict(*this, programs, m_programs_only)) {
 			ok = false;
 			break;
 		}
 	}
-	delete [] asProgram;
+	delete [] programs;
 	
 	return ok;
 }
 
 
-//------------------------------------------------------------------------
-// Executing
-//------------------------------------------------------------------------
-
-bool Shortcut::execute(bool bFromHotkey) {
-	if (bFromHotkey) {
-		m_nbUsage++;
+void Shortcut::execute(bool from_hotkey) {
+	if (from_hotkey) {
+		m_usage_count++;
 	}
 	
-	BYTE abKeyboard[256], abKeyboardNew[256];
-	GetKeyboardState(abKeyboard);
+	BYTE keyboard_state[256];
+	GetKeyboardState(keyboard_state);
 	
 	// Typing simulation requires the application has the keyboard focus
-	HWND hwndFocus;
-	DWORD idThread;
-	Keystroke::catchKeyboardFocus(hwndFocus, idThread);
-	memcpy(abKeyboardNew, abKeyboard, sizeof(abKeyboard));
+	HWND input_window;
+	DWORD input_thread;
+	Keystroke::catchKeyboardFocus(&input_window, &input_thread);
 	
-	const bool bCanReleaseSpecialKeys = bFromHotkey && canReleaseSpecialKeys();
+	const bool can_release_special_keys = from_hotkey && canReleaseSpecialKeys();
 	
-	if (bCanReleaseSpecialKeys) {
+	if (can_release_special_keys) {
+		BYTE new_keyboard_state[256];
+		memcpy(new_keyboard_state, keyboard_state, sizeof(keyboard_state));
 		
-		// Simulate special keys release, to avoid side effects
+		// Simulate special keys release via SetKeyboardState, to avoid side effects.
 		// Avoid to leave Alt and Shift down, alone, at the same time
 		// because it is one of Windows keyboard layout shortcut:
 		// simulate Ctrl down, release Alt and Shift, then release Ctrl
-		bool bReleaseControl = false;
-		if ((abKeyboard[VK_MENU] & keyDownMask) &&
-				(abKeyboard[VK_SHIFT] & keyDownMask) &&
-				!(abKeyboard[VK_CONTROL] & keyDownMask)) {
-			bReleaseControl = true;
-			keybdEvent(VK_CONTROL, true /* down */);
-			abKeyboardNew[VK_CONTROL] = keyDownMask;
+		bool release_control = false;
+		if ((keyboard_state[VK_MENU] & keyDownMask) &&
+				(keyboard_state[VK_SHIFT] & keyDownMask) &&
+				!(keyboard_state[VK_CONTROL] & keyDownMask)) {
+			release_control = true;
+			keybdEvent(VK_CONTROL, /* down= */ true);
+			new_keyboard_state[VK_CONTROL] = keyDownMask;
 		}
 		
 		for (int i = 0; i < arrayLength(e_special_keys); i++) {
 			const SpecialKey& special_key = e_special_keys[i];
-			abKeyboardNew[special_key.vk] =
-			abKeyboardNew[special_key.vk_left] =
-			abKeyboardNew[special_key.vk_right] = 0;
+			new_keyboard_state[special_key.vk] =
+			new_keyboard_state[special_key.vk_left] =
+			new_keyboard_state[special_key.vk_right] = 0;
 		}
-		abKeyboardNew[m_vk] = 0;
-		SetKeyboardState(abKeyboardNew);
+		new_keyboard_state[m_vk] = 0;
+		SetKeyboardState(new_keyboard_state);
 		
-		if (bReleaseControl) {
-			keybdEvent(VK_CONTROL, false /* down */);
+		if (release_control) {
+			keybdEvent(VK_CONTROL, /* down= */ false);
 		}
 	}
 	
-	if (m_bCommand) {
-		// Execute a command line
-		
+	switch (m_type) {
+	case Shortcut::Type::Command:
 		// Required because the launched program
 		// can be a script that simulates keystrokes
-		if (bCanReleaseSpecialKeys) {
-			releaseSpecialKeys(abKeyboard);
+		if (can_release_special_keys) {
+			releaseSpecialKeys(keyboard_state);
 		}
 		
-		if (!m_bSupportFileOpen || !setDialogBoxDirectory(hwndFocus, m_sCommand)) {
+		if (!m_support_file_open || !setDialogBoxDirectory(input_window, m_command)) {
 			clipboardToEnvironment();
 			ShellExecuteThread* const shell_execute_thread = new ShellExecuteThread(
-				m_sCommand, m_sDirectory, m_nShow);
+				m_command, m_directory, m_show_option);
 			startThread(shell_execute_thread->thread, shell_execute_thread);
 		}
+		break;
 		
-	} else {
-		// Text
-		
-		enum KIND {
-			kindNone,
-			kindText,
-			kindKeystroke,
+	case Shortcut::Type::Text:
+		enum class Kind {
+			None,
+			Text,
+			Keystroke,
 		};
-		KIND lastKind = kindNone;
+		Kind lastKind = Kind::None;
 		
 		// Send the text to the window
-		bool bBackslash = false;
-		LPCTSTR pszText = m_sText;
-		for (size_t i = 0; pszText[i]; i++) {
-			const WORD c = (WORD)pszText[i];
+		bool backslash = false;
+		LPCTSTR text = m_text;
+		for (size_t i = 0; text[i]; i++) {
+			const WORD c = static_cast<WORD>(text[i]);
 			if (c == _T('\n')) {
 				// Redundant with '\r'.
 				continue;
 			}
 			
-			if (!bBackslash && c == _T('\\')) {
-				bBackslash = true;
+			if (!backslash && c == _T('\\')) {
+				backslash = true;
 				continue;
 			}
 			
-			if (bBackslash || c != _T('[')) {
+			if (backslash || c != _T('[')) {
 				// Regular character: send WM_CHAR.
-				if (lastKind != kindText) {
+				if (lastKind != Kind::Text) {
 					sleepBackground(0);
 				}
-				lastKind = kindText;
+				lastKind = Kind::Text;
 				
-				bBackslash = false;
+				backslash = false;
 				const WORD vkMask = VkKeyScan(c);
-				PostMessage(hwndFocus, WM_CHAR, c,
+				PostMessage(input_window, WM_CHAR, c,
 					MAKELPARAM(1, MapVirtualKey(LOBYTE(vkMask), 0)));
 				
 			} else {
 				// Inline shortcut, or inline command line execution
 				
 				// Go to the end of the shortcut, and serialize it
-				const LPCTSTR pcStart = pszText + i + 1;
-				const TCHAR *pcEnd = pcStart;
-				while (*pcEnd && (pcEnd[-1] == _T('\\') || pcEnd[0] != _T(']'))) {
-					pcEnd++;
+				const LPCTSTR shortcut_start = text + i + 1;
+				const TCHAR *shortcut_end = shortcut_start;
+				while (*shortcut_end && (shortcut_end[-1] == _T('\\') || shortcut_end[0] != _T(']'))) {
+					shortcut_end++;
 				}
-				if (!*pcEnd) {
+				if (!*shortcut_end) {
 					break;
 				}
 				
-				String sInside;
-				bool bBackslash2 = false;
-				for (const TCHAR *pc = pcStart; pc < pcEnd; pc++) {
-					if (bBackslash2) {
-						bBackslash2 = false;
-						sInside += *pc;
+				String inside;
+				bool backslash2 = false;
+				for (const TCHAR *pc = shortcut_start; pc < shortcut_end; pc++) {
+					if (backslash2) {
+						backslash2 = false;
+						inside += *pc;
 					} else if (*pc == _T('\\')) {
-						bBackslash2 = true;
+						backslash2 = true;
 					} else {
-						sInside += *pc;
+						inside += *pc;
 					}
 				}
 				
-				if (sInside.isEmpty()) {
+				if (inside.isEmpty()) {
 					// Nothing: catch the focus
 					
-					lastKind = kindNone;
-					commandEmpty(idThread, hwndFocus);
+					lastKind = Kind::None;
+					commandEmpty(&input_thread, &input_window);
 					
-				} else if (*pcStart == _T('[') && *pcEnd == _T(']')) {
+				} else if (*shortcut_start == _T('[') && *shortcut_end == _T(']')) {
 					// Double brackets: [[command line]]
 					
-					pcEnd++;
+					shortcut_end++;
 					
 					// Required because the launched program
 					// can be a script that simulates keystrokes
-					releaseSpecialKeys(abKeyboard);
+					releaseSpecialKeys(keyboard_state);
 					
 					clipboardToEnvironment();
-					shellExecuteCmdLine((LPCTSTR)sInside + 1, NULL, SW_SHOWDEFAULT);
+					shellExecuteCmdLine(static_cast<LPCTSTR>(inside) + 1, /* directory= */ nullptr, SW_SHOWDEFAULT);
 					
-				} else if (*pcStart == _T('{') && pcEnd[-1] == _T('}')) {
+				} else if (*shortcut_start == _T('{') && shortcut_end[-1] == _T('}')) {
 					// Braces: [{command}]
 					
-					sInside[sInside.getLength() - 1] = _T('\0');
-					const LPCTSTR pszCommand = sInside + 1;
+					inside[inside.getLength() - 1] = _T('\0');
+					const LPCTSTR command = inside + 1;
 					
-					LPTSTR pszArg;
-					for (pszArg = (LPTSTR)pszCommand; *pszArg && *pszArg != _T(','); pszArg++) {
-						;
+					LPTSTR arg = const_cast<LPTSTR>(command);
+					while (*arg && *arg != _T(',')) {
+						arg++;
 					}
-					*pszArg++ = _T('\0');
+					*arg++ = _T('\0');
 					
-					if (!lstrcmpi(pszCommand, _T("Wait"))) {
-						commandWait(pszArg);
-					} else if (!lstrcmpi(pszCommand, _T("Focus"))) {
-						if (!commandFocus(idThread, hwndFocus, pszArg)) {
+					if (!lstrcmpi(command, _T("Wait"))) {
+						commandWait(arg);
+					} else if (!lstrcmpi(command, _T("Focus"))) {
+						if (!commandFocus(&input_thread, &input_window, arg)) {
 							break;
 						}
-					} else if (!lstrcmpi(pszCommand, _T("Copy"))) {
-						commandCopy(pszArg);
-					} else if (!lstrcmpi(pszCommand, _T("MouseButton"))) {
-						commandMouseButton(pszArg);
-					} else if (!lstrcmpi(pszCommand, _T("MouseMoveTo"))) {
-						const POINT ptOrigin = { 0, 0 };
-						commandMouseMove(ptOrigin, pszArg);
-					} else if (!lstrcmpi(pszCommand, _T("MouseMoveToFocus"))) {
+					} else if (!lstrcmpi(command, _T("Copy"))) {
+						commandCopy(arg);
+					} else if (!lstrcmpi(command, _T("MouseButton"))) {
+						commandMouseButton(arg);
+					} else if (!lstrcmpi(command, _T("MouseMoveTo"))) {
+						const POINT origin_point = { 0, 0 };
+						commandMouseMove(origin_point, arg);
+					} else if (!lstrcmpi(command, _T("MouseMoveToFocus"))) {
 						RECT rcFocusedWindow;
-						const HWND hwndOwner = GetAncestor(hwndFocus, GA_ROOT);
+						const HWND hwndOwner = GetAncestor(input_window, GA_ROOT);
 						if (!hwndOwner || !GetWindowRect(hwndOwner, &rcFocusedWindow)) {
 							rcFocusedWindow.left = rcFocusedWindow.top = 0;
 						}
-						commandMouseMove((const POINT&)rcFocusedWindow, pszArg);
-					} else if (!lstrcmpi(pszCommand, _T("MouseMoveBy"))) {
-						POINT ptOrigin;
-						GetCursorPos(&ptOrigin);
-						commandMouseMove(ptOrigin, pszArg);
-					} else if (!lstrcmpi(pszCommand, _T("MouseWheel"))) {
-						commandMouseWheel(pszArg);
+						commandMouseMove((const POINT&)rcFocusedWindow, arg);
+					} else if (!lstrcmpi(command, _T("MouseMoveBy"))) {
+						POINT origin_point;
+						GetCursorPos(&origin_point);
+						commandMouseMove(origin_point, arg);
+					} else if (!lstrcmpi(command, _T("MouseWheel"))) {
+						commandMouseWheel(arg);
 					}
 				} else {
 					// Simple brackets: [keystroke]
 					
-					releaseSpecialKeys(abKeyboard);
+					releaseSpecialKeys(keyboard_state);
 					
-					lastKind = kindKeystroke;
+					lastKind = Kind::Keystroke;
 					Keystroke ks;
 					
-					if (*pcStart == _T('|') && pcEnd[-1] == _T('|')) {
+					if (*shortcut_start == _T('|') && shortcut_end[-1] == _T('|')) {
 						// Brackets and pipe: [|characters as keystroke|]
 						
-						sInside[sInside.getLength() - 1] = _T('\0');
-						for (LPCTSTR psz = (LPCTSTR)sInside; *++psz;) {
-							if (*psz == _T('\n')) {
-								// Redundant with '\r'.
-								continue;
-							}
-							
-							const WORD wKey = VkKeyScan(*psz);
-							if (wKey == (WORD)-1) {
-								TCHAR pszCode[5];
-								wsprintf(pszCode, _T("0%u"), (WORD)*psz);
-								
-								ks.m_vk = VK_MENU;
-								ks.m_sided_mod_code = 0;
-								const bool bAltIsHotKey = ks.unregisterHotKey();
-								const BYTE scanCodeAlt = (BYTE)MapVirtualKey(VK_MENU, 0);
-								keybd_event(VK_MENU, scanCodeAlt, 0, 0);
-								
-								Keystroke ksDigit;
-								ks.m_sided_mod_code = MOD_ALT;
-								for (size_t code_index = 0; pszCode[code_index]; code_index++) {
-									ks.m_vk = VK_NUMPAD0 + (BYTE)(pszCode[code_index] - _T('0'));
-									ks.simulateTyping(hwndFocus, false);
-								}
-								
-								keybd_event(VK_MENU, scanCodeAlt, KEYEVENTF_KEYUP, 0);
-								if (bAltIsHotKey) {
-									ks.registerHotKey();
-								}
-								
-							} else {
-								const BYTE bFlags = HIBYTE(wKey);
-								ks.m_vk = LOBYTE(wKey);
-								ks.m_sided_mod_code = 0;
-								if (bFlags & (1 << 0)) {
-									ks.m_sided_mod_code |= MOD_SHIFT;
-								}
-								if (bFlags & (1 << 1)) {
-									ks.m_sided_mod_code |= MOD_CONTROL;
-								}
-								if (bFlags & (1 << 2)) {
-									ks.m_sided_mod_code |= MOD_ALT;
-								}
-								
-								const bool bWasRegistered = ks.unregisterHotKey();
-								ks.simulateTyping(hwndFocus);
-								if (bWasRegistered) {
-									ks.registerHotKey();
-								}
+						inside[inside.getLength() - 1] = _T('\0');
+						for (LPCTSTR psz = static_cast<LPCTSTR>(inside); *++psz;) {
+							if (*psz != _T('\n')) {  // '\n' is redundant with '\r'.
+								simulateCharacter(*psz);
 							}
 						}
 						
 					} else {
 						// Simple brackets: [keystroke]
 						
-						ks.serialize(sInside.get());
-						const bool bWasRegistered = ks.unregisterHotKey();
-						ks.simulateTyping(hwndFocus);
-						if (bWasRegistered) {
-							ks.registerHotKey();
-						}
+						ks.parseDisplayName(inside.get());
+						ks.simulateTyping();
 					}
 				}
 				
-				i = pcEnd - pszText;
+				i = shortcut_end - text;
 			}
 		}
+		break;
 	}
-	
-	return !m_bCommand;
 }
 
 
-// []
-// Sleep for 100 milliseconds and catch the focus.
-// This is a shortcut for [{Focus,100}]
-void commandEmpty(DWORD& ridThread, HWND& rhwndFocus) {
+void simulateCharacter(TCHAR c) {
+	Keystroke ks;
+	const WORD key = VkKeyScan(c);
+	if (key == WORD(-1)) {
+		// The character has no keystroke:
+		// simulate Alt + Numpad 0 + Numpad ASCII code digits.
+		
+		// Press Alt.
+		ks.m_vk = VK_MENU;
+		ks.m_sided_mod_code = 0;
+		const bool alt_is_hotkey = ks.unregisterHotKey();
+		const BYTE scan_code_alt = static_cast<BYTE>(MapVirtualKey(VK_MENU, MAPVK_VK_TO_VSC));
+		keybd_event(VK_MENU, scan_code_alt, 0, 0);
+		
+		// Press the digits.
+		TCHAR digits[5];
+		wsprintf(digits, _T("0%u"), static_cast<WORD>(c));
+		ks.m_sided_mod_code = MOD_ALT;
+		for (size_t digit_index = 0; digits[digit_index]; digit_index++) {
+			ks.m_vk = VK_NUMPAD0 + static_cast<BYTE>(digits[digit_index] - _T('0'));
+			ks.simulateTyping();
+		}
+		
+		// Release Alt.
+		keybd_event(VK_MENU, scan_code_alt, KEYEVENTF_KEYUP, /* dwExtraInfo= */ 0);
+		if (alt_is_hotkey) {
+			ks.registerHotKey();
+		}
+		
+	} else {
+		// The character has a keystroke: simulate it.
+		
+		const BYTE flags = HIBYTE(key);
+		ks.m_vk = LOBYTE(key);
+		ks.m_sided_mod_code = 0;
+		if (flags & (1 << 0)) {
+			ks.m_sided_mod_code |= MOD_SHIFT;
+		}
+		if (flags & (1 << 1)) {
+			ks.m_sided_mod_code |= MOD_CONTROL;
+		}
+		if (flags & (1 << 2)) {
+			ks.m_sided_mod_code |= MOD_ALT;
+		}
+		
+		ks.simulateTyping();
+	}
+}
+
+
+void commandEmpty(DWORD* input_thread, HWND* input_window) {
 	sleepBackground(100);
-	Keystroke::detachKeyboardFocus(ridThread);
-	Keystroke::catchKeyboardFocus(rhwndFocus, ridThread);
+	Keystroke::detachKeyboardFocus(*input_thread);
+	Keystroke::catchKeyboardFocus(input_window, input_thread);
 }
 
 
-// [{Wait,duration}]
-// Sleep for a given number of milliseconds.
-void commandWait(LPTSTR pszArg) {
-	sleepBackground(StrToInt(pszArg));
+void commandWait(LPTSTR arg) {
+	sleepBackground(StrToInt(arg));
 }
 
 
-// [{Focus,delay,[!]window_name}]
-// Sleep for delay milliseconds and catch the focus.
-// If window_name does not begin with '!', return false if the window is not found.
-bool commandFocus(DWORD& ridThread, HWND& rhwndFocus, LPTSTR pszArg) {
+bool commandFocus(DWORD* input_thread, HWND* input_window, LPTSTR arg) {
 	// Apply the delay
-	const int delay = StrToInt(pszArg);
-	skipUntilComma(pszArg);
+	const int delay = StrToInt(arg);
+	skipUntilComma(arg);
 	sleepBackground(delay);
 	
 	// Find the given window
-	const bool bIgnoreNotFound = (pszArg[0] == _T('!'));
+	const bool bIgnoreNotFound = (arg[0] == _T('!'));
 	if (bIgnoreNotFound) {
-		pszArg++;
+		arg++;
 	}
-	const LPCTSTR pszWindowName = pszArg;
-	skipUntilComma(pszArg, true);
+	const LPCTSTR pszWindowName = arg;
+	skipUntilComma(arg, true);
 	
 	if (*pszWindowName) {
 		const HWND hwndTarget = findWindowByName(pszWindowName);
@@ -756,29 +760,23 @@ bool commandFocus(DWORD& ridThread, HWND& rhwndFocus, LPTSTR pszArg) {
 		}
 	}
 	
-	Keystroke::detachKeyboardFocus(ridThread);
-	Keystroke::catchKeyboardFocus(rhwndFocus, ridThread);
+	Keystroke::detachKeyboardFocus(*input_thread);
+	Keystroke::catchKeyboardFocus(input_window, input_thread);
 	return true;
 }
 
 
-// [{Copy,text}]
-// Copy the text argument to the clipboard.
-void commandCopy(LPTSTR pszArg) {
-	setClipboardText(pszArg);
+void commandCopy(LPTSTR arg) {
+	setClipboardText(arg);
 }
 
 
-// [{Mouse,state}] where state is 2 letters:
-// 1 letter for button: L (left), M (middle), R (right)
-// 1 letter for state: U (up), D (down)
-// Simulate mouse clicks.
-void commandMouseButton(LPTSTR pszArg) {
-	CharUpper(pszArg);
+void commandMouseButton(LPTSTR arg) {
+	CharUpper(arg);
 	DWORD dwFlags = 0;
-	switch (lstrlen(pszArg)) {
+	switch (lstrlen(arg)) {
 		case 2:
-			switch (MAKELONG(pszArg[1], pszArg[0])) {
+			switch (MAKELONG(arg[1], arg[0])) {
 				case 'L\0D':  dwFlags = MOUSEEVENTF_LEFTDOWN;  break;
 				case 'L\0U':  dwFlags = MOUSEEVENTF_LEFTUP;  break;
 				case 'M\0D':  dwFlags = MOUSEEVENTF_MIDDLEDOWN;  break;
@@ -793,7 +791,7 @@ void commandMouseButton(LPTSTR pszArg) {
 			break;
 		
 		case 1:
-			switch (*pszArg) {
+			switch (*arg) {
 				case 'L':  dwFlags = MOUSEEVENTF_LEFTDOWN;  break;
 				case 'M':  dwFlags = MOUSEEVENTF_MIDDLEDOWN;  break;
 				case 'R':  dwFlags = MOUSEEVENTF_RIGHTDOWN;  break;
@@ -809,23 +807,19 @@ void commandMouseButton(LPTSTR pszArg) {
 }
 
 
-// [{MouseMoveTo,x,y}], [{MouseMoveToFocus,x,y}], [{MouseMoveBy,dx,dy}]
-// Move the mouse cursor.
-void commandMouseMove(POINT ptOrigin, LPTSTR pszArg) {
-	ptOrigin.x += StrToInt(pszArg);
-	skipUntilComma(pszArg);
-	ptOrigin.y += StrToInt(pszArg);
-	SetCursorPos(ptOrigin.x, ptOrigin.y);
+void commandMouseMove(POINT origin_point, LPTSTR arg) {
+	origin_point.x += StrToInt(arg);
+	skipUntilComma(arg);
+	origin_point.y += StrToInt(arg);
+	SetCursorPos(origin_point.x, origin_point.y);
 	sleepBackground(0);
 }
 
 
-// [{MouseWheel,offset}]
-// Simulate a mouse wheel scroll.
-void commandMouseWheel(LPTSTR pszArg) {
-	const int offset = -StrToInt(pszArg) * WHEEL_DELTA;
+void commandMouseWheel(LPTSTR arg) {
+	const int offset = -StrToInt(arg) * WHEEL_DELTA;
 	if (offset) {
-		mouse_event(MOUSEEVENTF_WHEEL, 0, 0, (DWORD)offset, 0);
+		mouse_event(MOUSEEVENTF_WHEEL, 0, 0, static_cast<DWORD>(offset), 0);
 		sleepBackground(0);
 	}
 }
@@ -836,46 +830,49 @@ void commandMouseWheel(LPTSTR pszArg) {
 //------------------------------------------------------------------------
 
 // Test for inclusion
-bool Shortcut::match(const Keystroke& ks, LPCTSTR pszProgram) const {
-	VERIF(Keystroke::match(ks));
+bool Shortcut::isSubset(const Keystroke& other_ks, LPCTSTR other_program) const {
+	VERIF(Keystroke::isSubset(other_ks));
 	
-	return (pszProgram && m_sPrograms.isSome() && containsProgram(pszProgram)) ^ (!m_bProgramsOnly);
+	return (other_program && m_programs.isSome() && containsProgram(other_program)) ^ (!m_programs_only);
 }
 
 // Test for intersection
-bool Shortcut::testConflict(const Keystroke& ks, const String asProgram[], bool bProgramsOnly) const {
-	VERIF(bProgramsOnly == m_bProgramsOnly);
+bool Shortcut::testConflict(
+		const Keystroke& other_ks, const String other_programs[], bool other_programs_only) const {
+	VERIF(other_programs_only == m_programs_only);
 	
-	VERIF(m_vk == ks.m_vk);
+	VERIF(m_vk == other_ks.m_vk);
 	
-	if (m_sided && ks.m_sided) {
-		VERIF(m_sided_mod_code == ks.m_sided_mod_code);
+	if (m_sided && other_ks.m_sided) {
+		VERIF(m_sided_mod_code == other_ks.m_sided_mod_code);
 	} else {
-		VERIF(getUnsidedModCode() == ks.getUnsidedModCode());
+		VERIF(getUnsidedModCode() == other_ks.getUnsidedModCode());
 	}
 	
 	for (int i = 0; i < condTypeCount; i++) {
-		VERIF(m_aCond[i] == condIgnore || ks.m_aCond[i] == condIgnore || m_aCond[i] == ks.m_aCond[i]);
+		VERIF(
+			m_conditions[i] == condIgnore ||
+			other_ks.m_conditions[i] == condIgnore ||
+			m_conditions[i] == other_ks.m_conditions[i]);
 	}
 	
-	if (!m_bProgramsOnly || !bProgramsOnly) {
+	if (!m_programs_only || !other_programs_only) {
 		return true;
 	}
 	
-	VERIF(asProgram && m_sPrograms.isSome());
-	for (int i = 0; asProgram[i].isSome(); i++) {
-		if (containsProgram(asProgram[i])) {
+	VERIF(other_programs && m_programs.isSome());
+	for (int i = 0; other_programs[i].isSome(); i++) {
+		if (containsProgram(other_programs[i])) {
 			return true;
 		}
 	}
 	return false;
 }
 
-// Get programs array, NULL if no program.
 String* Shortcut::getPrograms() const {
-	VERIFP(m_sPrograms.isSome(), NULL);
+	VERIFP(m_programs.isSome(), nullptr);
 	
-	const LPCTSTR pszPrograms = m_sPrograms;
+	const LPCTSTR pszPrograms = m_programs;
 	int nbProgram = 0;
 	for (int i = 0; pszPrograms[i]; i++) {
 		if (pszPrograms[i] == _T(';') && i > 0 && pszPrograms[i - 1] != _T(';')) {
@@ -897,32 +894,31 @@ String* Shortcut::getPrograms() const {
 	return asProgram;
 }
 
-// Eliminate duplicates in programs
 void Shortcut::cleanPrograms() {
-	String *const asProgram = getPrograms();
-	m_sPrograms.empty();
-	VERIFV(asProgram);
+	String *const programs = getPrograms();
+	m_programs.empty();
+	VERIFV(programs);
 	
-	for (int i = 0; asProgram[i].isSome(); i++) {
+	for (int i = 0; programs[i].isSome(); i++) {
 		for (int j = 0; j < i; j++) {
-			if (!lstrcmpi(asProgram[i], asProgram[j])) {
+			if (!lstrcmpi(programs[i], programs[j])) {
 				goto Next;
 			}
 		}
-		if (m_sPrograms.isSome()) {
-			m_sPrograms += _T(';');
+		if (m_programs.isSome()) {
+			m_programs += _T(';');
 		}
-		m_sPrograms += asProgram[i];
+		m_programs += programs[i];
 		
 	Next:
 		;
 	}
 	
-	delete [] asProgram;
+	delete [] programs;
 }
 
-bool Shortcut::containsProgram(LPCTSTR pszProgram) const {
-	LPCTSTR programs = m_sPrograms;
+bool Shortcut::containsProgram(LPCTSTR program) const {
+	LPCTSTR programs = m_programs;
 	VERIF(*programs);
 	
 	const TCHAR* current_program_begin = programs;
@@ -934,7 +930,7 @@ bool Shortcut::containsProgram(LPCTSTR pszProgram) const {
 		
 		if (CSTR_EQUAL == CompareString(LOCALE_USER_DEFAULT, NORM_IGNORECASE,
 				current_program_begin,
-				static_cast<int>(current_process_end - current_program_begin), pszProgram, -1)) {
+				static_cast<int>(current_process_end - current_program_begin), program, -1)) {
 			return true;
 		}
 		
@@ -952,106 +948,109 @@ bool Shortcut::containsProgram(LPCTSTR pszProgram) const {
 
 void loadShortcuts() {
 	clearShortcuts();
-	mergeShortcuts(e_pszIniFile);
+	mergeShortcuts(e_ini_filepath);
 }
 
-void mergeShortcuts(LPCTSTR pszIniFile) {
-	e_bIconVisible = true;
+void mergeShortcuts(LPCTSTR ini_filepath) {
+	e_icon_visible = true;
 	
-	memcpy(e_acxCol, s_acxColOrig, sizeof(s_acxColOrig));
+	memcpy(e_column_widths, s_default_column_widths, sizeof(s_default_column_widths));
 	
-	const HANDLE hf = CreateFile(pszIniFile,
-		GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-	if (hf == INVALID_HANDLE_VALUE) {
+	const HANDLE file = CreateFile(
+		ini_filepath,
+		GENERIC_READ, FILE_SHARE_READ, /* lpSecurityAttributes= */ nullptr, OPEN_EXISTING,
+		/* dwFlagsAndAttributes= */ 0, /* hTemplateFile= */ NULL);
+	if (file == INVALID_HANDLE_VALUE) {
 		if (GetLastError() != ERROR_FILE_NOT_FOUND) {
 Error:
-			messageBox(NULL, ERR_LOADING_INI);
+			messageBox(/* hwnd= */ NULL, ERR_LOADING_INI);
 		}
 		return;
 	}
 	
-	DWORD size = GetFileSize(hf, NULL);
-	if (size == INVALID_FILE_SIZE) {
+	DWORD file_size = GetFileSize(file, /* lpFileSizeHigh= */ nullptr);
+	if (file_size == INVALID_FILE_SIZE) {
 		goto Error;
 	}
 	
-	BYTE *pbBuffer = new BYTE[size + 2];
+	BYTE *file_contents = new BYTE[file_size + 2];
 	DWORD lenRead;
-	const bool bOK = ReadFile(hf, pbBuffer, size, &lenRead, NULL) && lenRead == size;
-	CloseHandle(hf);
+	const bool ok = ReadFile(file, file_contents, file_size, &lenRead, /* lpOverlapped= */ nullptr) && lenRead == file_size;
+	CloseHandle(file);
 	
-	if (!bOK) {
-		delete [] pbBuffer;
+	if (!ok) {
+		delete [] file_contents;
 		goto Error;
 	}
 	
-	pbBuffer[size] = pbBuffer[size + 1] = 0;
-	LPTSTR pszCurrent;
-	if (IsTextUnicode(pbBuffer, size, NULL)) {
-		pszCurrent = reinterpret_cast<LPTSTR>(pbBuffer);
-		if (*pszCurrent == kUtf16LittleEndianBom)
-			pszCurrent++;
+	file_contents[file_size] = file_contents[file_size + 1] = 0;
+	LPTSTR input;
+	if (IsTextUnicode(file_contents, file_size, /* lpiResult= */ nullptr)) {
+		input = reinterpret_cast<LPTSTR>(file_contents);
+		if (*input == kUtf16LittleEndianBom)
+			input++;
 	} else {
-		LPSTR asz = reinterpret_cast<LPSTR>(pbBuffer);
-		const int buf = lstrlenA(asz) + 1;
-		pszCurrent = new TCHAR[buf];
-		MultiByteToWideChar(CP_ACP, 0, asz, -1, pszCurrent, buf);
-		pbBuffer = reinterpret_cast<BYTE*>(pszCurrent);
+		LPSTR ansi_contents = reinterpret_cast<LPSTR>(file_contents);
+		const int buf = lstrlenA(ansi_contents) + 1;
+		input = new TCHAR[buf];
+		MultiByteToWideChar(CP_ACP, 0, ansi_contents, -1, input, buf);
+		file_contents = reinterpret_cast<BYTE*>(input);
 	}
 	
-	Keystroke ks;
 	do {
-		Shortcut *const psh = new Shortcut(ks);
-		if (psh->load(pszCurrent)) {
+		Shortcut *const psh = new Shortcut(Keystroke());
+		if (psh->load(&input)) {
 			psh->addToList();
 			psh->registerHotKey();
 		} else {
 			delete psh;
 		}
-	} while (pszCurrent);
+	} while (input);
 	
-	delete [] pbBuffer;
-	HeapCompact(e_hHeap, 0);
+	delete [] file_contents;
+	HeapCompact(e_heap, 0);
 }
 
 
 void saveShortcuts() {
-	HANDLE hf;
+	HANDLE file;
 	for (;;) {
-		hf = CreateFile(e_pszIniFile,
-			GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
-		if (hf != INVALID_HANDLE_VALUE) {
+		file = CreateFile(
+			e_ini_filepath,
+			GENERIC_WRITE, /* dwShareMode= */ 0, /* lpSecurityAttributes= */ nullptr, CREATE_ALWAYS,
+			/* dwFlagsAndAttributes= */ 0, /* hTemplateFile= */ NULL);
+		if (file != INVALID_HANDLE_VALUE) {
 			break;
 		}
-		VERIFV(messageBox(NULL, ERR_SAVING_INI, MB_ICONERROR | MB_RETRYCANCEL) == IDRETRY);
+		VERIFV(messageBox(/* hwnd= */ NULL, ERR_SAVING_INI, MB_ICONERROR | MB_RETRYCANCEL) == IDRETRY);
 	}
 	
-	TCHAR psz[1024];
+	TCHAR buffer[1024];
 	
-	wsprintf(psz, _T("%c%s=%s\r\n"),
+	wsprintf(buffer, _T("%c%s=%s\r\n"),
 		kUtf16LittleEndianBom, getToken(tokLanguage), getToken(tokLanguageName));
-	writeFile(hf, psz);
+	writeFile(file, buffer);
 	
-	wsprintf(psz, _T("%s=%d,%d,%d,%d\r\n"),
+	wsprintf(buffer, _T("%s=%d,%d,%d,%d\r\n"),
 		getToken(tokSize), e_sizeMainDialog.cx, e_sizeMainDialog.cy,
-		e_bMaximizeMainDialog, !e_bIconVisible);
-	writeFile(hf, psz);
+		e_maximize_main_dialog, !e_icon_visible);
+	writeFile(file, buffer);
 	
-	writeFile(hf, getToken(tokColumns));
-	for (int i = 0; i < nbColSize; i++) {
-		wsprintf(psz, (i == 0) ? _T("=%d") : _T(",%d"), e_acxCol[i]);
-		writeFile(hf, psz);
+	writeFile(file, getToken(tokColumns));
+	for (int i = 0; i < kSizedColumnCount; i++) {
+		wsprintf(buffer, (i == 0) ? _T("=%d") : _T(",%d"), e_column_widths[i]);
+		writeFile(file, buffer);
 	}
 	
-	wsprintf(psz, _T("\r\n%s=%d\r\n\r\n"),
-		getToken(tokSorting), Shortcut::s_iSortColumn);
-	writeFile(hf, psz);
+	wsprintf(buffer, _T("\r\n%s=%d\r\n\r\n"),
+		getToken(tokSorting), Shortcut::s_sort_column);
+	writeFile(file, buffer);
 	
 	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
-		shortcut->save(hf);
+		shortcut->save(file);
 	}
 	
-	CloseHandle(hf);
+	CloseHandle(file);
 }
 
 
@@ -1061,7 +1060,7 @@ void clearShortcuts() {
 		s_first_shortcut = old_first_shortcut->getNext();
 		delete old_first_shortcut;
 	}
-	s_first_shortcut = NULL;
+	s_first_shortcut = nullptr;
 }
 
 }  // shortcut namespace

@@ -31,25 +31,25 @@ class Shortcut;
 }
 
 
-const size_t bufString = 128;
-const size_t bufHotKey = 128;
-const size_t bufCode = 32;
-const size_t bufWindowTitle = 256;
+constexpr size_t bufString = 128;
+constexpr size_t bufHotKey = 128;
+constexpr size_t bufCode = 32;
+constexpr size_t bufWindowTitle = 256;
 
-const int bufClipboardString = MAX_PATH * 10;
+constexpr int bufClipboardString = MAX_PATH * 10;
 
 // Name of the environment variable set by clipboardToEnvironment().
-const LPCTSTR clipboard_env_variable = _T("CLIPBOARD");
+constexpr LPCTSTR clipboard_env_variable = _T("CLIPBOARD");
 
 
-const LPCTSTR pszApp = _T("Clavier+");
+constexpr LPCTSTR pszApp = _T("Clavier+");
 
 
-extern HANDLE e_hHeap;
-extern HINSTANCE e_hInst;
-extern HWND e_hwndInvisible;  // Invisible background window
-extern HWND e_hdlgModal;
-extern bool e_bIconVisible;
+extern HANDLE e_heap;
+extern HINSTANCE e_instance;
+extern HWND e_invisible_window;  // Invisible background window
+extern HWND e_modal_dialog;
+extern bool e_icon_visible;
 
 
 inline WNDPROC subclassWindow(HWND hwnd, WNDPROC new_window_proc) {
@@ -59,13 +59,13 @@ inline WNDPROC subclassWindow(HWND hwnd, WNDPROC new_window_proc) {
 
 
 // Display a message box. The message is read from string resources.
-int messageBox(HWND hwnd, UINT idString, UINT uType = MB_ICONERROR, LPCTSTR pszArg = NULL);
+int messageBox(HWND hwnd, UINT string_id, UINT type = MB_ICONERROR, LPCTSTR arg = nullptr);
 
 // Centers a window relatively to its parent.
 void centerParent(HWND hwnd);
 
 // Reads the text of a dialog box control.
-void getDlgItemText(HWND hdlg, UINT id, String& str);
+void getDlgItemText(HWND hdlg, UINT id, String* output);
 
 // Setups a label control for displaying an URL.
 //
@@ -76,96 +76,73 @@ void getDlgItemText(HWND hdlg, UINT id, String& str);
 //     be copied to a buffer.
 void initializeWebLink(HWND hdlg, UINT control_id, LPCTSTR link);
 
-// Wrapper for CreateThread()
+// Wrapper for CreateThread().
 void startThread(LPTHREAD_START_ROUTINE pfn, void* params);
 
 // Writes a NULL-terminated string to a file.
-void writeFile(HANDLE hf, LPCTSTR strbuf);
+void writeFile(HANDLE file, LPCTSTR strbuf);
 
 // Retrieves the basename of the process that created a window.
+// Returns true on success (process_name contains a valid name), false on failure.
 //
-// Args:
-//   hwnd: The window to get the process name of.
-//   process_name: The buffer where to put the basename of the process that created the window,
-//     in lowercase. Should have a size of MAX_PATH.
-//
-// Returns:
-//   True on success (process_name contains a valid name), false on failure.
+// hwnd: The window to get the process name of.
+// process_name: The buffer where to put the basename of the process that created the window,
+//   in lowercase. Should have a size of MAX_PATH.
 bool getWindowProcessName(HWND hwnd, LPTSTR process_name);
 
 // Sleeps in idle priority.
 //
-// Args:
-//   dwDurationMS: The time to sleep, in milliseconds.
-void sleepBackground(DWORD dwDurationMS);
+// duration_millis: the time to sleep, in milliseconds.
+void sleepBackground(DWORD duration_millis);
 
 // Wrapper for SHGetFileInfo() that does not call the function if the file belongs
 // to a slow device. If the call to SHGetFileInfo() fails and SHGFI_USEFILEATTRIBUTES was not
 // specified in flags, the flag is added and SHGetFileInfo() is called again.
+// Returns true on success.
 //
-// Args:
-//   path: The path of the file or directory to call SHGetFileInfo() on.
-//   file_attributes: Given as argument to SHGetFileInfo().
-//   shfi: Where to save the result of SHGetFileInfo().
-//   flags: Given as argument to SHGetFileInfo(). If path is on a slow device,
-//     according pathIsSlow(), SHGFI_USEFILEATTRIBUTES is added to flags before it is given
-//     to SHGetFileInfo().
-//
-// Returns:
-//   True on success, false on failure.
+// path: the path of the file or directory to call SHGetFileInfo() on.
+// file_attributes: given as argument to SHGetFileInfo().
+// shfi: where to save the result of SHGetFileInfo().
+// flags: given as argument to SHGetFileInfo(). If path is on a slow device,
+//   according pathIsSlow(), SHGFI_USEFILEATTRIBUTES is added to flags before it is given
+//   to SHGetFileInfo().
 bool getFileInfo(LPCTSTR path, DWORD file_attributes, SHFILEINFO& shfi, UINT flags);
 
 // Puts the text contents of the clipboard to the environment variable named clipboard_env_variable.
 void clipboardToEnvironment();
 
-// Returns a visible child of a window matching the given window class name, if any.
+// Returns a visible child of a window matching the given window class name, NULL if none is found.
+// Picks an arbitrary window if multiple match.
 //
-// Args:
-//   hwnd_parent: The parent to consider the child window of.
-//   wnd_class: The window class the returned window should match.
-//   allow_same_prefix: If false, the returned window will have exactly wnd_class as class name.
-//     If true, it will have wnd_class only as prefix; full equality is not enforced.
-//
-// Returns:
-//   The handle of a matching window, with no particular priority if several windows match,
-//   or NULL if no matching window is found.
+// hwnd_parent: the parent to consider the child window of.
+// wnd_class: the window class the returned window should match.
+// allow_same_prefix: if false, the returned window will have exactly wnd_class as class name.
+//   If true, it will have wnd_class only as prefix; full equality is not enforced.
 HWND findVisibleChildWindow(HWND hwnd_parent, LPCTSTR wnd_class, bool allow_same_prefix);
 
 // Determines whether a window has a window class, or a prefix of it.
 //
-// Args:
-//   hwnd: The window to check the class of.
-//   wnd_class: The class the window should have.
-//   allow_same_prefix: If false, the window should have exactly wnd_class as class name to match.
-//     If true, it should only have wnd_class only as prefix; full equality is not enforced.
-//
-// Returns:
-//   True if the class of hwnd matches wnd_class.
+// hwnd: the window to check the class of.
+// wnd_class: the class the window should have.
+// allow_same_prefix: if false, the window should have exactly wnd_class as class name to match.
+//   If true, it should only have wnd_class only as prefix; full equality is not enforced.
 bool checkWindowClass(HWND hwnd, LPCTSTR wnd_class, bool allow_same_prefix);
 
-// Finds a top-level window whose title matches a regexp.
+// Returns a top-level window whose title matches a regexp, NULL if none is found.
+// Picks an arbitrary window if multiple match.
 //
-// Args:
-//   title_regexp: The regular expression the title of the returned window will match.
-//     The regular expression is evaluated by matchWildcards().
-//
-// Returns:
-//   The handle of a window matching the title regexp, with no particular priority if several
-//   windows match.
+// title_regexp: the regular expression the title of the returned window will match.
+//   The regular expression is evaluated by matchWildcards().
 HWND findWindowByName(LPCTSTR title_regexp);
 
-// Determines if a string matches a wildcards pattern, by ignoring case.
+// Determines if a string matches a wildcards pattern. Case insensitive.
 //
-// Args:
-//   pattern: The pattern to use for testing matching. Supports '*' and '?'.
-//     This string must be given in lower case.
-//   subject: The string to test against the pattern. The case does not matter.
-//   pattern_end: If not null, points to the successor of the last character of the pattern; if
-//     equals pattern, the pattern will be considered empty.
-//
-// Returns:
-//   True if the subject matches the pattern, false otherwise.
-bool matchWildcards(LPCTSTR pattern, LPCTSTR subject, LPCTSTR pattern_end = NULL);
+// pattern: the pattern to use for testing matching. Supports '*' and '?'.
+//   This string must be given in lower case.
+// subject: the string to test against the pattern. The case does not matter.
+// pattern_end: if not null, points to the successor of the last character of the pattern; if
+//   equals pattern, the pattern will be considered empty.
+bool matchWildcards(LPCTSTR pattern, LPCTSTR subject, LPCTSTR pattern_end = nullptr);
 
 // Copies text into the clipboard.
 void setClipboardText(LPCTSTR text);
@@ -237,7 +214,7 @@ void skipUntilComma(TCHAR*& chr_ptr, bool unescape = false);
 
 // Isolates the next ';'-separated token with a '\0'.
 // Returns token_start, then modifies token_start to point to the start of the next token.
-LPCTSTR getSemiColonToken(LPTSTR& token_start);
+LPCTSTR getSemiColonToken(LPTSTR* token_start);
 
 
 //------------------------------------------------------------------------
@@ -318,14 +295,15 @@ enum {
 	colCount
 };
 
-const int nbColSize = colCount - 1;
+// Number of columns with an explicit size. The last column takes all the remaining space.
+constexpr int kSizedColumnCount = colCount - 1;
 
-extern int e_acxCol[colCount];
+extern int e_column_widths[colCount];
 
 extern SIZE e_sizeMainDialog;
-extern bool e_bMaximizeMainDialog;
+extern bool e_maximize_main_dialog;
 
-extern TCHAR e_pszIniFile[MAX_PATH];
+extern TCHAR e_ini_filepath[MAX_PATH];
 
 
 //------------------------------------------------------------------------

@@ -36,11 +36,18 @@
 
 const int kWindowClassBufferLength = 200;
 
-HANDLE e_hHeap;
-HINSTANCE e_hInst;
-HWND e_hwndInvisible;
-HWND e_hdlgModal;
-bool e_bIconVisible = true;
+HANDLE e_heap;
+HINSTANCE e_instance;
+HWND e_invisible_window;
+HWND e_modal_dialog;
+bool e_icon_visible = true;
+
+int e_column_widths[colCount];
+
+SIZE e_sizeMainDialog = { 0, 0 };
+bool e_maximize_main_dialog = false;
+
+TCHAR e_ini_filepath[MAX_PATH];
 
 
 static bool pathIsSlow(LPCTSTR path);
@@ -48,11 +55,11 @@ static bool pathIsSlow(LPCTSTR path);
 static BOOL CALLBACK prcEnumFindWindowByName(HWND hwnd, LPARAM lParam);
 
 
-int messageBox(HWND hwnd, UINT idString, UINT uType, LPCTSTR pszArg) {
-	TCHAR pszFormat[256], pszText[1024];
-	i18n::loadStringAuto(idString, pszFormat);
-	wsprintf(pszText, pszFormat, pszArg);
-	return MessageBox(hwnd, pszText, pszApp, uType);
+int messageBox(HWND hwnd, UINT string_id, UINT type, LPCTSTR arg) {
+	TCHAR format[256], text[1024];
+	i18n::loadStringAuto(string_id, format);
+	wsprintf(text, format, arg);
+	return MessageBox(hwnd, text, pszApp, type);
 }
 
 
@@ -63,35 +70,36 @@ void centerParent(HWND hwnd) {
 	MONITORINFO mi;
 	mi.cbSize = sizeof(mi);
 	if (hwnd_parent) {
-		const HMONITOR hMonitor = MonitorFromWindow(hwnd_parent, MONITOR_DEFAULTTONULL);
-		VERIFV(hMonitor);
-		GetMonitorInfo(hMonitor, &mi);
+		const HMONITOR monitor = MonitorFromWindow(hwnd_parent, MONITOR_DEFAULTTONULL);
+		VERIFV(monitor);
+		GetMonitorInfo(monitor, &mi);
 		GetWindowRect(hwnd_parent, &rcParent);
 		IntersectRect(&rcParent, &rcParent, &mi.rcWork);
 	} else {
-		const HMONITOR hMonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
-		VERIFV(hMonitor);
-		GetMonitorInfo(hMonitor, &mi);
+		const HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+		VERIFV(monitor);
+		GetMonitorInfo(monitor, &mi);
 		rcParent = mi.rcWork;
 	}
 	
 	GetWindowRect(hwnd, &rcChild);
-	SetWindowPos(hwnd, NULL,
+	SetWindowPos(
+		hwnd, /* hWndInsertAfter= */ NULL,
 		(rcParent.left + rcParent.right + rcChild.left - rcChild.right) / 2,
 		(rcParent.top + rcParent.bottom + rcChild.top - rcChild.bottom) / 2,
 		0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 
-void getDlgItemText(HWND hdlg, UINT id, String& rs) {
+void getDlgItemText(HWND hdlg, UINT id, String* output) {
 	const HWND hwnd = GetDlgItem(hdlg, id);
 	const int buf = GetWindowTextLength(hwnd) + 1;
-	GetWindowText(hwnd, rs.getBuffer(buf), buf);
+	GetWindowText(hwnd, output->getBuffer(buf), buf);
 }
 
 
 static WNDPROC s_prcLabel;
-static LRESULT CALLBACK prcWebLink(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK prcWebLink(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 void initializeWebLink(HWND hdlg, UINT control_id, LPCTSTR link) {
 	const HWND hwnd = GetDlgItem(hdlg, control_id);
@@ -101,36 +109,41 @@ void initializeWebLink(HWND hdlg, UINT control_id, LPCTSTR link) {
 
 // Window procedure for dialog box controls displaying an URL.
 // The link itself is stored in GWL_USERDATA.
-LRESULT CALLBACK prcWebLink(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	switch (uMsg) {
-		
+LRESULT CALLBACK prcWebLink(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	switch (message) {
 		case WM_SETCURSOR:
-			SetCursor(LoadCursor(NULL, IDC_HAND));
-			return TRUE;
+			SetCursor(LoadCursor(/* hInstance= */ NULL, IDC_HAND));
+			return true;
 		
 		case WM_NCHITTEST:
 			return HTCLIENT;
 		
 		case WM_LBUTTONDOWN:
-			ShellExecute(hwnd, NULL, reinterpret_cast<LPCTSTR>(GetWindowLongPtr(hwnd, GWLP_USERDATA)),
-				NULL, NULL, SW_SHOWDEFAULT);
+			ShellExecute(
+				hwnd,
+				/* lpOperation= */ nullptr,
+				/* lpFile= */ reinterpret_cast<LPCTSTR>(GetWindowLongPtr(hwnd, GWLP_USERDATA)),
+				/* lpParameters= */ nullptr,
+				/* lpDirectory= */ nullptr,
+				SW_SHOWDEFAULT);
 			return 0;
 	}
 	
-	return CallWindowProc(s_prcLabel, hwnd, uMsg, wParam, lParam);
+	return CallWindowProc(s_prcLabel, hwnd, message, wParam, lParam);
 }
 
 
 // Wrapper for CreateThread().
 void startThread(LPTHREAD_START_ROUTINE pfn, void* params) {
 	DWORD idThread;
-	CloseHandle(CreateThread(NULL, 0, pfn, params, 0, &idThread));
+	CloseHandle(CreateThread(
+		/* lpThreadAttributes= */ nullptr, /* dwStackSize= */ 0, pfn, params, /* dwCreationFlags= */ 0, &idThread));
 }
 
 
-void writeFile(HANDLE hf, LPCTSTR strbuf) {
+void writeFile(HANDLE file, LPCTSTR strbuf) {
 	DWORD len;
-	WriteFile(hf, strbuf, lstrlen(strbuf) * sizeof(TCHAR), &len, NULL);
+	WriteFile(file, strbuf, lstrlen(strbuf) * sizeof(*strbuf), &len, /* lpOverlapped= */ nullptr);
 }
 
 
@@ -138,7 +151,7 @@ bool getWindowProcessName(HWND hwnd, LPTSTR process_name) {
 	DWORD process_id;
 	GetWindowThreadProcessId(hwnd, &process_id);
 	
-	const HANDLE process_handle = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, process_id);
+	const HANDLE process_handle = OpenProcess(PROCESS_QUERY_INFORMATION, /* bInheritHandle= */ false, process_id);
 	VERIF(process_handle);
 	const bool ok = (GetProcessImageFileName(process_handle, process_name, MAX_PATH) > 0);
 	CloseHandle(process_handle);
@@ -152,12 +165,12 @@ bool getWindowProcessName(HWND hwnd, LPTSTR process_name) {
 }
 
 
-void sleepBackground(DWORD dwDurationMS) {
-	const HANDLE hProcess = GetCurrentProcess();
-	const DWORD dwOldPriority = GetPriorityClass(hProcess);
-	SetPriorityClass(hProcess, IDLE_PRIORITY_CLASS);
-	Sleep(dwDurationMS);
-	SetPriorityClass(hProcess, dwOldPriority);
+void sleepBackground(DWORD duration_millis) {
+	const HANDLE process = GetCurrentProcess();
+	const DWORD old_priority = GetPriorityClass(process);
+	SetPriorityClass(process, IDLE_PRIORITY_CLASS);
+	Sleep(duration_millis);
+	SetPriorityClass(process, old_priority);
 }
 
 
@@ -216,7 +229,7 @@ bool getFileInfo(LPCTSTR path, DWORD file_attributes, SHFILEINFO& shfi, UINT fla
 void clipboardToEnvironment() {
 	bool ok = false;
 	
-	if (IsClipboardFormatAvailable(CF_UNICODETEXT) && OpenClipboard(NULL)) {
+	if (IsClipboardFormatAvailable(CF_UNICODETEXT) && OpenClipboard(/* hWndNewOwner= */ NULL)) {
 		const HGLOBAL clipboard_mem = static_cast<HGLOBAL>(GetClipboardData(CF_UNICODETEXT));
 		if (clipboard_mem) {
 			const LPTSTR clipboard_text = static_cast<LPTSTR>(GlobalLock(clipboard_mem));
@@ -238,11 +251,12 @@ void clipboardToEnvironment() {
 
 
 HWND findVisibleChildWindow(HWND hwnd_parent, LPCTSTR wnd_class, bool allow_same_prefix) {
-	HWND hwndChild = NULL;
-	while (toBool(hwndChild = FindWindowEx(hwnd_parent, hwndChild, NULL, NULL))) {
-		if ((GetWindowStyle(hwndChild) & WS_VISIBLE) &&
-				checkWindowClass(hwndChild, wnd_class, allow_same_prefix)) {
-			return hwndChild;
+	HWND hwnd_child = NULL;
+	while (toBool(hwnd_child = FindWindowEx(
+			hwnd_parent, hwnd_child, /* lpszClass= nullptr */ nullptr, /* lpszWindow= */ nullptr))) {
+		if ((GetWindowStyle(hwnd_child) & WS_VISIBLE) &&
+				checkWindowClass(hwnd_child, wnd_class, allow_same_prefix)) {
+			return hwnd_child;
 		}
 	}
 	return NULL;
@@ -271,15 +285,15 @@ HWND findWindowByName(LPCTSTR title_regexp) {
 }
 
 BOOL CALLBACK prcEnumFindWindowByName(HWND hwnd, LPARAM lParam) {
-	FIND_WINDOW_BY_NAME &fwbn = *(FIND_WINDOW_BY_NAME*)lParam;
+	FIND_WINDOW_BY_NAME *fwbn = reinterpret_cast<FIND_WINDOW_BY_NAME*>(lParam);
 	TCHAR title[1024];
 	if (GetWindowText(hwnd, title, arrayLength(title))) {
-		if (matchWildcards(fwbn.title_regexp, title)) {
-			fwbn.hwnd_found = hwnd;
-			return FALSE;
+		if (matchWildcards(fwbn->title_regexp, title)) {
+			fwbn->hwnd_found = hwnd;
+			return false;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 
@@ -315,19 +329,19 @@ bool matchWildcards(LPCTSTR pattern, LPCTSTR subject, LPCTSTR pattern_end) {
 
 
 void setClipboardText(LPCTSTR text) {
-	if (!OpenClipboard(NULL)) {
+	if (!OpenClipboard(/* hWndNewOwner= */ NULL)) {
 		return;
 	}
 	EmptyClipboard();
 	
 	// Allocate and fill a global buffer.
-	const HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (lstrlen(text) + 1) * sizeof(TCHAR));
-	const LPTSTR mem_text = reinterpret_cast<LPTSTR>(GlobalLock(hMem));
-	lstrcpy(mem_text, text);
-	GlobalUnlock(hMem);
+	const HGLOBAL buffer = GlobalAlloc(GMEM_MOVEABLE, (lstrlen(text) + 1) * sizeof(*text));
+	const LPTSTR locked_buffer = reinterpret_cast<LPTSTR>(GlobalLock(buffer));
+	lstrcpy(locked_buffer, text);
+	GlobalUnlock(buffer);
 	
 	// Pass the buffer to the clipboard.
-	SetClipboardData(CF_UNICODETEXT, hMem);
+	SetClipboardData(CF_UNICODETEXT, buffer);
 	CloseClipboard();
 }
 
@@ -339,7 +353,7 @@ void setClipboardText(LPCTSTR text) {
 // - return directory path instead of LPITEMIDLIST
 //------------------------------------------------------------------------
 
-static int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
+static int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT message, LPARAM lParam, LPARAM lpData);
 
 bool browseForFolder(HWND hwnd_parent, LPCTSTR title, LPTSTR directory) {
 	BROWSEINFO bi;
@@ -348,14 +362,14 @@ bool browseForFolder(HWND hwnd_parent, LPCTSTR title, LPTSTR directory) {
 	bi.lpszTitle = title;
 	bi.ulFlags = BIF_RETURNONLYFSDIRS;
 	bi.lpfn = prcBrowseForFolderCallback;
-	bi.lParam = (LPARAM)directory;
+	bi.lParam = reinterpret_cast<LPARAM>(directory);
 	CoBuffer<LPITEMIDLIST> pidl(SHBrowseForFolder(&bi));
 	return pidl && SHGetPathFromIDList(pidl, directory);
 }
 
-int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM lpData) {
-	if (uMsg == BFFM_INITIALIZED) {
-		SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
+int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT message, LPARAM UNUSED(lParam), LPARAM lpData) {
+	if (message == BFFM_INITIALIZED) {
+		SendMessage(hwnd, BFFM_SETSELECTION, true, lpData);
 	}
 	return 0;
 }
@@ -375,22 +389,17 @@ class SetDialogBoxDirectory {
 public:
 	
 	// Changes the current directory in the given dialog box.
+	// Return true if the dialog box is supported and the current directory has been changed.
 	//
-	// Args:
-	//   hwnd: The window handle of the dialog box or one of its controls.
-	//   directory: The directory to set in the dialog box.
-	//
-	// Returns:
-	//   True if the dialog box is supported and the current directory has been changed.
+	// hwnd: the window handle of the dialog box or one of its controls.
+	// directory: the directory to set in the dialog box.
 	bool doit(HWND hwnd, LPCTSTR directory);
 	
 private:
 	
 	// One method per supported dialog box.
 	// Sets m_success to true if the directory has been successfully changed.
-	//
-	// Returns:
-	//   True on success, false to continue to the next method.
+	// Returns true on success, false to continue to the next method.
 	bool tryBrowseForFolder();
 	bool tryMsOfficeFileOpen();
 	bool tryWindowsFileOpen();
@@ -417,7 +426,6 @@ bool setDialogBoxDirectory(HWND hwnd, LPCTSTR directory) {
 
 
 bool SetDialogBoxDirectory::doit(HWND hwnd, LPCTSTR directory) {
-	
 	// Retrieves the dialog box handle, supports the case where hwnd is a control.
 	while (hwnd && (GetWindowStyle(hwnd) & WS_CHILD)) {
 		hwnd = GetParent(hwnd);
@@ -444,7 +452,6 @@ bool SetDialogBoxDirectory::doit(HWND hwnd, LPCTSTR directory) {
 
 
 bool SetDialogBoxDirectory::tryBrowseForFolder() {
-	
 	// Check for SHBrowseForFolder dialog box:
 	// - Must contain a control having a class name containing "SHBrowseForFolder"
 	if (!findVisibleChildWindow(m_hwnd, _T("SHBrowseForFolder"), true)) {
@@ -459,22 +466,25 @@ bool SetDialogBoxDirectory::tryBrowseForFolder() {
 	DWORD process_id;
 	GetWindowThreadProcessId(m_hwnd, &process_id);
 	const HANDLE process_handle = OpenProcess(
-			PROCESS_VM_OPERATION | PROCESS_VM_WRITE, FALSE, process_id);
+		PROCESS_VM_OPERATION | PROCESS_VM_WRITE, /* bInheritHandle= */ false, process_id);
 	if (!process_handle) {
 		return false;
 	}
 	
 	// 2) Allocate a buffer in the process space for the directory path
-	const DWORD size = (lstrlen(m_directory_no_quotes) + 1) * sizeof(TCHAR);
-	void *const remote_buf = VirtualAllocEx(process_handle, NULL, size, MEM_COMMIT, PAGE_READWRITE);
+	const DWORD size = (lstrlen(m_directory_no_quotes) + 1) * sizeof(*m_directory_no_quotes);
+	void *const remote_buf =
+		VirtualAllocEx(process_handle, /* lpAddress= */ nullptr, size, MEM_COMMIT, PAGE_READWRITE);
 	bool success = false;
 	if (remote_buf) {
 		
 		// 3) Fill the buffer
-		WriteProcessMemory(process_handle, remote_buf, m_directory_no_quotes, size, NULL);
+		WriteProcessMemory(
+			process_handle, remote_buf, m_directory_no_quotes, size,
+			/* lpNumberOfBytesWritten= */ nullptr);
 		
 		// 4) Send the message using the buffer
-		SendMessage(m_hwnd, BFFM_SETSELECTION, TRUE, reinterpret_cast<LPARAM>(remote_buf));
+		SendMessage(m_hwnd, BFFM_SETSELECTION, true, reinterpret_cast<LPARAM>(remote_buf));
 		
 		// 5) Free the buffer
 		VirtualFreeEx(process_handle, remote_buf, 0, MEM_RELEASE);
@@ -486,7 +496,6 @@ bool SetDialogBoxDirectory::tryBrowseForFolder() {
 
 
 bool SetDialogBoxDirectory::tryMsOfficeFileOpen() {
-	
 	// Check for MS Office File/Open dialog box
 	// - Check that the dialog box class contains "bosa_sdm_"
 	// - Find the first visible edit box (Edit or RichEdit)
@@ -533,15 +542,14 @@ bool SetDialogBoxDirectory::tryMsOfficeFileOpen() {
 
 
 bool SetDialogBoxDirectory::tryWindowsFileOpen() {
-	
 	// Check for standard Get(Open|Save)FileName dialog box
 	// - Must answer to CDM_GETSPEC message
-	if (SendMessage(m_hwnd, CDM_GETSPEC, 0, NULL) <= 0) {
+	if (SendMessage(m_hwnd, CDM_GETSPEC, 0, /* buffer= */ NULL) <= 0) {
 		return false;
 	}
 	
 	// Two possible controls: file path edit box or combo box
-	static const UINT control_ids[] = { cmb13, edt1 };
+	static constexpr UINT control_ids[] = { cmb13, edt1 };
 	for (size_t control = 0; control < arrayLength(control_ids); control++) {
 		const HWND hwnd_control = GetDlgItem(m_hwnd, control_ids[control]);
 		if (!hwnd_control) {
@@ -550,8 +558,7 @@ bool SetDialogBoxDirectory::tryWindowsFileOpen() {
 		
 		// The control is valid: save its contents to path_save, then set it to the directory.
 		TCHAR path_save[MAX_PATH];
-		SendMessage(hwnd_control, WM_GETTEXT, arrayLength(path_save),
-				reinterpret_cast<LPARAM>(path_save));
+		SendMessage(hwnd_control, WM_GETTEXT, arrayLength(path_save), reinterpret_cast<LPARAM>(path_save));
 		lockWindowUpdate();
 		if (SendMessage(hwnd_control, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(m_directory_no_quotes))) {
 			
@@ -576,7 +583,7 @@ bool SetDialogBoxDirectory::tryWindowsFileOpen() {
 
 // Wrapper for SHGetSpecialFolderPath
 bool getSpecialFolderPath(int csidl, LPTSTR path) {
-	return toBool(SHGetSpecialFolderPath(NULL, path, csidl, TRUE));
+	return toBool(SHGetSpecialFolderPath(/* hWnd= */ NULL, path, csidl, /* fCreate= */ true));
 }
 
 
@@ -587,14 +594,14 @@ bool getSpecialFolderPath(int csidl, LPTSTR path) {
 // - IShellLink shortcuts
 // Does not natively handle shortcuts to UWP apps.
 void resolveLinkFile(LPCTSTR link_file, Shortcut* shortcut) {
-	shortcut->m_bCommand = true;
-	String& cmdline = shortcut->m_sCommand;
+	shortcut->m_type = Shortcut::Type::Command;
+	String& cmdline = shortcut->m_command;
 	
-	TCHAR pszProductCode[39];
-	TCHAR pszComponentCode[39];
-	if (!MsiGetShortcutTarget(link_file, pszProductCode, NULL, pszComponentCode)) {
+	TCHAR product_code[39];
+	TCHAR component_code[39];
+	if (!MsiGetShortcutTarget(link_file, product_code, /* szFeatureId= */ nullptr, component_code)) {
 		DWORD buf = MAX_PATH;
-		MsiGetComponentPath(pszProductCode, pszComponentCode, cmdline.getBuffer(buf), &buf);
+		MsiGetComponentPath(product_code, component_code, cmdline.getBuffer(buf), &buf);
 		if (cmdline.isSome()) {
 			PathQuoteSpaces(cmdline.get());
 			return;
@@ -632,10 +639,10 @@ void resolveLinkFile(LPCTSTR link_file, Shortcut* shortcut) {
 				cmdline += args;
 			}
 			if (cmdline.isSome()) {
-				shell_link->GetWorkingDirectory(shortcut->m_sDirectory.getBuffer(MAX_PATH), MAX_PATH);
+				shell_link->GetWorkingDirectory(shortcut->m_directory.getBuffer(MAX_PATH), MAX_PATH);
 				int show;
 				if (SUCCEEDED(shell_link->GetShowCmd(&show))) {
-					shortcut->m_nShow = show;
+					shortcut->m_show_option = show;
 				}
 				return;
 			}
@@ -751,18 +758,18 @@ void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST p
 // Strings
 //------------------------------------------------------------------------
 
-LPCTSTR getSemiColonToken(LPTSTR& token_start) {
-	const LPTSTR token_start_copy = token_start;
+LPCTSTR getSemiColonToken(LPTSTR* token_start) {
+	const LPTSTR token_start_copy = *token_start;
 	LPTSTR current = token_start_copy;
 	while (*current != _T(';')) {
 		if (!*current) {
-			token_start = current;
+			*token_start = current;
 			return token_start_copy;
 		}
 		current++;
 	}
 	*current = _T('\0');
-	token_start = current + 1;
+	*token_start = current + 1;
 	return token_start_copy;
 }
 
@@ -774,7 +781,8 @@ LPCTSTR getSemiColonToken(LPTSTR& token_start) {
 void findFullPath(LPTSTR path, LPTSTR full_path) {
 	if (!pathIsSlow(path)) {
 		PathUnquoteSpaces(path);
-		if (SearchPath(NULL, path, NULL, MAX_PATH, full_path, NULL)) {
+		if (SearchPath(/* lpPath= */ nullptr, path, /* lpExtension= */ nullptr,
+				MAX_PATH, full_path, /* lpFilePath= */ nullptr)) {
 			return;
 		}
 		
@@ -784,7 +792,7 @@ void findFullPath(LPTSTR path, LPTSTR full_path) {
 			return;
 		}
 		
-		if (32 < reinterpret_cast<UINT_PTR>(FindExecutable(path, NULL, full_path))) {
+		if (32 < reinterpret_cast<UINT_PTR>(FindExecutable(path, /* lpDirectory= */ nullptr, full_path))) {
 			return;
 		}
 	}
@@ -817,9 +825,9 @@ void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 	SHELLEXECUTEINFO sei;
 	sei.cbSize = sizeof(sei);
 	sei.fMask = SEE_MASK_FLAG_DDEWAIT;
-	sei.hwnd = e_hwndInvisible;
+	sei.hwnd = e_invisible_window;
 	sei.lpFile = path;
-	sei.lpVerb = NULL;
+	sei.lpVerb = nullptr;
 	sei.lpParameters = PathGetArgs(command_exp);
 	sei.lpDirectory = real_directory;
 	sei.nShow = show_mode;
@@ -882,10 +890,10 @@ void skipUntilComma(TCHAR*& chr_ptr, bool unescape) {
 // named autostart_value.
 //------------------------------------------------------------------------
 
-static const TCHAR autostart_key[] = _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
-static const LPCTSTR autostart_value = pszApp;
+static constexpr TCHAR autostart_key[] = _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
+static constexpr LPCTSTR autostart_value = pszApp;
 
-static HKEY openAutoStartKey(LPTSTR pszPath);
+static HKEY openAutoStartKey(LPTSTR autostart_path_buf);
 
 // Open the Registry key for the auto-start setting.
 //
@@ -896,14 +904,14 @@ static HKEY openAutoStartKey(LPTSTR pszPath);
 // Returns the opened key, NULL on error.
 // The caller is responsible for closing the key with RegCloseKey().
 HKEY openAutoStartKey(LPTSTR autostart_path_buf) {
-	if (!GetModuleFileName(NULL, autostart_path_buf, MAX_PATH)) {
+	if (!GetModuleFileName(/* hInstance= */ NULL, autostart_path_buf, MAX_PATH)) {
 		*autostart_path_buf = _T('\0');
 	}
-	HKEY hKey;
-	if (ERROR_SUCCESS != RegOpenKey(HKEY_CURRENT_USER, autostart_key, &hKey)) {
-		hKey = NULL;
+	HKEY key;
+	if (ERROR_SUCCESS != RegOpenKey(HKEY_CURRENT_USER, autostart_key, &key)) {
+		key = NULL;
 	}
-	return hKey;
+	return key;
 }
 
 bool isAutoStartEnabled() {
@@ -918,10 +926,14 @@ bool isAutoStartEnabled() {
 	DWORD type, size;
 	TCHAR current_path[MAX_PATH];
 	
-	if (ERROR_SUCCESS == RegQueryValueEx(autostart_hKey, autostart_value, NULL,
-			&type, NULL, &size) && type == REG_SZ && size < sizeof(current_path)) {
-		if (ERROR_SUCCESS == RegQueryValueEx(autostart_hKey, autostart_value, NULL,
-					NULL, (BYTE*)current_path, &size) &&
+	if (ERROR_SUCCESS == RegQueryValueEx(
+				autostart_hKey, autostart_value, /* lpReserved= */ nullptr, &type,
+				/* lpData= */ nullptr, &size)
+			&& type == REG_SZ
+			&& size < sizeof(current_path)) {
+		if (ERROR_SUCCESS == RegQueryValueEx(
+					autostart_hKey, autostart_value, /* lpReserved= */ nullptr, /* lpType= */ nullptr,
+					/* lpData= */ reinterpret_cast<BYTE*>(current_path), &size) &&
 				!lstrcmpi(current_path, autostart_path_buf)) {
 			enabled = true;
 		}
@@ -939,8 +951,10 @@ void setAutoStartEnabled(bool enabled) {
 	}
 	
 	if (enabled) {
-		RegSetValueEx(autostart_hKey, autostart_value, NULL, REG_SZ,
-				(const BYTE*)autostart_path_buf, (lstrlen(autostart_path_buf) + 1) * sizeof(TCHAR));
+		RegSetValueEx(
+			autostart_hKey, autostart_value, /* Reserved= */ 0, REG_SZ,
+			reinterpret_cast<const BYTE*>(autostart_path_buf),
+			(lstrlen(autostart_path_buf) + 1) * sizeof(*autostart_path_buf));
 	} else {
 		RegDeleteValue(autostart_hKey, autostart_value);
 	}
