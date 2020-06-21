@@ -78,6 +78,14 @@ public:
 		clear();
 	}
 	
+#ifdef _DEBUG
+	String debugString() const {
+		return StringPrintf(
+			_T("vk=0x%02X (%d) sided=%d sided_mod_code=%d"),
+			m_vk, m_vk, m_sided, m_sided_mod_code);
+	}
+#endif // _DEBUG
+	
 	// Completely resets this keystroke to the empty state.
 	void clear() {
 		clearKeys();

@@ -78,6 +78,13 @@ public:
 		affectInit((CSTR)str);
 	}
 	
+	String(String&& str) {
+		m_strbuf = str.m_strbuf;
+		m_buf_length = str.m_buf_length;
+		str.m_strbuf = nullptr;
+		str.m_buf_length = 0;
+	}
+	
 	String(int resource_id) : m_strbuf(nullptr), m_buf_length(0) {
 		loadString(resource_id);
 	}
@@ -310,3 +317,16 @@ private:
 			: bufferAlloc(buf_length);
 	}
 };
+
+#ifdef _DEBUG
+
+inline String StringPrintf(LPCTSTR format, ...) {
+	TCHAR result[1024];
+	va_list args;
+	va_start(args, format);
+	vswprintf(result, arrayLength(result), format, args);
+	va_end(args);
+	return result;
+}
+
+#endif // _DEBUG

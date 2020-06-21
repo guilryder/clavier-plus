@@ -52,40 +52,64 @@ public:
 	// Construction, destruction
 	//--------------------------------------------------------------------------------------------------
 	
-	TEST_METHOD(ConstructEmpty) {
+	TEST_METHOD(ConstructorEmpty) {
 		Assert::AreEqual(_T(""), String());
 	}
 	
 	
-	TEST_METHOD(ConstructAffect) {
+	TEST_METHOD(ConstructorBuffer_notEmpty) {
 		String str = m_test_buf;
 		Assert::AreEqual(m_test_buf, str);
 	}
 	
-	TEST_METHOD(ConstructAffect_empty) {
+	TEST_METHOD(ConstructorBuffer_empty) {
 		String str = _T("");  // Use implicit constructor
 		Assert::AreEqual(_T(""), str);
 	}
 	
-	TEST_METHOD(ConstructAffect_null) {
+	TEST_METHOD(ConstructorBuffer_null) {
 		String str = static_cast<LPCTSTR>(nullptr);  // Use implicit constructor
 		Assert::AreEqual(_T(""), str);
 	}
 	
 	
-	TEST_METHOD(ConstructAffectObject_other) {
+	TEST_METHOD(ConstructorCopy_other) {
 		String str = m_test;  // Use implicit constructor
 		Assert::AreEqual(m_test_buf, str);
 	}
 	
-	TEST_METHOD(ConstructAffectObject_empty) {
+	TEST_METHOD(ConstructorCopy_empty) {
 		String str = m_empty;  // Use implicit constructor
 		Assert::AreEqual(_T(""), str);
 	}
 	
-	TEST_METHOD(ConstructAffectObject_null) {
+	TEST_METHOD(ConstructorCopy_null) {
 		String str = m_null;  // Use implicit constructor
 		Assert::AreEqual(_T(""), str);
+	}
+	
+	
+	TEST_METHOD(ConstructorMove_nonEmpty) {
+		String source = m_test_buf;
+		LPTSTR source_ptr = source.get();
+		String dest = std::move(source);
+		Assert::AreEqual(_T(""), source);
+		Assert::AreEqual(m_test_buf, dest);
+		Assert::AreSame(*source_ptr, *dest.get());
+	}
+	
+	TEST_METHOD(ConstructorMove_empty) {
+		String source = m_empty;
+		String dest = std::move(source);
+		Assert::AreEqual(_T(""), source);
+		Assert::AreEqual(_T(""), dest);
+	}
+	
+	TEST_METHOD(ConstructorMove_null) {
+		String source = m_null;
+		String dest = std::move(source);
+		Assert::AreEqual(_T(""), source);
+		Assert::AreEqual(_T(""), dest);
 	}
 	
 	//--------------------------------------------------------------------------------------------------
