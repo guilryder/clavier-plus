@@ -107,15 +107,22 @@ public:
 		       static_cast<WORD>(m_sided_mod_code >> kRightModCodeOffset);
 	}
 	
-	// Gets the human readable name of this keystroke.
-	void getDisplayName(LPTSTR output) const;
+	// Initializes the global data that the display name functions need.
+	static void loadVkKeyNames();
 	
-	// Appends the display name of a virtual key code to output.
-	static void appendKeyName(UINT vk, LPTSTR output);
+	// Gets the human readable name of this keystroke.
+	// Assumes loadVkKeyNames() has been called.
+	void getDisplayName(LPTSTR output) const;
 	
 	// Parses the given human readable name. Accepts the output of getDisplayName().
 	// May modify the input. Assumes the keystroke is initially cleared.
 	void parseDisplayName(LPTSTR input);
+	
+	// Returns the display of the given virtual key code, empty if unavailable.
+	// Assumes loadVkKeyNames() has been called.
+	static const String& getKeyName(UINT vk) {
+		return s_vk_key_names[(0 <= vk && vk <= 0xFF) ? vk : 0];
+	}
 	
 	
 	// Simulate typing the keystroke: presses the keys down and up.
@@ -214,6 +221,17 @@ private:
 	// Releases a key if it is down in the given keyboard state.
 	// keyboard_state: the state to read & update; see GetKeyboardState().
 	static void releaseKey(BYTE vk, BYTE keyboard_state[]);
+	
+	// Retrieves the name of a virtual key.
+	static void Keystroke::loadVkKeyName(BYTE vk, String* output);
+	
+	// Name of each virtual key, empty if unknown.
+	static String s_vk_key_names[256];
+	
+	// s_next_named_vk[vk] is the lowest vk_next > vk
+	// such that s_next_named_vk[vk_next] is not empty.
+	// s_next_named_vk[vk] = 0xFF if no such vk_next exists.
+	static BYTE s_next_named_vk[256];
 };
 
 

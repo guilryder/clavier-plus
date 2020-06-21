@@ -150,6 +150,7 @@ void initialize() {
 	e_modal_dialog = NULL;
 	
 	initializeLanguages();
+	Keystroke::loadVkKeyNames();
 }
 
 void terminate() {

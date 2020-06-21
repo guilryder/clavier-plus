@@ -36,8 +36,18 @@ TEST_MODULE_INITIALIZE(clavierSetUp) {
 		GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
 		reinterpret_cast<LPCTSTR>(clavierSetUp),
 		&e_instance);
-
+	
+	// Switch to the US English keyboard layout during Keystroke::loadVkKeyNames()
+	// to get deterministic key names.
+	HKL original_keyboard_layout = GetKeyboardLayout(/* idThread= */ 0);
+	SetLastError(0);
+	LoadKeyboardLayout(_T("00000409"), KLF_ACTIVATE);
+	Assert::AreEqual(DWORD(0), GetLastError());
+	
 	app::initialize();
+	
+	// Restore the keyboard layout.
+	ActivateKeyboardLayout(original_keyboard_layout, /* Flags= */ 0);
 }
 
 TEST_MODULE_CLEANUP(clavierTearDown) {

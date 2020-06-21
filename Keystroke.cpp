@@ -40,6 +40,59 @@ static INT_PTR CALLBACK prcEditDialog(HWND hdlg, UINT message, WPARAM wParam, LP
 static INT_PTR CALLBACK prcSendKeysDialog(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 
+String Keystroke::s_vk_key_names[256];
+BYTE Keystroke::s_next_named_vk[256];
+
+
+void Keystroke::loadVkKeyNames() {
+	BYTE last_named_vk = 0xFF;
+	for (int vk = last_named_vk - 1; vk >= 0; vk--) {
+		String* key_name = &s_vk_key_names[vk];
+		loadVkKeyName(static_cast<BYTE>(vk), key_name);
+		s_next_named_vk[vk] = last_named_vk;
+		if (key_name->isSome()) {
+			last_named_vk = static_cast<BYTE>(vk);
+		}
+	}
+}
+
+void Keystroke::loadVkKeyName(BYTE vk, String* output) {
+	if (vk <= 0x07
+			|| (0x0A <= vk && vk <= 0x0B)  // reserved
+			|| vk == 0x5E  // reserved
+			|| (0x88 <= vk && vk <= 0x8F)  // reserved
+			|| (VK_LSHIFT <= vk && vk <= VK_RMENU)  // special keys
+			|| (0xB8 <= vk && vk <= 0xB9)  // reserved
+			|| (0xC1 <= vk && vk <= 0xC2)  // reserved
+			|| (0xC3 <= vk && vk <= 0xDA)  // gamepad input
+			|| vk == 0xE0  // reserved
+			|| vk == 0xFF) {  // reserved & sentinel
+		return;
+	}
+	
+	// GetKeyNameText bug: support VK_F13..VK_F24 manually.
+	if (VK_F1 <= vk && vk <= VK_F24) {
+		wsprintf(output->getBuffer(4), _T("F%d"), vk - VK_F1 + 1);
+		return;
+	}
+	
+	// Retrieve the key name with GetKeyNameText.
+	// Do not distinguish between left and right.
+	// Fallback to a numerical name like #123 on error and for media keys
+	// (they have invalid key codes).
+	UINT scan_code = MapVirtualKey(LOBYTE(vk), MAPVK_VK_TO_VSC);
+	long lParam = (scan_code << 16) | (1L << 25);
+	if (isKeyExtended(vk)) {
+		lParam |= 1L << 24;
+	}
+	if ((VK_BROWSER_BACK <= vk && vk <= VK_LAUNCH_APP2) ||
+			!GetKeyNameText(lParam, output->getBuffer(bufHotKey), bufHotKey)) {
+		wsprintf(output->getBuffer(bufHotKey), _T("#%d"), vk);
+	}
+}
+
+
+
 void Keystroke::getDisplayName(LPTSTR output) const {
 	*output = _T('\0');
 	
@@ -59,20 +112,7 @@ void Keystroke::getDisplayName(LPTSTR output) const {
 	}
 	
 	// Main key
-	appendKeyName(m_vk, output);
-}
-
-void Keystroke::appendKeyName(UINT vk, LPTSTR output) {
-	long scan_code = (MapVirtualKey(LOBYTE(vk), 0) << 16) | (1L << 25);
-	if (isKeyExtended(vk)) {
-		scan_code |= 1L << 24;
-	}
-	
-	const int len = lstrlen(output);
-	GetKeyNameText(scan_code, output + len, bufHotKey - len);
-	if (vk >= 0xA6 && vk <= 0xB7 || (vk && !*output)) {
-		wsprintf(output + len, _T("#%d"), vk);
-	}
+	lstrcat(output, getKeyName(m_vk));
 }
 
 void Keystroke::parseDisplayName(LPTSTR input) {
@@ -119,6 +159,7 @@ void Keystroke::parseDisplayName(LPTSTR input) {
 		} else if (mod_code_last && (tok == tokLeft || tok == tokRight)) {
 			// Key side
 			
+			m_sided = true;
 			if (tok == tokRight) {
 				m_sided_mod_code &= ~mod_code_last;
 				m_sided_mod_code |= mod_code_last << kRightModCodeOffset;
@@ -130,28 +171,15 @@ void Keystroke::parseDisplayName(LPTSTR input) {
 			
 			*next_word = next_word_copy;
 			
-			for (int vk = 0x07; vk < 0xFF; vk++) {
-				if (vk == 0x0A) {
-					vk = 0x0B;
-				} else if (vk == 0x5E || vk == 0xE0) {
-					continue;
-				} else if (vk == 0xB8) {
-					vk = 0xB9;
-				} else if (vk == 0xC1) {
-					vk = 0xD7;
-				} else if (vk == 0xA0) {
-					vk = 0xA5;
-				} else {
-					TCHAR key_name[bufHotKey] = _T("");
-					appendKeyName(vk, key_name);
-					if (!lstrcmpi(input, key_name)) {
-						m_vk = canonicalizeKey(static_cast<BYTE>(vk));
-						break;
-					}
+			if (!*input) {
+				break;
+			}
+			for (BYTE vk = s_next_named_vk[0]; vk < 0xFF; vk = s_next_named_vk[vk]) {
+				if (!lstrcmpi(input, s_vk_key_names[vk])) {
+					m_vk = canonicalizeKey(vk);
+					break;
 				}
 			}
-			
-			// Stop here
 			break;
 		}
 		
@@ -222,7 +250,11 @@ bool Keystroke::unregisterHotKey() const {
 
 
 bool Keystroke::isKeyExtended(UINT vk) {
-	return vk == VK_NUMLOCK || vk == VK_DIVIDE || (vk >= VK_PRIOR && vk <= VK_DELETE);
+	// http://docs.microsoft.com/windows/win32/inputdev/about-keyboard-input#extended-key-flag
+	return
+		(VK_PRIOR <= vk && vk <= VK_DOWN) ||
+		(VK_SNAPSHOT <= vk && vk <= VK_DELETE) ||
+		vk == VK_DIVIDE || vk == VK_NUMLOCK;
 }
 
 
