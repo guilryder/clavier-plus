@@ -1,18 +1,10 @@
-﻿#ifdef IS_X64
-#define Platform "x64"
-#define PlatformName "64"
-#else
-#define Platform "Win32"
-#define PlatformName "32"
-#endif
-
-#define RootDir "."
+﻿#define RootDir "."
 #define BinDir "."
-#define CompilOutputDir "..\output\" + Platform + "_Release\"
+#define CompilOutputDir "..\output\x64_Release\"
 
 #define AppName "Clavier+"
 #define AppExeName "Clavier.exe"
-#define InstallerFileName Copy(AppExeName, 1, RPos(".", AppExeName) - 1) + "Setup" + PlatformName
+#define InstallerFileName Copy(AppExeName, 1, RPos(".", AppExeName) - 1) + "Setup"
 #define VersionFile AddBackslash(RootDir) + AddBackslash(BinDir) + CompilOutputDir + AppExeName
 
 #define AppVersion GetFileProductVersion(VersionFile)
@@ -44,10 +36,8 @@ Compression=lzma/ultra
 SolidCompression=true
 InternalCompressLevel=ultra
 PrivilegesRequired=none
-#ifdef IS_X64
 ArchitecturesInstallIn64BitMode=x64
 ArchitecturesAllowed=x64
-#endif
 
 [Languages]
 Name: chinesesimpl; MessagesFile: compiler:issrc\Files\Languages\Unofficial\ChineseSimplified.isl
