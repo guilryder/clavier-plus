@@ -67,7 +67,13 @@ static void commandMouseMove(POINT origin_point, LPTSTR arg);
 // Simulate a mouse wheel scroll.
 static void commandMouseWheel(LPTSTR arg);
 
-static void simulateCharacter(TCHAR c);
+// [{KeysDown,keystroke}]
+// Keep special keys down.
+// Reads & updates keep_down_unsided_mod_code.
+static void commandKeysDown(BYTE keyboard_state[], DWORD* keep_down_unsided_mod_code, LPTSTR arg);
+
+
+static void simulateCharacter(TCHAR c, DWORD keep_down_mod_code);
 
 
 constexpr LPCTSTR kLineSeparator = _T("-\r\n");
@@ -512,7 +518,7 @@ void Shortcut::execute(bool from_hotkey) {
 		// Required because the launched program
 		// can be a script that simulates keystrokes
 		if (can_release_special_keys) {
-			releaseSpecialKeys(keyboard_state);
+			releaseSpecialKeys(keyboard_state, /* keep_down_mod_code= */ 0);
 		}
 		
 		if (!m_support_file_open || !setDialogBoxDirectory(input_window, m_command)) {
@@ -524,6 +530,10 @@ void Shortcut::execute(bool from_hotkey) {
 		break;
 		
 	case Shortcut::Type::Text:
+		// Special keys to keep down across commands.
+		// Unsided MOD_* constants bitmask.
+		DWORD keep_down_mod_code = 0;
+		
 		enum class Kind {
 			None,
 			Text,
@@ -597,7 +607,7 @@ void Shortcut::execute(bool from_hotkey) {
 					
 					// Required because the launched program
 					// can be a script that simulates keystrokes
-					releaseSpecialKeys(keyboard_state);
+					releaseSpecialKeys(keyboard_state, keep_down_mod_code);
 					
 					clipboardToEnvironment();
 					shellExecuteCmdLine(static_cast<LPCTSTR>(inside) + 1, /* directory= */ nullptr, SW_SHOWDEFAULT);
@@ -640,11 +650,13 @@ void Shortcut::execute(bool from_hotkey) {
 						commandMouseMove(origin_point, arg);
 					} else if (!lstrcmpi(command, _T("MouseWheel"))) {
 						commandMouseWheel(arg);
+					} else if (!lstrcmpi(command, _T("KeysDown"))) {
+						commandKeysDown(keyboard_state, &keep_down_mod_code, arg);
 					}
 				} else {
 					// Simple brackets: [keystroke]
 					
-					releaseSpecialKeys(keyboard_state);
+					releaseSpecialKeys(keyboard_state, keep_down_mod_code);
 					
 					lastKind = Kind::Keystroke;
 					Keystroke ks;
@@ -655,7 +667,7 @@ void Shortcut::execute(bool from_hotkey) {
 						inside[inside.getLength() - 1] = _T('\0');
 						for (LPCTSTR psz = static_cast<LPCTSTR>(inside); *++psz;) {
 							if (*psz != _T('\n')) {  // '\n' is redundant with '\r'.
-								simulateCharacter(*psz);
+								simulateCharacter(*psz, keep_down_mod_code);
 							}
 						}
 						
@@ -663,19 +675,23 @@ void Shortcut::execute(bool from_hotkey) {
 						// Simple brackets: [keystroke]
 						
 						ks.parseDisplayName(inside.get());
-						ks.simulateTyping();
+						ks.m_sided_mod_code |= keep_down_mod_code;
+						ks.simulateTyping(/* already_down_mod_code= */ keep_down_mod_code);
 					}
 				}
 				
 				i = shortcut_end - text;
 			}
 		}
+		
+		// Release all special keys kept down in case the shortcut doesn't end with [{KeysDown}].
+		releaseSpecialKeys(keyboard_state, /* keep_down_mode_code= */ ~keep_down_mod_code);
 		break;
 	}
 }
 
 
-void simulateCharacter(TCHAR c) {
+void simulateCharacter(TCHAR c, DWORD keep_down_mod_code) {
 	Keystroke ks;
 	const WORD key = VkKeyScan(c);
 	if (key == WORD(-1)) {
@@ -695,11 +711,13 @@ void simulateCharacter(TCHAR c) {
 		ks.m_sided_mod_code = MOD_ALT;
 		for (size_t digit_index = 0; digits[digit_index]; digit_index++) {
 			ks.m_vk = VK_NUMPAD0 + static_cast<BYTE>(digits[digit_index] - _T('0'));
-			ks.simulateTyping();
+			ks.simulateTyping(/* already_down_mod_code= */ keep_down_mod_code | MOD_ALT);
 		}
 		
 		// Release Alt.
-		keybd_event(VK_MENU, scan_code_alt, KEYEVENTF_KEYUP, /* dwExtraInfo= */ 0);
+		if (!(keep_down_mod_code & MOD_ALT)) {
+			keybd_event(VK_MENU, scan_code_alt, KEYEVENTF_KEYUP, /* dwExtraInfo= */ 0);
+		}
 		if (alt_is_hotkey) {
 			ks.registerHotKey();
 		}
@@ -709,7 +727,7 @@ void simulateCharacter(TCHAR c) {
 		
 		const BYTE flags = HIBYTE(key);
 		ks.m_vk = LOBYTE(key);
-		ks.m_sided_mod_code = 0;
+		ks.m_sided_mod_code = keep_down_mod_code;
 		if (flags & (1 << 0)) {
 			ks.m_sided_mod_code |= MOD_SHIFT;
 		}
@@ -720,7 +738,7 @@ void simulateCharacter(TCHAR c) {
 			ks.m_sided_mod_code |= MOD_ALT;
 		}
 		
-		ks.simulateTyping();
+		ks.simulateTyping(/* already_down_mod_code= */ keep_down_mod_code);
 	}
 }
 
@@ -821,6 +839,27 @@ void commandMouseWheel(LPTSTR arg) {
 	if (offset) {
 		mouse_event(MOUSEEVENTF_WHEEL, 0, 0, static_cast<DWORD>(offset), 0);
 		sleepBackground(0);
+	}
+}
+
+
+void commandKeysDown(BYTE keyboard_state[], DWORD* keep_down_mod_code, LPTSTR arg) {
+	Keystroke keep_down_keystroke;
+	keep_down_keystroke.parseDisplayName(arg);
+	*keep_down_mod_code = keep_down_keystroke.getUnsidedModCode();
+	
+	// Release the old special keys.
+	Keystroke::releaseSpecialKeys(keyboard_state, /* keep_down_mod_code= */ 0);
+	
+	// Press the new special keys.
+	for (int i = 0; i < arrayLength(e_special_keys); i++) {
+		const SpecialKey& special_key = e_special_keys[i];
+		if (*keep_down_mod_code & special_key.mod_code) {
+			// Press the left instance of the special key.
+			BYTE vk_left = special_key.vk_left;
+			Keystroke::keybdEvent(vk_left, /* down= */ true);
+			keyboard_state[vk_left] = keyboard_state[special_key.vk] = keyDownMask;
+		}
 	}
 }
 

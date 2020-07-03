@@ -127,10 +127,8 @@ public:
 	
 	// Simulate typing the keystroke: presses the keys down and up.
 	// Simulates special keys as unsided.
-	// If the keystroke is registered as a global hotkey, unregisters it before simulating it
-	// and re-registers it afterwards to avoid recursive calls.
-	// special_keys: whether to simulate the special keys too.
-	void simulateTyping(bool special_keys = true) const;
+	// already_down_mod_code: special keys to assume are already down and to keep down, unsided.
+	void simulateTyping(DWORD already_down_mod_code) const;
 	
 	// Simulates pressing or releasing a virtual key. Wrapper for keybd_event().
 	static void keybdEvent(UINT vk, bool down);
@@ -176,7 +174,8 @@ public:
 	
 	// Releases the special keys up in the given keyboard state.
 	// keyboard_state: see GetKeyboardState().
-	static void releaseSpecialKeys(BYTE keyboard_state[]);
+	// keep_down_mod_code: the special keys to keep down, unsided.
+	static void releaseSpecialKeys(BYTE keyboard_state[], DWORD keep_down_mod_code);
 	
 	// Compares two keystrokes.
 	//

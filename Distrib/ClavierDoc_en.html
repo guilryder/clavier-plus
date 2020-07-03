@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -246,6 +246,14 @@ This shortcut copies to the clipboard the text currently selected, launches Note
 <dt><kbd>[{MouseWheel,<i>ticks</i>}]</kbd></dt>
 <dd>Simulates a mouse wheel scroll. <i>ticks</i> specifies the number of ticks to scroll by. A positive value will scroll downwards, a negative one will scroll upwards. For example, to scroll twice upwards:<br>
 <kbd>[{MouseWheel,-2}]</kbd></dd>
+
+<dt><kbd>[{KeysDown,<i>keys</i>}]</kbd></dt>
+<dd>Presses and keeps down some special keys. <i>keys</i> lists the special keys to press; Clavier+ ignores non-special keys. For example, to press <kbd>Ctrl + Alt</kbd>:<br>
+<kbd>[{KeysDown,Ctrl + Alt}]</kbd><br>
+Clavier+ keeps the keys down until the next <kbd>[{KeysDown}]</kbd> or the end of the shortcut, affecting all commands in between except regular text. For example, the following shortcut simulates <kbd>Ctrl + Shift + A</kbd>, <kbd>Ctrl + left click</kbd>, then writes <kbd>HELLO world</kbd>:<br>
+<kbd>[{KeysDown,Ctrl}][Shift + A][{MouseButton,L}][{KeysDown,Shift}][|Hello|][] world</kbd><br>
+<kbd>[{KeysDown}]</kbd> without keys releases all special keys.</dd>
+</dd>
 </dl>
 
 

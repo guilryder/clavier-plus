@@ -245,7 +245,7 @@ void runGui(CMDLINE_OPTION cmdopt) {
 			} else {
 				// No matching shortcut found: simulate the keystroke back for default processing.
 				// Do not press the special keys again, do not release them.
-				ks.simulateTyping(/* special_keys= */ false);
+				ks.simulateTyping(/* already_down_mod_code= */ ks.m_sided_mod_code);
 			}
 			
 		} else {

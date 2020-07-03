@@ -191,16 +191,14 @@ void Keystroke::parseDisplayName(LPTSTR input) {
 }
 
 
-void Keystroke::simulateTyping(bool special_keys) const {
+void Keystroke::simulateTyping(DWORD already_down_mod_code) const {
 	const bool was_registered = unregisterHotKey();
-	const DWORD mod_code = getUnsidedModCode();
+	const DWORD to_press_mod_code = getUnsidedModCode() & ~already_down_mod_code;
 	
-	if (special_keys) {
-		// Press the special keys.
-		for (int i = 0; i < arrayLength(e_special_keys); i++) {
-			if (mod_code & e_special_keys[i].mod_code) {
-				keybdEvent(e_special_keys[i].vk, /* down= */ true);
-			}
+	// Press the special keys that are not already kept down.
+	for (int i = 0; i < arrayLength(e_special_keys); i++) {
+		if (to_press_mod_code & e_special_keys[i].mod_code) {
+			keybdEvent(e_special_keys[i].vk, /* down= */ true);
 		}
 	}
 	
@@ -209,12 +207,10 @@ void Keystroke::simulateTyping(bool special_keys) const {
 	sleepBackground(0);
 	keybdEvent(m_vk, /* down= */ false);
 	
-	if (special_keys) {
-		// Release the special keys.
-		for (int i = 0; i < arrayLength(e_special_keys); i++) {
-			if (mod_code & e_special_keys[i].mod_code) {
-				keybdEvent(e_special_keys[i].vk, /* down= */ false);
-			}
+	// Release the special keys that should not be kept down.
+	for (int i = 0; i < arrayLength(e_special_keys); i++) {
+		if (to_press_mod_code & e_special_keys[i].mod_code) {
+			keybdEvent(e_special_keys[i].vk, /* down= */ false);
 		}
 	}
 	
@@ -294,9 +290,12 @@ void Keystroke::detachKeyboardFocus(DWORD input_thread) {
 	AttachThreadInput(GetCurrentThreadId(), input_thread, /* fAttach= */ false);
 }
 
-void Keystroke::releaseSpecialKeys(BYTE keyboard_state[]) {
+void Keystroke::releaseSpecialKeys(BYTE keyboard_state[], DWORD keep_down_mod_code) {
 	for (int i = 0; i < arrayLength(e_special_keys); i++) {
 		const SpecialKey& special_key = e_special_keys[i];
+		if (keep_down_mod_code & special_key.mod_code) {
+			continue;
+		}
 		releaseKey(special_key.vk_left, keyboard_state);
 		releaseKey(special_key.vk_right, keyboard_state);
 		keyboard_state[special_key.vk] = 0;

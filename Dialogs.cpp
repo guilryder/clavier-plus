@@ -600,6 +600,7 @@ static constexpr LPCTSTR write_commands[] = {
 	_T("[{MouseMoveToFocus,x,y}]"),
 	_T("[{MouseMoveBy,dx,dy}]"),
 	_T("[{MouseWheel,<+/- ticks>}]"),
+	_T("[{KeysDown,<keys>}]"),
 };
 
 

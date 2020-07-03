@@ -198,6 +198,7 @@ BEGIN
             MENUITEM " Û±Í“∆∂ØµΩ(œ‡∂‘)(&E): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM " Û±Í“∆∂Ø∑Ω Ω(&Y): [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM " Û±Íπˆ¬÷(&H): [{MouseWheel,<+/- µŒ¥ ˝>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -430,6 +431,7 @@ BEGIN
             MENUITEM "PrzesuÒ wskaünik myszy do (wz&gl.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "PrzesuÒ wskaünik myszy &o: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "&Rolka myszy: [{MouseWheel,<+/- liczba skokÛw>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -663,6 +665,7 @@ BEGIN
             MENUITEM "Posun˙ù myö na (&rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Posun˙ù myö &o: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "Ko&liesko myöi: [{MouseWheel,<+/- poËet krokov>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -896,6 +899,7 @@ BEGIN
             MENUITEM "ƒ‚Ë&„‡Ú¸ Ï˚¯¸ ‚ ÙÓÍÛÒ (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "ƒ‚Ë„‡Ú¸ Ï˚¯¸ Ì&‡: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM " ÓÎÂÒËÍÓ Ï&˚¯Ë: [{MouseWheel,<+/- ticks count>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -1228,6 +1232,7 @@ BEGIN
             MENUITEM "Maus p&ositionieren (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Maus &bewegen: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "M‰&userad: [{MouseWheel,<+/- Z‰hl>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -1459,6 +1464,7 @@ BEGIN
             MENUITEM "Mouse mov&e to (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Mouse move b&y: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "Mouse w&heel: [{MouseWheel,<+/- ticks count>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "&Keep special keys down: [{KeysDown,<keys>}]", ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -1699,6 +1705,7 @@ BEGIN
             MENUITEM "P&ositionner souris (rel.) : [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "DÈplacer so&uris : [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "&Molette souris : [{MouseWheel,<+/- nb. crans>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "Garder touches &enfoncÈes : [{KeysDown,<touches>}]", ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -1950,6 +1957,7 @@ BEGIN
             MENUITEM "Mu&ovi Mouse a (rel.) : [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Muo&vi Mouse con : [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "Mouse &rotella : [{MouseWheel,<+/- conteggio scatti>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -2181,6 +2189,7 @@ BEGIN
             MENUITEM "Mue&ve el mouse (rel.): [{MouseMoveToFocus,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Mueve el &mouse: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "&Rolar p·gina (esfera): [{MouseWheel,<+/- # de linhas>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -2414,6 +2423,7 @@ BEGIN
             MENUITEM "Muis &brengen naar (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Muis &verplaatsen: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "Muis&wiel: [{MouseWheel,<+/- rolbewegingen>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -2647,6 +2657,7 @@ BEGIN
             MENUITEM "Mo&ver ratÛn a (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Mover &ratÛ&n a: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "R&ueda de ratÛn: [{MouseWheel,<+/- cifra de pulsaciones>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -2880,6 +2891,7 @@ BEGIN
             MENUITEM " ﬂÌÁÛÁ &ÔÌÙÈÍÈÔ˝ ÛÂ (Û˜ÂÙ.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM " ﬂÌÁÛÁ Ô&ÌÙÈÍÈÔ˝ ·¸: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "&‘ÒÔ˜¸Ú ÔÌÙÈÍÈÔ˝: [{MouseWheel,<+/- ·ÒÈËÏ¸Ú ‚ÁÏ‹Ù˘Ì>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "

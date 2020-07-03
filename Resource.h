@@ -104,6 +104,7 @@
 #define ID_TEXT_CMD_MOUSE_MOVE_TO_REL   40044
 #define ID_TEXT_CMD_MOUSE_MOVE_BY       40045
 #define ID_TEXT_CMD_MOUSE_WHEEL         40046
+#define ID_TEXT_CMD_KEYS_DOWN           40047
 #define ID_TRAY_SETTINGS                40056
 #define ID_TRAY_COPY_LIST               40057
 #define ID_TRAY_COPYLIST                40058

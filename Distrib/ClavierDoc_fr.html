@@ -239,6 +239,13 @@ Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, l
 <dt><kbd>[{MouseWheel,<i>ticks</i>}]</kbd></dt>
 <dd>Simuler une action sur la molette de la souris. <i>ticks</i> indique le nombre de roulements de molette à simuler. Spécifier une valeur positive pour défiler vers le bas, négative pour défiler vers le haut. Par exemple, pour défiler de deux crans vers le haut&nbsp;:<br>
 <kbd>[{MouseWheel,-2}]</kbd></dd>
+
+<dt><kbd>[{KeysDown,<i>touches</i>}]</kbd></dt>
+<dd>Enfonce certaines touches spéciales. <i>touches</i> liste les touches spéciales à enfoncer&nbsp;; Clavier+ ignore les touches normales. Par exemple, pour enfoncer <kbd>Ctrl + Alt</kbd>&nbsp;:<br>
+<kbd>[{KeysDown,Ctrl + Alt}]</kbd><br>
+Clavier+ garde les touches enfoncées et affectant toutes les commandes qui suivent (sauf l’écriture normale de texte) jusqu’au prochain <kbd>[{KeysDown}]</kbd> ou jusqu’à la fin du raccourci. Par exemple, le raccourci qui suit simule <kbd>Ctrl + Maj + A</kbd>, <kbd>Ctrl + clic gauche</kbd>, puis écrit <kbd>SALUT à tous</kbd>:<br>
+<kbd>[{KeysDown,Ctrl}][Maj + A][{MouseButton,L}][{KeysDown,Maj}][|Salut|][] à tous</kbd><br>
+<kbd>[{KeysDown}]</kbd> sans touches relâche toutes les touches spéciales.</dd>
 </dl>
 
 
