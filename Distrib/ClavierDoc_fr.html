@@ -115,7 +115,7 @@ E-mail&nbsp;: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd><
 
 <p>Ensuite, une boîte de dialogue apparaît pour saisir le raccourci clavier. Effectuez votre raccourci clavier dans la zone prévue à cet effet&nbsp;: son nom devrait s’écrire dans la zone. Cliquez enfin sur <i>OK</i>.</p>
 
-<p>Si nécessaire, modifiez l’action du raccourci dans la moitié inférieure de la boîte de dialogue. Si le raccourci doit écrire du texte, par exemple une formule de politesse, vérifiez que l’option <i>Écrire du texte</i> est cochée puis entrez le texte voulu dans la zone située en-dessous. À chaque fois que le raccourci sera effectué, le texte spécifié sera écrit. Vous pouvez utiliser le bouton en forme de flèche pour insérer des caractères spéciaux ou simuler une frappe de touches.</p>
+<p>Si nécessaire, modifiez l’action du raccourci dans la moitié inférieure de la boîte de dialogue. Si le raccourci doit écrire du texte, par exemple une formule de politesse, vérifiez que l’option <i>Écrire du texte</i> est cochée puis entrez le texte voulu dans la zone située en-dessous. À chaque fois que le raccourci sera effectué, le texte spécifié sera écrit. Vous pouvez utiliser le <a href="clavier_arrow_menu_FR.png">menu flèche</a> pour insérer des caractères spéciaux ou simuler une frappe de touches.</p>
 
 <p>Si le raccourci doit lancer un programme ou afficher un site Internet, cochez l’option correspondante. Entrez le chemin d’accès du programme ou l’adresse du site Web dans la zone. Vous pouvez cliquer sur le petit bouton situé à droite pour chercher le programme à lancer. Vous pouvez vérifier que le programme ou le site Internet est correct avec le bouton <i>Tester</i>. Si nécessaire, cliquez sur le bouton <i>Paramètres avancés</i> pour régler le répertoire de démarrage du programme ou son mode d’affichage (plein écran, fenêtré, réduit).</p>
 
@@ -159,21 +159,21 @@ E-mail&nbsp;: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd><
 
 <h3 id="text-typing">Écrire du texte</h3>
 
-<p>Il suffit d’écrire votre texte tel quel. La commande <i>Écrire un caractère</i> du menu en forme de flèche permet d’écrire les caractères inaccessibles au clavier.</p>
+<p>Il suffit d’écrire votre texte tel quel. La commande <i>Écrire un caractère</i> du <a href="clavier_arrow_menu_FR.png">menu flèche</a> permet d’écrire les caractères inaccessibles au clavier.</p>
 
 <p>La frappe de texte ne fonctionne pas avec certains programmes. Vous pouvez alors utiliser la syntaxe <kbd>[|<i>texte à écrire</i>|]</kbd> pour forcer Clavier+ à écrire le texte en bas niveau (meilleure compatibilité mais plus lent et plus limité).</p>
 
 
 <h3 id="text-simulating-keystroke">Simuler des frappes de touches</h3>
 
-<p>Utilisez la commande <i>Simuler une frappe de touches</i> du menu en forme de flèche pour écrire le code correspondant à la frappe de touches souhaitée. Typiquement, ce code est le nom de la combinaison de touches entre crochets, par exemple <kbd>[Ctrl+O]</kbd>.</p>
+<p>Utilisez la commande <i>Simuler une frappe de touches</i> du <a href="clavier_arrow_menu_FR.png">menu flèche</a> pour écrire le code correspondant à la frappe de touches souhaitée. Typiquement, ce code est le nom de la combinaison de touches entre crochets, par exemple <kbd>[Ctrl+O]</kbd>.</p>
 
 <p>Notez que simuler une frappe de touches permet d’effectuer de nombreuses actions, notamment manipuler le presse-papiers (avec <kbd>Ctrl + C</kbd> et <kbd>Ctrl + V</kbd>) ou exécuter une commande dans un menu (avec <kbd>Alt + <i>lettre</i></kbd>).</p>
 
 
 <h3 id="text-launching-program">Lancer un programme</h3>
 
-<p>Utilisez la commande <i>Lancer un programme</i> du menu en forme de flèches, ou bien écrivez la ligne de commande à exécuter entre double crochets. Par exemple, pour ouvrir un fichier texte et aller à la fin&nbsp;:<br>
+<p>Utilisez la commande <i>Lancer un programme</i> du <a href="clavier_arrow_menu_FR.png">menu flèche</a>, ou bien écrivez la ligne de commande à exécuter entre double crochets. Par exemple, pour ouvrir un fichier texte et aller à la fin&nbsp;:<br>
 <kbd>[[notepad.exe C:\\urgent.txt]][][Ctrl+Fin]</kbd></p>
 
 <p>Cette syntaxe permet de lancer plusieurs programmes à la fois avec le même raccourci. Par exemple, pour lancer le bloc-notes et la calculatrice&nbsp;:<br>
@@ -197,7 +197,7 @@ Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, l
 
 <h3 id="text-special-commands">Exécuter des commandes spéciales</h3>
 
-<p>Le menu en forme de flèche liste les commandes prises en charge&nbsp;:</p>
+<p>Le <a href="clavier_arrow_menu_FR.png">menu flèche</a> liste les commandes prises en charge&nbsp;:</p>
 
 <dl>
 <dt><kbd>[{Wait,<i>durée</i>}]</kbd></dt>
@@ -253,7 +253,7 @@ Clavier+ garde les touches enfoncées et affectant toutes les commandes qui suiv
 
 <p>Si vous avez besoin d’insérer les caractères <kbd>\</kbd>, <kbd>[</kbd>, <kbd>]</kbd>, <kbd>{</kbd>, <kbd>}</kbd> ou <kbd>|</kbd>, vous devez le faire précéder d’un antislash. Par exemple&nbsp;:<br>
 <kbd>Ceci est un crochet ouvrant: \[, ceci est un seul antislash: \\</kbd><br>
-Le menu en forme de flèche rappelle la liste des caractères spéciaux.</p>
+Le <a href="clavier_arrow_menu_FR.png">menu flèche</a> rappelle la liste des caractères spéciaux.</p>
 
 <p>Vous devez écrire un antislash devant les caractères spéciaux partout dans le texte du raccourci, y compris dans les balises spéciales de frappe de touches ou d’exécution de programmes&nbsp;:<br>
 <kbd>[[notepad.exe document\[1\].txt]]</kbd> pour ouvrir le fichier nommé <kbd>document[1].txt</kbd> avec le bloc-notes</p>

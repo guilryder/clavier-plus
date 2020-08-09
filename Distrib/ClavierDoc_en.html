@@ -121,7 +121,7 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <p>A dialog box appears for you to specify the keyboard shortcut. Type it in the dedicated area: its text name should be written in the textbox. Then, click the <i>OK</i> button.</p>
 
-<p>If necessary, modify the shortcut action in the lower part of the configuration window. If the shortcut should write text, for example an E-mail address, check that the <i>Write text</i> option is checked, and then enter your text in the large text area. Each time you type the keyboard shortcut, Clavier+ will write the specified text. You can use the arrow menu to <a href="#text">perform special actions</a> beyond typing text: simulate a keystroke, launch a program, etc.</p>
+<p>If necessary, modify the shortcut action in the lower part of the configuration window. If the shortcut should write text, for example an E-mail address, check that the <i>Write text</i> option is checked, and then enter your text in the large text area. Each time you type the keyboard shortcut, Clavier+ will write the specified text. You can use the <a href="clavier_arrow_menu_EN.png">arrow menu</a> to <a href="#text">perform special actions</a> beyond typing text: simulate a keystroke, launch a program, etc.</p>
 
 <p>If the shortcut should launch a program or display a website, check the corresponding option. Write the path of your program or the URL of your website in the area below. You can use the small button on the right to look for the program to launch. You can check what your shortcut does by clicking the <i>Test</i> button. If necessary, click the <i>Advanced settings</i> button to specify the initial directory or the initial window size of the program (maximized, windowed, minimized).</p>
 
@@ -164,21 +164,21 @@ E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
 
 <h3 id="text-typing">Typing text</h3>
 
-<p>Write the text to type in the text area. Use <i>Write a character</i> in the arrow menu to insert special characters unreachable from the keyboard.</p>
+<p>Write the text to type in the text area. Use <i>Write a character</i> in the <a href="clavier_arrow_menu_EN.png">arrow menu</a> to insert special characters unreachable from the keyboard.</p>
 
 <p>Typing text does not work with some programs. You can try to use the <kbd>[|<i>text to write</i>|]</kbd> syntax to make Clavier+ use low-level techniques when typing text (better compatibility, but slower and more limited).</p>
 
 
 <h3 id="text-simulating-keystroke">Simulating a keystroke</h3>
 
-<p>Use the <i>Simulate a Keystroke</i> in the arrow menu to write the keystroke code. Typically, the code is the name of the keystroke between brackets, for example: <kbd>[Ctrl+O]</kbd>.</p>
+<p>Use the <i>Simulate a Keystroke</i> in the <a href="clavier_arrow_menu_EN.png">arrow menu</a> to write the keystroke code. Typically, the code is the name of the keystroke between brackets, for example: <kbd>[Ctrl+O]</kbd>.</p>
 
 <p>Note that simulating a keystroke allows performing many different actions such as manipulating the clipboard (with <kbd>Ctrl + C</kbd> and <kbd>Ctrl + V</kbd>) or executing menu commands (with <kbd>Alt + <i>letter</i></kbd>).</p>
 
 
 <h3 id="text-launching-program">Launching a program</h3>
 
-<p>Use the <i>Launch a Program</i> command in the arrow menu, or write the command line to execute enclosed in double brackets. For example, to open a text file and move the cursor to its end:<br>
+<p>Use the <i>Launch a Program</i> command in the <a href="clavier_arrow_menu_EN.png">arrow menu</a>, or write the command line to execute enclosed in double brackets. For example, to open a text file and move the cursor to its end:<br>
 <kbd>[[notepad.exe C:\\TODO.txt]][][Ctrl+End]</kbd></p>
 
 <p>This syntax allows launching several programs with the same shortcut. For example, to launch Notepad and the calculator:<br>
@@ -204,7 +204,7 @@ This shortcut copies to the clipboard the text currently selected, launches Note
 
 <h3 id="text-special-commands">Executing special commands</h3>
 
-<p>The arrow menu lists the supported commands:</p>
+<p>The <a href="clavier_arrow_menu_EN.png">arrow menu</a> lists the supported commands:</p>
 
 <dl>
 <dt><kbd>[{Wait,<i>duration</i>}]</kbd></dt>
@@ -261,7 +261,7 @@ Clavier+ keeps the keys down until the next <kbd>[{KeysDown}]</kbd> or the end o
 
 <p>If you need to write special characters <kbd>\</kbd>, <kbd>[</kbd>, <kbd>]</kbd>, <kbd>{</kbd>, <kbd>}</kbd> or <kbd>|</kbd>, you need to escape them with a backslash. For example:<br>
 <kbd>This is a bracket: \[, this is a single backslash: \\</kbd><br>
-The arrow menu has an entry listing all special characters.</p>
+The <a href="clavier_arrow_menu_EN.png">arrow menu</a> has an entry listing all special characters.</p>
 
 <p>You need to write a backslash before special characters everywhere in the shortcut text, even in special tags such as keystroke simulation or program launching tags:<br>
 <kbd>[[notepad.exe document\[1\].txt]]</kbd> to open the file named <kbd>document[1].txt</kbd> with Notepad</p>
