@@ -1,17 +1,6 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Помощь по Clavier+</title>
-<link rel="stylesheet" href="ClavierHelp.css">
-</head>
-
-<body>
-
 <h1>Помощь по Clavier+</h1>
 
-<p class="toc">
+<p class="doc-toc">
 <a href="#name">Почему такое странное название?</a>
 <a href="#author">Автор</a>
 <a href="#license">Лицензия</a>
@@ -29,7 +18,7 @@
 </p>
 
 
-<h2 style="clear: both"><a href="http://utilfr42.free.fr/util/Clavier.php">Веб-сайт Clavier+</a></h2>
+<h2 style="clear: both"><a href="{{MAIN_URL}}">Веб-сайт Clavier+</a></h2>
 
 
 <h2 id="name">Почему такое странное название?</h2>
@@ -39,10 +28,7 @@
 
 <h2 id="author">Автор</h2>
 
-<p>Guillaume Ryder<br>
-Website: <a href="http://utilfr42.free.fr/"><kbd>http://utilfr42.free.fr</kbd></a><br>
-E-mail: <a href="mailto:guillaume@ryder.fr"><kbd>guillaume@ryder.fr</kbd></a>
-</p>
+<p><a href="https://gryder.org">Guillaume Ryder</a></p>
 
 <p><b>Русский перевод</b><br>
 Валерий Романовский, Поставы<br>
@@ -63,13 +49,13 @@ E-mail: <a href="mailto:valerik-roma@mail.ru"><kbd>valerik-roma@mail.ru</kbd></a
 
 <p>Clavier+ распространяется в двух пакетах:</p>
 <ul>
-<li><b>С</b> установкой программы: <a href="http://utilfr42.free.fr/dn/ClavierSetup.exe"><kbd>http://utilfr42.free.fr/dn/ClavierSetup.exe</kbd></a></li>
-<li><b>Без</b> установки программы: <a href="http://utilfr42.free.fr/dn/Clavier.zip"><kbd>http://utilfr42.free.fr/dn/Clavier.zip</kbd></a></li>
+<li><b>С</b> установкой программы: <a href="ClavierSetup.exe"><kbd>ClavierSetup.exe</kbd></a></li>
+<li><b>Без</b> установки программы: <a href="Clavier.zip"><kbd>Clavier.zip</kbd></a></li>
 </ul>
 
 <p>Чтобы инсталлировать Clavier+ без программы установки:</p>
 <ol>
-<li>Скачайте <a href="http://utilfr42.free.fr/dn/Clavier.zip">Zip архив</a> и распакуйте его.</li>
+<li>Скачайте <a href="Clavier.zip">Zip архив</a> и распакуйте его.</li>
 <li>Запустите <kbd>Clavier.exe</kbd>.</li>
 <li>Если вы хотите чтобы ярлыки всегда были активны, запустите <kbd>Clavier.exe</kbd> снова, чтобы отобразить диалоговое окно настроек, а затем отметьте <i>Запуск программы при старте Windows</i> флажком.</li>
 </ol>
@@ -490,7 +476,6 @@ F12
 <div class="faq-answer"><p>Да. Новая программа установки не требует каких-либо административных прав и можно положить файлы программы в папку учетной записи пользователя.</p></div>
 <div id="incompatprog" class="faq-question">Clavier+ не может записать текст в <i>Мои Избранные Программы</i>!</div>
 <div class="faq-answer"><p>Некоторые программы обрабатывают нажатия клавиатуры нестандартным путем, препятствуя Clavier+ написанию текста. Чтобы обойти эту проблему, заключите текст в <kbd>[|</kbd> и <kbd>|]</kbd>, как показано ниже:</p><p><kbd>[|Мой текст|]</kbd></p></div>
-<div class="faq-answer"><p>Скачайте <a href="http://utilfr42.free.fr/dn/ClavierUnicode.zip">Unicode версию Clavier+</a>. Эта версия экспериментальная и доступна только в виде архива Zip (без установки программы).</p></div>
 <div id="games" class="faq-question">Clavier+ работает с играми?</div>
 <div class="faq-answer"><p>В основном нет. Игры имеют доступ к клавиатуре на низком уровне, для различных случаев: скорость, защита от читов.</p></div>
 <div id="textformat" class="faq-question">Как написать форматированный текст (жирный, гиперссылку)?</div>
@@ -546,6 +531,3 @@ F12
 <li>Перезагрузить Windows<br>команда <kbd>shutdown.exe -r -t 01</kbd></li>
 <li>Выйти из Windows<br>команда <kbd>shutdown.exe -l</kbd></li>
 </ul>
-
-</body>
-</html>

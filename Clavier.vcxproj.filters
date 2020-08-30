@@ -114,25 +114,22 @@
     <None Include="Distrib\Clavier_zh-CN.ini">
       <Filter>Distrib</Filter>
     </None>
-    <None Include="Distrib\Clavier64.iss">
+    <None Include="Distrib\documentation_de.html">
       <Filter>Distrib</Filter>
     </None>
-    <None Include="Distrib\ClavierDoc_de.html">
+    <None Include="Distrib\documentation_en.html">
       <Filter>Distrib</Filter>
     </None>
-    <None Include="Distrib\ClavierDoc_en.html">
+    <None Include="Distrib\documentation_fr.html">
       <Filter>Distrib</Filter>
     </None>
-    <None Include="Distrib\ClavierDoc_fr.html">
+    <None Include="Distrib\documentation_nl.html">
       <Filter>Distrib</Filter>
     </None>
-    <None Include="Distrib\ClavierDoc_nl.html">
+    <None Include="Distrib\documentation_pt-BR.html">
       <Filter>Distrib</Filter>
     </None>
-    <None Include="Distrib\ClavierDoc_pt-BR.html">
-      <Filter>Distrib</Filter>
-    </None>
-    <None Include="Distrib\ClavierDoc_ru.html">
+    <None Include="Distrib\documentation_ru.html">
       <Filter>Distrib</Filter>
     </None>
     <None Include="Target.cur">

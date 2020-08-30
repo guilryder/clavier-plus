@@ -10,8 +10,8 @@
 #define AppVersion GetFileProductVersion(VersionFile)
 #define AppVerName AppName + " " + AppVersion
 #define AppPublisher "Guillaume Ryder"
-#define AppURL "http://utilfr42.free.fr"
-#define HelpFileBaseUrl "http://utilfr42.free.fr/util/ClavierDoc_"
+#define AppURL "https://gryder.org/software/clavier-plus/"
+#define HelpFileBaseUrl "https://gryder.org/software/clavier-plus/documentation?lang="
 
 #define IniFile "Clavier.ini"
 
@@ -70,18 +70,18 @@ Source: {#BinDir}\Clavier_ru.ini; DestDir: {app}; Flags: ignoreversion onlyifdoe
 
 [Icons]
 Name: {group}\{#AppName}; Filename: {app}\{#AppExeName}
-Name: {group}\帮助; Filename: {#HelpFileBaseUrl}zh-CN.html; Languages: chinesesimpl
-Name: {group}\Hilfe; Filename: {#HelpFileBaseUrl}de.html; Languages: german
-Name: {group}\Help; Filename: {#HelpFileBaseUrl}en.html; Languages: english
-Name: {group}\Ayuda; Filename: {#HelpFileBaseUrl}en.html; Languages: spanish
-Name: {group}\Aide; Filename: {#HelpFileBaseUrl}fr.html; Languages: french
-Name: {group}\Aiuto; Filename: {#HelpFileBaseUrl}it.html; Languages: italian
-Name: {group}\Help; Filename: {#HelpFileBaseUrl}nl.html; Languages: dutch
-Name: {group}\Pomoc; Filename: {#HelpFileBaseUrl}pl.html; Languages: polish
-Name: {group}\Ajuda; Filename: {#HelpFileBaseUrl}pt-BR.html; Languages: portuguese
-Name: {group}\Pomoc; Filename: {#HelpFileBaseUrl}sk.html; Languages: slovak
-Name: {group}\Βοήθεια; Filename: {#HelpFileBaseUrl}el.html; Languages: greek
-Name: {group}\Помощь; Filename: {#HelpFileBaseUrl}ru.html; Languages: russian
+Name: {group}\帮助; Filename: {#HelpFileBaseUrl}zh-CN; Languages: chinesesimpl
+Name: {group}\Hilfe; Filename: {#HelpFileBaseUrl}de; Languages: german
+Name: {group}\Help; Filename: {#HelpFileBaseUrl}en; Languages: english
+Name: {group}\Ayuda; Filename: {#HelpFileBaseUrl}en; Languages: spanish
+Name: {group}\Aide; Filename: {#HelpFileBaseUrl}fr; Languages: french
+Name: {group}\Aiuto; Filename: {#HelpFileBaseUrl}it; Languages: italian
+Name: {group}\Help; Filename: {#HelpFileBaseUrl}nl; Languages: dutch
+Name: {group}\Pomoc; Filename: {#HelpFileBaseUrl}pl; Languages: polish
+Name: {group}\Ajuda; Filename: {#HelpFileBaseUrl}pt-BR; Languages: portuguese
+Name: {group}\Pomoc; Filename: {#HelpFileBaseUrl}sk; Languages: slovak
+Name: {group}\Βοήθεια; Filename: {#HelpFileBaseUrl}el; Languages: greek
+Name: {group}\Помощь; Filename: {#HelpFileBaseUrl}ru; Languages: russian
 Name: {group}\{cm:ProgramOnTheWeb,{#AppName}}; Filename: {#AppURL}
 Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}
 

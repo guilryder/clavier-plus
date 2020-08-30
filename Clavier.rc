@@ -35,7 +35,7 @@ BEGIN
     GROUPBOX        "×÷Õß",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         "·­Òë: Bluebell",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "È·¶¨",IDOK,101,124,50,14,WS_GROUP
@@ -273,7 +273,7 @@ BEGIN
     GROUPBOX        "Autor",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         "T³umaczenie: Grzegorz Miros",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
@@ -507,7 +507,7 @@ BEGIN
     GROUPBOX        "Autor",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         "Preklad: Roman Horváth",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
@@ -835,7 +835,7 @@ BEGIN
     GROUPBOX        "Àâòîð",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,64,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,68,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         "Ïåðåâîä: Âàëåðèé Ðîìàíîâñêèé",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,120,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,46,16
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
@@ -1022,10 +1022,10 @@ BEGIN
     BEGIN
         BLOCK "000004b0"
         BEGIN
-            VALUE "CompanyName", "Guillaume Ryder (http://utilfr42.free.fr)"
+            VALUE "CompanyName", "Guillaume Ryder (https://gryder.org)"
             VALUE "FileDescription", "Clavier+"
             VALUE "FileVersion", "11.1.0"
-            VALUE "InternalName", "Clavier.exe"
+            VALUE "InternalName", "Clavier"
             VALUE "LegalCopyright", "Copyright (C) 2000-2020 Guillaume Ryder"
             VALUE "OriginalFilename", "Clavier.exe"
             VALUE "ProductName", "Clavier+"
@@ -1074,7 +1074,7 @@ BEGIN
     GROUPBOX        "Autor",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         "Übersetzungen: Dietmar Vogel",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
@@ -1371,7 +1371,7 @@ BEGIN
     GROUPBOX        "Author",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,99,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,104,50,14,WS_GROUP
 END
@@ -1604,7 +1604,7 @@ BEGIN
     GROUPBOX        "Auteur",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,99,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,104,50,14,WS_GROUP
 END
@@ -1893,7 +1893,7 @@ BEGIN
     GROUPBOX        "Autore",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         "Traduzione : Andrea Zanella",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
@@ -2032,7 +2032,7 @@ BEGIN
     GROUPBOX        "Criador",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         "Tradução: Milton Chaves de Almeida",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,123,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
@@ -2265,7 +2265,7 @@ BEGIN
     GROUPBOX        "Auteur",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         "Vertaling: Van Hees",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,144,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
@@ -2563,7 +2563,7 @@ BEGIN
     GROUPBOX        "Autor",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         "Traducción: Ricardo A. Rivas",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,101,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "Aceptar",IDOK,101,124,50,14,WS_GROUP
@@ -2733,7 +2733,7 @@ BEGIN
     GROUPBOX        "Äçìéïõñãüò",IDC_STATIC,6,48,145,44
     CONTROL         "Guillaume Ryder",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,12,59,54,8
     LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,62,8,SS_NOPREFIX
-    LTEXT           "http://utilfr42.free.fr",IDCLBL_WEBSITE,12,79,69,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,133,8,SS_NOPREFIX
     CONTROL         "ÌåôÜöñáóç: geogeo (www.geogeo.gr)",IDC_STATIC,"Static",SS_SIMPLE | SS_NOPREFIX | WS_GROUP,6,102,126,8
     CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
     DEFPUSHBUTTON   "ÅíôÜîåé",IDOK,101,124,50,14,WS_GROUP

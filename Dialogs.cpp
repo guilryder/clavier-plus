@@ -58,7 +58,7 @@ static bool s_process_gui_events;
 
 HWND e_hdlgMain;
 
-static constexpr LPCTSTR kHelpUrlFormat = _T("http://utilfr42.free.fr/util/ClavierDoc_%s.html");
+static constexpr LPCTSTR kHelpUrlFormat = _T("https://gryder.org/software/clavier-plus/documentation?lang=%s");
 static TCHAR s_donate_url[256];
 
 // Main dialog box.
@@ -1578,7 +1578,7 @@ INT_PTR CALLBACK prcAbout(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam)
 			e_modal_dialog = hdlg;
 			centerParent(hdlg);
 			
-			initializeWebLink(hdlg, IDCLBL_WEBSITE, _T("http://utilfr42.free.fr/"));
+			initializeWebLink(hdlg, IDCLBL_WEBSITE, _T("https://gryder.org/software/clavier-plus/"));
 			initializeWebLink(hdlg, IDCLBL_EMAIL, _T("mailto:guillaume@ryder.fr"));
 			i18n::loadStringAuto(IDS_DONATEURL, s_donate_url);
 			initializeWebLink(hdlg, IDCLBL_DONATE, s_donate_url);
