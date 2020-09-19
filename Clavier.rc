@@ -197,7 +197,7 @@ BEGIN
             MENUITEM "Κσ±κÒΖ¶―µ½(Ύψ¶Τ)(&V): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Κσ±κÒΖ¶―µ½(Οΰ¶Τ)(&E): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Κσ±κÒΖ¶―·½Κ½(&Y): [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "Κσ±κΉφΒΦ(&H): [{MouseWheel,<+/- µΞ΄πΚύ>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "Κσ±κΉφΒΦ(&H): [{MouseWheel,<(-) µΞ΄πΚύ>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
@@ -430,7 +430,7 @@ BEGIN
             MENUITEM "Przesuρ wskanik myszy do (&bezwzgl.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Przesuρ wskanik myszy do (wz&gl.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Przesuρ wskanik myszy &o: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "&Rolka myszy: [{MouseWheel,<+/- liczba skokσw>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "&Rolka myszy: [{MouseWheel,<(-) liczba skokσw>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
@@ -664,7 +664,7 @@ BEGIN
             MENUITEM "Posunϊ my na (a&bs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Posunϊ my na (&rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Posunϊ my &o: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "Ko&liesko myi: [{MouseWheel,<+/- poθet krokov>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "Ko&liesko myi: [{MouseWheel,<(-) poθet krokov>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
@@ -898,7 +898,7 @@ BEGIN
             MENUITEM "Δβθγΰςό μϋ&ψό κ (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Δβθ&γΰςό μϋψό β τξκσρ (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Δβθγΰςό μϋψό ν&ΰ: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "Κξλερθκξ μ&ϋψθ: [{MouseWheel,<+/- ticks count>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "Κξλερθκξ μ&ϋψθ: [{MouseWheel,<(-) ticks count>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
@@ -1231,7 +1231,7 @@ BEGIN
             MENUITEM "Maus &positionieren (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Maus p&ositionieren (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Maus &bewegen: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "Mδ&userad: [{MouseWheel,<+/- Zδhl>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "Mδ&userad: [{MouseWheel,<(-) Zδhl>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
@@ -1463,7 +1463,7 @@ BEGIN
             MENUITEM "Mouse mo&ve to (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Mouse mov&e to (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Mouse move b&y: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "Mouse w&heel: [{MouseWheel,<+/- ticks count>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "Mouse w&heel: [{MouseWheel,<(-) ticks count>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "&Keep special keys down: [{KeysDown,<keys>}]", ID_TEXT_CMD_KEYS_DOWN
         END
     END
@@ -1704,7 +1704,7 @@ BEGIN
             MENUITEM "&Positionner souris (abs.) : [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "P&ositionner souris (rel.) : [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Dιplacer so&uris : [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "&Molette souris : [{MouseWheel,<+/- nb. crans>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "&Molette souris : [{MouseWheel,<(-) nb. crans>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "Garder touches &enfoncιes : [{KeysDown,<touches>}]", ID_TEXT_CMD_KEYS_DOWN
         END
     END
@@ -1956,7 +1956,7 @@ BEGIN
             MENUITEM "&Muovi Mouse a (ass.) : [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Mu&ovi Mouse a (rel.) : [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Muo&vi Mouse con : [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "Mouse &rotella : [{MouseWheel,<+/- conteggio scatti>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "Mouse &rotella : [{MouseWheel,<(-) conteggio scatti>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
@@ -2188,7 +2188,7 @@ BEGIN
             MENUITEM "M&ueve el mouse (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Mue&ve el mouse (rel.): [{MouseMoveToFocus,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Mueve el &mouse: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "&Rolar pαgina (esfera): [{MouseWheel,<+/- # de linhas>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "&Rolar pαgina (esfera): [{MouseWheel,<(-) # de linhas>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
@@ -2422,7 +2422,7 @@ BEGIN
             MENUITEM "M&uis plaatsen (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Muis &brengen naar (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Muis &verplaatsen: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "Muis&wiel: [{MouseWheel,<+/- rolbewegingen>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "Muis&wiel: [{MouseWheel,<(-) rolbewegingen>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
@@ -2656,7 +2656,7 @@ BEGIN
             MENUITEM "&Mover ratσn a (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Mo&ver ratσn a (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Mover &ratσ&n a: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "R&ueda de ratσn: [{MouseWheel,<+/- cifra de pulsaciones>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "R&ueda de ratσn: [{MouseWheel,<(-) cifra de pulsaciones>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
@@ -2890,7 +2890,7 @@ BEGIN
             MENUITEM "Κίνηση &ποντικιού σε (απόλ.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
             MENUITEM "Κίνηση π&οντικιού σε (σχετ.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Κίνηση πο&ντικιού από: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "&Τροχός ποντικιού: [{MouseWheel,<+/- αριθμός βημάτων>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "&Τροχός ποντικιού: [{MouseWheel,<(-) αριθμός βημάτων>}]", ID_TEXT_CMD_MOUSE_WHEEL
             MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
         END
     END
