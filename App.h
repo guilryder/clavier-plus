@@ -43,6 +43,7 @@ enum {
 	tokDirectory,
 	tokWindow,
 	tokSupportFileOpen,
+	tokRunAsAdmin,
 	tokPrograms,
 	tokAllProgramsBut,
 	tokLanguage,

@@ -108,6 +108,7 @@ Shortcut::Shortcut(const Shortcut& sh) : Keystroke(sh) {
 	m_type = sh.m_type;
 	m_show_option = sh.m_show_option;
 	m_support_file_open = sh.m_support_file_open;
+	m_run_as_admin = sh.m_run_as_admin;
 	m_programs_only = sh.m_programs_only;
 	m_small_icon_index = sh.m_small_icon_index;
 	m_icon = CopyIcon(sh.m_icon);
@@ -126,6 +127,7 @@ Shortcut::Shortcut(const Keystroke& ks) : Keystroke(ks) {
 	m_type = Shortcut::Type::Text;
 	m_show_option = SW_NORMAL;
 	m_support_file_open = false;
+	m_run_as_admin = false;
 	m_programs_only = false;
 	m_small_icon_index = iconNeeded;
 	m_icon = NULL;
@@ -150,7 +152,7 @@ void Shortcut::save(HANDLE file) {
 		int tokKey;
 		LPCTSTR pszValue;
 	};
-	LINE lines[3 + 4 + 2 + condTypeCount + 1];
+	LINE lines[3 + 4 + 2 + condTypeCount + 1 + 1];
 	lines[0].tokKey = tokShortcut;
 	lines[0].pszValue = display_name;
 	lines[1].tokKey = tokCode;
@@ -197,6 +199,12 @@ void Shortcut::save(HANDLE file) {
 		
 		if (m_support_file_open) {
 			lines[line_count].tokKey = tokSupportFileOpen;
+			lines[line_count].pszValue = _T("1");
+			line_count++;
+		}
+
+		if (m_run_as_admin) {
+			lines[line_count].tokKey = tokRunAsAdmin;
 			lines[line_count].pszValue = _T("1");
 			line_count++;
 		}
@@ -426,6 +434,10 @@ bool Shortcut::load(LPTSTR* input) {
 			case tokSupportFileOpen:
 				m_support_file_open = toBool(StrToInt(next_sep));
 				break;
+
+			case tokRunAsAdmin:
+				m_run_as_admin = toBool(StrToInt(next_sep));
+				break;
 			
 			// Condition
 			case tokConditionCapsLock:
@@ -524,7 +536,7 @@ void Shortcut::execute(bool from_hotkey) {
 		if (!m_support_file_open || !setDialogBoxDirectory(input_window, m_command)) {
 			clipboardToEnvironment();
 			ShellExecuteThread* const shell_execute_thread = new ShellExecuteThread(
-				m_command, m_directory, m_show_option);
+				m_command, m_directory, m_show_option, m_run_as_admin);
 			startThread(shell_execute_thread->thread, shell_execute_thread);
 		}
 		break;

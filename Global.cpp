@@ -801,7 +801,7 @@ void findFullPath(LPTSTR path, LPTSTR full_path) {
 }
 
 
-void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
+void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode, bool run_as_admin) {
 	// Expand the environment variables before splitting
 	TCHAR command_exp[MAX_PATH + bufClipboardString];
 	ExpandEnvironmentStrings(command, command_exp, arrayLength(command_exp));
@@ -827,7 +827,7 @@ void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 	sei.fMask = SEE_MASK_FLAG_DDEWAIT;
 	sei.hwnd = e_invisible_window;
 	sei.lpFile = path;
-	sei.lpVerb = nullptr;
+	sei.lpVerb = run_as_admin ? _T("runas") : nullptr;
 	sei.lpParameters = PathGetArgs(command_exp);
 	sei.lpDirectory = real_directory;
 	sei.nShow = show_mode;
@@ -837,7 +837,7 @@ void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 
 DWORD WINAPI ShellExecuteThread::thread(void* params) {
 	ShellExecuteThread* const params_ptr = reinterpret_cast<ShellExecuteThread*>(params);
-	shellExecuteCmdLine(params_ptr->m_command, params_ptr->m_directory, params_ptr->m_show_mode);
+	shellExecuteCmdLine(params_ptr->m_command, params_ptr->m_directory, params_ptr->m_show_mode, params_ptr->m_run_as_admin);
 	delete params_ptr;
 	return 0;
 }
