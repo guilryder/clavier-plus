@@ -43,7 +43,6 @@ enum {
 	tokDirectory,
 	tokWindow,
 	tokSupportFileOpen,
-	tokRunAsAdmin,
 	tokPrograms,
 	tokAllProgramsBut,
 	tokLanguage,
@@ -69,6 +68,8 @@ enum {
 	tokConditionNo,
 	
 	tokUsageCount,
+
+	tokRunAsAdmin,
 	
 	tokNotFound
 };

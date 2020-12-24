@@ -1501,7 +1501,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "English;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;RunAsAdmin;Programs;AllProgramsBut;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages"
+    IDS_TOKENS              "English;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages;RunAsAdmin"
     IDS_COLUMNS             "Contents;Shortcut;Conditions;Usages;Description"
     IDS_LANGUAGE_CODE       "en"
     IDS_CONDITIONS          "no condition;must be on;must be off"
