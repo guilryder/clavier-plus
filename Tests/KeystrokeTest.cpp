@@ -381,7 +381,7 @@ public:
 		
 		setKeystroke(keystroke++, 'Y', false, 0);
 		
-		Assert::AreEqual(static_cast<size_t>(keystroke - keystrokes), arrayLength(keystrokes));
+		Assert::AreEqual(keystroke - keystrokes, static_cast<ptrdiff_t>(arrayLength(keystrokes)));
 		
 		for (int i = 0; i < arrayLength(keystrokes); i++) {
 			for (int j = 0; j < arrayLength(keystrokes); j++) {

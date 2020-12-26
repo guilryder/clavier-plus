@@ -28,22 +28,17 @@ public:
 	
 	TEST_METHOD(ArrayLength_oneElement) {
 		const int array[] = { 42 };
-		Assert::AreEqual(size_t(1), arrayLength(array));
+		Assert::AreEqual(1, arrayLength(array));
 	}
 	
 	TEST_METHOD(ArrayLength_eightElements) {
 		const int array[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-		Assert::AreEqual(size_t(8), arrayLength(array));
-	}
-	
-	TEST_METHOD(ArrayLength_stringPointer) {
-		const char* const string = "test";
-		Assert::AreEqual(sizeof(char*), arrayLength(string));
+		Assert::AreEqual(8, arrayLength(array));
 	}
 	
 	TEST_METHOD(ArrayLength_charArrayString) {
 		const char string[] = "test";
-		Assert::AreEqual(size_t(5), arrayLength(string));
+		Assert::AreEqual(5, arrayLength(string));
 	}
 	
 	

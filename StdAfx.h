@@ -105,8 +105,13 @@ inline bool reportFailedAssert(const char* message) {
 #define SUPPRESS_WARNING(code)  __pragma(warning(suppress: code))
 
 #define toBool(value)  ((value) != 0)
-#define arrayLength(static_array)  (sizeof(static_array) / sizeof(static_array[0]))
 #define UNUSED(name)  SUPPRESS_WARNING(4100) name
+
+template <class T, int size>
+constexpr int arrayLength(const T(&)[size]) {
+  return size;
+}
+
 
 #define VERIFP(f, value)  { if (!(f)) { return (value); } }
 #define VERIF(f)  VERIFP(f, false)

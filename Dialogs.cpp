@@ -989,7 +989,7 @@ void onMainCommand(UINT id, WORD notify, HWND hwnd) {
 				String command;
 				escapeString(text, &command);
 				appendText(command);
-			} else if (ID_TEXT_LOWLEVEL <= id && id < ID_TEXT_LOWLEVEL + arrayLength(write_commands)) {
+			} else if (ID_TEXT_LOWLEVEL <= id && id < ID_TEXT_LOWLEVEL + std::size(write_commands)) {
 				appendText(write_commands[id - ID_TEXT_LOWLEVEL]);
 			}
 			break;
@@ -1456,7 +1456,7 @@ INT_PTR CALLBACK prcCmdSettings(HWND hdlg, UINT message, WPARAM wParam, LPARAM U
 				// Fill "command line show" list
 				String show_options(IDS_SHOW_OPTIONS);
 				TCHAR* next_show_option = show_options.get();
-				for (int i = 0; i < arrayLength(show_options); i++) {
+				for (int i = 0; i < arrayLength(shortcut::show_options); i++) {
 					LPCTSTR show_option = show_options.isEmpty()
 						? getToken(tokShowNormal + i)
 						: getSemiColonToken(&next_show_option);
