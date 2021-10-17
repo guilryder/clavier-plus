@@ -78,14 +78,15 @@ void Keystroke::loadVkKeyName(BYTE vk, String* output) {
 	
 	// Retrieve the key name with GetKeyNameText.
 	// Do not distinguish between left and right.
-	// Fallback to a numerical name like #123 on error and for media keys
-	// (they have invalid key codes).
+	// Fallback to a numerical name like #123 on error,
+	// for media keys (they have invalid key codes), and for some extended keys
+	// (to avoid ambiguities like VK_OEM_5 and VK_OEM_102 both named "\").
 	UINT scan_code = MapVirtualKey(LOBYTE(vk), MAPVK_VK_TO_VSC);
 	long lParam = (scan_code << 16) | (1L << 25);
 	if (isKeyExtended(vk)) {
 		lParam |= 1L << 24;
 	}
-	if ((VK_BROWSER_BACK <= vk && vk <= VK_LAUNCH_APP2) ||
+	if ((VK_BROWSER_BACK <= vk && vk <= VK_LAUNCH_APP2) || (vk >= 0xE1) ||
 			!GetKeyNameText(lParam, output->getBuffer(bufHotKey), bufHotKey)) {
 		wsprintf(output->getBuffer(bufHotKey), _T("#%d"), vk);
 	}

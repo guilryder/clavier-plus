@@ -210,6 +210,9 @@ public:
 		checkGetKeyName(_T("]"), VK_OEM_6);
 		checkGetKeyName(_T("'"), VK_OEM_7);
 		checkGetKeyName(_T("#223"), VK_OEM_8);
+		checkGetKeyName(_T("#225"), VK_OEM_AX);
+		checkGetKeyName(_T("#226"), VK_OEM_102);  // same name as VK_OEM_5 by default: "\"
+		checkGetKeyName(_T("#240"), VK_OEM_ATTN);
 	}
 	
 	TEST_METHOD(Media) {
