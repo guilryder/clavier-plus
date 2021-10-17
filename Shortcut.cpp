@@ -372,7 +372,7 @@ bool Shortcut::load(LPTSTR* input) {
 					const DWORD dwCode = static_cast<DWORD>(StrToInt(next_sep));
 					if (dwCode) {
 						m_vk = canonicalizeKey(LOBYTE(dwCode));
-						m_sided_mod_code = HIBYTE(dwCode);
+						m_sided_mod_code = dwCode >> 8;
 					}
 				}
 				break;
