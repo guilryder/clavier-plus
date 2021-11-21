@@ -263,14 +263,14 @@ private:
 
 void findFullPath(LPTSTR path, LPTSTR full_path);
 
-void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode);
+void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode, bool run_as_admin = false);
 
 
 class ShellExecuteThread {
 public:
 	
-	ShellExecuteThread(const String& command, const String& directory, int show_mode)
-		: m_command(command), m_directory(directory), m_show_mode(show_mode) {}
+	ShellExecuteThread(const String& command, const String& directory, int show_mode, bool run_as_admin)
+		: m_command(command), m_directory(directory), m_show_mode(show_mode), m_run_as_admin(run_as_admin) {}
 	
 	static DWORD WINAPI thread(void* params);
 	
@@ -279,6 +279,7 @@ private:
 	String m_command;
 	String m_directory;
 	int m_show_mode;
+	bool m_run_as_admin;
 };
 
 

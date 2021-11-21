@@ -68,6 +68,8 @@ enum {
 	tokConditionNo,
 	
 	tokUsageCount,
+
+	tokRunAsAdmin,
 	
 	tokNotFound
 };

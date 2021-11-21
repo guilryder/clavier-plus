@@ -129,6 +129,8 @@ public:
 	
 	// Indicates whether the shortcut can change the current directory in File/Open
 	bool m_support_file_open;
+	// Indicates whether the shortcut should be executed as admin
+	bool m_run_as_admin;
 	
 	String m_description;
 	String m_text; // Type::Text only

@@ -212,12 +212,12 @@ static SIZEPOS aSizePos[] = {
 };
 
 
-static void createAndAddShortcut(LPCTSTR command = nullptr, bool support_file_open = false);
+static void createAndAddShortcut(LPCTSTR command = nullptr, bool support_file_open = false, bool run_as_admin = false);
 static Shortcut* createShortcut();
 static void addCreatedShortcut(Shortcut* shortcut);
 
 
-void createAndAddShortcut(LPCTSTR command, bool support_file_open) {
+void createAndAddShortcut(LPCTSTR command, bool support_file_open, bool run_as_admin) {
 	Shortcut *const shortcut = createShortcut();
 	if (shortcut) {
 		if (command) {
@@ -225,6 +225,7 @@ void createAndAddShortcut(LPCTSTR command, bool support_file_open) {
 			shortcut->m_command = command;
 		}
 		shortcut->m_support_file_open = support_file_open;
+		shortcut->m_run_as_admin = run_as_admin;
 		addCreatedShortcut(shortcut);
 	}
 }
@@ -1476,6 +1477,7 @@ INT_PTR CALLBACK prcCmdSettings(HWND hdlg, UINT message, WPARAM wParam, LPARAM U
 				SendDlgItemMessage(hdlg, IDCCBO_SHOW, CB_SETCURSEL, static_cast<WPARAM>(show_option_index), 0);
 				
 				CheckDlgButton(hdlg, IDCCHK_SUPPORTFILEOPEN, s_shortcut->m_support_file_open);
+				CheckDlgButton(hdlg, IDCCHK_RUNASADMIN, s_shortcut->m_run_as_admin);
 			}
 			return true;
 		
@@ -1513,6 +1515,7 @@ INT_PTR CALLBACK prcCmdSettings(HWND hdlg, UINT message, WPARAM wParam, LPARAM U
 					s_shortcut->m_show_option = shortcut::show_options[
 						SendDlgItemMessage(hdlg, IDCCBO_SHOW, CB_GETCURSEL, 0,0)];
 					s_shortcut->m_support_file_open = toBool(IsDlgButtonChecked(hdlg, IDCCHK_SUPPORTFILEOPEN));
+					s_shortcut->m_run_as_admin = toBool(IsDlgButtonChecked(hdlg, IDCCHK_RUNASADMIN));
 					s_shortcut->clearIcons();
 					// Fall-through
 					
