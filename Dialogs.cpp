@@ -236,10 +236,12 @@ Shortcut* createShortcut() {
 }
 
 void addCreatedShortcut(Shortcut* shortcut) {
+	s_process_gui_events = false;
 	addItem(shortcut, /* selected= */ true);
 	onItemUpdated(~0);
 	updateList();
 	onShortcutsCountChanged();
+	s_process_gui_events = true;
 	
 	const HWND edit_control = GetDlgItem(
 		e_hdlgMain, (shortcut->m_type == Shortcut::Type::Command) ? IDCTXT_COMMAND : IDCTXT_TEXT);
@@ -975,6 +977,10 @@ void onMainCommand(UINT id, WORD notify, HWND hwnd) {
 			}
 			break;
 		
+		case ID_UPDATE_LIST:
+			updateList();
+			break;
+		
 		default:
 			if (ID_ADD_SPECIALCHAR_FIRST <= id && id < ID_ADD_ITEM_FIRST) {
 				Shortcut *const shortcut = createShortcut();
@@ -1249,7 +1255,16 @@ INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) 
 						break;
 					
 					case LVN_ITEMCHANGED:
-						updateList();
+						// Delay updateList() after all LVN_ITEMCHANGED to avoid flickering
+						// (one LVN_ITEMCHANGED to unselect the old item, another to select the new item).
+						// Do nothing if s_process_gui_events is true (during addCreatedShortcut)
+						// to avoid resetting the edit box selection.
+						if (s_process_gui_events) {
+							const NMLISTVIEW& lv = *reinterpret_cast<NMLISTVIEW*>(lParam);
+							if ((lv.uOldState ^ lv.uNewState) & LVIS_SELECTED) {
+								PostMessage(hdlg, WM_COMMAND, ID_UPDATE_LIST, 0);
+							}
+						}
 						break;
 					
 					case LVN_COLUMNCLICK:

@@ -112,6 +112,7 @@
 #define ID_TRAY_INI_MERGE               40060
 #define ID_TRAY_INI_SAVE                40061
 #define ID_TRAY_QUIT                    40062
+#define ID_UPDATE_LIST                  40063
 #define ID_TRAY_INI_FIRSTFILE           41000
 
 // Next default values for new objects
