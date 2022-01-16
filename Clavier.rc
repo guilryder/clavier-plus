@@ -198,7 +198,7 @@ BEGIN
             MENUITEM " Û±Í“∆∂ØµΩ(œ‡∂‘)(&E): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM " Û±Í“∆∂Ø∑Ω Ω(&Y): [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM " Û±Íπˆ¬÷(&H): [{MouseWheel,<(-) µŒ¥ ˝>}]", ID_TEXT_CMD_MOUSE_WHEEL
-            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
+            MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -431,7 +431,7 @@ BEGIN
             MENUITEM "PrzesuÒ wskaünik myszy do (wz&gl.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "PrzesuÒ wskaünik myszy &o: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "&Rolka myszy: [{MouseWheel,<(-) liczba skokÛw>}]", ID_TEXT_CMD_MOUSE_WHEEL
-            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
+            MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -665,7 +665,7 @@ BEGIN
             MENUITEM "Posun˙ù myö na (&rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Posun˙ù myö &o: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "Ko&liesko myöi: [{MouseWheel,<(-) poËet krokov>}]", ID_TEXT_CMD_MOUSE_WHEEL
-            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
+            MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -899,7 +899,7 @@ BEGIN
             MENUITEM "ƒ‚Ë&„‡Ú¸ Ï˚¯¸ ‚ ÙÓÍÛÒ (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "ƒ‚Ë„‡Ú¸ Ï˚¯¸ Ì&‡: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM " ÓÎÂÒËÍÓ Ï&˚¯Ë: [{MouseWheel,<(-) ticks count>}]", ID_TEXT_CMD_MOUSE_WHEEL
-            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
+            MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -1431,30 +1431,30 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Open &Folder...",             ID_ADD_FOLDER
         MENUITEM "&Write Text...",              ID_ADD_TEXT
-        MENUITEM "&Launch a Program...",        ID_ADD_COMMAND
-        MENUITEM "&Display a Website...",       ID_ADD_WEBSITE
+        MENUITEM "&Launch Program...",          ID_ADD_COMMAND
+        MENUITEM "&Display Website...",         ID_ADD_WEBSITE
     END
     POPUP " "
     BEGIN
-        MENUITEM "&Simulate a Keystroke: [...]", ID_TEXT_SENDKEYS
-        MENUITEM "Launch a &Program: [[...]]",  ID_TEXT_COMMAND
+        MENUITEM "&Simulate Keystroke: [...]",  ID_TEXT_SENDKEYS
+        MENUITEM "Launch &Program: [[...]]",    ID_TEXT_COMMAND
         MENUITEM "&Wait 100 ms then detect focus: []", ID_TEXT_WAIT
         MENUITEM "Write Text in &Low-level Mode: [|...|]", ID_TEXT_LOWLEVEL
         MENUITEM SEPARATOR
-        POPUP "Write a &Character"
+        POPUP "Write &Character"
         BEGIN
             MENUITEM SEPARATOR
         END
-        POPUP "Write a Sp&ecial Character"
+        POPUP "Write Sp&ecial Character"
         BEGIN
-            MENUITEM "Write a Back&slash: \\\\",    ID_TEXT_BACKSLASH
-            MENUITEM "Write an Opening &Bracket: \\[", ID_TEXT_BRACKET_OPEN
-            MENUITEM "Write a Closing Brac&ket: \\]", ID_TEXT_BRACKET_CLOSE
-            MENUITEM "Write an Opening Br&ace: \\{", ID_TEXT_BRACE_OPEN
-            MENUITEM "Write a Closing Bra&ce: \\}", ID_TEXT_BRACE_CLOSE
-            MENUITEM "Write a &Pipe: \\|",          ID_TEXT_PIPE
+            MENUITEM "Write Back&slash: \\\\",      ID_TEXT_BACKSLASH
+            MENUITEM "Write Opening &Bracket: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Write Closing Brac&ket: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Write Opening Br&ace: \\{",   ID_TEXT_BRACE_OPEN
+            MENUITEM "Write Closing Bra&ce: \\}",   ID_TEXT_BRACE_CLOSE
+            MENUITEM "Write &Pipe: \\|",            ID_TEXT_PIPE
         END
-        POPUP "Execute a Special C&ommand"
+        POPUP "Execute Special C&ommand"
         BEGIN
             MENUITEM "&Wait: [{Wait,<duration>}]",  ID_TEXT_CMD_WAIT
             MENUITEM "&Detect focused window: [{Focus,<delay>,<window name>}]", ID_TEXT_CMD_FOCUS
@@ -1957,7 +1957,7 @@ BEGIN
             MENUITEM "Mu&ovi Mouse a (rel.) : [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Muo&vi Mouse con : [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "Mouse &rotella : [{MouseWheel,<(-) conteggio scatti>}]", ID_TEXT_CMD_MOUSE_WHEEL
-            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
+            MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -2189,7 +2189,7 @@ BEGIN
             MENUITEM "Mue&ve el mouse (rel.): [{MouseMoveToFocus,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Mueve el &mouse: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "&Rolar p·gina (esfera): [{MouseWheel,<(-) # de linhas>}]", ID_TEXT_CMD_MOUSE_WHEEL
-            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
+            MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -2657,7 +2657,7 @@ BEGIN
             MENUITEM "Mo&ver ratÛn a (rel.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM "Mover &ratÛ&n a: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "R&ueda de ratÛn: [{MouseWheel,<(-) cifra de pulsaciones>}]", ID_TEXT_CMD_MOUSE_WHEEL
-            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
+            MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
@@ -2891,7 +2891,7 @@ BEGIN
             MENUITEM " ﬂÌÁÛÁ &ÔÌÙÈÍÈÔ˝ ÛÂ (Û˜ÂÙ.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
             MENUITEM " ﬂÌÁÛÁ Ô&ÌÙÈÍÈÔ˝ ·¸: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
             MENUITEM "&‘ÒÔ˜¸Ú ÔÌÙÈÍÈÔ˝: [{MouseWheel,<(-) ·ÒÈËÏ¸Ú ‚ÁÏ‹Ù˘Ì>}]", ID_TEXT_CMD_MOUSE_WHEEL
-            MENUITEM "[{KeysDown,<keys>}]",   ID_TEXT_CMD_KEYS_DOWN
+            MENUITEM "[{KeysDown,<keys>}]",         ID_TEXT_CMD_KEYS_DOWN
         END
     END
     POPUP " "
