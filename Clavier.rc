@@ -192,6 +192,7 @@ BEGIN
         BEGIN
             MENUITEM "µΘ΄ύ(&W): [{Wait,<³ΦΠψΚ±Όδ>}]",     ID_TEXT_CMD_WAIT
             MENUITEM "Όμ²β½Ήµγ΄°ΏΪ(&D): [{Focus,<ΡΣ³Ω>,<΄°ΏΪΓϋ³Ζ>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "[{FocusOrLaunch,<window name>,<command>,<delay>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "Έ΄ΦΖµ½ΌτΜω°ε(&C): [{Copy,<ΞΔ±Ύ>}]",   ID_TEXT_CMD_COPY
             MENUITEM "Κσ±κ°΄Ε¥(&M): [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "Κσ±κÒΖ¶―µ½(Ύψ¶Τ)(&V): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
@@ -425,6 +426,7 @@ BEGIN
         BEGIN
             MENUITEM "&Czekaj: [{Wait,<czas trwania>}]", ID_TEXT_CMD_WAIT
             MENUITEM "&Wykryj aktywne okno: [{Focus,<opσnienie>,<nazwa okna>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "[{FocusOrLaunch,<window name>,<command>,<delay>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "&Kopiuj do schowka: [{Copy,<tekst>}]", ID_TEXT_CMD_COPY
             MENUITEM "&Przycisk myszy: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "Przesuρ wskanik myszy do (&bezwzgl.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
@@ -659,6 +661,7 @@ BEGIN
         BEGIN
             MENUITEM "Θ&aka: [{Wait,<dεka>}]",    ID_TEXT_CMD_WAIT
             MENUITEM "&Detegova okno majϊce vstup: [{Focus,<θakanie>,<nαzov okna>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "[{FocusOrLaunch,<window name>,<command>,<delay>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "&Kopνrova do schrαnky: [{Copy,<text>}]", ID_TEXT_CMD_COPY
             MENUITEM "&Tlaθidlo myi: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "Posunϊ my na (a&bs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
@@ -893,6 +896,7 @@ BEGIN
         BEGIN
             MENUITEM "&Ξζθδΰςό: [{Wait,<δλθςελόνξρςό>}]", ID_TEXT_CMD_WAIT
             MENUITEM "Ξ&ανΰπσζθβΰςό ρτξκσρθπξβΰννξε ξκνξ: [{Focus,<ηΰδεπζκΰ>,<θμÿ ξκνΰ>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "[{FocusOrLaunch,<window name>,<command>,<delay>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "&Κξοθπξβΰςό β αστεπ: [{Copy,<ςεκρς>}]", ID_TEXT_CMD_COPY
             MENUITEM "Κ&νξοκΰ μϋψθ: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "Δβθγΰςό μϋ&ψό κ (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
@@ -1226,6 +1230,7 @@ BEGIN
         BEGIN
             MENUITEM "&Warten: [{Wait,<Dauer>}]",   ID_TEXT_CMD_WAIT
             MENUITEM "&Fenster aktivieren: [{Focus,<Aufschub>,<Fenster-Name>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "[{FocusOrLaunch,<Fenster-Name>,<Programm>,<Aufschub>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "&Copy zum Klemmbrett: [{Copy,<Text>}]", ID_TEXT_CMD_COPY
             MENUITEM "&Maustaste: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "Maus &positionieren (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
@@ -1458,6 +1463,7 @@ BEGIN
         BEGIN
             MENUITEM "&Wait: [{Wait,<duration>}]",  ID_TEXT_CMD_WAIT
             MENUITEM "&Detect focused window: [{Focus,<delay>,<window name>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Activate window or launch: [{FocusOrLaunch,<window name>,<command>,<delay>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "&Copy to clipboard: [{Copy,<text>}]", ID_TEXT_CMD_COPY
             MENUITEM "&Mouse button: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "Mouse mo&ve to (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
@@ -1699,6 +1705,7 @@ BEGIN
         BEGIN
             MENUITEM "&Attendre : [{Wait,<durιe>}]", ID_TEXT_CMD_WAIT
             MENUITEM "&Dιtecter fenκtre active : [{Focus,<dιlai>,<fenκtre>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "&Activer ou lancer : [{FocusOrLaunch,<fenκtre>,<commande>,<dιlai>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "&Copier texte : [{Copy,<texte>}]", ID_TEXT_CMD_COPY
             MENUITEM "Bouton &souris: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "&Positionner souris (abs.) : [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
@@ -1951,6 +1958,7 @@ BEGIN
         BEGIN
             MENUITEM "&Attendi : [{Wait,<durata>}]", ID_TEXT_CMD_WAIT
             MENUITEM "&Individua finestra attiva : [{Focus,<attesa>,<nome finestra>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "[{FocusOrLaunch,<nome finestra>,<programma>,<attesa>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "&Copia negli appunti : [{Copy,<testo>}]", ID_TEXT_CMD_COPY
             MENUITEM "&Pulsante del mouse : [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "&Muovi Mouse a (ass.) : [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
@@ -2183,6 +2191,7 @@ BEGIN
         BEGIN
             MENUITEM "&Esperar: [{Wait,<duraηγo>}]", ID_TEXT_CMD_WAIT
             MENUITEM "&Selecionar janela: [{Focus,<duraηγo>,<janela>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "[{FocusOrLaunch,<janela>,<programa>,<duraηγo>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "&Copiar na Αrea de Armazenagem: [{Copy,<texto>}]", ID_TEXT_CMD_COPY
             MENUITEM "&Botγo do mouse: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "M&ueve el mouse (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
@@ -2417,6 +2426,7 @@ BEGIN
         BEGIN
             MENUITEM "Wa&chten: [{Wait,<duur>}]",   ID_TEXT_CMD_WAIT
             MENUITEM "&Actief venster opzoeken: [{Focus,<uitstel>,<venster>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "[{FocusOrLaunch,<venster>,<programma>,<uitstel>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "Tekst &kopiλren: [{Copy,<tekst>}]", ID_TEXT_CMD_COPY
             MENUITEM "&Muisknop: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "M&uis plaatsen (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
@@ -2651,6 +2661,7 @@ BEGIN
         BEGIN
             MENUITEM "&Esperar: [{Wait,<duraciσn>}]", ID_TEXT_CMD_WAIT
             MENUITEM "&Detectar ventana enfocada: [{Focus,<demora>,<ventana>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "[{FocusOrLaunch,<ventana>,<programa>,<demora>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "&Copiar: [{Copy,<texto>}]",   ID_TEXT_CMD_COPY
             MENUITEM "&Botσn de ratσn: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "&Mover ratσn a (abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
@@ -2885,6 +2896,7 @@ BEGIN
         BEGIN
             MENUITEM "&Αναμονή: [{Wait,<διάρκεια>}]", ID_TEXT_CMD_WAIT
             MENUITEM "&Εντοπισμός παραθύρου εστίασης: [{Focus,<καθυστέρηση>,<όνομα παραθύρου>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "[{FocusOrLaunch,<window name>,<command>,<duration>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
             MENUITEM "Αντι&γραφή στο Πρόχειρο: [{Copy,<κείμενο>}]", ID_TEXT_CMD_COPY
             MENUITEM "&Κουμπί ποντικιού: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
             MENUITEM "Κίνηση &ποντικιού σε (απόλ.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO

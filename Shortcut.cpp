@@ -67,6 +67,12 @@ static void commandWait(LPTSTR arg);
 // Reads & updates input_thread and input_window in the context.
 static bool commandFocus(ExecutionContext* context, LPTSTR arg);
 
+// [{FocusOrLaunch,window_name,command,delay}]
+// Activate window_name.
+// If the window is not found, relases any pressed special keys, execute command, then sleep for delay milliseconds.
+// Either way, catch the focus (reads & updates input_thread and input_window in the context).
+static void commandFocusOrLaunch(ExecutionContext* context, LPTSTR arg);
+
 // [{Copy,text}]
 // Copy the text argument to the clipboard.
 static void commandCopy(LPTSTR arg);
@@ -642,6 +648,8 @@ bool executeSpecialCommand(LPCTSTR shortcut_start, LPCTSTR& shortcut_end, Execut
 			commandWait(arg);
 		} else if (!lstrcmpi(command, _T("Focus"))) {
 			return commandFocus(context, arg);
+		} else if (!lstrcmpi(command, _T("FocusOrLaunch"))) {
+			commandFocusOrLaunch(context, arg);
 		} else if (!lstrcmpi(command, _T("Copy"))) {
 			commandCopy(arg);
 		} else if (!lstrcmpi(command, _T("MouseButton"))) {
@@ -803,6 +811,23 @@ bool commandFocus(ExecutionContext* context, LPTSTR arg) {
 	
 	Keystroke::resetKeyboardFocus(&context->input_window, &context->input_thread);
 	return true;
+}
+
+
+void commandFocusOrLaunch(ExecutionContext* context, LPTSTR arg) {
+	const LPCTSTR window_name = parseCommaSepArgUnescape(arg);
+	const HWND hwnd_target = findWindowByName(window_name);
+	if (hwnd_target) {
+		// Window found: give it the focus.
+		focusWindow(hwnd_target);
+	} else {
+		// Window not found: execute the command then apply the delay.
+		executeCommandLine(parseCommaSepArgUnescape(arg), context);
+		const int delay_ms = StrToInt(parseCommaSepArgUnescape(arg));
+		sleepBackground(delay_ms);
+	}
+	
+	Keystroke::resetKeyboardFocus(&context->input_window, &context->input_thread);
 }
 
 

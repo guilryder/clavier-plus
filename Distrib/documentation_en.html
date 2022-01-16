@@ -211,6 +211,16 @@ This shortcut copies to the clipboard the text currently selected, launches Note
 <kbd>[{Focus,0,\!Warning!}]</kbd> activates the first window titled <kbd>!Warning!</kbd>.</p>
 <p>Note that <kbd>[{Focus,100}]</kbd> is equivalent to <kbd>[]</kbd>.</p></dd>
 
+<dt><kbd>[{FocusOrLaunch,<i>window name</i>,<i>command</i>,<i>delay</i>}]</kbd></dt>
+<dd><div>Activates a window like <a href="#focus"><kbd>[{Focus,,<i>window name</i>}]</kbd></a>, or launches a program like <a href="#text-launching-program"><kbd>[[<i>command</i>]][{Wait,<i>delay</i>}]</kbd></a> if the window is not found.</div>
+<p>If not empty, <i>delay</i> is the number of milliseconds to wait after launching the program. If Clavier+ finds a matching window or <i>delay</i> is not specified, there is no delay.</p>
+<p>Clavier+ activates the first window that matches <i>window name</i>; see <a href="#focus"><kbd>[{Focus}]</kbd></a> for the syntax (exception: <kbd>!</kbd> has no special meaning and does not need escaping).</p>
+<p>If Clavier+ does not find any matching window, it executes the specified command, then waits for the specified delay (if any).</p>
+<p>Examples:<br>
+<kbd>[{FocusOrLaunch,* - Notepad,notepad.exe}]</kbd> activates a Notepad window if one exists, else launches Notepad.<br>
+<kbd>[{FocusOrLaunch,* - Notepad,notepad.exe,100}]Hello</kbd> activates a Notepad window if one exists, else launches Notepad and waits 100 milliseconds for the blank Notepad window to appear. Either way, after that, writes <kbd>Hello</kbd> in Notepad.<br>
+<kbd>[{FocusOrLaunch,one\,two,C:\\program.exe one\,two}]</kbd> activates the window titled <kbd>one,two</kbd> if it exists, else executes <kbd>C:\progam.exe one,two</kbd>.</p></dd>
+
 <dt><kbd>[{Copy,<i>text</i>}]</kbd></dt>
 <dd>Copies the specified text to the clipboard. Beware that this command is completely unrelated to the <kbd>Ctrl + C</kbd> clipboard shortcut, which copies the <i>selection</i> to the clipboard. Associated to the <kbd>Ctrl + V</kbd> keystroke, this command allows writing a long text quickly, or to write many times the same text. The following example writes five time the same text:<br>
 <kbd>[{Copy,A sentence to repeat five times. }][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd></dd>

@@ -202,6 +202,16 @@ Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, l
 <kbd>[{Focus,0,\!Attention!}]</kbd> active la fenêtre dont le titre est <kbd>!Attention!</kbd>.</p>
 <p>Noter que <kbd>[{Focus,100}]</kbd> est équivalent à <kbd>[]</kbd>.</p></dd>
 
+<dt><kbd>[{FocusOrLaunch,<i>fenêtre</i>,<i>commande</i>,<i>délai</i>}]</kbd></dt>
+<dd><div>Active une fenêtre comme le ferait <a href="#focus"><kbd>[{Focus,,<i>fenêtre</i>}]</kbd></a>, ou bien lance un programme et attend comme le ferait <a href="#text-launching-program"><kbd>[[<i>commande</i>]][{Wait,<i>délai</i>}]</kbd></a> si la fenêtre demandée n’existe pas.</div>
+<p>Si non-vide, <i>délai</i> est le nombre de millisecondes que Clavier+ attend après avoir lancé le programme. Si Clavier+ ne trouve pas la fenêtre demandée ou si <i>délai</i> n’est pas spécifié, le délai d’attente est nul.</p>
+<p>Clavier+ active la première fenêtre qui a le nom spécifié&nbsp;; voir <a href="#focus"><kbd>[{Focus}]</kbd></a> pour la syntaxe (exception&nbsp;: <kbd>!</kbd> n’a pas de signification particulière et n’a pas besoin d’être échappé).</p>
+<p>Si Clavier+ ne trouve pas la fenêtre demandée, il exécute la commande spécifiée, puis le cas échéant fait une pause de la durée spécifiée.</p>
+<p>Exemples&nbsp;:<br>
+<kbd>[{FocusOrLaunch,* - Bloc-notes,notepad.exe}]</kbd> active une fenêtre du Bloc-notes si une existe, ou bien lance le Bloc-notes.<br>
+<kbd>[{FocusOrLaunch,* - Bloc-notes,notepad.exe,100}]Bonjour</kbd> active une fenêtre du Bloc-notes si une existe, ou bien lance le Bloc-notes et attend 100 millisecondes. Dans les deux cas, écrit <kbd>Bonjour</kbd> dans le Bloc-notes.<br>
+<kbd>[{FocusOrLaunch,un\,deux,C:\\programme.exe un\,deux}]</kbd> active la fenêtre dont le titre est <kbd>un,deux</kbd> si elle existe, sinon exécute <kbd>C:\progamme.exe un,deux</kbd>.</p></dd>
+
 <dt><kbd>[{Copy,<i>texte</i>}]</kbd></dt>
 <dd>Copier le texte spécifié dans le presse-papiers. Attention&nbsp;! Cette commande n’a aucun rapport avec le raccourci clavier <kbd>Ctrl + C</kbd> qui, elle, copie la <i>sélection</i> dans le presse-papiers. Si vous utilisez la séquence de touches <kbd>Ctrl + V</kbd> par la suite, cela permet d’écrire rapidement de très longs textes, ou d’écrire plusieurs fois le même texte. L’exemple suivant écrit cinq fois le même texte&nbsp;:<br>
 <kbd>[{Copy,Une longue suite de mots. }][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd></dd>
