@@ -73,6 +73,9 @@ static INT_PTR CALLBACK prcLanguage(HWND hdlg, UINT message, WPARAM wParam, LPAR
 // "About" dialog box.
 static INT_PTR CALLBACK prcAbout(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam);
 
+// s_hwnd_list procedure.
+static LRESULT CALLBACK prcList(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclass_id, DWORD_PTR ref_data);
+
 // IDCIMG_PROGRAMS procedure.
 static LRESULT CALLBACK prcProgramsTarget(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclass_id, DWORD_PTR ref_data);
 
@@ -760,6 +763,14 @@ void onMainCommand(UINT id, WORD notify, HWND hwnd) {
 		
 		case IDCCMD_DELETE:
 			{
+				// Retrieve the selected list item, if any.
+				LVITEM lvi;
+				lvi.iItem = ListView_GetNextItem(s_hwnd_list, -1, LVNI_SELECTED);
+				if (lvi.iItem < 0) {
+					// No item selected. Can happen if VK_DELETE triggered IDCCMD_DELETE.
+					break;
+				}
+				
 				if (!isKeyDown(VK_SHIFT) && IDNO == messageBox(
 						e_hdlgMain, ASK_DELETE, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION)) {
 					break;
@@ -768,18 +779,15 @@ void onMainCommand(UINT id, WORD notify, HWND hwnd) {
 				SetFocus(GetDlgItem(e_hdlgMain, IDCCMD_ADD));
 				SendMessage(e_hdlgMain, WM_NEXTDLGCTL, /* previous= */ true, /* absolute= */ false);
 				
-				LVITEM lvi;
-				lvi.iItem = ListView_GetNextItem(s_hwnd_list, -1, LVNI_SELECTED);
-				if (lvi.iItem >= 0) {
-					lvi.mask = LVIF_PARAM;
-					ListView_GetItem(s_hwnd_list, &lvi);
-					
-					// Delete item, hotkey, and shortcut object
-					ListView_DeleteItem(s_hwnd_list, lvi.iItem);
-					Shortcut *const psh = reinterpret_cast<Shortcut*>(lvi.lParam);
-					psh->unregisterHotKey();
-					delete psh;
-				}
+				// Remove the item from the list.
+				lvi.mask = LVIF_PARAM;
+				ListView_GetItem(s_hwnd_list, &lvi);
+				
+				// Delete item, hotkey, and shortcut object
+				ListView_DeleteItem(s_hwnd_list, lvi.iItem);
+				Shortcut *const psh = reinterpret_cast<Shortcut*>(lvi.lParam);
+				psh->unregisterHotKey();
+				delete psh;
 				
 				// Select an other item and update
 				if (lvi.iItem >= ListView_GetItemCount(s_hwnd_list)) {
@@ -1026,6 +1034,7 @@ INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) 
 				subclassWindow(GetDlgItem(hdlg, IDCIMG_PROGRAMS), prcProgramsTarget);
 				
 				s_hwnd_list = GetDlgItem(hdlg, IDCLST);
+				subclassWindow(s_hwnd_list, prcList);
 				ListView_SetExtendedListViewStyle(s_hwnd_list, LVS_EX_FULLROWSELECT);
 				
 				// Get the initial size
@@ -1410,6 +1419,20 @@ INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) 
 	}
 	
 	return 0;
+}
+
+
+// Associates VK_DELETE with IDCCMD_DELETE.
+LRESULT CALLBACK prcList(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR UNUSED(subclass_id), DWORD_PTR UNUSED(ref_data)) {
+	switch (message) {
+		case WM_KEYDOWN:
+			if (wParam == VK_DELETE) {
+				PostMessage(e_hdlgMain, WM_COMMAND, IDCCMD_DELETE, 0);
+			}
+			break;
+	}
+	
+	return DefSubclassProc(hwnd, message, wParam, lParam);
 }
 
 
