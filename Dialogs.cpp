@@ -1188,6 +1188,8 @@ INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) 
 				if (lParam) {
 					PostMessage(hdlg, WM_COMMAND, static_cast<WPARAM>(lParam), 0);
 				}
+				
+				DragAcceptFiles(hdlg, true);
 			}
 			return true;
 		
@@ -1393,6 +1395,16 @@ INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) 
 				}
 				
 				delete pgfi;
+			}
+			break;
+		
+		
+		case WM_DROPFILES:
+			{
+				TCHAR path[MAX_PATH];
+				if (DragQueryFile(reinterpret_cast<HDROP>(wParam), /* iFile= */ 0, path, arrayLength(path))) {
+					addPathShortcut(path);
+				}
 			}
 			break;
 	}
