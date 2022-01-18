@@ -75,6 +75,8 @@ static void commandKeysDown(BYTE keyboard_state[], DWORD* keep_down_unsided_mod_
 
 static void simulateCharacter(TCHAR c, DWORD keep_down_mod_code);
 
+static void focusWindow(HWND hwnd);
+
 
 constexpr LPCTSTR kLineSeparator = _T("-\r\n");
 
@@ -743,6 +745,17 @@ void simulateCharacter(TCHAR c, DWORD keep_down_mod_code) {
 }
 
 
+void focusWindow(HWND hwnd) {
+	// Restore the window if it is minimized.
+	WINDOWPLACEMENT wp;
+	if (GetWindowPlacement(hwnd, &wp) && (wp.showCmd == SW_SHOWMINIMIZED)) {
+		ShowWindow(hwnd, SW_RESTORE);
+	}
+	
+	SetForegroundWindow(hwnd);
+}
+
+
 void commandEmpty(DWORD* input_thread, HWND* input_window) {
 	sleepBackground(100);
 	Keystroke::detachKeyboardFocus(*input_thread);
@@ -772,7 +785,7 @@ bool commandFocus(DWORD* input_thread, HWND* input_window, LPTSTR arg) {
 	if (*pszWindowName) {
 		const HWND hwndTarget = findWindowByName(pszWindowName);
 		if (hwndTarget) {
-			SetForegroundWindow(hwndTarget);
+			focusWindow(hwndTarget);
 		} else if (!bIgnoreNotFound) {
 			return false;
 		}
