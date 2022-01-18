@@ -67,16 +67,22 @@ public:
 	// Constructors, destructor
 	//----------------------------------------------------------------------
 	
-	String() : m_strbuf(nullptr), m_buf_length(0) {
+	String() : m_strbuf(nullptr), m_buf_length(0) {}
+	
+	String(CSTR strbuf) : String(strbuf, lstrlen(strbuf)) {}
+	
+	String(CSTR strbuf, int length) {
+		if (length <= 0) {
+			m_strbuf = nullptr;
+			m_buf_length = 0;
+		} else {
+			length++;
+			alloc(length);
+			lstrcpyn(m_strbuf, strbuf, length);
+		}
 	}
 	
-	String(CSTR strbuf) {
-		affectInit(strbuf);
-	}
-	
-	String(const String& str) {
-		affectInit((CSTR)str);
-	}
+	String(const String& str) : String(static_cast<CSTR>(str)) {}
 	
 	String(String&& str) {
 		m_strbuf = str.m_strbuf;
@@ -99,7 +105,7 @@ public:
 	
 	String& operator = (const String& str) {
 		if (&str != this) {
-			affect((CSTR)str);
+			affect(static_cast<CSTR>(str));
 		}
 		return *this;
 	}
@@ -144,7 +150,7 @@ public:
 				}
 			}
 		} else {
-			append((CSTR)str);
+			append(static_cast<CSTR>(str));
 		}
 		return *this;
 	}
@@ -247,21 +253,6 @@ private:
 	
 	inline void destroy() {
 		bufferFree(m_strbuf);
-	}
-	
-	void affectInit(CSTR strbuf) {
-		affectInit(strbuf, lstrlen(strbuf));
-	}
-	
-	void affectInit(CSTR strbuf, int length) {
-		if (length <= 0) {
-			m_strbuf = nullptr;
-			m_buf_length = 0;
-		} else {
-			length++;
-			alloc(length);
-			lstrcpyn(m_strbuf, strbuf, length);
-		}
 	}
 	
 	void affect(CSTR strbuf) {

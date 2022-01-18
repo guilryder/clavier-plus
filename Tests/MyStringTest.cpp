@@ -73,6 +73,34 @@ public:
 	}
 	
 	
+	TEST_METHOD(ConstructorBufferLength_exactLength) {
+		LPCTSTR input = _T("12345");
+		String str(input, 5);
+		Assert::AreEqual(input, str);
+	}
+	
+	TEST_METHOD(ConstructorBufferLength_shorterLength) {
+		LPCTSTR input = _T("1234");
+		String str(input, 3);
+		Assert::AreEqual(_T("123"), str);
+	}
+	
+	TEST_METHOD(ConstructorBufferLength_negativeLength) {
+		String str(m_test_buf, -1);
+		Assert::AreEqual(_T(""), str);
+	}
+	
+	TEST_METHOD(ConstructorBufferLength_empty) {
+		String str(_T(""), 0);
+		Assert::AreEqual(_T(""), str);
+	}
+	
+	TEST_METHOD(ConstructorBufferLength_null) {
+		String str(static_cast<LPCTSTR>(nullptr), 0);
+		Assert::AreEqual(_T(""), str);
+	}
+	
+	
 	TEST_METHOD(ConstructorCopy_other) {
 		String str = m_test;  // Use implicit constructor
 		Assert::AreEqual(m_test_buf, str);
