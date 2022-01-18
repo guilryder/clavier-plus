@@ -1050,12 +1050,12 @@ Error:
 	}
 	
 	do {
-		Shortcut *const psh = new Shortcut(Keystroke());
-		if (psh->load(&input)) {
-			psh->addToList();
-			psh->registerHotKey();
+		Shortcut *const shortcut = new Shortcut;
+		if (shortcut->load(&input)) {
+			shortcut->addToList();
+			shortcut->registerHotKey();
 		} else {
-			delete psh;
+			delete shortcut;
 		}
 	} while (input);
 	

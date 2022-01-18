@@ -22,12 +22,8 @@
 
 namespace ShortcutTest {
 
-static const Keystroke s_ks_empty;
-
 TEST_CLASS(ShortcutGetProgramsTest) {
 public:
-	
-	ShortcutGetProgramsTest() : m_shortcut(s_ks_empty) {}
 	
 	TEST_METHOD(Empty) {
 		Assert::IsNull(m_shortcut.getPrograms());
@@ -77,8 +73,6 @@ private:
 
 TEST_CLASS(ShortcutCleanProgramsTest) {
 public:
-	
-	ShortcutCleanProgramsTest() : m_shortcut(s_ks_empty) {}
 	
 	TEST_METHOD(Empty) {
 		check(_T(""), _T(""));

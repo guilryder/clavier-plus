@@ -412,11 +412,10 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 				case cmdoptSendKeys:
 					try_auto_quit = true;
 					{
-						Keystroke ks;
-						Shortcut sh(ks);
-						sh.m_type = Shortcut::Type::Text;
-						sh.m_text = strbuf_arg;
-						sh.execute(/* from_hotkey= */ false);
+						Shortcut shortcut;
+						shortcut.m_type = Shortcut::Type::Text;
+						shortcut.m_text = strbuf_arg;
+						shortcut.execute(/* from_hotkey= */ false);
 					}
 					break;
 				

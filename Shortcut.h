@@ -28,6 +28,7 @@ namespace shortcut {
 class Shortcut : public Keystroke {
 public:
 	
+	Shortcut() : Shortcut(Keystroke()) {}
 	explicit Shortcut(const Shortcut& sh);
 	explicit Shortcut(const Keystroke& ks);
 	

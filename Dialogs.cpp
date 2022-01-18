@@ -212,30 +212,43 @@ static SIZEPOS aSizePos[] = {
 };
 
 
-static void createAndAddShortcut(LPCTSTR command = nullptr, bool support_file_open = false);
-static Shortcut* createShortcut();
-static void addCreatedShortcut(Shortcut* shortcut);
+// Create a new command shortcut for the given path, using resolveLinkFile().
+// Ask the user to enter a keystroke before adding the shortcut.
+static void addPathShortcut(LPCTSTR path);
+
+// Create a new command shortcut for the given command-line.
+// Ask the user to enter a keystroke before adding the shortcut.
+static void addCommandShortcut(LPCTSTR command = nullptr, bool support_file_open = false);
+
+// Ask the user to enter a keystroke for the shortcut.
+// Add the shortcut on success, else delete it.
+// Takes ownership of the shortcut.
+static void addShortcut(Shortcut* shortcut);
 
 
-void createAndAddShortcut(LPCTSTR command, bool support_file_open) {
-	Shortcut *const shortcut = createShortcut();
-	if (shortcut) {
-		if (command) {
-			shortcut->m_type = Shortcut::Type::Command;
-			shortcut->m_command = command;
-		}
-		shortcut->m_support_file_open = support_file_open;
-		addCreatedShortcut(shortcut);
-	}
+void addPathShortcut(LPCTSTR path) {
+	Shortcut *const shortcut = new Shortcut;
+	resolveLinkFile(path, shortcut);
+	addShortcut(shortcut);
 }
 
-Shortcut* createShortcut() {
+void addCommandShortcut(LPCTSTR command, bool support_file_open) {
+	Shortcut *const shortcut = new Shortcut;
+	shortcut->m_type = Shortcut::Type::Command;
+	shortcut->m_command = command;
+	shortcut->m_support_file_open = support_file_open;
+	addShortcut(shortcut);
+}
+
+void addShortcut(Shortcut* shortcut) {
+	// Ask the user for the keystroke.
 	SetFocus(s_hwnd_list);
-	Keystroke ks;
-	return ks.showEditDialog(dialogs::e_hdlgMain) ? new Shortcut(ks) : nullptr;
-}
-
-void addCreatedShortcut(Shortcut* shortcut) {
+	if (!shortcut->showEditDialog(dialogs::e_hdlgMain)) {
+		delete shortcut;
+		return;
+	}
+	
+	// Add the shortcut to the list, in selected state.
 	s_process_gui_events = false;
 	addItem(shortcut, /* selected= */ true);
 	onItemUpdated(~0);
@@ -243,6 +256,7 @@ void addCreatedShortcut(Shortcut* shortcut) {
 	onShortcutsCountChanged();
 	s_process_gui_events = true;
 	
+	// Give the focus to the main control of the shortcut.
 	const HWND edit_control = GetDlgItem(
 		e_hdlgMain, (shortcut->m_type == Shortcut::Type::Command) ? IDCTXT_COMMAND : IDCTXT_TEXT);
 	if (shortcut->m_type == Shortcut::Type::Command) {
@@ -496,10 +510,7 @@ void FileMenuItem::populate(HMENU menu) {
 }
 
 void FileMenuItem::execute() {
-	Shortcut *const shortcut = createShortcut();
-	VERIFV(shortcut);
-	resolveLinkFile(m_path, shortcut);
-	addCreatedShortcut(shortcut);
+	addPathShortcut(m_path);
 }
 
 
@@ -548,7 +559,7 @@ void AppMenuItem::populate(HMENU menu) {
 void AppMenuItem::execute() {
 	String path = _T("explorer.exe shell:appsFolder\\");
 	path += m_app_id;
-	createAndAddShortcut(path);
+	addCommandShortcut(path);
 }
 
 
@@ -731,21 +742,21 @@ void onMainCommand(UINT id, WORD notify, HWND hwnd) {
 				TCHAR folder[MAX_PATH] = _T("");
 				if (browseForFolder(e_hdlgMain, /* title= */ nullptr, folder)) {
 					PathQuoteSpaces(folder);
-					createAndAddShortcut(folder, /* support_file_open= */ true);
+					addCommandShortcut(folder, /* support_file_open= */ true);
 				}
 			}
 			break;
 		
 		case ID_ADD_TEXT:
-			createAndAddShortcut();
+			addShortcut(new Shortcut);
 			break;
 		
 		case ID_ADD_COMMAND:
-			createAndAddShortcut(_T(""));
+			addCommandShortcut(_T(""));
 			break;
 		
 		case ID_ADD_WEBSITE:
-			createAndAddShortcut(_T("https://"));
+			addCommandShortcut(_T("https://"));
 			break;
 		
 		
@@ -983,13 +994,11 @@ void onMainCommand(UINT id, WORD notify, HWND hwnd) {
 		
 		default:
 			if (ID_ADD_SPECIALCHAR_FIRST <= id && id < ID_ADD_ITEM_FIRST) {
-				Shortcut *const shortcut = createShortcut();
-				if (shortcut) {
-					const TCHAR pszText[] = { static_cast<TCHAR>(id - ID_ADD_SPECIALCHAR_FIRST), _T('\0') };
-					shortcut->m_type = Shortcut::Type::Text;
-					shortcut->m_text = pszText;
-					addCreatedShortcut(shortcut);
-				}
+				Shortcut *const shortcut = new Shortcut;
+				const TCHAR text[] = { static_cast<TCHAR>(id - ID_ADD_SPECIALCHAR_FIRST), _T('\0') };
+				shortcut->m_type = Shortcut::Type::Text;
+				shortcut->m_text = text;
+				addShortcut(shortcut);
 			} else if (ID_TEXT_SPECIALCHAR_FIRST <= id && id < ID_TEXT_SPECIALCHAR_FIRST + 256) {
 				const TCHAR text[] = { static_cast<TCHAR>(id - ID_TEXT_SPECIALCHAR_FIRST), _T('\0') };
 				String command;
