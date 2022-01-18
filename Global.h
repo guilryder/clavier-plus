@@ -200,6 +200,10 @@ LPCTSTR getLanguageName(int lang);
 //   A tok* enum value, or tokNotFound if the token does not match any token.
 int findToken(LPCTSTR token);
 
+// '\'-unescapes the given string.
+// In-place is safe because the unescaping process can only but reduce the string length.
+void unescape(LPTSTR str);
+
 // Increments a string pointer until the end of the string or a comma is encountered, then skips
 // spaces. The comma is replaced by a null character, so that the initial pointer (before being
 // incremented) will point to the string before the comma.
@@ -207,9 +211,15 @@ int findToken(LPCTSTR token);
 // Args:
 //   chr_ptr: A reference to the pointer to increment. The string initially pointed will be
 //     unescaped if unescape is true.
-//   unescape: If true, unescapes the string according to backslashes. The string is unescaped in
-//     place, which is possible because the unescaping process can only reduce the string length.
-void skipUntilComma(TCHAR*& chr_ptr, bool unescape = false);
+//   unescape: Whether to recognize '\'-escaping when looking for the comma
+//     and unescape the returned string (up to the comma).
+//
+// Returns the original value of chr_ptr.
+LPCTSTR parseCommaSepArg(TCHAR*& chr_ptr, bool unescape = false);
+
+inline LPCTSTR parseCommaSepArgUnescape(TCHAR*& chr_ptr) {
+	return parseCommaSepArg(chr_ptr, /* unescape= */ true);
+}
 
 // Isolates the next ';'-separated token with a '\0'.
 // Returns token_start, then modifies token_start to point to the start of the next token.

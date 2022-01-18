@@ -203,12 +203,12 @@ This shortcut copies to the clipboard the text currently selected, launches Note
 <p>If not empty, <i>delay</i> is the number of milliseconds to wait before activating the window. It may be useful give enough time for the window to appear before trying to activate it. If <i>delay</i> is not specified, there is no delay.</p>
 <p>If <i>window name</i> is empty, Clavier+ detects the new active window and will send the future keystrokes to it. Useful if a keystroke displays a new window in which the shortcut needs to write. Example:<br>
 <kbd>[{Focus}]</kbd> or <kbd>[{Focus,200}]</kbd></p>
-<p>If <i>window name</i> is not empty, Clavier+ activates the first window matching the given name. The name can contain <kbd>*</kbd> and <kbd>?</kbd> wildcards. Backslashes should be used twice to escape commas. Example:<br>
-<kbd>[{Focus,50,* - Microsoft Word}]</kbd> or <kbd>[{Focus,,Title\\, subtitle}]</kbd></p>
-<p>By default, the shortcut execution stops if the window is not found. In order to continue executing the shortcut even if the window is not found, insert an exclamation mark <kbd>!</kbd> before the window title. If you want to search for a window having a title beginning with <kbd>!</kbd>, escape it with two backslashes. Examples:<br>
+<p>If <i>window name</i> is not empty, Clavier+ activates the first window matching the given name. The name can contain <kbd>*</kbd> and <kbd>?</kbd> wildcards. Escape commas with a backslash as if it were a <a href="#text-special-chars">special character</a>. Example:<br>
+<kbd>[{Focus,50,* - Microsoft Word}]</kbd> or <kbd>[{Focus,,Title\, subtitle}]</kbd></p>
+<p>By default, the shortcut execution stops if the window is not found. To continue executing the shortcut even if the window is not found, insert an exclamation mark <kbd>!</kbd> before the window title. If you want to search for a window with a title that starts with <kbd>!</kbd>, escape the exclamation mark with a backslash as if it were a <a href="#text-special-chars">special character</a>. Examples:<br>
 <kbd>[{Focus,0,*Internet Explorer}][Alt+F4]</kbd> closes the first Internet Explorer window found. Does nothing if Internet Explorer is not running.<br>
 <kbd>[{Focus,0,!Untitled*}]Test</kbd> writes <kbd>Test</kbd> in the first window whose title starts with <kbd>Untitled</kbd>, or in the current window if no such window exists.<br>
-<kbd>[{Focus,0,\\!Warning!}]</kbd> activates the first window titled <kbd>!Warning!</kbd>.</p>
+<kbd>[{Focus,0,\!Warning!}]</kbd> activates the first window titled <kbd>!Warning!</kbd>.</p>
 <p>Note that <kbd>[{Focus,100}]</kbd> is equivalent to <kbd>[]</kbd>.</p></dd>
 
 <dt><kbd>[{Copy,<i>text</i>}]</kbd></dt>
@@ -216,7 +216,7 @@ This shortcut copies to the clipboard the text currently selected, launches Note
 <kbd>[{Copy,A sentence to repeat five times. }][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd></dd>
 
 <dt><kbd>[{MouseButton,<i>code</i>}]</kbd></dt>
-<dd>Simulates a mouse button action. <i>code</i> specifies the button to modify and its new state. It is made of one or two letters.  The first one, mandatory, specifies the button to modify: <kbd>L</kbd> = left button, <kbd>M</kbd> = middle button, <kbd>R</kbd> = right button. The second letter, optional, specifies the action to perform: <kbd>D</kbd> = press the button down, <kbd>U</kbd> = release the button up. If the second letter is not specified, the button is pressed then released: this simulates a click. For example, to simulate a double-click with the left mouse button:<br>
+<dd>Simulates a mouse button action. <i>code</i> specifies the button to modify and its new state. It is made of one or two letters.  The first one, mandatory, specifies the button to modify: <kbd>L</kbd> = left button, <kbd>M</kbd> =m iddle button, <kbd>R</kbd> = right button. The second letter, optional, specifies the action to perform: <kbd>D</kbd> = press the button down, <kbd>U</kbd> = release the button up. If the second letter is not specified, the button is pressed then released: this simulates a click. For example, to simulate a double-click with the left mouse button:<br>
 <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd></dd>
 
 <dt><kbd>[{MouseMoveTo,<i>x</i>,<i>y</i>}]</kbd></dt>

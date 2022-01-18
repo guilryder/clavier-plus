@@ -172,6 +172,10 @@ public:
 	// Detaches the input focus from the given thread.
 	static void detachKeyboardFocus(DWORD input_thread);
 	
+	// Same as detachKeyboardFocus() then catchKeyboardFocus().
+	// Overwrites input_thread with the new input thread.
+	static void resetKeyboardFocus(HWND* new_input_window, DWORD* input_thread);
+	
 	// Releases the special keys up in the given keyboard state.
 	// keyboard_state: see GetKeyboardState().
 	// keep_down_mod_code: the special keys to keep down, unsided.

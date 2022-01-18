@@ -841,18 +841,28 @@ DWORD WINAPI ShellExecuteThread::thread(void* params) {
 }
 
 
-void skipUntilComma(TCHAR*& chr_ptr, bool unescape) {
-	TCHAR* const start = chr_ptr;
+void unescape(LPTSTR str) {
+	const TCHAR* input = str;
+	TCHAR* output = str;
+	bool escaping = false;
+	while (*input) {
+		if (*input == _T('\\') && !escaping) {
+			escaping = true;
+		} else {
+			escaping = false;
+			*output++ = *input;
+		}
+		input++;
+	}
+	*output = _T('\0');
+}
+
+LPCTSTR parseCommaSepArg(TCHAR*& chr_ptr, bool unescape) {
+	const LPTSTR start = chr_ptr;
 	bool escaping = false;
 	TCHAR* current = start;
-	while (*current) {
-		if (escaping) {
-			escaping = false;
-		} else if (*current == _T(',')) {
-			break;
-		} else if (unescape && *current == _T('\\')) {
-			escaping = true;
-		}
+	while (*current && !(*current == _T(',') && !escaping)) {
+		escaping = !escaping && (unescape && *current == _T('\\'));
 		current++;
 	}
 	if (*current) {
@@ -863,22 +873,11 @@ void skipUntilComma(TCHAR*& chr_ptr, bool unescape) {
 	}
 	chr_ptr = current;
 	
-	if (!unescape) {
-		return;
+	if (unescape) {
+		::unescape(start);
 	}
-	const TCHAR* input = start;
-	TCHAR* output = start;
-	escaping = false;
-	while (*input) {
-		if (*input == _T('\\') && !escaping) {
-			escaping = true;
-		} else{
-			escaping = false;
-			*output++ = *input;
-		}
-		input++;
-	}
-	*output = _T('\0');
+	
+	return start;
 }
 
 

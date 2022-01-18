@@ -429,42 +429,72 @@ public:
 TEST_CLASS(GlobalTest) {
 public:
 	
-	TEST_METHOD(SkipUntilComma_noCommaNoUnescape) {
-		TCHAR buffer[100];
-		lstrcpy(buffer, _T("No \\\\ comma"));
-		LPTSTR chr_ptr = buffer;
-		skipUntilComma(chr_ptr, false);
-		Assert::AreSame(buffer[11], *chr_ptr);
-		Assert::AreEqual(_T("No \\\\ comma"), buffer);
+	TEST_METHOD(Unescape_empty) {
+		TCHAR buffer[] = _T("");
+		unescape(buffer);
+		Assert::AreEqual(_T(""), buffer);
 	}
 	
-	TEST_METHOD(SkipUntilComma_commaNoUnescape) {
-		TCHAR buffer[100];
-		lstrcpy(buffer, _T("With \\\\ a, comma, end"));
-		LPTSTR chr_ptr = buffer;
-		skipUntilComma(chr_ptr, false);
-		Assert::AreSame(buffer[11], *chr_ptr);
-		Assert::AreEqual(_T("With \\\\ a"), buffer);
-		Assert::AreEqual(_T("comma, end"), buffer + 11);
+	TEST_METHOD(Unescape_noBackslash) {
+		TCHAR buffer[] = _T("Regular");
+		unescape(buffer);
+		Assert::AreEqual(_T("Regular"), buffer);
 	}
 	
-	TEST_METHOD(SkipUntilComma_noCommaUnescape) {
-		TCHAR buffer[100];
-		lstrcpy(buffer, _T("No \\,\\\\ comma"));
+	TEST_METHOD(Unescape_someBackslashes) {
+		TCHAR buffer[] = _T("a , \\b \\\\ \\, \\c");
+		unescape(buffer);
+		Assert::AreEqual(_T("a , b \\ , c"), buffer);
+	}
+	
+	TEST_METHOD(ParseCommaSepArg_empty) {
+		TCHAR buffer[] = _T("");
 		LPTSTR chr_ptr = buffer;
-		skipUntilComma(chr_ptr, true);
-		Assert::AreSame(buffer[13], *chr_ptr);
+		Assert::AreSame(*buffer, *parseCommaSepArg(chr_ptr));
+		Assert::AreSame(buffer[0], *chr_ptr);
+		Assert::AreEqual(_T(""), buffer);
+	}
+	
+	TEST_METHOD(ParseCommaSepArgUnescape_empty) {
+		TCHAR buffer[] = _T("");
+		LPTSTR chr_ptr = buffer;
+		Assert::AreSame(*buffer, *parseCommaSepArgUnescape(chr_ptr));
+		Assert::AreSame(buffer[0], *chr_ptr);
+		Assert::AreEqual(_T(""), buffer);
+	}
+	
+	TEST_METHOD(ParseCommaSepArg_noComma) {
+		TCHAR buffer[] = _T("N\\o \\\\ comma");
+		LPTSTR chr_ptr = buffer;
+		Assert::AreSame(*buffer, *parseCommaSepArg(chr_ptr));
+		Assert::AreSame(buffer[12], *chr_ptr);
+		Assert::AreEqual(_T("N\\o \\\\ comma"), buffer);
+	}
+	
+	TEST_METHOD(ParseCommaSepArgUnescape_noComma) {
+		TCHAR buffer[] = _T("N\\o \\,\\\\ comma");
+		LPTSTR chr_ptr = buffer;
+		Assert::AreSame(*buffer, *parseCommaSepArgUnescape(chr_ptr));
+		Assert::AreSame(buffer[14], *chr_ptr);
 		Assert::AreEqual(_T("No ,\\ comma"), buffer);
 	}
 	
-	TEST_METHOD(SkipUntilComma_commaUnescape) {
-		TCHAR buffer[100];
-		lstrcpy(buffer, _T("With \\,\\\\ a, comma, \\,\\\\ end"));
+	TEST_METHOD(ParseCommaSepArg_someCommas) {
+		TCHAR buffer[] = _T("Wi\\th \\\\ a, comma, end");
 		LPTSTR chr_ptr = buffer;
-		skipUntilComma(chr_ptr, true);
-		Assert::AreSame(buffer[13], *chr_ptr);
+		Assert::AreSame(*buffer, *parseCommaSepArg(chr_ptr));
+		Assert::AreSame(buffer[12], *chr_ptr);
+		Assert::AreEqual(_T("Wi\\th \\\\ a"), buffer);
+		Assert::AreEqual(_T("comma, end"), buffer + 12);
+	}
+	
+	TEST_METHOD(ParseCommaSepArgUnescape_someCommas) {
+		TCHAR buffer[] = _T("W\\ith \\,\\\\ a, comma, \\,\\\\ end");
+		LPTSTR chr_ptr = buffer;
+		Assert::AreSame(*buffer, *parseCommaSepArgUnescape(chr_ptr));
+		Assert::AreSame(buffer[14], *chr_ptr);
 		Assert::AreEqual(_T("With ,\\ a"), buffer);
-		Assert::AreEqual(_T("comma, \\,\\\\ end"), buffer + 13);
+		Assert::AreEqual(_T("comma, \\,\\\\ end"), buffer + 14);
 	}
 };
 

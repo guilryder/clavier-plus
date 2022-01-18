@@ -211,12 +211,12 @@ Deze sneltoets kopieert de geselecteerde tekst in het klembord, start het kladbl
 <p>Indien „niet leeg” is <i>uitstel</i> het aantal milliseconden te wachten voordat het nieuw venster geopend wordt. Het kan nuttig zijn voldoende tijd te laten zodat het venster opent vooraleer er tekst in te schrijven. Als <i>uitstel</i> niet gespecificeerd is wordt de wachttijd nul.</p>
 <p>Als <i>venster</i> leeg is, dan zal Clavier+ het nieuw actief venster vinden. De volgende toetsdrukken zullen naar dat venster gestuurd worden. Dit is nuttig als de toetsdrukken een nieuw venster toont waarin moet geschreven worden. Voorbeeld:<br>
 <kbd>[{Focus}]</kbd> of <kbd>[{Focus,200}]</kbd></p>
-<p>Als <i>venster</i> niet leeg is dan zal Clavier+ het eerste venster met de aangeduide naam. Deze naam kan <em>wildcards</em> <kbd>*</kbd> en <kbd>?</kbd>. bevatten. Twee backslash moeten gebruikt worden om de komma te vermijden. Voorbeeld:<br>
-<kbd>[{Focus,50,* - Microsoft Word}]</kbd> ou <kbd>[{Focus,,Titel\\, subtitel}]</kbd></p>
-<p>Bij verstek wordt de sneltoets gestopt als het venster niet gevonden wordt. Om de sneltoets toch verder te laten werken, zelfs als het venster niet gevonden wordt, voeg een uitroepteken <kbd>!</kbd> voor de naam van het te zoeken venster. Om echter een venster te zoeken. Waarvan de naam met <kbd>!</kbd> begint moet je 2 backslash plaatsen. Voorbeeld:<br>
+<p>Als <i>venster</i> niet leeg is dan zal Clavier+ het eerste venster met de aangeduide naam. Deze naam kan <em>wildcards</em> <kbd>*</kbd> en <kbd>?</kbd>. bevatten. Een backslash moeten gebruikt worden om de komma te vermijden. Voorbeeld:<br>
+<kbd>[{Focus,50,* - Microsoft Word}]</kbd> ou <kbd>[{Focus,,Titel\, subtitel}]</kbd></p>
+<p>Bij verstek wordt de sneltoets gestopt als het venster niet gevonden wordt. Om de sneltoets toch verder te laten werken, zelfs als het venster niet gevonden wordt, voeg een uitroepteken <kbd>!</kbd> voor de naam van het te zoeken venster. Om echter een venster te zoeken. Waarvan de naam met <kbd>!</kbd> begint moet je 1 backslash plaatsen. Voorbeeld:<br>
 <kbd>[{Focus,0,*Internet Explorer}][Alt+F4]</kbd> verlaat het eerste venster van Internet Explorer maar doet niets als Internet Explorer niet geopend is.<br>
 <kbd>[{Focus,0,!Foo*}]Bar</kbd> schrijft <kbd>Bar</kbd> in het venster <kbd>Foo</kbd>, of in het actieve venster als dit venster niet bestaat.<br>
-<kbd>[{Focus,0,\\!Warning!}]</kbd> activeert een venster met de naam <kbd>!Warning!</kbd>.</p>
+<kbd>[{Focus,0,\!Warning!}]</kbd> activeert een venster met de naam <kbd>!Warning!</kbd>.</p>
 <p>Noteer dat <kbd>[{Focus,100}]</kbd> gelijkwaardig is aan <kbd>[]</kbd>.</p></dd>
 
 <dt><kbd>[{Copy,<i>tekst</i>}]</kbd></dt>

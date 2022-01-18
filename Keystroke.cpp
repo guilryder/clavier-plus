@@ -288,6 +288,11 @@ void Keystroke::detachKeyboardFocus(DWORD input_thread) {
 	AttachThreadInput(GetCurrentThreadId(), input_thread, /* fAttach= */ false);
 }
 
+void Keystroke::resetKeyboardFocus(HWND* new_input_window, DWORD* input_thread) {
+	detachKeyboardFocus(*input_thread);
+	catchKeyboardFocus(new_input_window, input_thread);
+}
+
 void Keystroke::releaseSpecialKeys(BYTE keyboard_state[], DWORD keep_down_mod_code) {
 	for (int i = 0; i < arrayLength(e_special_keys); i++) {
 		const SpecialKey& special_key = e_special_keys[i];

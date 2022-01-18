@@ -32,11 +32,30 @@ static constexpr int s_default_column_widths[] = { 35, 20, 15, 10 };
 constexpr WCHAR kUtf16LittleEndianBom = 0xFEFF;
 
 
+enum class LastTextExecution {
+	None,
+	Text,
+	Keystroke,
+};
+
+struct ExecutionContext {
+	BYTE keyboard_state[256];
+	
+	// Unsided MOD_* constants bitmask.
+	DWORD keep_down_mod_code;
+	
+	HWND input_window;
+	DWORD input_thread;
+	
+	LastTextExecution lastTextExecution;
+};
+
+
 // []
 // Sleep for 100 milliseconds and catch the focus.
 // Convenience alias for [{Focus,100}].
-// Reads & updates input_thread and input_window.
-static void commandEmpty(DWORD* input_thread, HWND* input_window);
+// Reads & updates input_thread and input_window in the context.
+static void commandEmpty(ExecutionContext* context);
 
 // [{Wait,duration}]
 // Sleep for a given number of milliseconds.
@@ -45,8 +64,8 @@ static void commandWait(LPTSTR arg);
 // [{Focus,delay,[!]window_name}]
 // Sleep for delay milliseconds and catch the focus.
 // If window_name does not begin with '!', return false if the window is not found.
-// Reads & updates input_thread and input_window.
-static bool commandFocus(DWORD* input_thread, HWND* input_window, LPTSTR arg);
+// Reads & updates input_thread and input_window in the context.
+static bool commandFocus(ExecutionContext* context, LPTSTR arg);
 
 // [{Copy,text}]
 // Copy the text argument to the clipboard.
@@ -70,8 +89,13 @@ static void commandMouseWheel(LPTSTR arg);
 // [{KeysDown,keystroke}]
 // Keep special keys down.
 // Reads & updates keep_down_unsided_mod_code.
-static void commandKeysDown(BYTE keyboard_state[], DWORD* keep_down_unsided_mod_code, LPTSTR arg);
+static void commandKeysDown(ExecutionContext* context, LPTSTR arg);
 
+
+// Return whether to continue executing the shortcut.
+static bool executeSpecialCommand(LPCTSTR shortcut_start, LPCTSTR& shortcut_end, ExecutionContext* context);
+
+static void executeCommandLine(LPCTSTR command, ExecutionContext* context);
 
 static void simulateCharacter(TCHAR c, DWORD keep_down_mod_code);
 
@@ -329,16 +353,10 @@ bool Shortcut::load(LPTSTR* input) {
 				while (*next_sep == _T(' ')) {
 					next_sep++;
 				}
-				e_sizeMainDialog.cx = StrToInt(next_sep);
-				
-				skipUntilComma(next_sep);
-				e_sizeMainDialog.cy = StrToInt(next_sep);
-				
-				skipUntilComma(next_sep);
-				e_maximize_main_dialog = toBool(StrToInt(next_sep));
-				
-				skipUntilComma(next_sep);
-				e_icon_visible = !StrToInt(next_sep);
+				e_sizeMainDialog.cx = StrToInt(parseCommaSepArg(next_sep));
+				e_sizeMainDialog.cy = StrToInt(parseCommaSepArg(next_sep));
+				e_maximize_main_dialog = toBool(StrToInt(parseCommaSepArg(next_sep)));
+				e_icon_visible = !StrToInt(parseCommaSepArg(next_sep));
 				break;
 			
 			// Main window columns width
@@ -347,11 +365,10 @@ bool Shortcut::load(LPTSTR* input) {
 					if (!*next_sep) {
 						break;
 					}
-					int cx = StrToInt(next_sep);
+					int cx = StrToInt(parseCommaSepArg(next_sep));
 					if (cx >= 0) {
 						e_column_widths[i] = cx;
 					}
-					skipUntilComma(next_sep);
 				}
 				break;
 			
@@ -474,28 +491,27 @@ void Shortcut::execute(bool from_hotkey) {
 		m_usage_count++;
 	}
 	
-	BYTE keyboard_state[256];
-	GetKeyboardState(keyboard_state);
+	ExecutionContext context;
+	GetKeyboardState(context.keyboard_state);
+	context.keep_down_mod_code = 0;
 	
 	// Typing simulation requires the application has the keyboard focus
-	HWND input_window;
-	DWORD input_thread;
-	Keystroke::catchKeyboardFocus(&input_window, &input_thread);
+	Keystroke::catchKeyboardFocus(&context.input_window, &context.input_thread);
 	
 	const bool can_release_special_keys = from_hotkey && canReleaseSpecialKeys();
 	
 	if (can_release_special_keys) {
 		BYTE new_keyboard_state[256];
-		memcpy(new_keyboard_state, keyboard_state, sizeof(keyboard_state));
+		memcpy(new_keyboard_state, context.keyboard_state, sizeof(context.keyboard_state));
 		
 		// Simulate special keys release via SetKeyboardState, to avoid side effects.
 		// Avoid to leave Alt and Shift down, alone, at the same time
 		// because it is one of Windows keyboard layout shortcut:
 		// simulate Ctrl down, release Alt and Shift, then release Ctrl
 		bool release_control = false;
-		if ((keyboard_state[VK_MENU] & keyDownMask) &&
-				(keyboard_state[VK_SHIFT] & keyDownMask) &&
-				!(keyboard_state[VK_CONTROL] & keyDownMask)) {
+		if ((context.keyboard_state[VK_MENU] & keyDownMask) &&
+				(context.keyboard_state[VK_SHIFT] & keyDownMask) &&
+				!(context.keyboard_state[VK_CONTROL] & keyDownMask)) {
 			release_control = true;
 			keybdEvent(VK_CONTROL, /* down= */ true);
 			new_keyboard_state[VK_CONTROL] = keyDownMask;
@@ -520,10 +536,10 @@ void Shortcut::execute(bool from_hotkey) {
 		// Required because the launched program
 		// can be a script that simulates keystrokes
 		if (can_release_special_keys) {
-			releaseSpecialKeys(keyboard_state, /* keep_down_mod_code= */ 0);
+			releaseSpecialKeys(context.keyboard_state, /* keep_down_mod_code= */ 0);
 		}
 		
-		if (!m_support_file_open || !setDialogBoxDirectory(input_window, m_command)) {
+		if (!m_support_file_open || !setDialogBoxDirectory(context.input_window, m_command)) {
 			clipboardToEnvironment();
 			ShellExecuteThread* const shell_execute_thread = new ShellExecuteThread(
 				m_command, m_directory, m_show_option);
@@ -533,153 +549,55 @@ void Shortcut::execute(bool from_hotkey) {
 		
 	case Shortcut::Type::Text:
 		// Special keys to keep down across commands.
-		// Unsided MOD_* constants bitmask.
-		DWORD keep_down_mod_code = 0;
 		
-		enum class Kind {
-			None,
-			Text,
-			Keystroke,
-		};
-		Kind lastKind = Kind::None;
+		LastTextExecution lastTextExecution = LastTextExecution::None;
 		
 		// Send the text to the window
-		bool backslash = false;
+		bool escaping = false;  // whether the next character is '\'-escaped
 		LPCTSTR text = m_text;
 		for (size_t i = 0; text[i]; i++) {
 			const WORD c = static_cast<WORD>(text[i]);
 			if (c == _T('\n')) {
-				// Redundant with '\r'.
+				// Skip '\n': redundant with the expected '\r'.
 				continue;
 			}
 			
-			if (!backslash && c == _T('\\')) {
-				backslash = true;
+			if (!escaping && c == _T('\\')) {
+				escaping = true;
 				continue;
 			}
 			
-			if (backslash || c != _T('[')) {
+			if (escaping || c != _T('[')) {
 				// Regular character: send WM_CHAR.
-				if (lastKind != Kind::Text) {
+				if (lastTextExecution != LastTextExecution::Text) {
+					lastTextExecution = LastTextExecution::Text;
 					sleepBackground(0);
 				}
-				lastKind = Kind::Text;
 				
-				backslash = false;
+				escaping = false;
 				const WORD vkMask = VkKeyScan(c);
-				PostMessage(input_window, WM_CHAR, c,
+				PostMessage(context.input_window, WM_CHAR, c,
 					MAKELPARAM(1, MapVirtualKey(LOBYTE(vkMask), 0)));
 				
 			} else {
-				// Inline shortcut, or inline command line execution
+				// '[': inline shortcut, or inline command line execution
 				
-				// Go to the end of the shortcut, and serialize it
+				// Extract the inside of the shortcut.
+				// Take into account '\' escaping to detect the end of the shortcut, but do not unescape.
 				const LPCTSTR shortcut_start = text + i + 1;
 				const TCHAR *shortcut_end = shortcut_start;
-				while (*shortcut_end && (shortcut_end[-1] == _T('\\') || shortcut_end[0] != _T(']'))) {
+				bool escaping2 = false;
+				while (*shortcut_end && !(*shortcut_end == _T(']') && !escaping2)) {
+					escaping2 = !escaping2 && (*shortcut_end == _T('\\'));
 					shortcut_end++;
 				}
 				if (!*shortcut_end) {
+					// Non-terminated command.
 					break;
 				}
 				
-				String inside;
-				bool backslash2 = false;
-				for (const TCHAR *pc = shortcut_start; pc < shortcut_end; pc++) {
-					if (backslash2) {
-						backslash2 = false;
-						inside += *pc;
-					} else if (*pc == _T('\\')) {
-						backslash2 = true;
-					} else {
-						inside += *pc;
-					}
-				}
-				
-				if (inside.isEmpty()) {
-					// Nothing: catch the focus
-					
-					lastKind = Kind::None;
-					commandEmpty(&input_thread, &input_window);
-					
-				} else if (*shortcut_start == _T('[') && *shortcut_end == _T(']')) {
-					// Double brackets: [[command line]]
-					
-					shortcut_end++;
-					
-					// Required because the launched program
-					// can be a script that simulates keystrokes
-					releaseSpecialKeys(keyboard_state, keep_down_mod_code);
-					
-					clipboardToEnvironment();
-					shellExecuteCmdLine(static_cast<LPCTSTR>(inside) + 1, /* directory= */ nullptr, SW_SHOWDEFAULT);
-					
-				} else if (*shortcut_start == _T('{') && shortcut_end[-1] == _T('}')) {
-					// Braces: [{command}]
-					
-					inside[inside.getLength() - 1] = _T('\0');
-					const LPCTSTR command = inside + 1;
-					
-					LPTSTR arg = const_cast<LPTSTR>(command);
-					while (*arg && *arg != _T(',')) {
-						arg++;
-					}
-					*arg++ = _T('\0');
-					
-					if (!lstrcmpi(command, _T("Wait"))) {
-						commandWait(arg);
-					} else if (!lstrcmpi(command, _T("Focus"))) {
-						if (!commandFocus(&input_thread, &input_window, arg)) {
-							break;
-						}
-					} else if (!lstrcmpi(command, _T("Copy"))) {
-						commandCopy(arg);
-					} else if (!lstrcmpi(command, _T("MouseButton"))) {
-						commandMouseButton(arg);
-					} else if (!lstrcmpi(command, _T("MouseMoveTo"))) {
-						const POINT origin_point = { 0, 0 };
-						commandMouseMove(origin_point, arg);
-					} else if (!lstrcmpi(command, _T("MouseMoveToFocus"))) {
-						RECT rcFocusedWindow;
-						const HWND hwndOwner = GetAncestor(input_window, GA_ROOT);
-						if (!hwndOwner || !GetWindowRect(hwndOwner, &rcFocusedWindow)) {
-							rcFocusedWindow.left = rcFocusedWindow.top = 0;
-						}
-						commandMouseMove((const POINT&)rcFocusedWindow, arg);
-					} else if (!lstrcmpi(command, _T("MouseMoveBy"))) {
-						POINT origin_point;
-						GetCursorPos(&origin_point);
-						commandMouseMove(origin_point, arg);
-					} else if (!lstrcmpi(command, _T("MouseWheel"))) {
-						commandMouseWheel(arg);
-					} else if (!lstrcmpi(command, _T("KeysDown"))) {
-						commandKeysDown(keyboard_state, &keep_down_mod_code, arg);
-					}
-				} else {
-					// Simple brackets: [keystroke]
-					
-					releaseSpecialKeys(keyboard_state, keep_down_mod_code);
-					
-					lastKind = Kind::Keystroke;
-					Keystroke ks;
-					
-					if (*shortcut_start == _T('|') && shortcut_end[-1] == _T('|')) {
-						// Brackets and pipe: [|characters as keystroke|]
-						
-						inside[inside.getLength() - 1] = _T('\0');
-						for (LPCTSTR psz = static_cast<LPCTSTR>(inside); *++psz;) {
-							if (*psz != _T('\n')) {  // '\n' is redundant with '\r'.
-								simulateCharacter(*psz, keep_down_mod_code);
-							}
-						}
-						
-					} else {
-						// Simple brackets: [keystroke]
-						
-						ks.parseDisplayName(inside.get());
-						ks.m_sided_mod_code |= keep_down_mod_code;
-						ks.simulateTyping(/* already_down_mod_code= */ keep_down_mod_code);
-					}
+				if (!executeSpecialCommand(shortcut_start, shortcut_end, &context)) {
+					break;
 				}
 				
 				i = shortcut_end - text;
@@ -687,9 +605,103 @@ void Shortcut::execute(bool from_hotkey) {
 		}
 		
 		// Release all special keys kept down in case the shortcut doesn't end with [{KeysDown}].
-		releaseSpecialKeys(keyboard_state, /* keep_down_mode_code= */ ~keep_down_mod_code);
+		releaseSpecialKeys(context.keyboard_state, /* keep_down_mode_code= */ ~context.keep_down_mod_code);
 		break;
 	}
+}
+
+
+bool executeSpecialCommand(LPCTSTR shortcut_start, LPCTSTR& shortcut_end, ExecutionContext* context) {
+	String inside(shortcut_start, static_cast<int>(shortcut_end - shortcut_start));
+	
+	if (inside.isEmpty()) {
+		// []
+		
+		context->lastTextExecution = LastTextExecution::None;
+		commandEmpty(context);
+		return true;
+	}
+	
+	if (*shortcut_start == _T('[') && *shortcut_end == _T(']')) {
+		// Double brackets: [[command line]]
+		
+		shortcut_end++;
+		const LPTSTR command_line = &inside[1];
+		unescape(command_line);
+		
+		executeCommandLine(command_line, context);
+		
+	} else if (*shortcut_start == _T('{') && shortcut_end[-1] == _T('}')) {
+		// Braces: [{command}]
+		
+		inside[inside.getLength() - 1] = _T('\0');
+		LPTSTR arg = &inside[1];
+		const LPCTSTR command = parseCommaSepArgUnescape(arg);
+		
+		if (!lstrcmpi(command, _T("Wait"))) {
+			commandWait(arg);
+		} else if (!lstrcmpi(command, _T("Focus"))) {
+			return commandFocus(context, arg);
+		} else if (!lstrcmpi(command, _T("Copy"))) {
+			commandCopy(arg);
+		} else if (!lstrcmpi(command, _T("MouseButton"))) {
+			commandMouseButton(arg);
+		} else if (!lstrcmpi(command, _T("MouseMoveTo"))) {
+			const POINT origin_point = { 0, 0 };
+			commandMouseMove(origin_point, arg);
+		} else if (!lstrcmpi(command, _T("MouseMoveToFocus"))) {
+			RECT focused_window_rect;
+			const HWND hwnd_owner = GetAncestor(context->input_window, GA_ROOT);
+			if (!hwnd_owner || !GetWindowRect(hwnd_owner, &focused_window_rect)) {
+				focused_window_rect.left = focused_window_rect.top = 0;
+			}
+			commandMouseMove(reinterpret_cast<const POINT&>(focused_window_rect), arg);
+		} else if (!lstrcmpi(command, _T("MouseMoveBy"))) {
+			POINT origin_point;
+			GetCursorPos(&origin_point);
+			commandMouseMove(origin_point, arg);
+		} else if (!lstrcmpi(command, _T("MouseWheel"))) {
+			commandMouseWheel(arg);
+		} else if (!lstrcmpi(command, _T("KeysDown"))) {
+			commandKeysDown(context, arg);
+		}
+	} else {
+		// Simple brackets: [keystroke]
+		
+		Shortcut::releaseSpecialKeys(context->keyboard_state, context->keep_down_mod_code);
+		
+		context->lastTextExecution = LastTextExecution::Keystroke;
+		
+		if (*shortcut_start == _T('|') && shortcut_end[-1] == _T('|')) {
+			// Brackets and pipe: [|characters as keystroke|]
+			
+			inside[inside.getLength() - 1] = _T('\0');
+			for (LPCTSTR chr_ptr = inside; *++chr_ptr;) {
+				if (*chr_ptr != _T('\n')) {  // '\n' is redundant with '\r'.
+					simulateCharacter(*chr_ptr, context->keep_down_mod_code);
+				}
+			}
+			
+		} else {
+			// Simple brackets: [keystroke]
+			
+			Keystroke keystroke;
+			keystroke.parseDisplayName(inside.get());
+			keystroke.m_sided_mod_code |= context->keep_down_mod_code;
+			keystroke.simulateTyping(/* already_down_mod_code= */ context->keep_down_mod_code);
+		}
+	}
+	
+	return true;
+}
+
+
+void executeCommandLine(LPCTSTR command, ExecutionContext* context) {
+	// Required because the command can be a script that simulates keystrokes.
+	Keystroke::releaseSpecialKeys(context->keyboard_state, context->keep_down_mod_code);
+	
+	clipboardToEnvironment();
+	shellExecuteCmdLine(command, /* directory= */ nullptr, SW_SHOWDEFAULT);
 }
 
 
@@ -756,10 +768,9 @@ void focusWindow(HWND hwnd) {
 }
 
 
-void commandEmpty(DWORD* input_thread, HWND* input_window) {
+void commandEmpty(ExecutionContext* context) {
 	sleepBackground(100);
-	Keystroke::detachKeyboardFocus(*input_thread);
-	Keystroke::catchKeyboardFocus(input_window, input_thread);
+	Keystroke::resetKeyboardFocus(&context->input_window, &context->input_thread);
 }
 
 
@@ -768,31 +779,29 @@ void commandWait(LPTSTR arg) {
 }
 
 
-bool commandFocus(DWORD* input_thread, HWND* input_window, LPTSTR arg) {
-	// Apply the delay
-	const int delay = StrToInt(arg);
-	skipUntilComma(arg);
-	sleepBackground(delay);
+bool commandFocus(ExecutionContext* context, LPTSTR arg) {
+	// Parse and apply the delay.
+	const int delay_ms = StrToInt(parseCommaSepArgUnescape(arg));
+	sleepBackground(delay_ms);
 	
-	// Find the given window
-	const bool bIgnoreNotFound = (arg[0] == _T('!'));
-	if (bIgnoreNotFound) {
+	// Unescape the window name argument. Detect the '!' prefix.
+	const bool ignore_not_found = (arg[0] == _T('!'));
+	if (ignore_not_found) {
 		arg++;
 	}
-	const LPCTSTR pszWindowName = arg;
-	skipUntilComma(arg, true);
+	const LPCTSTR window_name = parseCommaSepArgUnescape(arg);
 	
-	if (*pszWindowName) {
-		const HWND hwndTarget = findWindowByName(pszWindowName);
-		if (hwndTarget) {
-			focusWindow(hwndTarget);
-		} else if (!bIgnoreNotFound) {
+	if (*window_name) {
+		const HWND hwnd_target = findWindowByName(window_name);
+		if (hwnd_target) {
+			// Window found: give it the focus.
+			focusWindow(hwnd_target);
+		} else if (!ignore_not_found) {
 			return false;
 		}
 	}
 	
-	Keystroke::detachKeyboardFocus(*input_thread);
-	Keystroke::catchKeyboardFocus(input_window, input_thread);
+	Keystroke::resetKeyboardFocus(&context->input_window, &context->input_thread);
 	return true;
 }
 
@@ -839,9 +848,8 @@ void commandMouseButton(LPTSTR arg) {
 
 
 void commandMouseMove(POINT origin_point, LPTSTR arg) {
-	origin_point.x += StrToInt(arg);
-	skipUntilComma(arg);
-	origin_point.y += StrToInt(arg);
+	origin_point.x += StrToInt(parseCommaSepArgUnescape(arg));
+	origin_point.y += StrToInt(parseCommaSepArgUnescape(arg));
 	SetCursorPos(origin_point.x, origin_point.y);
 	sleepBackground(0);
 }
@@ -856,22 +864,22 @@ void commandMouseWheel(LPTSTR arg) {
 }
 
 
-void commandKeysDown(BYTE keyboard_state[], DWORD* keep_down_mod_code, LPTSTR arg) {
+void commandKeysDown(ExecutionContext* context, LPTSTR arg) {
 	Keystroke keep_down_keystroke;
 	keep_down_keystroke.parseDisplayName(arg);
-	*keep_down_mod_code = keep_down_keystroke.getUnsidedModCode();
+	context->keep_down_mod_code = keep_down_keystroke.getUnsidedModCode();
 	
 	// Release the old special keys.
-	Keystroke::releaseSpecialKeys(keyboard_state, /* keep_down_mod_code= */ 0);
+	Keystroke::releaseSpecialKeys(context->keyboard_state, /* keep_down_mod_code= */ 0);
 	
 	// Press the new special keys.
 	for (int i = 0; i < arrayLength(e_special_keys); i++) {
 		const SpecialKey& special_key = e_special_keys[i];
-		if (*keep_down_mod_code & special_key.mod_code) {
+		if (context->keep_down_mod_code & special_key.mod_code) {
 			// Press the left instance of the special key.
 			BYTE vk_left = special_key.vk_left;
 			Keystroke::keybdEvent(vk_left, /* down= */ true);
-			keyboard_state[vk_left] = keyboard_state[special_key.vk] = keyDownMask;
+			context->keyboard_state[vk_left] = context->keyboard_state[special_key.vk] = keyDownMask;
 		}
 	}
 }

@@ -194,12 +194,12 @@ Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, l
 <p>Si non-vide, <i>délai</i> est le nombre de millisecondes qu’il faudra attendre avant d’avoir activé la fenêtre. En effet, il peut être utile de laisser à la fenêtre le temps d’apparaître avant de lui envoyer du texte. Si <i>délai</i> n’est pas spécifié, le délai d’attente est nul.</p>
 <p>Si <i>fenêtre</i> est vide, Clavier+ détecte la nouvelle fenêtre active. Les futures frappes de touches seront envoyées à cette fenêtre. Utile si une frappe de touches affiche une nouvelle fenêtre dans laquelle il faut écrire. Exemple&nbsp;:<br>
 <kbd>[{Focus}]</kbd> ou <kbd>[{Focus,200}]</kbd></p>
-<p>Si <i>fenêtre</i> n’est pas vide, Clavier+ active la première fenêtre qui a le nom spécifié. Le nom peut contenir les <em>wildcards</em> <kbd>*</kbd> et <kbd>?</kbd>. Deux antislashs consécutifs doivent être utilisés pour échapper les virgules. Exemple&nbsp;:<br>
-<kbd>[{Focus,50,* - Microsoft Word}]</kbd> ou <kbd>[{Focus,,Titre\\, sous-titre}]</kbd></p>
-<p>Par défaut, le raccourci est stoppé si la fenêtre n’est pas trouvée. Pour forcer la poursuite du raccourci même si la fenêtre n’est pas trouvée, ajoutez un point d’exclamation <kbd>!</kbd> devant le titre de la fenêtre à chercher. Pour chercher une fenêtre dont le titre commence par <kbd>!</kbd>, il faut l’échapper avec deux antislashs. Exemples&nbsp;:<br>
+<p>Si <i>fenêtre</i> n’est pas vide, Clavier+ active la première fenêtre qui a le nom spécifié. Le nom peut contenir les <em>wildcards</em> <kbd>*</kbd> et <kbd>?</kbd>. Échappez les virgules avec un antislash comme s’il s’agissait d’un <a href="#text-special-chars">caractère spécial</a>. Exemple&nbsp;:<br>
+<kbd>[{Focus,50,* - Microsoft Word}]</kbd> ou <kbd>[{Focus,,Titre\, sous-titre}]</kbd></p>
+<p>Par défaut, le raccourci est stoppé si la fenêtre n’est pas trouvée. Pour forcer la poursuite du raccourci même si la fenêtre n’est pas trouvée, ajoutez un point d’exclamation <kbd>!</kbd> devant le titre de la fenêtre à chercher. Pour chercher une fenêtre dont le titre commence par <kbd>!</kbd>, échappez le point d’exclamation avec un antislash comme s’il s’agissait d’un <a href="#text-special-chars">caractère spécial</a>. Exemples&nbsp;:<br>
 <kbd>[{Focus,0,*Internet Explorer}][Alt+F4]</kbd> quitte la première fenêtre d’Internet Explorer trouvée, mais ne fait rien si Internet Explorer n’est pas lancé.<br>
 <kbd>[{Focus,0,!Sans titre*}]Test</kbd> écrit <kbd>Test</kbd> dans la fenêtre commençant par <kbd>Sans titre</kbd>, ou dans la fenêtre active si une telle fenêtre n’existe pas.<br>
-<kbd>[{Focus,0,\\!Attention!}]</kbd> active la fenêtre dont le titre est <kbd>!Attention!</kbd>.</p>
+<kbd>[{Focus,0,\!Attention!}]</kbd> active la fenêtre dont le titre est <kbd>!Attention!</kbd>.</p>
 <p>Noter que <kbd>[{Focus,100}]</kbd> est équivalent à <kbd>[]</kbd>.</p></dd>
 
 <dt><kbd>[{Copy,<i>texte</i>}]</kbd></dt>
