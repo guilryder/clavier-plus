@@ -98,18 +98,16 @@ void getDlgItemText(HWND hdlg, UINT id, String* output) {
 }
 
 
-static WNDPROC s_prcLabel;
-static LRESULT CALLBACK prcWebLink(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK prcWebLink(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclass_id, DWORD_PTR ref_data);
 
 void initializeWebLink(HWND hdlg, UINT control_id, LPCTSTR link) {
 	const HWND hwnd = GetDlgItem(hdlg, control_id);
-	SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(link));
-	s_prcLabel = SubclassWindow(hwnd, prcWebLink);
+	subclassWindow(hwnd, prcWebLink, /* ref_data= */ reinterpret_cast<DWORD_PTR>(link));
 }
 
 // Window procedure for dialog box controls displaying an URL.
-// The link itself is stored in GWL_USERDATA.
-LRESULT CALLBACK prcWebLink(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+// The link itself is stored in ref_data.
+LRESULT CALLBACK prcWebLink(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR UNUSED(subclass_id), DWORD_PTR ref_data) {
 	switch (message) {
 		case WM_SETCURSOR:
 			SetCursor(LoadCursor(/* hInstance= */ NULL, IDC_HAND));
@@ -122,14 +120,14 @@ LRESULT CALLBACK prcWebLink(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 			ShellExecute(
 				hwnd,
 				/* lpOperation= */ nullptr,
-				/* lpFile= */ reinterpret_cast<LPCTSTR>(GetWindowLongPtr(hwnd, GWLP_USERDATA)),
+				/* lpFile= */ reinterpret_cast<LPCTSTR>(ref_data),
 				/* lpParameters= */ nullptr,
 				/* lpDirectory= */ nullptr,
 				SW_SHOWDEFAULT);
 			return 0;
 	}
 	
-	return CallWindowProc(s_prcLabel, hwnd, message, wParam, lParam);
+	return DefSubclassProc(hwnd, message, wParam, lParam);
 }
 
 

@@ -61,7 +61,7 @@ static void runGui(CMDLINE_OPTION cmdopt);
 static CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch);
 static void processCmdLineAction(CMDLINE_OPTION cmdopt);
 
-static LRESULT CALLBACK prcInvisible(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK prcInvisible(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclass_id, DWORD_PTR ref_data);
 
 static void updateTrayIcon(DWORD message);
 
@@ -512,7 +512,7 @@ void processCmdLineAction(CMDLINE_OPTION cmdopt) {
 // Invisible window:
 // - quit when destroyed
 // - handle traybar icon notifications
-LRESULT CALLBACK prcInvisible(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK prcInvisible(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR UNUSED(subclass_id), DWORD_PTR UNUSED(ref_data)) {
 	if (message == WM_DESTROY) {
 Destroy:
 		PostQuitMessage(0);
@@ -582,7 +582,7 @@ Destroy:
 		return true;
 	}
 	
-	return DefWindowProc(hwnd, message, wParam, lParam);
+	return DefSubclassProc(hwnd, message, wParam, lParam);
 }
 
 

@@ -52,9 +52,8 @@ extern HWND e_modal_dialog;
 extern bool e_icon_visible;
 
 
-inline WNDPROC subclassWindow(HWND hwnd, WNDPROC new_window_proc) {
-	return reinterpret_cast<WNDPROC>(SetWindowLongPtr(hwnd, GWLP_WNDPROC,
-		reinterpret_cast<LONG_PTR>(new_window_proc)));
+inline void subclassWindow(HWND hwnd, SUBCLASSPROC subclass_proc, DWORD_PTR ref_data = 0) {
+	SetWindowSubclass(hwnd, subclass_proc, /* uIdSubclass= */ 0, ref_data);
 }
 
 

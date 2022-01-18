@@ -74,9 +74,7 @@ static INT_PTR CALLBACK prcLanguage(HWND hdlg, UINT message, WPARAM wParam, LPAR
 static INT_PTR CALLBACK prcAbout(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 // IDCIMG_PROGRAMS procedure.
-static LRESULT CALLBACK prcProgramsTarget(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-static WNDPROC s_prcProgramsTarget;
+static LRESULT CALLBACK prcProgramsTarget(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclass_id, DWORD_PTR ref_data);
 
 // ID of the next program or app menu item to add to the "Add" sub-menus.
 static UINT s_add_menu_next_id;
@@ -1025,7 +1023,7 @@ INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) 
 				
 				s_process_gui_events = false;
 				
-				s_prcProgramsTarget = subclassWindow(GetDlgItem(hdlg, IDCIMG_PROGRAMS), prcProgramsTarget);
+				subclassWindow(GetDlgItem(hdlg, IDCIMG_PROGRAMS), prcProgramsTarget);
 				
 				s_hwnd_list = GetDlgItem(hdlg, IDCLST);
 				ListView_SetExtendedListViewStyle(s_hwnd_list, LVS_EX_FULLROWSELECT);
@@ -1403,7 +1401,7 @@ INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) 
 }
 
 
-LRESULT CALLBACK prcProgramsTarget(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK prcProgramsTarget(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR UNUSED(subclass_id), DWORD_PTR UNUSED(ref_data)) {
 	switch (message) {
 		case WM_LBUTTONDOWN:
 			if (s_shortcut) {
@@ -1465,7 +1463,7 @@ LRESULT CALLBACK prcProgramsTarget(HWND hwnd, UINT message, WPARAM wParam, LPARA
 			break;
 	}
 	
-	return CallWindowProc(s_prcProgramsTarget, hwnd, message, wParam, lParam);
+	return DefSubclassProc(hwnd, message, wParam, lParam);
 }
 
 

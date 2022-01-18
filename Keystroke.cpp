@@ -27,11 +27,8 @@ static bool s_reset_keystroke;
 // Currently edited keystroke
 static Keystroke s_keystroke;
 
-// Default window proc of edit controls. Used by prcKeystrokeCtl.
-static WNDPROC s_prcKeystrokeCtl;
-
 // Keystroke dialog box edit box.
-static LRESULT CALLBACK prcKeystrokeCtl(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK prcKeystrokeCtl(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclass_id, DWORD_PTR ref_data);
 
 // Dialog box procedure for showEditDialog().
 static INT_PTR CALLBACK prcEditDialog(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam);
@@ -391,7 +388,7 @@ INT_PTR CALLBACK prcEditDialog(HWND hdlg, UINT message, WPARAM wParam, LPARAM UN
 				
 				// Subclass the keystroke control. Display the initial keystroke name.
 				const HWND hwnd_keystroke = GetDlgItem(hdlg, IDCTXT);
-				s_prcKeystrokeCtl = subclassWindow(hwnd_keystroke, prcKeystrokeCtl);
+				subclassWindow(hwnd_keystroke, prcKeystrokeCtl);
 				PostMessage(hwnd_keystroke, WM_KEYSTROKE, 0,0);
 				
 				CheckDlgButton(hdlg, IDCCHK_DISTINGUISH_LEFT_RIGHT, s_keystroke.m_sided);
@@ -475,7 +472,7 @@ INT_PTR CALLBACK prcSendKeysDialog(HWND hdlg, UINT message, WPARAM wParam, LPARA
 				centerParent(hdlg);
 				
 				const HWND hctl = GetDlgItem(hdlg, IDCTXT);
-				s_prcKeystrokeCtl = subclassWindow(hctl, prcKeystrokeCtl);
+				subclassWindow(hctl, prcKeystrokeCtl);
 				PostMessage(hctl, WM_KEYSTROKE, 0,0);
 			}
 			return true;
@@ -495,7 +492,7 @@ INT_PTR CALLBACK prcSendKeysDialog(HWND hdlg, UINT message, WPARAM wParam, LPARA
 }
 
 
-LRESULT CALLBACK prcKeystrokeCtl(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK prcKeystrokeCtl(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR UNUSED(subclass_id), DWORD_PTR UNUSED(ref_data)) {
 	bool down = false;
 	
 	switch (message) {
@@ -580,5 +577,5 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 		return 0;
 	}
 	
-	return CallWindowProc(s_prcKeystrokeCtl, hwnd, message, wParam, lParam);
+	return DefSubclassProc(hwnd, message, wParam, lParam);
 }
