@@ -80,7 +80,11 @@ inline bool reportFailedAssert(const char* message) {
 }
 
 #else
+#ifdef __GNUC__
+#define assert(expression)
+#else
 #define assert(expression)  __noop
+#endif
 #endif
 
 // Memory leaks detection
@@ -101,9 +105,11 @@ inline bool reportFailedAssert(const char* message) {
 #error Non-Unicode is no longer supported
 #endif
 
-
+#ifdef __GNUC__
+#define SUPPRESS_WARNING(code)
+#else
 #define SUPPRESS_WARNING(code)  __pragma(warning(suppress: code))
-
+#endif
 #define toBool(value)  ((value) != 0)
 #define UNUSED(name)  SUPPRESS_WARNING(4100) name
 

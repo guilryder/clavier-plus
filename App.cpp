@@ -84,9 +84,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #else
 
+#ifdef __GNUC__
+namespace std { void __throw_bad_function_call(void) {ExitProcess(1);} }
+// entry point needs to be "C" for GNU ld...
+extern "C" void WinMainCRTStartup() {
+	app::entryPoint();
+}
+#else
 void WinMainCRTStartup() {
 	app::entryPoint();
 }
+#endif
 
 extern "C" void abort() {
 	ExitProcess(3);

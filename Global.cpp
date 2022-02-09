@@ -27,8 +27,11 @@
 #include <msi.h>
 #include <tlhelp32.h>
 #include <psapi.h>
+
+#ifndef NO_PROPSYS
 #include <propsys.h>
 #include <propvarutil.h>
+#endif
 
 #include <dlgs.h>
 #undef psh1
@@ -542,7 +545,7 @@ bool SetDialogBoxDirectory::tryMsOfficeFileOpen() {
 bool SetDialogBoxDirectory::tryWindowsFileOpen() {
 	// Check for standard Get(Open|Save)FileName dialog box
 	// - Must answer to CDM_GETSPEC message
-	if (SendMessage(m_hwnd, CDM_GETSPEC, 0, /* buffer= */ NULL) <= 0) {
+	if (SendMessage(m_hwnd, CDM_GETSPEC, 0, /* buffer=NULL*/ 0) <= 0) {
 		return false;
 	}
 	
@@ -605,7 +608,7 @@ void resolveLinkFile(LPCTSTR link_file, Shortcut* shortcut) {
 			return;
 		}
 	}
-	
+#ifndef __GNUC__ // Not working on MingW64...
 	// Resolve the shortcut using the IUniformResourceLocator and IPersistFile interfaces
 	CoPtr<IUniformResourceLocator> url_locator(CLSID_InternetShortcut);
 	if (url_locator) {
@@ -620,7 +623,7 @@ void resolveLinkFile(LPCTSTR link_file, Shortcut* shortcut) {
 			}
 		}
 	}
-	
+#endif
 	// Resolve the shortcut using the IShellLink and IPersistFile interfaces
 	CoPtr<IShellLink> shell_link(CLSID_ShellLink);
 	if (shell_link) {
@@ -654,6 +657,7 @@ void resolveLinkFile(LPCTSTR link_file, Shortcut* shortcut) {
 
 
 void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST pidl)> app_callback) {
+#ifndef NO_PROPSYS
 	constexpr ULONG kMaxAppItemCount = 100;
 	constexpr size_t kMaxAppIdLength = 1000;
 	
@@ -748,6 +752,7 @@ void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST p
 		
 		app_callback(app_name, app_id, app_pidl);
 	}
+#endif // NO_PROPSYS
 }
 
 

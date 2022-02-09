@@ -19,6 +19,7 @@
 // Implement the intrinsices used by the application.
 // Needed to remove all dependencies to Visual C++ runtime DLLs.
 
+#include <stdint.h>
 
 extern "C" void* memset(void* dest, int value, size_t size);
 extern "C" void* memcpy(void* dest, const void* src, size_t size);

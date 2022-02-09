@@ -226,7 +226,7 @@ private:
 	static void releaseKey(BYTE vk, BYTE keyboard_state[]);
 	
 	// Retrieves the name of a virtual key.
-	static void Keystroke::loadVkKeyName(BYTE vk, String* output);
+	static void loadVkKeyName(BYTE vk, String* output);
 	
 	// Name of each virtual key, empty if unknown.
 	static String s_vk_key_names[256];
