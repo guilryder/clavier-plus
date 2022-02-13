@@ -86,7 +86,7 @@ public:
 	}
 	
 private:
-	friend class CoPtr;
+	template<class U> friend class CoPtr;
 	
 	explicit CoPtr(T* ptr) : m_ptr(ptr) {}
 	

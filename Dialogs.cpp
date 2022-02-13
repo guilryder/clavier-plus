@@ -1818,7 +1818,7 @@ DWORD WINAPI threadGetFileIcon(GETFILEICON& gfi) {
 
 void Shortcut::findExecutable(LPTSTR executable) {
 	TCHAR file[MAX_PATH];
-	StrCpyN(file, m_command, arrayLength(file));
+	lstrcpyn(file, m_command, arrayLength(file));
 	PathRemoveArgs(file);
 	findFullPath(file, executable);
 }

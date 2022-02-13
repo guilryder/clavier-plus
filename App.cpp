@@ -84,7 +84,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #else
 
-void WinMainCRTStartup() {
+extern "C" void WinMainCRTStartup() {
 	app::entryPoint();
 }
 

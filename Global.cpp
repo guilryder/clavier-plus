@@ -542,13 +542,13 @@ bool SetDialogBoxDirectory::tryMsOfficeFileOpen() {
 bool SetDialogBoxDirectory::tryWindowsFileOpen() {
 	// Check for standard Get(Open|Save)FileName dialog box
 	// - Must answer to CDM_GETSPEC message
-	if (SendMessage(m_hwnd, CDM_GETSPEC, 0, /* buffer= */ NULL) <= 0) {
+	if (CommDlg_OpenSave_GetSpec(m_hwnd, /* psz= */ nullptr, /* cbmax= */ 0) <= 0) {
 		return false;
 	}
 	
 	// Two possible controls: file path edit box or combo box
 	static constexpr UINT control_ids[] = { cmb13, edt1 };
-	for (size_t control = 0; control < arrayLength(control_ids); control++) {
+	for (int control = 0; control < arrayLength(control_ids); control++) {
 		const HWND hwnd_control = GetDlgItem(m_hwnd, control_ids[control]);
 		if (!hwnd_control) {
 			continue;
