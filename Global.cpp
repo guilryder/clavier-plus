@@ -34,6 +34,14 @@
 #undef psh1
 #undef psh2
 
+#ifdef __GNUC__
+// Missing propsys.h declarations for MinGW.
+
+PSSTDAPI PropVariantToString(REFPROPVARIANT propvar, PWSTR psz, UINT cch);
+
+__CRT_UUID_DECL(IUniformResourceLocatorW, 0xCABB0DA0L, 0xDA57, 0x11CF, 0x99, 0x74, 0x00, 0x20, 0xAF, 0xD7, 0x97, 0x62);
+#endif  // __GNUC__
+
 const int kWindowClassBufferLength = 200;
 
 HANDLE e_heap;

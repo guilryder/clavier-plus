@@ -68,6 +68,10 @@
 
 #include <tchar.h>
 
+#ifdef __GNUC__
+#define __noop  ((void)0)
+#endif
+
 // Test-friendly assert().
 #ifdef _DEBUG
 #include <stdexcept>
@@ -102,7 +106,11 @@ inline bool reportFailedAssert(const char* message) {
 #endif
 
 
+#ifdef __GNUC__
+#define SUPPRESS_WARNING(code)
+#else
 #define SUPPRESS_WARNING(code)  __pragma(warning(suppress: code))
+#endif
 
 #define toBool(value)  ((value) != 0)
 #define UNUSED(name)  SUPPRESS_WARNING(4100) name

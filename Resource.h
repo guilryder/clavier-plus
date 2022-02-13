@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by Clavier.rc
 //
+#define ID_MANIFEST                     1
 #define IDCCMD_ABOUT                    3
 #define IDCCMD_LANGUAGE                 4
 #define IDCCMD_COPYLIST                 5
@@ -121,7 +122,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        135
+#define _APS_NEXT_RESOURCE_VALUE        136
 #define _APS_NEXT_COMMAND_VALUE         40067
 #define _APS_NEXT_CONTROL_VALUE         1061
 #define _APS_NEXT_SYMED_VALUE           104

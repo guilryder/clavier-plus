@@ -57,7 +57,11 @@ extern "C" int atexit(void (__cdecl*)()) {
 }
 
 namespace std {
+#ifdef __GNUC__
+void __throw_bad_function_call() {}
+#else
 void __cdecl _Xbad_function_call() {}
+#endif
 }
 
 #endif  // !_DEBUG
