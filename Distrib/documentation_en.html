@@ -179,7 +179,7 @@
 
 <h3 id="text-syncing">Synchronizing</h3>
 
-<p>If your shortcut executes several actions sequentially, you may need Clavier+ to wait a little time between them to let them fully execute. To insert a pause, write a pair of brackets: <kbd>[]</kbd>. Clavier+ will wait for 100 milliseconds, then detect the new focused window. You can also use the command <a href="#focus"><kbd>[{Focus}]</kbd></a> to specify the delay.
+<p>If your shortcut executes several actions sequentially, you may need Clavier+ to wait a little time between them to let them fully execute. To insert a pause, write a pair of brackets: <kbd>[]</kbd>. Clavier+ will wait for 100 milliseconds, then detect the new focused window. You can also use the command <a href="#Focus"><kbd>[{Focus}]</kbd></a> to specify the delay.
 
 <p>This last point is crucial. If you simulate a keystroke that displays a new window (for example <kbd>Ctrl + O</kbd> which pops out the <i>File/Open</i> dialog box), then write some text (for example a filename), you must indicate to Clavier+ that the text should be typed in the <em>new</em> window:<br>
 <kbd>[Ctrl+O][]MyFile.txt[ENTER]</kbd>
@@ -194,10 +194,10 @@ This shortcut copies to the clipboard the text currently selected, launches Note
 <p>The <a href="clavier_arrow_menu_EN.png">arrow menu</a> lists the supported commands:
 
 <dl>
-<dt><kbd>[{Wait,<i>duration</i>}]</kbd>
+<dt><kbd id="Wait">[{Wait,<i>duration</i>}]</kbd>
 <dd>Pauses for the specified duration, in milliseconds.
 
-<dt><kbd id="focus">[{Focus,<i>delay</i>,<i>window name</i>}]</kbd>
+<dt><kbd id="Focus">[{Focus,<i>delay</i>,<i>window name</i>}]</kbd>
 <dd><div>Detects or sets the new active window. The <i>window name</i> and <i>delay</i> parameters are optional.</div>
 <p>If not empty, <i>delay</i> is the number of milliseconds to wait before activating the window. It may be useful give enough time for the window to appear before trying to activate it. If <i>delay</i> is not specified, there is no delay.
 <p>If <i>window name</i> is empty, Clavier+ detects the new active window and will send the future keystrokes to it. Useful if a keystroke displays a new window in which the shortcut needs to write. Example:<br>
@@ -210,41 +210,43 @@ This shortcut copies to the clipboard the text currently selected, launches Note
 <kbd>[{Focus,0,\!Warning!}]</kbd> activates the first window titled <kbd>!Warning!</kbd>.
 <p>Note that <kbd>[{Focus,100}]</kbd> is equivalent to <kbd>[]</kbd>.
 
-<dt><kbd>[{FocusOrLaunch,<i>window name</i>,<i>command</i>,<i>delay</i>}]</kbd>
-<dd><div>Activates a window like <a href="#focus"><kbd>[{Focus,,<i>window name</i>}]</kbd></a>, or launches a program like <a href="#text-launching-program"><kbd>[[<i>command</i>]][{Wait,<i>delay</i>}]</kbd></a> if the window is not found.</div>
+<dt><kbd id="FocusOrLaunch">[{FocusOrLaunch,<i>window name</i>,<i>command</i>,<i>delay</i>}]</kbd>
+<dd><div>Activates a window like <a href="#Focus"><kbd>[{Focus,,<i>window name</i>}]</kbd></a>, or launches a program like <a href="#text-launching-program"><kbd>[[<i>command</i>]][{Wait,<i>delay</i>}]</kbd></a> if the window is not found.</div>
 <p>If not empty, <i>delay</i> is the number of milliseconds to wait after launching the program. If Clavier+ finds a matching window or <i>delay</i> is not specified, there is no delay.
-<p>Clavier+ activates the first window that matches <i>window name</i>; see <a href="#focus"><kbd>[{Focus}]</kbd></a> for the syntax (exception: <kbd>!</kbd> has no special meaning and does not need escaping).
+<p>Clavier+ activates the first window that matches <i>window name</i>; see <a href="#Focus"><kbd>[{Focus}]</kbd></a> for the syntax (exception: <kbd>!</kbd> has no special meaning and does not need escaping).
 <p>If Clavier+ does not find any matching window, it executes the specified command, then waits for the specified delay (if any).
 <p>Examples:<br>
 <kbd>[{FocusOrLaunch,* - Notepad,notepad.exe}]</kbd> activates a Notepad window if one exists, else launches Notepad.<br>
 <kbd>[{FocusOrLaunch,* - Notepad,notepad.exe,100}]Hello</kbd> activates a Notepad window if one exists, else launches Notepad and waits 100 milliseconds for the blank Notepad window to appear. Either way, after that, writes <kbd>Hello</kbd> in Notepad.<br>
 <kbd>[{FocusOrLaunch,one\,two,C:\\program.exe one\,two}]</kbd> activates the window titled <kbd>one,two</kbd> if it exists, else executes <kbd>C:\progam.exe one,two</kbd>.
 
-<dt><kbd>[{Copy,<i>text</i>}]</kbd>
+<dt><kbd id="Copy">[{Copy,<i>text</i>}]</kbd>
 <dd>Copies the specified text to the clipboard. Beware that this command is completely unrelated to the <kbd>Ctrl + C</kbd> clipboard shortcut, which copies the <i>selection</i> to the clipboard. Associated to the <kbd>Ctrl + V</kbd> keystroke, this command allows writing a long text quickly, or to write many times the same text. The following example writes five time the same text:<br>
 <kbd>[{Copy,A sentence to repeat five times. }][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd>
 
-<dt><kbd>[{MouseButton,<i>code</i>}]</kbd>
-<dd>Simulates a mouse button action. <i>code</i> specifies the button to modify and its new state. It is made of one or two letters.  The first one, mandatory, specifies the button to modify: <kbd>L</kbd> = left button, <kbd>M</kbd> =m iddle button, <kbd>R</kbd> = right button. The second letter, optional, specifies the action to perform: <kbd>D</kbd> = press the button down, <kbd>U</kbd> = release the button up. If the second letter is not specified, the button is pressed then released: this simulates a click. For example, to simulate a double-click with the left mouse button:<br>
-<kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>
+<dt><kbd id="MouseButton">[{MouseButton,<i>code</i>}]</kbd>
+<dd>Simulates a mouse button action. <i>code</i> specifies the button to modify and its new state. It is made of one or two letters.  The first one, mandatory, specifies the button to modify: <kbd>L</kbd> = left button, <kbd>M</kbd> = middle button, <kbd>R</kbd> = right button. The second letter, optional, specifies the action to perform: <kbd>D</kbd> = press the button down, <kbd>U</kbd> = release the button up. If the second letter is not specified, the button is pressed then released: this simulates a click.
+<p>Examples:<br>
+<kbd>[{MouseButton,L}][{MouseButton,L}]</kbd> simulates a double-click with the left mouse button<br>
+<kbd>[{MouseButton,RD}][{Wait,1000}][{MouseButton,RU}]</kbd> keeps the right mouse button down for 1 second
 
-<dt><kbd>[{MouseMoveTo,<i>x</i>,<i>y</i>}]</kbd>
+<dt><kbd id="MouseMoveTo">[{MouseMoveTo,<i>x</i>,<i>y</i>}]</kbd>
 <dd>Moves the mouse cursor to the given (x,y) position, specified in pixels relatively to the upper-left corner of the screen. For example, if you have a screen size of 1,024 &times; 768 pixels, the following command will move the cursor to the upper right corner:<br>
 <kbd>[{MouseMoveTo,1023,0}]</kbd>
 
-<dt><kbd>[{MouseMoveToFocus,<i>x</i>,<i>y</i>}]</kbd>
+<dt><kbd id="MouseMoveToFocus">[{MouseMoveToFocus,<i>x</i>,<i>y</i>}]</kbd>
 <dd>Moves the mouse cursor to the given (x,y) position, specified in pixels relatively to the upper-left corner of the active window. For example, to move the mouse over the system menu if the active window:<br>
 <kbd>[{MouseMoveToFocus,8,8}]</kbd>
 
-<dt><kbd>[{MouseMoveBy,<i>dx</i>,<i>dy</i>}]</kbd>
+<dt><kbd id="MouseMoveBy">[{MouseMoveBy,<i>dx</i>,<i>dy</i>}]</kbd>
 <dd>Moves the mouse cursor by the given amount of pixels. For example, to move the mouse by 10 pixels left and 3 pixels down:<br>
 <kbd>[{MouseMoveBy,-10,3}]</kbd>
 
-<dt><kbd>[{MouseWheel,<i>ticks</i>}]</kbd>
+<dt><kbd id="MouseWheel">[{MouseWheel,<i>ticks</i>}]</kbd>
 <dd>Simulates a mouse wheel scroll. <i>ticks</i> specifies the number of ticks to scroll by. A positive value will scroll downwards, a negative one will scroll upwards. For example, to scroll twice upwards:<br>
 <kbd>[{MouseWheel,-2}]</kbd>
 
-<dt><kbd>[{KeysDown,<i>keys</i>}]</kbd>
+<dt><kbd id="KeysDown">[{KeysDown,<i>keys</i>}]</kbd>
 <dd>Presses and keeps down some special keys. <i>keys</i> lists the special keys to press; Clavier+ ignores non-special keys. For example, to press <kbd>Ctrl + Alt</kbd>:<br>
 <kbd>[{KeysDown,Ctrl + Alt}]</kbd><br>
 Clavier+ keeps the keys down until the next <kbd>[{KeysDown}]</kbd> or the end of the shortcut, affecting all commands in between except regular text. For example, the following shortcut simulates <kbd>Ctrl + Shift + A</kbd>, <kbd>Ctrl + left click</kbd>, then writes <kbd>HELLO world</kbd>:<br>

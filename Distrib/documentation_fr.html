@@ -170,7 +170,7 @@
 
 <h3 id="text-syncing">Synchroniser</h3>
 
-<p>Si vous enchaînez plusieurs actions, il peut être utile de leur laisser le temps de s’exécuter. Pour cela écrivez une paire de crochets&nbsp;: <kbd>[]</kbd>. Cela attendra 100 millisecondes puis détectera la nouvelle fenêtre active. Vous pouvez aussi utiliser la commande <a href="#focus"><kbd>[{Focus}]</kbd></a>, qui offre un meilleur contrôle du délai.
+<p>Si vous enchaînez plusieurs actions, il peut être utile de leur laisser le temps de s’exécuter. Pour cela écrivez une paire de crochets&nbsp;: <kbd>[]</kbd>. Cela attendra 100 millisecondes puis détectera la nouvelle fenêtre active. Vous pouvez aussi utiliser la commande <a href="#Focus"><kbd>[{Focus}]</kbd></a>, qui offre un meilleur contrôle du délai.
 
 <p>Ce dernier point est très important. Si vous simulez une frappe de touches qui affiche une nouvelle fenêtre (par exemple <kbd>Ctrl + O</kbd> qui affiche la fenêtre <i>Ouvrir</i>) et qu’ensuite vous simulez de la frappe de texte (par exemple le nom d’un fichier), il faut indiquer à Clavier+ de taper le texte dans la <em>nouvelle</em> fenêtre affichée&nbsp;:<br>
 <kbd>[Ctrl+O][]MonFichier.txt[ENTREE]</kbd>
@@ -185,10 +185,10 @@ Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, l
 <p>Le <a href="clavier_arrow_menu_FR.png">menu flèche</a> liste les commandes prises en charge&nbsp;:
 
 <dl>
-<dt><kbd>[{Wait,<i>durée</i>}]</kbd>
+<dt><kbd id="Wait">[{Wait,<i>durée</i>}]</kbd>
 <dd>Faire une pause de la durée spécifiée, en millisecondes.
 
-<dt><kbd id="focus">[{Focus,<i>délai</i>,<i>fenêtre</i>}]</kbd>
+<dt><kbd id="Focus">[{Focus,<i>délai</i>,<i>fenêtre</i>}]</kbd>
 <dd><div>Détecter ou changer la fenêtre active. Les paramètres sont facultatifs.</div>
 <p>Si non-vide, <i>délai</i> est le nombre de millisecondes qu’il faudra attendre avant d’avoir activé la fenêtre. En effet, il peut être utile de laisser à la fenêtre le temps d’apparaître avant de lui envoyer du texte. Si <i>délai</i> n’est pas spécifié, le délai d’attente est nul.
 <p>Si <i>fenêtre</i> est vide, Clavier+ détecte la nouvelle fenêtre active. Les futures frappes de touches seront envoyées à cette fenêtre. Utile si une frappe de touches affiche une nouvelle fenêtre dans laquelle il faut écrire. Exemple&nbsp;:<br>
@@ -201,41 +201,43 @@ Ce raccourci copie le texte actuellement sélectionné dans le presse-papiers, l
 <kbd>[{Focus,0,\!Attention!}]</kbd> active la fenêtre dont le titre est <kbd>!Attention!</kbd>.
 <p>Noter que <kbd>[{Focus,100}]</kbd> est équivalent à <kbd>[]</kbd>.
 
-<dt><kbd>[{FocusOrLaunch,<i>fenêtre</i>,<i>commande</i>,<i>délai</i>}]</kbd>
-<dd><div>Active une fenêtre comme le ferait <a href="#focus"><kbd>[{Focus,,<i>fenêtre</i>}]</kbd></a>, ou bien lance un programme et attend comme le ferait <a href="#text-launching-program"><kbd>[[<i>commande</i>]][{Wait,<i>délai</i>}]</kbd></a> si la fenêtre demandée n’existe pas.</div>
+<dt><kbd id="FocusOrLaunch">[{FocusOrLaunch,<i>fenêtre</i>,<i>commande</i>,<i>délai</i>}]</kbd>
+<dd><div>Active une fenêtre comme le ferait <a href="#Focus"><kbd>[{Focus,,<i>fenêtre</i>}]</kbd></a>, ou bien lance un programme et attend comme le ferait <a href="#text-launching-program"><kbd>[[<i>commande</i>]][{Wait,<i>délai</i>}]</kbd></a> si la fenêtre demandée n’existe pas.</div>
 <p>Si non-vide, <i>délai</i> est le nombre de millisecondes que Clavier+ attend après avoir lancé le programme. Si Clavier+ ne trouve pas la fenêtre demandée ou si <i>délai</i> n’est pas spécifié, le délai d’attente est nul.
-<p>Clavier+ active la première fenêtre qui a le nom spécifié&nbsp;; voir <a href="#focus"><kbd>[{Focus}]</kbd></a> pour la syntaxe (exception&nbsp;: <kbd>!</kbd> n’a pas de signification particulière et n’a pas besoin d’être échappé).
+<p>Clavier+ active la première fenêtre qui a le nom spécifié&nbsp;; voir <a href="#Focus"><kbd>[{Focus}]</kbd></a> pour la syntaxe (exception&nbsp;: <kbd>!</kbd> n’a pas de signification particulière et n’a pas besoin d’être échappé).
 <p>Si Clavier+ ne trouve pas la fenêtre demandée, il exécute la commande spécifiée, puis le cas échéant fait une pause de la durée spécifiée.
 <p>Exemples&nbsp;:<br>
 <kbd>[{FocusOrLaunch,* - Bloc-notes,notepad.exe}]</kbd> active une fenêtre du Bloc-notes si une existe, ou bien lance le Bloc-notes.<br>
 <kbd>[{FocusOrLaunch,* - Bloc-notes,notepad.exe,100}]Bonjour</kbd> active une fenêtre du Bloc-notes si une existe, ou bien lance le Bloc-notes et attend 100 millisecondes. Dans les deux cas, écrit <kbd>Bonjour</kbd> dans le Bloc-notes.<br>
 <kbd>[{FocusOrLaunch,un\,deux,C:\\programme.exe un\,deux}]</kbd> active la fenêtre dont le titre est <kbd>un,deux</kbd> si elle existe, sinon exécute <kbd>C:\progamme.exe un,deux</kbd>.
 
-<dt><kbd>[{Copy,<i>texte</i>}]</kbd>
+<dt><kbd id="Copy">[{Copy,<i>texte</i>}]</kbd>
 <dd>Copier le texte spécifié dans le presse-papiers. Attention&nbsp;! Cette commande n’a aucun rapport avec le raccourci clavier <kbd>Ctrl + C</kbd> qui, elle, copie la <i>sélection</i> dans le presse-papiers. Si vous utilisez la séquence de touches <kbd>Ctrl + V</kbd> par la suite, cela permet d’écrire rapidement de très longs textes, ou d’écrire plusieurs fois le même texte. L’exemple suivant écrit cinq fois le même texte&nbsp;:<br>
 <kbd>[{Copy,Une longue suite de mots. }][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd>
 
-<dt><kbd>[{MouseButton,<i>code</i>}]</kbd>
-<dd>Simuler une action sur les boutons de la souris. <i>code</i> spécifie l’action à effectuer. Il est constitué d’une ou deux lettres. La première, obligatoire, indiquant le bouton concerné&nbsp;: <kbd>L</kbd> = bouton gauche, <kbd>M</kbd> = bouton du milieu, <kbd>R</kbd> = bouton droit. La seconde, facultative, indique l’action à effectuer&nbsp;: <kbd>D</kbd> = enfoncer le bouton, <kbd>U</kbd> = le relâcher. Si la seconde lettre est absente, le bouton est enfoncé puis relâché&nbsp;: cela simule un clic. Par exemple, pour effectuer un double-clic avec le bouton gauche&nbsp;:<br>
-<kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>
+<dt><kbd id="MouseButton">[{MouseButton,<i>code</i>}]</kbd>
+<dd>Simuler une action sur les boutons de la souris. <i>code</i> spécifie l’action à effectuer. Il est constitué d’une ou deux lettres. La première, obligatoire, indiquant le bouton concerné&nbsp;: <kbd>L</kbd> = bouton gauche, <kbd>M</kbd> = bouton du milieu, <kbd>R</kbd> = bouton droit. La seconde, facultative, indique l’action à effectuer&nbsp;: <kbd>D</kbd> = enfoncer le bouton, <kbd>U</kbd> = le relâcher. Si la seconde lettre est absente, le bouton est enfoncé puis relâché&nbsp;: cela simule un clic.
+<p>Exemples&nbsp;:<br>
+<kbd>[{MouseButton,L}][{MouseButton,L}]</kbd> effectue un double-clic avec le bouton gauche<br>
+<kbd>[{MouseButton,RD}][{Wait,1000}][{MouseButton,RU}]</kbd> garde le bouton droit enfoncé pendant 1 seconde
 
-<dt><kbd>[{MouseMoveTo,<i>x</i>,<i>y</i>}]</kbd>
+<dt><kbd id="MouseMoveTo">[{MouseMoveTo,<i>x</i>,<i>y</i>}]</kbd>
 <dd>Déplacer le curseur de la souris à la position (x,y), spécifiée en pixels par rapport au coin supérieur gauche de l’écran. Par exemple, si vous avez un écran en résolution 1&nbsp;024 &times; 768, la commande suivante déplace le curseur au coin supérieur droit&nbsp;:<br>
 <kbd>[{MouseMoveTo,1023,0}]</kbd>
 
-<dt><kbd>[{MouseMoveToFocus,<i>x</i>,<i>y</i>}]</kbd>
+<dt><kbd id="MouseMoveToFocus">[{MouseMoveToFocus,<i>x</i>,<i>y</i>}]</kbd>
 <dd>Déplacer le curseur de la souris à la position (x,y), spécifiée en pixels par rapport au coin supérieur gauche de la fenêtre active. Par exemple, pour déplacer la souris sur le menu système de la fenêtre active&nbsp;:<br>
 <kbd>[{MouseMoveToFocus,8,8}]</kbd>
 
-<dt><kbd>[{MouseMoveBy,<i>dx</i>,<i>dy</i>}]</kbd>
+<dt><kbd id="MouseMoveBy">[{MouseMoveBy,<i>dx</i>,<i>dy</i>}]</kbd>
 <dd>Déplacer le curseur de la souris relativement à sa position courante. <i>dx</i> et <i>dy</i> spécifient respectivement l’amplitude horizontale (resp. verticale) du déplacement, positives pour un déplacement à droite (resp. en bas). Par exemple, pour déplacer la souris de 10 pixels vers la gauche et de 3 vers le bas&nbsp;:<br>
 <kbd>[{MouseMoveBy,-10,3}]</kbd>
 
-<dt><kbd>[{MouseWheel,<i>ticks</i>}]</kbd>
+<dt><kbd id="MouseWheel">[{MouseWheel,<i>ticks</i>}]</kbd>
 <dd>Simuler une action sur la molette de la souris. <i>ticks</i> indique le nombre de roulements de molette à simuler. Spécifier une valeur positive pour défiler vers le bas, négative pour défiler vers le haut. Par exemple, pour défiler de deux crans vers le haut&nbsp;:<br>
 <kbd>[{MouseWheel,-2}]</kbd>
 
-<dt><kbd>[{KeysDown,<i>touches</i>}]</kbd>
+<dt><kbd id="KeysDown">[{KeysDown,<i>touches</i>}]</kbd>
 <dd>Enfonce certaines touches spéciales. <i>touches</i> liste les touches spéciales à enfoncer&nbsp;; Clavier+ ignore les touches normales. Par exemple, pour enfoncer <kbd>Ctrl + Alt</kbd>&nbsp;:<br>
 <kbd>[{KeysDown,Ctrl + Alt}]</kbd><br>
 Clavier+ garde les touches enfoncées et affectant toutes les commandes qui suivent (sauf l’écriture normale de texte) jusqu’au prochain <kbd>[{KeysDown}]</kbd> ou jusqu’à la fin du raccourci. Par exemple, le raccourci qui suit simule <kbd>Ctrl + Maj + A</kbd>, <kbd>Ctrl + clic gauche</kbd>, puis écrit <kbd>SALUT à tous</kbd>:<br>

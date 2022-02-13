@@ -193,21 +193,21 @@ Este atalho copia o texto selecionado na Área de Armazenamento, abre o Bloco de
 <p>O menu da seta contém uma lista de comandos.
 
 <dl>
-<dt><kbd>[{Wait,<i>duração</i>}]</kbd>
+<dt><kbd id="Wait">[{Wait,<i>duração</i>}]</kbd>
 <dd>Faz uma pausa com a seguinte duração, em milissegundos.
 
-<dt><kbd>[{Focus}]</kbd>
+<dt><kbd id="Focus">[{Focus}]</kbd>
 <dd>Identifica a nova janela. Útil se a simulação abre uma nova janela na qual o comando do atalho tem por objetivo escrever algo. Geralmente, o comando <kbd>[]</kbd> é melhor, pois espera um pouco também, a fim de dar tempo suficiente à abertura da janela.
 
-<dt><kbd>[{<i>Copy</i>,<i>texto</i>}]</kbd>
+<dt><kbd id="Copy">[{<i>Copy</i>,<i>texto</i>}]</kbd>
 <dd>Copia o texto especificado na Área de Armazenamento. Observe que este comando não tem nenhuma relação com o comando <kbd>Ctrl + C</kbd>, já que este atalho copia a <i>seleção</i> na Área de Armazenagem. Associado à digitação simulada <kbd>[Ctrl+V]</kbd>, este comando permite a digitação de um longo texto rapidamente ou do mesmo texto muitas vezes. Os seguinte exemplos reproduzem o mesmo texto cinco vezes:<br>
 <kbd>[{Copiar,Frase que se deseja repetir cinco vezes.}][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd>
 
-<dt><kbd>[{MouseButton,<i>code</i>}]</kbd>
+<dt><kbd id="MouseButton">[{MouseButton,<i>code</i>}]</kbd>
 <dd>Simula o clique de um botão do mouse. <i>code</i> determina que botão deve ser modificado e indica seu novo estado. É composto por duas letras. A primeira (obrigatória) indica o botão cuja operação deve ser simulada: <kbd>L</kbd> = esquerdo, <kbd>M</kbd> = mediano, <kbd>R</kbd> = direito. A segunda letra (opcional) assinala a operação que deve ser efetuada: <kbd>D</kbd> = pressionar o botão, <kbd>U</kbd> = soltar o botão. Se a segunda letra não for especificada, o botão é “pressionado e solto” em seguida: é a simulação de um clique simples. Por exemplo, para simular um clique duplo com o botão esquerdo do mouse, use isto:<br>
 <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>
 
-<dt><kbd>[{MouseWheel,<i>ticks</i>}]</kbd>
+<dt><kbd id="MouseWheel">[{MouseWheel,<i>ticks</i>}]</kbd>
 <dd>Simula uma operação com a esfera do mouse. <i>ticks</i> indica o número de linhas do uso simulado da esfera. Valores positivos fazem a rolagem da página para baixo de um número x de linhas, enquanto valores negativos fazem a página deslizar para cima outro número x de linhas. Por exemplo, para rolar apenas um linha acima, digite:<br>
 <kbd>[{MouseWheel,-1}]</kbd>
 </dl>

@@ -187,7 +187,7 @@ aangeeft (exclusieve voorwaarde) of enkel voor bepaalde programma’s door U ver
 
 <h3 id="text-syncing">Synchroniseren</h3>
 
-<p>Mocht je verschillende taken doen gebeuren, kan het nuttig zijn hen tijd te laten voor uitvoering. Typ dan een paar haken: <kbd>[]</kbd>. Zo zal er 100 milliseconden gewacht worden om dan het nieuwe actieve venster te vinden. Je kan ook het commando: <a href="#focus"><kbd>[{Focus}]</kbd></a> gebruiken die een betere controle van het uitstel regelt.
+<p>Mocht je verschillende taken doen gebeuren, kan het nuttig zijn hen tijd te laten voor uitvoering. Typ dan een paar haken: <kbd>[]</kbd>. Zo zal er 100 milliseconden gewacht worden om dan het nieuwe actieve venster te vinden. Je kan ook het commando: <a href="#Focus"><kbd>[{Focus}]</kbd></a> gebruiken die een betere controle van het uitstel regelt.
 
 <p>Dit laatste punt is heel belangrijk. Als je een toetsenaanslag simuleert die een nieuw venster opent (bvb.: <kbd>Ctrl + O</kbd> die het venster <i>Openen</i>aanduidt) en dat je daarna het typen van tekst simuleert (naam van de file bvb) dan moet je aan Clavier+ zeggen om die tekst in het <em>nieuwe</em> venster te typen:<br>
 <kbd>[Ctrl+O][]foo.txt[ENTER]</kbd>
@@ -202,10 +202,10 @@ Deze sneltoets kopieert de geselecteerde tekst in het klembord, start het kladbl
 <p>Het menu pijltje toont de commando’s die kunnen gebruikt worden:
 
 <dl>
-<dt><kbd>[{Wait,<i>duur</i>}]</kbd>
+<dt><kbd id="Wait">[{Wait,<i>duur</i>}]</kbd>
 <dd>Een pauze van de aangeduide duur in milliseconden.
 
-<dt><kbd id="focus">[{Focus,<i>uitstel</i>,<i>venster</i>}]</kbd>
+<dt><kbd id="Focus">[{Focus,<i>uitstel</i>,<i>venster</i>}]</kbd>
 <dd><div>Detecteren om het actief venster te veranderen. De parameters zijn facultatief.</div>
 <p>Indien „niet leeg” is <i>uitstel</i> het aantal milliseconden te wachten voordat het nieuw venster geopend wordt. Het kan nuttig zijn voldoende tijd te laten zodat het venster opent vooraleer er tekst in te schrijven. Als <i>uitstel</i> niet gespecificeerd is wordt de wachttijd nul.
 <p>Als <i>venster</i> leeg is, dan zal Clavier+ het nieuw actief venster vinden. De volgende toetsdrukken zullen naar dat venster gestuurd worden. Dit is nuttig als de toetsdrukken een nieuw venster toont waarin moet geschreven worden. Voorbeeld:<br>
@@ -218,30 +218,30 @@ Deze sneltoets kopieert de geselecteerde tekst in het klembord, start het kladbl
 <kbd>[{Focus,0,\!Warning!}]</kbd> activeert een venster met de naam <kbd>!Warning!</kbd>.
 <p>Noteer dat <kbd>[{Focus,100}]</kbd> gelijkwaardig is aan <kbd>[]</kbd>.
 
-<dt><kbd>[{Copy,<i>tekst</i>}]</kbd>
+<dt><kbd id="Copy">[{Copy,<i>tekst</i>}]</kbd>
 <dd>Bedoelde tekst in klembord kopiëren. Opgelet! Dit commando is volledig los van de sneltoets <kbd>Ctrl + C</kbd> die de geselecteerde tekst naar het klembord kopieert. Als U later de combinatie <kbd>Ctrl + V</kbd> gebruikt, laat dit toe om heel snel lange teksten te schrijven, of meermaals dezelfde tekst te schrijven. Volgend voorbeeld schrijft 5 maal dezelfde tekst:<br>
 <kbd>[{Copy,Een hele reeks woorden. }][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V][Ctrl+V]</kbd>
 
-<dt><kbd>[{MouseButton,<i>code</i>}]</kbd>
+<dt><kbd id="MouseButton">[{MouseButton,<i>code</i>}]</kbd>
 <dd>Een actie op de muisknoppen simuleren. <i>code</i> specificeert de uit te voeren actie. Dit bestaat uit één of twee letters. De eerste,
 verplicht, duidt bedoelde knop aan: <kbd>L</kbd> = linker knop, <kbd>M</kbd> = middelknop, <kbd>R</kbd> = rechter knop. De tweede, facultatief geeft de uit te voeren actie: <kbd>D</kbd> = knop drukken, <kbd>U</kbd> = loslaten. Bij gebrek aan een tweede letter wordt de knop ingedrukt en losgelaten: dit is een klik. Om bvb met de linkerknop een dubbele klik te doen:<br>
 <kbd>[{MouseButton,L}][{MouseButton,L}]</kbd>
 
-<dt><kbd>[{MouseMoveTo,<i>x</i>,<i>y</i>}]</kbd>
+<dt><kbd id="MouseMoveTo">[{MouseMoveTo,<i>x</i>,<i>y</i>}]</kbd>
 <dd>De muiscursor naar positie (x,y) brengen. Dit in pixelpunten t.o.v. de linker bovenhoek van het scherm. Voorbeeld: heb je een schermresolutie 1024 &times; 768, zal volgend commando de cursor naar de rechterbovenhoek brengen:<br>
 <kbd>[{MouseMoveTo,1023,0}]</kbd>
 
-<dt><kbd>[{MouseMoveToFocus,<i>x</i>,<i>y</i>}]</kbd>
+<dt><kbd id="MouseMoveToFocus">[{MouseMoveToFocus,<i>x</i>,<i>y</i>}]</kbd>
 <dd>De muiscursor naar positie (x,y) brengen. Dit in pixelpunten t.o.v. de linker bovenhoek van het actief venster. Om bvb de muis op het systeemmenu van het actieve venster te brengen:<br>
 <kbd>[{MouseMoveToFocus,8,8}]</kbd>
 
-<dt><kbd>[{MouseMoveBy,<i>dx</i>,<i>dy</i>}]</kbd>
+<dt><kbd id="MouseMoveBy">[{MouseMoveBy,<i>dx</i>,<i>dy</i>}]</kbd>
 <dd>De muiscursor verplaatsen ten opzichte van zijn huidige plaats. <i>dx</i> en <i>dy</i> specificeren respectievelijk de horizontale en verticale verplaatsings afstand. Positief voor een verplaatsing naar rechts
 (resp naar onder). Voorbeeld om de muis 10 pixels naar links en 3 naar
 onder te verplaatsen:<br>
 <kbd>[{MouseMoveBy,-10,3}]</kbd>
 
-<dt><kbd>[{MouseWheel,<i>rolbewegingen</i>}]</kbd>
+<dt><kbd id="MouseWheel">[{MouseWheel,<i>rolbewegingen</i>}]</kbd>
 <dd>Een actie simuleren op het muiswiel. <i>rolbewegingen</i> duidt het aantal draaien die moeten gesimuleerd worden. Een positief getal om naar beneden te simuleren negatief naar boven. Om 2 plaatsen naar boven te schuiven:<br>
 <kbd>[{MouseWheel,-2}]</kbd>
 </dl>
