@@ -172,8 +172,8 @@ public:
 	}
 	
 	TEST_METHOD(GetSafe_hangsIfInstanceHasNullAddress) {
-		String *pstring = nullptr;
-		Assert::ExpectException<std::runtime_error>([&]{ pstring->getSafe(); });
+		String *string_ptr = nullptr;
+		Assert::ExpectException<std::runtime_error>([&]{ string_ptr->getSafe(); });
 	}
 	
 	
@@ -446,4 +446,4 @@ private:
 	String m_replace;
 };
 
-}
+}  // namespace MyStringTest

@@ -29,12 +29,10 @@ namespace testing {
 // Normalizes a <0 / =0 / >0 comparison result into -1 / 0 /+1.
 int normalizeCompareResult(int result);
 
-}
+}  // namespace testing
 
 
-namespace Microsoft {
-namespace VisualStudio {
-namespace CppUnitTestFramework {
+namespace Microsoft::VisualStudio::CppUnitTestFramework {
 
 template<> inline std::wstring ToString<String>(const String& s) { RETURN_WIDE_STRING(s); }
 
@@ -42,6 +40,4 @@ template<> inline std::wstring ToString<IShellLink>(IShellLink* t) {
 	RETURN_WIDE_STRING(static_cast<const void*>(t));
 }
 
-}
-}
-}
+}  // Microsoft::VisualStudio::CppUnitTestFramework

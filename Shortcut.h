@@ -21,7 +21,12 @@
 
 #include "Keystroke.h"
 
+namespace dialogs {
+
 struct GETFILEICON;
+
+}  // namespace dialogs
+
 
 namespace shortcut {
 
@@ -31,6 +36,8 @@ public:
 	Shortcut() : Shortcut(Keystroke()) {}
 	explicit Shortcut(const Shortcut& sh);
 	explicit Shortcut(const Keystroke& ks);
+	
+	Shortcut& operator =(const Shortcut& other) = delete;
 	
 	~Shortcut() {
 		clearIcons();
@@ -74,7 +81,7 @@ public:
 	void findIcon();
 	void clearIcons();
 	
-	void fillGetFileIcon(GETFILEICON* pgfi, bool small_icon);
+	void fillGetFileIcon(dialogs::GETFILEICON* pgfi, bool small_icon);
 	
 	int getSmallIconIndex();
 	
@@ -88,7 +95,7 @@ public:
 	// Appends the shortcut CSV representation to the given string.
 	void appendCsvLineToString(String& output) const;
 	
-	void onGetFileInfo(GETFILEICON& gfi);
+	void onGetFileInfo(dialogs::GETFILEICON& gfi);
 	
 	void getColumnText(int column_index, String& output) const;
 	
@@ -102,25 +109,16 @@ public:
 	//   0 if the shortcuts are equal for the column.
 	static int CALLBACK compare(const Shortcut* shortcut1, const Shortcut* shortcut2, LPARAM lParam);
 	
-private:
-	
-	// Special values for m_small_icon_index.
-	enum {
-		iconInvalid = -1,
-		iconNeeded = -2,
-		iconThreadRunning = -3,
-	};
-	
-	int m_small_icon_index;
-	HICON m_icon;
-	
 public:
 	
-	enum class Type { Text, Command };
+	enum class Type { kText, kCommand };
 	
 	Type m_type;
 	
-	// One of show_options. Applies to Type::Command shortcuts only.
+	// Matches kTokShowNormal and following.
+	static constexpr int kShowOptions[] = { SW_NORMAL, SW_MINIMIZE, SW_MAXIMIZE };
+	
+	// Index of a kShowOptions. Applies to Type::kCommand shortcuts only.
 	int m_show_option;
 	
 	// If true, the program conditions (see m_sPrograms below) are positive: the shortcut must match
@@ -132,8 +130,8 @@ public:
 	bool m_support_file_open;
 	
 	String m_description;
-	String m_text; // Type::Text only
-	String m_command; // Type::Command only
+	String m_text; // Type::kText only
+	String m_command; // Type::kCommand only
 	String m_directory;
 	
 	// The list of program conditions, as a ';' separated string. The whole condition is satisfied if
@@ -154,9 +152,15 @@ public:
 private:
 	
 	Shortcut* m_next_shortcut;
+	
+	// Special values for m_small_icon_index.
+	static constexpr int kIconInvalid = -1;
+	static constexpr int kIconNeeded = -2;
+	static constexpr int kIconThreadRunning = -3;
+	
+	int m_small_icon_index;
+	HICON m_icon;
 };
-
-constexpr int show_options[] = { SW_NORMAL, SW_MINIMIZE, SW_MAXIMIZE };
 
 // Initializes the namespace variables. Should be called once.
 void initialize();
@@ -171,18 +175,18 @@ Shortcut* getFirst();
 // Should not be called while the main dialog box is displayed
 Shortcut* find(const Keystroke& ks, LPCTSTR program);
 
-// Loads the list of shortcuts from e_pszIniFile.
+// Loads the list of shortcuts from e_ini_filepath.
 void loadShortcuts();
 
-// Merges the shortcuts of e_pszIniFile into the current list of shortcuts.
-void mergeShortcuts(LPCTSTR pszIniFile);
+// Merges the shortcuts of e_ini_filepath into the current list of shortcuts.
+void mergeShortcuts(LPCTSTR ini_filepath);
 
-// Saves the list of shortcuts into e_pszIniFile.
+// Saves the list of shortcuts into e_ini_filepath.
 void saveShortcuts();
 
 // Clears the list of shortcuts.
 void clearShortcuts();
 
-}  // shortcut namespace
+}  // namespace shortcut
 
 using shortcut::Shortcut;

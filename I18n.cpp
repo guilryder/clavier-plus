@@ -25,13 +25,14 @@ extern HINSTANCE e_instance;
 extern HWND e_modal_dialog;
 
 namespace i18n {
+namespace {
 
-static int s_lang;
+// Current language.
+Language s_lang;
+LANGID s_lang_id;
 
-
-static LANGID s_lang_id;
-
-constexpr LANGID s_lang_ids[] = {
+// Same order as the Language enum.
+constexpr LANGID kLangIds[kLangCount] = {
 	MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED),
 	MAKELANGID(LANG_GERMAN, SUBLANG_GERMAN),
 	MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US),
@@ -47,38 +48,37 @@ constexpr LANGID s_lang_ids[] = {
 };
 
 
-static void* loadResource(UINT id, LPCTSTR type);
+void* loadResource(UINT id, LPCTSTR type) {
+	const HRSRC resource = FindResourceEx(e_instance, type, MAKEINTRESOURCE(id), s_lang_id);
+	VERIFP(resource, nullptr);
+	
+	const HGLOBAL resource_data = LoadResource(e_instance, resource);
+	VERIFP(resource_data, nullptr);
+	
+	return LockResource(resource_data);
+}
+
+}  // namespace
 
 
-int getLanguage() {
+Language getLanguage() {
 	return s_lang;
 }
 
-void setLanguage(int lang) {
+void setLanguage(Language lang) {
 	s_lang = lang;
-	s_lang_id = s_lang_ids[lang];
+	s_lang_id = kLangIds[lang];
 }
 
 
-int getDefaultLanguage() {
+Language getDefaultLanguage() {
 	const LANGID lang_id = PRIMARYLANGID(LANGIDFROMLCID(GetUserDefaultLCID()));
-	for (int lang = 0; lang < arrayLength(s_lang_ids); lang++) {
-		if (PRIMARYLANGID(s_lang_ids[lang]) == lang_id) {
-			return lang;
+	for (int lang = 0; lang < arrayLength(kLangIds); lang++) {
+		if (PRIMARYLANGID(kLangIds[lang]) == lang_id) {
+			return static_cast<Language>(lang);
 		}
 	}
-	return langEN;
-}
-
-
-void* loadResource(UINT id, LPCTSTR type) {
-	const HRSRC hResource = FindResourceEx(e_instance, type, MAKEINTRESOURCE(id), s_lang_id);
-	VERIFP(hResource, nullptr);
-	
-	const HGLOBAL hGlobal = LoadResource(e_instance, hResource);
-	VERIFP(hGlobal, nullptr);
-	
-	return LockResource(hGlobal);
+	return kLangDefault;
 }
 
 
@@ -96,7 +96,7 @@ const STRING_RESOURCE* loadStringResource(UINT id) {
 
 
 void loadString(UINT id, LPTSTR strbuf, int buffer_length) {
-	const STRING_RESOURCE* const resource = loadStringResource(id);
+	const STRING_RESOURCE *const resource = loadStringResource(id);
 	if (buffer_length > resource->length) {
 		buffer_length = resource->length + 1;
 	}
@@ -128,17 +128,17 @@ HMENU loadMenu(UINT id) {
 
 
 HBITMAP loadBitmap(UINT id) {
-	BITMAPINFO *const pbi = reinterpret_cast<BITMAPINFO*>(loadResource(id, RT_BITMAP));
-	VERIFP(pbi, NULL);
+	BITMAPINFO *const bitmap_info = reinterpret_cast<BITMAPINFO*>(loadResource(id, RT_BITMAP));
+	VERIFP(bitmap_info, NULL);
 	
 	const HDC hdc = GetDC(/* hWnd= */ NULL);
-	const HBITMAP hBitmap = CreateDIBitmap(
-		hdc, &pbi->bmiHeader, CBM_INIT,
-		pbi->bmiColors + pbi->bmiHeader.biClrUsed,
-		pbi, DIB_RGB_COLORS);
+	const HBITMAP bitmap = CreateDIBitmap(
+		hdc, &bitmap_info->bmiHeader, CBM_INIT,
+		bitmap_info->bmiColors + bitmap_info->bmiHeader.biClrUsed,
+		bitmap_info, DIB_RGB_COLORS);
 	ReleaseDC(/* hWnd= */ NULL, hdc);
 	
-	return hBitmap;
+	return bitmap;
 }
 
 
@@ -149,7 +149,7 @@ HICON loadNeutralIcon(UINT id, int cx, int cy) {
 
 
 void formatInteger(int number, String* output) {
-	const LCID locale = LOCALE_USER_DEFAULT;
+	constexpr LCID locale = LOCALE_USER_DEFAULT;
 	
 	static NUMBERFMT format;
 	
@@ -177,9 +177,9 @@ void formatInteger(int number, String* output) {
 			sizeof(format.NegativeOrder) / sizeof(TCHAR));
 	}
 	
-	TCHAR number_buf[bufIntegerCount];
+	TCHAR number_buf[kIntegerBufSize];
 	wsprintf(number_buf, _T("%d"), number);
-	GetNumberFormat(locale, 0, number_buf, &format, output->getBuffer(bufIntegerCount), bufIntegerCount);
+	GetNumberFormat(locale, 0, number_buf, &format, output->getBuffer(kIntegerBufSize), kIntegerBufSize);
 }
 
 
@@ -199,4 +199,4 @@ int parseNumberGroupingString(LPCTSTR input) {
 	return result;
 }
 
-}  // i18n namespace
+}  // namespace i18n

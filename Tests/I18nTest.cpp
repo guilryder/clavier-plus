@@ -21,8 +21,6 @@
 #include "../I18n.h"
 #include "../MyString.h"
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
 namespace I18nTest {
 
 TEST_CLASS(FormatIntegerTest) {
@@ -89,4 +87,4 @@ private:
 	}
 };
 
-}
+}  // namespace I18nTest

@@ -189,41 +189,41 @@ TEST_CLASS(TokensTest) {
 public:
 	
 	TEST_METHOD(AllTokensSet) {
-		for (int lang = 0; lang < i18n::langCount; lang++) {
-			i18n::setLanguage(lang);
-			for (int tok = 0; tok < tokNotFound; tok++) {
+		for (int lang = 0; lang < i18n::kLangCount; lang++) {
+			i18n::setLanguage(static_cast<i18n::Language>(lang));
+			for (Token tok = Token::kFirst; tok < Token::kNotFound; tok++) {
 				Assert::AreNotEqual(_T(""), getToken(tok));
 			}
 		}
 	}
 	
 	TEST_METHOD(LanguageTokensAllDifferent) {
-		for (int tok = 0; tok < tokNotFound; tok++) {
+		for (Token tok = Token::kFirst; tok < Token::kNotFound; tok++) {
 			Assert::AreNotEqual(_T(""), getToken(tok));
 		}
 	}
 	
 	TEST_METHOD(SomeFrenchTokensDifferentFromEnglish) {
-		for (int tok = 0; tok < tokNotFound; tok++) {
-			if (tok != tokShortcut && tok != tokAllProgramsBut) {
+		for (Token tok = Token::kFirst; tok < Token::kNotFound; tok++) {
+			if (tok != Token::kShortcut && tok != Token::kAllProgramsBut) {
 				continue;
 			}
-			i18n::setLanguage(i18n::langEN);
+			i18n::setLanguage(i18n::kLangEN);
 			LPCTSTR english_token = getToken(tok);
-			i18n::setLanguage(i18n::langFR);
+			i18n::setLanguage(i18n::kLangFR);
 			LPCTSTR french_token = getToken(tok);
 			Assert::AreNotEqual(english_token, french_token);
 		}
 	}
 	
 	TEST_METHOD(PolishTokensDefaultToEnglish) {
-		for (int tok = 0; tok < tokNotFound; tok++) {
-			if (tok == tokLanguageName) {
+		for (Token tok = Token::kFirst; tok < Token::kNotFound; tok++) {
+			if (tok == Token::kLanguageName) {
 				continue;
 			}
-			i18n::setLanguage(i18n::langEN);
+			i18n::setLanguage(i18n::kLangEN);
 			LPCTSTR english_token = getToken(tok);
-			i18n::setLanguage(i18n::langPL);
+			i18n::setLanguage(i18n::kLangPL);
 			LPCTSTR polish_token = getToken(tok);
 			Assert::AreEqual(english_token, polish_token);
 		}
@@ -306,7 +306,7 @@ TEST_CLASS(ClipboardTest) {
 public:
 	
 	TEST_METHOD_INITIALIZE(setUp) {
-		SetEnvironmentVariable(clipboard_env_variable, nullptr);
+		SetEnvironmentVariable(kClipboardEnvVariableName, nullptr);
 	}
 	
 	TEST_METHOD(ClipboardToEnvironment_ansi) {
@@ -343,7 +343,7 @@ private:
 	
 	void checkClipboardEnvVariable(LPCTSTR expected) {
 		TCHAR actual[256];
-		GetEnvironmentVariable(clipboard_env_variable, actual, arrayLength(actual));
+		GetEnvironmentVariable(kClipboardEnvVariableName, actual, arrayLength(actual));
 		Assert::AreEqual(expected, actual);
 	}
 };
@@ -587,4 +587,4 @@ private:
 	}
 };
 
-}
+}  // namespace GlobaTest

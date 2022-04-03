@@ -31,28 +31,40 @@ inline bool isAsyncKeyDown(UINT vk) {
 	return toBool(GetAsyncKeyState(vk) & 0x8000);
 }
 
-constexpr BYTE keyDownMask = 0x80;
+constexpr BYTE kKeyDownMask = 0x80;
+constexpr short kKeyToggledMask = 0x01;
 
 constexpr int kRightModCodeOffset = 16;
 constexpr DWORD kModCodeAll = ~0U;
 
 
-enum KeystrokeConditionType {
-	condTypeShiftLock,
-	condTypeNumLock,
-	condTypeScrollLock,
-	condTypeCount
-};
-
-enum KeystrokeCondition {
-	condIgnore,
-	condYes,
-	condNo,
-	condCount
-};
-
-
 class Keystroke {
+public:
+	
+	enum CondType {
+		kCondTypeCapsLock,
+		kCondTypeNumLock,
+		kCondTypeScrollLock,
+		kCondTypeCount
+	};
+	static constexpr int kCondTypeVks[kCondTypeCount] = {
+		VK_CAPITAL,
+		VK_NUMLOCK,
+		VK_SCROLL,
+	};
+	
+	enum class Condition {
+		kIgnore,
+		kYes,
+		kNo,
+	};
+	static constexpr TCHAR kConditionChars[] = {
+		_T('\0'),  // kIgnore
+		_T('+'),   // kYes
+		_T('-'),   // kNo
+	};
+	static constexpr int kConditionCount = arrayLength(kConditionChars);
+	
 public:
 	
 	// Virtual key code of the keystroke
@@ -66,8 +78,8 @@ public:
 	// 0..kRightModCodeOffset-1 are taken into account.
 	DWORD m_sided_mod_code;
 	
-	// Indexed by KeystrokeConditionType.
-	KeystrokeCondition m_conditions[condTypeCount];
+	// Indexed by CondType.
+	Condition m_conditions[kCondTypeCount];
 	
 	// True if m_sided_mod_code distinguishes between left and right special keys.
 	bool m_sided;
@@ -77,6 +89,9 @@ public:
 	Keystroke() {
 		clear();
 	}
+	
+	Keystroke(const Keystroke& other) = default;
+	Keystroke& operator =(const Keystroke& other) = default;
 	
 #ifdef _DEBUG
 	String debugString() const {
@@ -90,8 +105,8 @@ public:
 	void clear() {
 		clearKeys();
 		m_sided = false;
-		for (int i = 0; i < condTypeCount; i++) {
-			m_conditions[i] = condIgnore;
+		for (int i = 0; i < kCondTypeCount; i++) {
+			m_conditions[i] = Condition::kIgnore;
 		}
 	}
 	
@@ -243,12 +258,12 @@ struct SpecialKey {
 	BYTE vk_left;  // Virtual code of the left key
 	BYTE vk_right;  // Virtual code of the right key
 	DWORD mod_code;  // MOD_* code of the key (e.g. MOD_CONTROL), not sided
-	int tok;  // Token index of the name of the key
+	Token tok;  // Token index of the name of the key
 };
 
-constexpr SpecialKey e_special_keys[4] = {
-	{ VK_LWIN, VK_LWIN, VK_RWIN, MOD_WIN, tokWin },
-	{ VK_CONTROL, VK_LCONTROL, VK_RCONTROL, MOD_CONTROL, tokCtrl },
-	{ VK_SHIFT, VK_LSHIFT, VK_RSHIFT, MOD_SHIFT, tokShift },
-	{ VK_MENU, VK_LMENU, VK_RMENU, MOD_ALT, tokAlt },
+constexpr SpecialKey kSpecialKeys[4] = {
+	{ VK_LWIN, VK_LWIN, VK_RWIN, MOD_WIN, Token::kWin },
+	{ VK_CONTROL, VK_LCONTROL, VK_RCONTROL, MOD_CONTROL, Token::kCtrl },
+	{ VK_SHIFT, VK_LSHIFT, VK_RSHIFT, MOD_SHIFT, Token::kShift },
+	{ VK_MENU, VK_LMENU, VK_RMENU, MOD_ALT, Token::kAlt },
 };

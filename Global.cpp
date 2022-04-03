@@ -50,29 +50,24 @@ HWND e_invisible_window;
 HWND e_modal_dialog;
 bool e_icon_visible = true;
 
-int e_column_widths[colCount];
+int e_column_widths[kColCount];
 
-SIZE e_sizeMainDialog = { 0, 0 };
+SIZE e_main_dialog_size = { 0, 0 };
 bool e_maximize_main_dialog = false;
 
 TCHAR e_ini_filepath[MAX_PATH];
-
-
-static bool pathIsSlow(LPCTSTR path);
-
-static BOOL CALLBACK prcEnumFindWindowByName(HWND hwnd, LPARAM lParam);
 
 
 int messageBox(HWND hwnd, UINT string_id, UINT type, LPCTSTR arg) {
 	TCHAR format[256], text[1024];
 	i18n::loadStringAuto(string_id, format);
 	wsprintf(text, format, arg);
-	return MessageBox(hwnd, text, pszApp, type);
+	return MessageBox(hwnd, text, kAppName, type);
 }
 
 
 void centerParent(HWND hwnd) {
-	RECT rcParent, rcChild;
+	RECT parent_rect, child_rect;
 	
 	const HWND hwnd_parent = GetParent(hwnd);
 	MONITORINFO mi;
@@ -81,20 +76,20 @@ void centerParent(HWND hwnd) {
 		const HMONITOR monitor = MonitorFromWindow(hwnd_parent, MONITOR_DEFAULTTONULL);
 		VERIFV(monitor);
 		GetMonitorInfo(monitor, &mi);
-		GetWindowRect(hwnd_parent, &rcParent);
-		IntersectRect(&rcParent, &rcParent, &mi.rcWork);
+		GetWindowRect(hwnd_parent, &parent_rect);
+		IntersectRect(&parent_rect, &parent_rect, &mi.rcWork);
 	} else {
 		const HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
 		VERIFV(monitor);
 		GetMonitorInfo(monitor, &mi);
-		rcParent = mi.rcWork;
+		parent_rect = mi.rcWork;
 	}
 	
-	GetWindowRect(hwnd, &rcChild);
+	GetWindowRect(hwnd, &child_rect);
 	SetWindowPos(
 		hwnd, /* hWndInsertAfter= */ NULL,
-		(rcParent.left + rcParent.right + rcChild.left - rcChild.right) / 2,
-		(rcParent.top + rcParent.bottom + rcChild.top - rcChild.bottom) / 2,
+		(parent_rect.left + parent_rect.right + child_rect.left - child_rect.right) / 2,
+		(parent_rect.top + parent_rect.bottom + child_rect.top - child_rect.bottom) / 2,
 		0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
@@ -106,12 +101,7 @@ void getDlgItemText(HWND hdlg, UINT id, String* output) {
 }
 
 
-static LRESULT CALLBACK prcWebLink(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclass_id, DWORD_PTR ref_data);
-
-void initializeWebLink(HWND hdlg, UINT control_id, LPCTSTR link) {
-	const HWND hwnd = GetDlgItem(hdlg, control_id);
-	subclassWindow(hwnd, prcWebLink, /* ref_data= */ reinterpret_cast<DWORD_PTR>(link));
-}
+namespace {
 
 // Window procedure for dialog box controls displaying an URL.
 // The link itself is stored in ref_data.
@@ -136,6 +126,13 @@ LRESULT CALLBACK prcWebLink(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 	}
 	
 	return DefSubclassProc(hwnd, message, wParam, lParam);
+}
+
+}  // namespace
+
+void initializeWebLink(HWND hdlg, UINT control_id, LPCTSTR link) {
+	const HWND hwnd = GetDlgItem(hdlg, control_id);
+	subclassWindow(hwnd, prcWebLink, /* ref_data= */ reinterpret_cast<DWORD_PTR>(link));
 }
 
 
@@ -180,8 +177,10 @@ void sleepBackground(DWORD duration_millis) {
 }
 
 
+namespace {
+
 // Indicates if a file is located in a slow drive (network, removable, etc.).
-bool pathIsSlow(LPCTSTR path) {
+bool isPathSlow(LPCTSTR path) {
 	const int drive_index = PathGetDriveNumber(path);
 	if (drive_index >= 0) {
 		// The path has a drive
@@ -201,31 +200,31 @@ bool pathIsSlow(LPCTSTR path) {
 	return false;
 }
 
+}  // namespace
 
 bool getFileInfo(LPCTSTR path, DWORD file_attributes, SHFILEINFO& shfi, UINT flags) {
-	TCHAR pszPathTemp[MAX_PATH];
+	TCHAR transformed_path[MAX_PATH];
 	
-	if (pathIsSlow(path)) {
+	if (isPathSlow(path)) {
 		// If UNC server or share, remove any trailing backslash
 		// If normal file, strip the path: extension-based icon
 		
 		flags |= SHGFI_USEFILEATTRIBUTES;
-		lstrcpy(pszPathTemp, path);
-		PathRemoveBackslash(pszPathTemp);
-		const LPCTSTR pszPathName = PathFindFileName(path);
-		if (PathIsUNCServer(pszPathTemp) || PathIsUNCServerShare(pszPathTemp)) {
-			path = pszPathTemp;
-		} else if (pszPathName) {
-			lstrcpy(pszPathTemp, pszPathName);
-			path = pszPathTemp;
+		lstrcpy(transformed_path, path);
+		PathRemoveBackslash(transformed_path);
+		const LPCTSTR path_name = PathFindFileName(path);
+		if (PathIsUNCServer(transformed_path) || PathIsUNCServerShare(transformed_path)) {
+			path = transformed_path;
+		} else if (path_name) {
+			lstrcpy(transformed_path, path_name);
+			path = transformed_path;
 		}
 	}
 	
 	for (;;) {
-		const bool bOK = toBool(SHGetFileInfo(path, file_attributes,
-				&shfi, sizeof(shfi), flags));
-		if (bOK || (flags & SHGFI_USEFILEATTRIBUTES)) {
-			return bOK;
+		const bool ok = toBool(SHGetFileInfo(path, file_attributes, &shfi, sizeof(shfi), flags));
+		if (ok || (flags & SHGFI_USEFILEATTRIBUTES)) {
+			return ok;
 		}
 		flags |= SHGFI_USEFILEATTRIBUTES;
 	}
@@ -240,9 +239,9 @@ void clipboardToEnvironment() {
 		if (clipboard_mem) {
 			const LPTSTR clipboard_text = static_cast<LPTSTR>(GlobalLock(clipboard_mem));
 			if (clipboard_text) {
-				if (lstrlen(clipboard_text) < bufClipboardString) {
+				if (lstrlen(clipboard_text) < kClipboardStringBugSize) {
 					ok = true;
-					SetEnvironmentVariable(clipboard_env_variable, clipboard_text);
+					SetEnvironmentVariable(kClipboardEnvVariableName, clipboard_text);
 				}
 				GlobalUnlock(clipboard_mem);
 			}
@@ -251,7 +250,7 @@ void clipboardToEnvironment() {
 	}
 	
 	if (!ok) {
-		SetEnvironmentVariable(clipboard_env_variable, _T(""));
+		SetEnvironmentVariable(kClipboardEnvVariableName, _T(""));
 	}
 }
 
@@ -268,6 +267,7 @@ HWND findVisibleChildWindow(HWND hwnd_parent, LPCTSTR wnd_class, bool allow_same
 	return NULL;
 }
 
+
 bool checkWindowClass(HWND hwnd, LPCTSTR wnd_class, bool allow_same_prefix) {
 	TCHAR actual_wnd_class[kWindowClassBufferLength];
 	VERIF(GetClassName(hwnd, actual_wnd_class, arrayLength(actual_wnd_class)));
@@ -277,18 +277,13 @@ bool checkWindowClass(HWND hwnd, LPCTSTR wnd_class, bool allow_same_prefix) {
 	return !lstrcmp(wnd_class, actual_wnd_class);
 }
 
+
+namespace {
+
 struct FIND_WINDOW_BY_NAME {
 	LPCTSTR title_regexp;
 	HWND hwnd_found;
 };
-
-HWND findWindowByName(LPCTSTR title_regexp) {
-	FIND_WINDOW_BY_NAME fwbn;
-	fwbn.title_regexp = title_regexp;
-	fwbn.hwnd_found = NULL;
-	EnumWindows(prcEnumFindWindowByName, reinterpret_cast<LPARAM>(&fwbn));
-	return fwbn.hwnd_found;
-}
 
 BOOL CALLBACK prcEnumFindWindowByName(HWND hwnd, LPARAM lParam) {
 	FIND_WINDOW_BY_NAME *fwbn = reinterpret_cast<FIND_WINDOW_BY_NAME*>(lParam);
@@ -300,6 +295,16 @@ BOOL CALLBACK prcEnumFindWindowByName(HWND hwnd, LPARAM lParam) {
 		}
 	}
 	return true;
+}
+
+}  // namespace
+
+HWND findWindowByName(LPCTSTR title_regexp) {
+	FIND_WINDOW_BY_NAME fwbn;
+	fwbn.title_regexp = title_regexp;
+	fwbn.hwnd_found = NULL;
+	EnumWindows(prcEnumFindWindowByName, reinterpret_cast<LPARAM>(&fwbn));
+	return fwbn.hwnd_found;
 }
 
 
@@ -352,14 +357,16 @@ void setClipboardText(LPCTSTR text) {
 }
 
 
-//------------------------------------------------------------------------
-// SHBrowseForFolder wrapper:
-// - use given title
-// - set initial directory
-// - return directory path instead of LPITEMIDLIST
-//------------------------------------------------------------------------
+namespace {
 
-static int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT message, LPARAM lParam, LPARAM lpData);
+int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT message, LPARAM UNUSED(lParam), LPARAM lpData) {
+	if (message == BFFM_INITIALIZED) {
+		SendMessage(hwnd, BFFM_SETSELECTION, true, lpData);
+	}
+	return 0;
+}
+
+}  // namespace
 
 bool browseForFolder(HWND hwnd_parent, LPCTSTR title, LPTSTR directory) {
 	BROWSEINFO bi;
@@ -373,33 +380,24 @@ bool browseForFolder(HWND hwnd_parent, LPCTSTR title, LPTSTR directory) {
 	return pidl && SHGetPathFromIDList(pidl, directory);
 }
 
-int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT message, LPARAM UNUSED(lParam), LPARAM lpData) {
-	if (message == BFFM_INITIALIZED) {
-		SendMessage(hwnd, BFFM_SETSELECTION, true, lpData);
-	}
-	return 0;
-}
 
-
-//------------------------------------------------------------------------
-// Changes the current directory in the given dialog box.
-// Supported dialog boxes:
-// - Standard Windows File/Open and similar: GetOpenFileName, GetSaveFileName
-// - MS Office File/Open and similar
-// - Standard Windows folder selection: SHBrowseForFolder
-//------------------------------------------------------------------------
+namespace {
 
 // Helper class used by setDialogBoxDirectory().
 // Should be instantiated every time setDialogBoxDirectory() is called.
 class SetDialogBoxDirectory {
 public:
 	
+	SetDialogBoxDirectory() = default;
+	SetDialogBoxDirectory(const SetDialogBoxDirectory& other) = delete;
+	SetDialogBoxDirectory& operator =(const SetDialogBoxDirectory& other) = delete;
+	
 	// Changes the current directory in the given dialog box.
 	// Return true if the dialog box is supported and the current directory has been changed.
 	//
 	// hwnd: the window handle of the dialog box or one of its controls.
 	// directory: the directory to set in the dialog box.
-	bool doit(HWND hwnd, LPCTSTR directory);
+	bool execute(HWND hwnd, LPCTSTR directory);
 	
 private:
 	
@@ -425,13 +423,7 @@ private:
 	bool m_unlock_window_update_needed;
 };
 
-
-bool setDialogBoxDirectory(HWND hwnd, LPCTSTR directory) {
-	return SetDialogBoxDirectory().doit(hwnd, directory);
-}
-
-
-bool SetDialogBoxDirectory::doit(HWND hwnd, LPCTSTR directory) {
+bool SetDialogBoxDirectory::execute(HWND hwnd, LPCTSTR directory) {
 	// Retrieves the dialog box handle, supports the case where hwnd is a control.
 	while (hwnd && (GetWindowStyle(hwnd) & WS_CHILD)) {
 		hwnd = GetParent(hwnd);
@@ -456,11 +448,10 @@ bool SetDialogBoxDirectory::doit(HWND hwnd, LPCTSTR directory) {
 	return success;
 }
 
-
 bool SetDialogBoxDirectory::tryBrowseForFolder() {
 	// Check for SHBrowseForFolder dialog box:
 	// - Must contain a control having a class name containing "SHBrowseForFolder"
-	if (!findVisibleChildWindow(m_hwnd, _T("SHBrowseForFolder"), true)) {
+	if (!findVisibleChildWindow(m_hwnd, _T("SHBrowseForFolder"), /* allow_same_prefix= */ true)) {
 		return false;
 	}
 	
@@ -500,12 +491,11 @@ bool SetDialogBoxDirectory::tryBrowseForFolder() {
 	return success;
 }
 
-
 bool SetDialogBoxDirectory::tryMsOfficeFileOpen() {
 	// Check for MS Office File/Open dialog box
 	// - Check that the dialog box class contains "bosa_sdm_"
 	// - Find the first visible edit box (Edit or RichEdit)
-	if (!checkWindowClass(m_hwnd, _T("bosa_sdm_"), true)) {
+	if (!checkWindowClass(m_hwnd, _T("bosa_sdm_"), /* allow_same_prefix= */ true)) {
 		return false;
 	}
 	
@@ -546,7 +536,6 @@ bool SetDialogBoxDirectory::tryMsOfficeFileOpen() {
 	return true;
 }
 
-
 bool SetDialogBoxDirectory::tryWindowsFileOpen() {
 	// Check for standard Get(Open|Save)FileName dialog box
 	// - Must answer to CDM_GETSPEC message
@@ -555,9 +544,9 @@ bool SetDialogBoxDirectory::tryWindowsFileOpen() {
 	}
 	
 	// Two possible controls: file path edit box or combo box
-	static constexpr UINT control_ids[] = { cmb13, edt1 };
-	for (int control = 0; control < arrayLength(control_ids); control++) {
-		const HWND hwnd_control = GetDlgItem(m_hwnd, control_ids[control]);
+	static constexpr UINT kControlIds[] = { cmb13, edt1 };
+	for (int control = 0; control < arrayLength(kControlIds); control++) {
+		const HWND hwnd_control = GetDlgItem(m_hwnd, kControlIds[control]);
 		if (!hwnd_control) {
 			continue;
 		}
@@ -582,32 +571,31 @@ bool SetDialogBoxDirectory::tryWindowsFileOpen() {
 	return false;
 }
 
+}  // namespace
+
+bool setDialogBoxDirectory(HWND hwnd, LPCTSTR directory) {
+	return SetDialogBoxDirectory().execute(hwnd, directory);
+}
+
 
 //------------------------------------------------------------------------
 // Shell API tools
 //------------------------------------------------------------------------
 
-// Wrapper for SHGetSpecialFolderPath
 bool getSpecialFolderPath(int csidl, LPTSTR path) {
 	return toBool(SHGetSpecialFolderPath(/* hWnd= */ NULL, path, csidl, /* fCreate= */ true));
 }
 
 
-// Populates a shortcut with the target of a link file.
-// Handles special cases natively:
-// - installer shortcuts (MSI API)
-// - IUniformResourceLocator shortcuts
-// - IShellLink shortcuts
-// Does not natively handle shortcuts to UWP apps.
 void resolveLinkFile(LPCTSTR link_file, Shortcut* shortcut) {
-	shortcut->m_type = Shortcut::Type::Command;
+	shortcut->m_type = Shortcut::Type::kCommand;
 	String& cmdline = shortcut->m_command;
 	
 	TCHAR product_code[39];
 	TCHAR component_code[39];
 	if (!MsiGetShortcutTarget(link_file, product_code, /* szFeatureId= */ nullptr, component_code)) {
-		DWORD buf = MAX_PATH;
-		MsiGetComponentPath(product_code, component_code, cmdline.getBuffer(buf), &buf);
+		DWORD buf_size = MAX_PATH;
+		MsiGetComponentPath(product_code, component_code, cmdline.getBuffer(buf_size), &buf_size);
 		if (cmdline.isSome()) {
 			PathQuoteSpaces(cmdline.get());
 			return;
@@ -759,10 +747,50 @@ void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST p
 }
 
 
-
 //------------------------------------------------------------------------
 // Strings
 //------------------------------------------------------------------------
+
+void unescape(LPTSTR str) {
+	const TCHAR* input = str;
+	TCHAR* output = str;
+	bool escaping = false;
+	while (*input) {
+		if (*input == _T('\\') && !escaping) {
+			escaping = true;
+		} else {
+			escaping = false;
+			*output++ = *input;
+		}
+		input++;
+	}
+	*output = _T('\0');
+}
+
+
+LPCTSTR parseCommaSepArg(TCHAR*& chr_ptr, bool unescape) {
+	const LPTSTR start = chr_ptr;
+	bool escaping = false;
+	TCHAR* current = start;
+	while (*current && !(*current == _T(',') && !escaping)) {
+		escaping = !escaping && (unescape && *current == _T('\\'));
+		current++;
+	}
+	if (*current) {
+		*current++ = _T('\0');
+		while (*current == _T(' ')) {
+			current++;
+		}
+	}
+	chr_ptr = current;
+	
+	if (unescape) {
+		::unescape(start);
+	}
+	
+	return start;
+}
+
 
 LPCTSTR getSemiColonToken(LPTSTR* token_start) {
 	const LPTSTR token_start_copy = *token_start;
@@ -785,7 +813,7 @@ LPCTSTR getSemiColonToken(LPTSTR* token_start) {
 //------------------------------------------------------------------------
 
 void findFullPath(LPTSTR path, LPTSTR full_path) {
-	if (!pathIsSlow(path)) {
+	if (!isPathSlow(path)) {
 		PathUnquoteSpaces(path);
 		if (SearchPath(/* lpPath= */ nullptr, path, /* lpExtension= */ nullptr,
 				MAX_PATH, full_path, /* lpFilePath= */ nullptr)) {
@@ -799,7 +827,7 @@ void findFullPath(LPTSTR path, LPTSTR full_path) {
 		}
 		
 		if (32 < reinterpret_cast<UINT_PTR>(FindExecutable(path, /* lpDirectory= */ nullptr, full_path))) {
-			return;
+			return;  // Successful.
 		}
 	}
 	
@@ -809,7 +837,7 @@ void findFullPath(LPTSTR path, LPTSTR full_path) {
 
 void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 	// Expand the environment variables before splitting
-	TCHAR command_exp[MAX_PATH + bufClipboardString];
+	TCHAR command_exp[MAX_PATH + kClipboardStringBugSize];
 	ExpandEnvironmentStrings(command, command_exp, arrayLength(command_exp));
 	
 	// Split the command line: get the file and the arguments
@@ -842,50 +870,10 @@ void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 
 
 DWORD WINAPI ShellExecuteThread::thread(void* params) {
-	ShellExecuteThread* const params_ptr = reinterpret_cast<ShellExecuteThread*>(params);
+	ShellExecuteThread *const params_ptr = reinterpret_cast<ShellExecuteThread*>(params);
 	shellExecuteCmdLine(params_ptr->m_command, params_ptr->m_directory, params_ptr->m_show_mode);
 	delete params_ptr;
 	return 0;
-}
-
-
-void unescape(LPTSTR str) {
-	const TCHAR* input = str;
-	TCHAR* output = str;
-	bool escaping = false;
-	while (*input) {
-		if (*input == _T('\\') && !escaping) {
-			escaping = true;
-		} else {
-			escaping = false;
-			*output++ = *input;
-		}
-		input++;
-	}
-	*output = _T('\0');
-}
-
-LPCTSTR parseCommaSepArg(TCHAR*& chr_ptr, bool unescape) {
-	const LPTSTR start = chr_ptr;
-	bool escaping = false;
-	TCHAR* current = start;
-	while (*current && !(*current == _T(',') && !escaping)) {
-		escaping = !escaping && (unescape && *current == _T('\\'));
-		current++;
-	}
-	if (*current) {
-		*current++ = _T('\0');
-		while (*current == _T(' ')) {
-			current++;
-		}
-	}
-	chr_ptr = current;
-	
-	if (unescape) {
-		::unescape(start);
-	}
-	
-	return start;
 }
 
 
@@ -895,10 +883,10 @@ LPCTSTR parseCommaSepArg(TCHAR*& chr_ptr, bool unescape) {
 // named autostart_value.
 //------------------------------------------------------------------------
 
-static constexpr TCHAR autostart_key[] = _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
-static constexpr LPCTSTR autostart_value = pszApp;
+namespace {
 
-static HKEY openAutoStartKey(LPTSTR autostart_path_buf);
+constexpr LPCTSTR kAutostartRegKey = _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
+constexpr LPCTSTR kAutostartRegValue = kAppName;
 
 // Open the Registry key for the auto-start setting.
 //
@@ -913,11 +901,13 @@ HKEY openAutoStartKey(LPTSTR autostart_path_buf) {
 		*autostart_path_buf = _T('\0');
 	}
 	HKEY key;
-	if (ERROR_SUCCESS != RegOpenKey(HKEY_CURRENT_USER, autostart_key, &key)) {
+	if (ERROR_SUCCESS != RegOpenKey(HKEY_CURRENT_USER, kAutostartRegKey, &key)) {
 		key = NULL;
 	}
 	return key;
 }
+
+}  // namespace
 
 bool isAutoStartEnabled() {
 	bool enabled = false;
@@ -932,12 +922,12 @@ bool isAutoStartEnabled() {
 	TCHAR current_path[MAX_PATH];
 	
 	if (ERROR_SUCCESS == RegQueryValueEx(
-				autostart_hKey, autostart_value, /* lpReserved= */ nullptr, &type,
+				autostart_hKey, kAutostartRegValue, /* lpReserved= */ nullptr, &type,
 				/* lpData= */ nullptr, &size)
 			&& type == REG_SZ
 			&& size < sizeof(current_path)) {
 		if (ERROR_SUCCESS == RegQueryValueEx(
-					autostart_hKey, autostart_value, /* lpReserved= */ nullptr, /* lpType= */ nullptr,
+					autostart_hKey, kAutostartRegValue, /* lpReserved= */ nullptr, /* lpType= */ nullptr,
 					/* lpData= */ reinterpret_cast<BYTE*>(current_path), &size) &&
 				!lstrcmpi(current_path, autostart_path_buf)) {
 			enabled = true;
@@ -957,11 +947,11 @@ void setAutoStartEnabled(bool enabled) {
 	
 	if (enabled) {
 		RegSetValueEx(
-			autostart_hKey, autostart_value, /* Reserved= */ 0, REG_SZ,
+			autostart_hKey, kAutostartRegValue, /* Reserved= */ 0, REG_SZ,
 			reinterpret_cast<const BYTE*>(autostart_path_buf),
 			(lstrlen(autostart_path_buf) + 1) * sizeof(*autostart_path_buf));
 	} else {
-		RegDeleteValue(autostart_hKey, autostart_value);
+		RegDeleteValue(autostart_hKey, kAutostartRegValue);
 	}
 	RegCloseKey(autostart_hKey);
 }

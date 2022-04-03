@@ -27,22 +27,24 @@
 
 
 namespace shortcut {
+
 class Shortcut;
-}
+
+}  // namespace shortcut
 
 
-constexpr size_t bufString = 128;
-constexpr size_t bufHotKey = 128;
-constexpr size_t bufCode = 32;
-constexpr size_t bufWindowTitle = 256;
+constexpr size_t kStringBufSize = 128;
+constexpr size_t kHotKeyBufSize = 128;
+constexpr size_t kCodeBufSize = 32;
+constexpr size_t kWindowTitleBufSize = 256;
 
-constexpr int bufClipboardString = MAX_PATH * 10;
+constexpr int kClipboardStringBugSize = MAX_PATH * 10;
 
 // Name of the environment variable set by clipboardToEnvironment().
-constexpr LPCTSTR clipboard_env_variable = _T("CLIPBOARD");
+constexpr LPCTSTR kClipboardEnvVariableName = _T("CLIPBOARD");
 
 
-constexpr LPCTSTR pszApp = _T("Clavier+");
+constexpr LPCTSTR kAppName = _T("Clavier+");
 
 
 extern HANDLE e_heap;
@@ -147,17 +149,13 @@ bool matchWildcards(LPCTSTR pattern, LPCTSTR subject, LPCTSTR pattern_end = null
 void setClipboardText(LPCTSTR text);
 
 
-//------------------------------------------------------------------------
 // SHBrowseForFolder wrapper:
 // - use custom title
 // - set initial directory
 // - return directory path instead of LPITEMIDLIST
-//------------------------------------------------------------------------
-
 bool browseForFolder(HWND hwnd_parent, LPCTSTR title, LPTSTR directory);
 
 
-//------------------------------------------------------------------------
 // Changes the current directory in the given dialog box.
 // Supported dialog boxes:
 // - Standard Windows File/Open and similar: GetOpenFileName, GetSaveFileName
@@ -170,8 +168,6 @@ bool browseForFolder(HWND hwnd_parent, LPCTSTR title, LPTSTR directory);
 //
 // Returns:
 //   True if the dialog box is supported and the current directory has been changed.
-//------------------------------------------------------------------------
-
 bool setDialogBoxDirectory(HWND hwnd, LPCTSTR directory);
 
 
@@ -179,8 +175,18 @@ bool setDialogBoxDirectory(HWND hwnd, LPCTSTR directory);
 // Shell API tools
 //------------------------------------------------------------------------
 
+// Wrapper for SHGetSpecialFolderPath
 bool getSpecialFolderPath(int csidl, LPTSTR path);
+
+// Populates a shortcut with the target of a link file.
+// Handles special cases natively:
+// - installer shortcuts (MSI API)
+// - IUniformResourceLocator shortcuts
+// - IShellLink shortcuts
+// Does not natively handle shortcuts to UWP apps.
 void resolveLinkFile(LPCTSTR link_file, shortcut::Shortcut* shortcut);
+
+// Invokes the callback for each UWP app found, by display name order.
 void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST pidl)> app_callback);
 
 
@@ -188,17 +194,84 @@ void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST p
 // Application-specific helpers
 //------------------------------------------------------------------------
 
+// Each token is associated to a part of the IDS_TOKENS resource string. IDS_TOKENS is a ';'
+// separated string whose parts are in the same other as the values of this enum.
+enum class Token {
+	kFirst,
+	kLanguageName = kFirst,
+	
+	kShortcut,
+	kCode,
+	kDistinguishLeftRight,
+	kDescription,
+	kCommand,
+	kText,
+	kDirectory,
+	kWindow,
+	kSupportFileOpen,
+	kPrograms,
+	kAllProgramsBut,
+	kLanguage,
+	kSize,
+	kColumns,
+	kSorting,
+	
+	// Matches Shortcut::kShowOptions.
+	kShowNormal,
+	kShowMinimize,
+	kShowMaximize,
+	
+	kWin,
+	kCtrl,
+	kShift,
+	kAlt,
+	kLeft,
+	kRight,
+	
+	// Matches Keystroke::CondType.
+	kConditionCapsLock,
+	kConditionNumLock,
+	kConditionScrollLock,
+	
+	// Matches Keystroke::Condition, except kIgnore.
+	kConditionYes,
+	kConditionNo,
+	
+	kUsageCount,
+	
+	kNotFound
+};
+
+inline Token operator +(Token tok, int delta) {
+	return static_cast<Token>(static_cast<int>(tok) + delta);
+}
+
+inline int operator -(Token tok1, Token tok2) {
+	return static_cast<int>(tok1) - static_cast<int>(tok2);
+}
+
+inline Token operator ++(Token& tok, int) {
+	const Token copy = tok;
+	tok = tok + 1;
+	return copy;
+}
+
 // Returns the translation of a token in the current language.
-LPCTSTR getToken(int tok);
+LPCTSTR getToken(Token tok);
 
 // Returns the name of a language in this language.
-LPCTSTR getLanguageName(int lang);
+LPCTSTR getLanguageName(i18n::Language lang);
 
 // Returns the index of a token from its name. The name of the token can be in any language.
 //
 // Returns:
-//   A tok* enum value, or tokNotFound if the token does not match any token.
-int findToken(LPCTSTR token);
+//   A kTok* enum value, or kTokNotFound if the token does not match any token.
+Token findToken(LPCTSTR token);
+
+
+//------------------------------------------------------------------------
+// Strings
+//------------------------------------------------------------------------
 
 // '\'-unescapes the given string.
 // In-place is safe because the unescaping process can only but reduce the string length.
@@ -236,6 +309,10 @@ LPCTSTR getSemiColonToken(LPTSTR* token_start);
 class TranslatedString {
 public:
 	
+	TranslatedString() = default;
+	TranslatedString(const TranslatedString& other) = delete;
+	TranslatedString& operator =(const TranslatedString& other) = delete;
+	
 	// Loads the translation of the string for the current language.
 	void load(UINT id) {
 		m_translations[i18n::getLanguage()].loadString(id);
@@ -256,13 +333,13 @@ public:
 	// Falls back to the default default if the translation is empty.
 	LPCTSTR get() const {
 		LPCTSTR translation = get(i18n::getLanguage());
-		return *translation ? translation : get(i18n::langDefault);
+		return *translation ? translation : get(i18n::kLangDefault);
 	}
 	
 private:
 	
 	// Translations of the string, indexed by language.
-	String m_translations[i18n::langCount];
+	String m_translations[i18n::kLangCount];
 };
 
 
@@ -281,6 +358,9 @@ public:
 	ShellExecuteThread(const String& command, const String& directory, int show_mode)
 		: m_command(command), m_directory(directory), m_show_mode(show_mode) {}
 	
+	ShellExecuteThread(const ShellExecuteThread& other) = delete;
+	ShellExecuteThread& operator =(const ShellExecuteThread& other) = delete;
+	
 	static DWORD WINAPI thread(void* params);
 	
 private:
@@ -296,20 +376,30 @@ private:
 //------------------------------------------------------------------------
 
 enum {
-	colContents,
-	colKeystroke,
-	colCond,
-	colUsageCount,
-	colDescription,
-	colCount
+	kColContents,
+	kColKeystroke,
+	kColCond,
+	kColUsageCount,
+	kColDescription,
+	kColCount
 };
 
+// In dialog units, indexed by the column enum.
+constexpr int kDefaultColumnWidths[] = {
+	35,  // kColContents
+	20,  // kColKeystroke
+	15,  // kColCond
+	10,  // kColUsageCount
+	// kColDescription takes the remaining space.
+};
+
+
 // Number of columns with an explicit size. The last column takes all the remaining space.
-constexpr int kSizedColumnCount = colCount - 1;
+constexpr int kSizedColumnCount = kColCount - 1;
 
-extern int e_column_widths[colCount];
+extern int e_column_widths[kColCount];
 
-extern SIZE e_sizeMainDialog;
+extern SIZE e_main_dialog_size;
 extern bool e_maximize_main_dialog;
 
 extern TCHAR e_ini_filepath[MAX_PATH];

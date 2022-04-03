@@ -28,27 +28,27 @@ class String;
 
 namespace i18n {
 
-enum {
-	langZH_CN,
-	langDE,
-	langEN,
-	langES,
-	langFR,
-	langIT,
-	langNL,
-	langPL,
-	langPT,
-	langSK,
-	langGR,
-	langRU,
-	langCount,
-	langDefault = langEN,
+enum Language {
+	kLangZH_CN,
+	kLangDE,
+	kLangEN,
+	kLangES,
+	kLangFR,
+	kLangIT,
+	kLangNL,
+	kLangPL,
+	kLangPT,
+	kLangSK,
+	kLangGR,
+	kLangRU,
+	kLangCount,
+	kLangDefault = kLangEN,
 };
 
 
-int getLanguage();
-void setLanguage(int lang);
-int getDefaultLanguage();
+Language getLanguage();
+void setLanguage(Language lang);
+Language getDefaultLanguage();
 
 
 // Memory representation of a string resource. Should only be used for low-level string resource
@@ -87,7 +87,7 @@ HBITMAP loadBitmap(UINT id);
 HICON loadNeutralIcon(UINT id, int cx, int cy);
 
 
-const size_t bufIntegerCount = 40;
+const size_t kIntegerBufSize = 40;
 
 // Formats a number with the default i18n format.
 void formatInteger(int number, String* output);
@@ -95,4 +95,4 @@ void formatInteger(int number, String* output);
 // Converts a LOCALE_SGROUPING string into its NUMBERFMT.Grouping equivalent.
 int parseNumberGroupingString(LPCTSTR input);
 
-}  // i18n namespace
+}  // namespace i18n

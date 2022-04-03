@@ -23,7 +23,7 @@
 namespace KeystrokeTest {
 
 void useEnglishKeyNames() {
-	i18n::setLanguage(i18n::langEN);
+	i18n::setLanguage(i18n::kLangEN);
 }
 
 void setKeystroke(Keystroke* keystroke, BYTE vk, bool sided = false, DWORD sided_mod_code = 0) {
@@ -92,7 +92,7 @@ private:
 		String keystroke_debug_string = keystroke.debugString();
 		
 		// Verify getDisplayName().
-		TCHAR generated_display_name[bufHotKey];
+		TCHAR generated_display_name[kHotKeyBufSize];
 		keystroke.getDisplayName(generated_display_name);
 		Assert::AreEqual(
 			display_name, generated_display_name,
@@ -408,8 +408,8 @@ private:
 		int actual_result = testing::normalizeCompareResult(Keystroke::compare(keystroke1, keystroke2));
 		
 		// Generate a nice test failure message.
-		TCHAR message[50 + bufHotKey * 2];
-		TCHAR name1[bufHotKey], name2[bufHotKey];
+		TCHAR message[50 + kHotKeyBufSize * 2];
+		TCHAR name1[kHotKeyBufSize], name2[kHotKeyBufSize];
 		keystroke1.getDisplayName(name1);
 		keystroke2.getDisplayName(name2);
 		wsprintf(message, _T("Comparing %ws and %ws -- expected %d"),
@@ -423,11 +423,11 @@ TEST_CLASS(SpecialKeysTest) {
 public:
 	
 	TEST_METHOD(VkRight) {
-		for (int i = 0; i < arrayLength(e_special_keys); i++) {
-			const SpecialKey& special_key = e_special_keys[i];
+		for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
+			const SpecialKey& special_key = kSpecialKeys[i];
 			Assert::AreEqual(static_cast<BYTE>(special_key.vk_left + 1), special_key.vk_right);
 		}
 	}
 };
 
-}
+}  // namespace KeystrokeTest

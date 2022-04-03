@@ -190,34 +190,34 @@ public:
 	
 	
 	TEST_METHOD(Contents_bothAreCommands) {
-		m_shortcut1->m_type = m_shortcut2->m_type = Shortcut::Type::Command;
+		m_shortcut1->m_type = m_shortcut2->m_type = Shortcut::Type::kCommand;
 		m_shortcut1->m_command = _T("AZZZZZ");
 		m_shortcut2->m_command = _T("Baa");
-		checkCompare(colContents, -1);
+		checkCompare(kColContents, -1);
 	}
 	
 	TEST_METHOD(Contents_bothAreTexts) {
-		m_shortcut1->m_type = m_shortcut2->m_type = Shortcut::Type::Text;
+		m_shortcut1->m_type = m_shortcut2->m_type = Shortcut::Type::kText;
 		m_shortcut1->m_text = _T("Baa");
 		m_shortcut2->m_text = _T("AZZZZZ");
-		checkCompare(colContents, +1);
+		checkCompare(kColContents, +1);
 	}
 	
 	TEST_METHOD(Contents_commandAndText) {
-		m_shortcut1->m_type = Shortcut::Type::Text;
-		m_shortcut2->m_type = Shortcut::Type::Command;
-		checkCompare(colContents, -1);
+		m_shortcut1->m_type = Shortcut::Type::kText;
+		m_shortcut2->m_type = Shortcut::Type::kCommand;
+		checkCompare(kColContents, -1);
 	}
 	
 	
 	TEST_METHOD(Keystroke_equal) {
-		checkCompare(colKeystroke, 0);
+		checkCompare(kColKeystroke, 0);
 	}
 	
 	TEST_METHOD(Keystroke_noModCode) {
 		m_shortcut1->m_vk = 'A';
 		m_shortcut2->m_vk = 'B';
-		checkCompare(colKeystroke, -1);
+		checkCompare(kColKeystroke, -1);
 	}
 	
 	TEST_METHOD(Keystroke_sameModCode) {
@@ -225,58 +225,61 @@ public:
 		m_shortcut2->m_vk = 'B';
 		m_shortcut1->m_sided_mod_code = m_shortcut2->m_sided_mod_code
 				= MOD_ALT | MOD_SHIFT | MOD_CONTROL | MOD_WIN;
-		checkCompare(colKeystroke, -1);
+		checkCompare(kColKeystroke, -1);
 	}
 	
 	TEST_METHOD(Keystroke_winControlShiftBeforeWinControlAlt) {
 		m_shortcut1->m_sided_mod_code = MOD_WIN | MOD_CONTROL | MOD_SHIFT;
 		m_shortcut2->m_sided_mod_code = MOD_WIN | MOD_CONTROL | MOD_ALT;
-		checkCompare(colKeystroke, -1);
+		checkCompare(kColKeystroke, -1);
 	}
 	
 	
 	TEST_METHOD(Cond_empty) {
-		checkCompare(colCond, 0);
+		checkCompare(kColCond, 0);
 	}
 	
 	TEST_METHOD(Cond_equal) {
-		m_shortcut1->m_conditions[condTypeShiftLock] = m_shortcut2->m_conditions[condTypeShiftLock] = condYes;
-		m_shortcut1->m_programs = m_shortcut2->m_programs = _T("same");
-		checkCompare(colCond, 0);
+		m_shortcut1->m_conditions[Keystroke::kCondTypeCapsLock] =
+			m_shortcut2->m_conditions[Keystroke::kCondTypeCapsLock] =
+				Keystroke::Condition::kYes;
+		m_shortcut1->m_programs =
+			m_shortcut2->m_programs = _T("same");
+		checkCompare(kColCond, 0);
 	}
 	
 	TEST_METHOD(Cond_differentCondition) {
-		m_shortcut1->m_conditions[condTypeShiftLock] = condYes;
-		m_shortcut2->m_conditions[condTypeNumLock] = condNo;
-		checkCompare(colCond, -1);
+		m_shortcut1->m_conditions[Keystroke::kCondTypeCapsLock] = Keystroke::Condition::kYes;
+		m_shortcut2->m_conditions[Keystroke::kCondTypeNumLock] = Keystroke::Condition::kNo;
+		checkCompare(kColCond, -1);
 	}
 	
 	TEST_METHOD(Cond_differentPrograms) {
 		m_shortcut1->m_programs = _T("aaa");
 		m_shortcut2->m_programs = _T("bbb");
-		checkCompare(colCond, -1);
+		checkCompare(kColCond, -1);
 	}
 	
 	
 	TEST_METHOD(Description_empty) {
-		checkCompare(colDescription, 0);
+		checkCompare(kColDescription, 0);
 	}
 	
 	TEST_METHOD(Description_equal) {
 		m_shortcut1->m_description = m_shortcut2->m_description = _T("same");
-		checkCompare(colDescription, 0);
+		checkCompare(kColDescription, 0);
 	}
 	
 	TEST_METHOD(Description_different) {
 		m_shortcut1->m_description = _T("Aaaa");
 		m_shortcut2->m_description = _T("Bbbb");
-		checkCompare(colDescription, -1);
+		checkCompare(kColDescription, -1);
 	}
 	
 	TEST_METHOD(Description_ignoreCase) {
 		m_shortcut1->m_description = _T("AAAA");
 		m_shortcut2->m_description = _T("aaaa");
-		checkCompare(colDescription, 0);
+		checkCompare(kColDescription, 0);
 	}
 	
 private:
@@ -293,4 +296,4 @@ private:
 	}
 };
 
-}
+}  // namespace ShortcutTest

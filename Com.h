@@ -35,6 +35,7 @@ public:
 	}
 	
 	CoPtr(const CoPtr<T>& other) = delete;
+	CoPtr& operator =(const CoPtr<T>& other) = delete;
 	
 	CoPtr(CoPtr<T>&& other) : m_ptr(other.m_ptr) {
 		other.m_ptr = nullptr;

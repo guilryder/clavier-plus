@@ -29,51 +29,9 @@
 #define WM_GETFILEICON  (WM_USER + 101)
 
 
-// Each token is associated to a part of the IDS_TOKENS resource string. IDS_TOKENS is a ';'
-// separated string whose parts are in the same other as the values of this enum.
-enum {
-	tokLanguageName,
-	
-	tokShortcut,
-	tokCode,
-	tokDistinguishLeftRight,
-	tokDescription,
-	tokCommand,
-	tokText,
-	tokDirectory,
-	tokWindow,
-	tokSupportFileOpen,
-	tokPrograms,
-	tokAllProgramsBut,
-	tokLanguage,
-	tokSize,
-	tokColumns,
-	tokSorting,
-	
-	tokShowNormal,
-	tokShowMinimize,
-	tokShowMaximize,
-	
-	tokWin,
-	tokCtrl,
-	tokShift,
-	tokAlt,
-	tokLeft,
-	tokRight,
-	
-	tokConditionCapsLock,
-	tokConditionNumLock,
-	tokConditionScrollLock,
-	tokConditionYes,
-	tokConditionNo,
-	
-	tokUsageCount,
-	
-	tokNotFound
-};
-
-
 namespace app {
-	void initialize();
-	void terminate();
-}  // app namespace
+
+void initialize();
+void terminate();
+
+}  // namespace app

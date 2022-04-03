@@ -65,4 +65,4 @@ int normalizeCompareResult(int result) {
 	}
 }
 
-}
+}  // namespace testing

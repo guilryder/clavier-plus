@@ -36,4 +36,4 @@ void initializeCurrentLanguage();
 //   The ID of the last clicked button: ID_OK, ID_CANCEL, IDCCMD_QUIT, IDCCMD_LANGUAGE.
 INT_PTR showMainDialogModal(UINT initial_command);
 
-}  // dialogs namespace
+}  // namespace dialogs

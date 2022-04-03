@@ -24,10 +24,9 @@
 #include <algorithm>
 
 namespace shortcut {
+namespace {
 
-static Shortcut* s_first_shortcut;
-
-static constexpr int s_default_column_widths[] = { 35, 20, 15, 10 };
+Shortcut* s_first_shortcut;
 
 constexpr WCHAR kUtf16LittleEndianBom = 0xFEFF;
 
@@ -55,60 +54,62 @@ struct ExecutionContext {
 // Sleep for 100 milliseconds and catch the focus.
 // Convenience alias for [{Focus,100}].
 // Reads & updates input_thread and input_window in the context.
-static void commandEmpty(ExecutionContext* context);
+void commandEmpty(ExecutionContext* context);
 
 // [{Wait,duration}]
 // Sleep for a given number of milliseconds.
-static void commandWait(LPTSTR arg);
+void commandWait(LPTSTR arg);
 
 // [{Focus,delay,[!]window_name}]
 // Sleep for delay milliseconds and catch the focus.
 // If window_name does not begin with '!', return false if the window is not found.
 // Reads & updates input_thread and input_window in the context.
-static bool commandFocus(ExecutionContext* context, LPTSTR arg);
+bool commandFocus(ExecutionContext* context, LPTSTR arg);
 
 // [{FocusOrLaunch,window_name,command,delay}]
 // Activate window_name.
 // If the window is not found, relases any pressed special keys, execute command, then sleep for delay milliseconds.
 // Either way, catch the focus (reads & updates input_thread and input_window in the context).
-static void commandFocusOrLaunch(ExecutionContext* context, LPTSTR arg);
+void commandFocusOrLaunch(ExecutionContext* context, LPTSTR arg);
 
 // [{Copy,text}]
 // Copy the text argument to the clipboard.
-static void commandCopy(LPTSTR arg);
+void commandCopy(LPTSTR arg);
 
 // [{Mouse,state}] where state is 2 letters:
 // 1 letter for button: L (left), M (middle), R (right)
 // 1 letter for state: U (up), D (down)
 // Simulate mouse clicks.
-static void commandMouseButton(LPTSTR arg);
+void commandMouseButton(LPTSTR arg);
 
 // [{MouseMoveTo,x,y}], [{MouseMoveToFocus,x,y}], [{MouseMoveBy,dx,dy}]
 // Move the mouse cursor.
 // arg: move coordinates relative to origin_point.
-static void commandMouseMove(POINT origin_point, LPTSTR arg);
+void commandMouseMove(POINT origin_point, LPTSTR arg);
 
 // [{MouseWheel,offset}]
 // Simulate a mouse wheel scroll.
-static void commandMouseWheel(LPTSTR arg);
+void commandMouseWheel(LPTSTR arg);
 
 // [{KeysDown,keystroke}]
 // Keep special keys down.
 // Reads & updates keep_down_unsided_mod_code.
-static void commandKeysDown(ExecutionContext* context, LPTSTR arg);
+void commandKeysDown(ExecutionContext* context, LPTSTR arg);
 
 
 // Return whether to continue executing the shortcut.
-static bool executeSpecialCommand(LPCTSTR shortcut_start, LPCTSTR& shortcut_end, ExecutionContext* context);
+bool executeSpecialCommand(LPCTSTR shortcut_start, LPCTSTR& shortcut_end, ExecutionContext* context);
 
-static void executeCommandLine(LPCTSTR command, ExecutionContext* context);
+void executeCommandLine(LPCTSTR command, ExecutionContext* context);
 
-static void simulateCharacter(TCHAR c, DWORD keep_down_mod_code);
+void simulateCharacter(TCHAR c, DWORD keep_down_mod_code);
 
-static void focusWindow(HWND hwnd);
+void focusWindow(HWND hwnd);
 
 
 constexpr LPCTSTR kLineSeparator = _T("-\r\n");
+
+}  // namespace
 
 
 void initialize() {
@@ -124,10 +125,10 @@ Shortcut* getFirst() {
 
 Shortcut* find(const Keystroke& ks, LPCTSTR program) {
 	Shortcut *best_shortcut = nullptr;
-	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
-		if (shortcut->isSubset(ks, program)) {
+	for (Shortcut* sh = getFirst(); sh; sh = sh->getNext()) {
+		if (sh->isSubset(ks, program)) {
 			if (!best_shortcut || !best_shortcut->m_programs_only) {
-				best_shortcut = shortcut;
+				best_shortcut = sh;
 			}
 		}
 	}
@@ -135,35 +136,40 @@ Shortcut* find(const Keystroke& ks, LPCTSTR program) {
 }
 
 
-Shortcut::Shortcut(const Shortcut& sh) : Keystroke(sh) {
-	m_next_shortcut = nullptr;
-	m_type = sh.m_type;
-	m_show_option = sh.m_show_option;
-	m_support_file_open = sh.m_support_file_open;
-	m_programs_only = sh.m_programs_only;
-	m_small_icon_index = sh.m_small_icon_index;
-	m_icon = CopyIcon(sh.m_icon);
+Shortcut::Shortcut(const Shortcut& sh)
+	: Keystroke(sh),
+	m_type(sh.m_type),
+	m_show_option(sh.m_show_option),
+	m_programs_only(sh.m_programs_only),
+	m_support_file_open(sh.m_support_file_open),
 	
-	m_description = sh.m_description;
-	m_text = sh.m_text;
-	m_command = sh.m_command;
-	m_directory = sh.m_directory;
-	m_programs = sh.m_programs;
+	m_description(sh.m_description),
+	m_text(sh.m_text),
+	m_command(sh.m_command),
+	m_directory(sh.m_directory),
 	
-	m_usage_count = sh.m_usage_count;
-}
+	m_programs(sh.m_programs),
+	m_usage_count(sh.m_usage_count),
+	
+	m_next_shortcut(nullptr),
+	
+	m_small_icon_index(sh.m_small_icon_index),
+	m_icon(CopyIcon(sh.m_icon)) {}
 
-Shortcut::Shortcut(const Keystroke& ks) : Keystroke(ks) {
-	m_next_shortcut = nullptr;
-	m_type = Shortcut::Type::Text;
-	m_show_option = SW_NORMAL;
-	m_support_file_open = false;
-	m_programs_only = false;
-	m_small_icon_index = iconNeeded;
-	m_icon = NULL;
+Shortcut::Shortcut(const Keystroke& ks)
+	: Keystroke(ks),
+	m_type(Type::kText),
+	m_show_option(SW_NORMAL),
+	m_programs_only(false),
+	m_support_file_open(false),
 	
-	m_usage_count = 0;
-}
+	m_usage_count(0),
+	
+	m_next_shortcut(nullptr),
+	
+	m_small_icon_index(kIconNeeded),
+	m_icon(NULL) {}
+
 
 void Shortcut::addToList() {
 	m_next_shortcut = s_first_shortcut;
@@ -174,31 +180,32 @@ void Shortcut::addToList() {
 void Shortcut::save(HANDLE file) {
 	cleanPrograms();
 	
-	TCHAR display_name[bufHotKey], code_text[bufCode];
+	TCHAR display_name[kHotKeyBufSize], code_text[kCodeBufSize];
 	getDisplayName(display_name);
 	wsprintf(code_text, _T("%lu"), static_cast<DWORD>(m_vk) | (m_sided_mod_code << 8));
 	
-	struct LINE {
-		int tokKey;
-		LPCTSTR pszValue;
+	struct Line {
+		Token key_token;
+		LPCTSTR value;
 	};
-	LINE lines[3 + 4 + 2 + condTypeCount + 1];
-	lines[0].tokKey = tokShortcut;
-	lines[0].pszValue = display_name;
-	lines[1].tokKey = tokCode;
-	lines[1].pszValue = code_text;
+	Line lines[3 + 4 + 2 + kCondTypeCount + 1];
+	lines[0].key_token = Token::kShortcut;
+	lines[0].value = display_name;
+	lines[1].key_token = Token::kCode;
+	lines[1].value = code_text;
 	int line_count = 2;
 	
 	if (m_sided) {
-		lines[line_count].tokKey = tokDistinguishLeftRight;
-		lines[line_count].pszValue = _T("1");
+		lines[line_count].key_token = Token::kDistinguishLeftRight;
+		lines[line_count].value = _T("1");
 		line_count++;
 	}
 	
-	for (int i = 0; i < condTypeCount; i++) {
-		if (m_conditions[i] != condIgnore) {
-			lines[line_count].tokKey = tokConditionCapsLock + i;
-			lines[line_count].pszValue = getToken(m_conditions[i] - 1 + tokConditionYes);
+	for (int i = 0; i < kCondTypeCount; i++) {
+		if (m_conditions[i] != Condition::kIgnore) {
+			lines[line_count].key_token = Token::kConditionCapsLock + i;
+			lines[line_count].value = getToken(
+				Token::kConditionYes + (static_cast<int>(m_conditions[i]) - static_cast<int>(Condition::kYes)));
 			line_count++;
 		}
 	}
@@ -206,74 +213,74 @@ void Shortcut::save(HANDLE file) {
 	String text;
 	
 	switch (m_type) {
-	case Shortcut::Type::Command:
-		lines[line_count].tokKey = tokCommand;
-		lines[line_count].pszValue = m_command;
-		line_count++;
-		
-		if (m_directory.isSome()) {
-			lines[line_count].tokKey = tokDirectory;
-			lines[line_count].pszValue = m_directory;
+		case Type::kCommand:
+			lines[line_count].key_token = Token::kCommand;
+			lines[line_count].value = m_command;
 			line_count++;
-		}
 		
-		lines[line_count].tokKey = tokWindow;
-		lines[line_count].pszValue = _T("");
-		for (int i = 0; i < arrayLength(shortcut::show_options); i++) {
-			if (m_show_option == shortcut::show_options[i]) {
-				lines[line_count].pszValue = getToken(tokShowNormal + i);
-				break;
+			if (m_directory.isSome()) {
+				lines[line_count].key_token = Token::kDirectory;
+				lines[line_count].value = m_directory;
+				line_count++;
 			}
-		}
-		line_count++;
 		
-		if (m_support_file_open) {
-			lines[line_count].tokKey = tokSupportFileOpen;
-			lines[line_count].pszValue = _T("1");
+			lines[line_count].key_token = Token::kWindow;
+			lines[line_count].value = _T("");
+			for (int i = 0; i < arrayLength(kShowOptions); i++) {
+				if (m_show_option == kShowOptions[i]) {
+					lines[line_count].value = getToken(Token::kShowNormal + i);
+					break;
+				}
+			}
 			line_count++;
-		}
-		break;
 		
-	case Shortcut::Type::Text:
-		// Copy the text, replace "\r\n" by "\r\n>"
-		// to handle multiple lines text
-		for (const TCHAR *pcFrom = m_text; *pcFrom; pcFrom++) {
-			text += *pcFrom;
-			if (pcFrom[0] == _T('\r') && pcFrom[1] == _T('\n')) {
-				text += _T("\n>");
-				pcFrom++;
+			if (m_support_file_open) {
+				lines[line_count].key_token = Token::kSupportFileOpen;
+				lines[line_count].value = _T("1");
+				line_count++;
 			}
-		}
+			break;
 		
-		lines[line_count].tokKey = tokText;
-		lines[line_count].pszValue = text;
-		line_count++;
-		break;
+		case Type::kText:
+			// Copy the text, replace "\r\n" by "\r\n>"
+			// to handle multiple lines text
+			for (const TCHAR *from = m_text; *from; from++) {
+				text += *from;
+				if (from[0] == _T('\r') && from[1] == _T('\n')) {
+					text += _T("\n>");
+					from++;
+				}
+			}
+		
+			lines[line_count].key_token = Token::kText;
+			lines[line_count].value = text;
+			line_count++;
+			break;
 	}
 	
 	if (m_programs.isSome()) {
-		lines[line_count].tokKey = (m_programs_only) ? tokPrograms : tokAllProgramsBut;
-		lines[line_count].pszValue = m_programs;
+		lines[line_count].key_token = (m_programs_only) ? Token::kPrograms : Token::kAllProgramsBut;
+		lines[line_count].value = m_programs;
 		line_count++;
 	}
 	
 	if (m_description.isSome()) {
-		lines[line_count].tokKey = tokDescription;
-		lines[line_count].pszValue = m_description;
+		lines[line_count].key_token = Token::kDescription;
+		lines[line_count].value = m_description;
 		line_count++;
 	}
 	
-	TCHAR strbuf_usage_count[i18n::bufIntegerCount];
+	TCHAR strbuf_usage_count[i18n::kIntegerBufSize];
 	wsprintf(strbuf_usage_count, _T("%d"), m_usage_count);
-	lines[line_count].tokKey = tokUsageCount;
-	lines[line_count].pszValue = strbuf_usage_count;
+	lines[line_count].key_token = Token::kUsageCount;
+	lines[line_count].value = strbuf_usage_count;
 	line_count++;
 	
 	// Write all
 	for (int i = 0; i < line_count; i++) {
-		writeFile(file, getToken(lines[i].tokKey));
+		writeFile(file, getToken(lines[i].key_token));
 		writeFile(file, _T("="));
-		writeFile(file, lines[i].pszValue);
+		writeFile(file, lines[i].value);
 		writeFile(file, _T("\r\n"));
 	}
 	writeFile(file, kLineSeparator);
@@ -282,7 +289,7 @@ void Shortcut::save(HANDLE file) {
 bool Shortcut::load(LPTSTR* input) {
 	// Read
 	
-	int tokKey = tokNotFound;
+	Token key_tok = Token::kNotFound;
 	for (;;) {
 		
 		// Read the line
@@ -314,7 +321,7 @@ bool Shortcut::load(LPTSTR* input) {
 		}
 		
 		// If next line of text, get it
-		if (*line_start == _T('>') && tokKey == tokText) {
+		if (*line_start == _T('>') && key_tok == Token::kText) {
 			m_text += _T("\r\n");
 			m_text += line_start + 1;
 			continue;
@@ -329,8 +336,8 @@ bool Shortcut::load(LPTSTR* input) {
 		*next_sep = _T('\0');
 		
 		// Identify the key
-		tokKey = findToken(line_start);
-		if (tokKey == tokNotFound) {
+		key_tok = findToken(line_start);
+		if (key_tok == Token::kNotFound) {
 			continue;
 		}
 		
@@ -343,11 +350,12 @@ bool Shortcut::load(LPTSTR* input) {
 			next_sep++;
 		}
 		line_length -= next_sep - line_start;
-		switch (tokKey) {
+		switch (key_tok) {
 			
 			// Language
-			case tokLanguage:
-				for (int lang = 0; lang < i18n::langCount; lang++) {
+			case Token::kLanguage:
+				for (int lang_index = 0; lang_index < i18n::kLangCount; lang_index++) {
+					i18n::Language lang = static_cast<i18n::Language>(lang_index);
 					if (!lstrcmpi(next_sep, getLanguageName(lang))) {
 						i18n::setLanguage(lang);
 					}
@@ -355,19 +363,19 @@ bool Shortcut::load(LPTSTR* input) {
 				break;
 			
 			// Main window size
-			case tokSize:
+			case Token::kSize:
 				while (*next_sep == _T(' ')) {
 					next_sep++;
 				}
-				e_sizeMainDialog.cx = StrToInt(parseCommaSepArg(next_sep));
-				e_sizeMainDialog.cy = StrToInt(parseCommaSepArg(next_sep));
+				e_main_dialog_size.cx = StrToInt(parseCommaSepArg(next_sep));
+				e_main_dialog_size.cy = StrToInt(parseCommaSepArg(next_sep));
 				e_maximize_main_dialog = toBool(StrToInt(parseCommaSepArg(next_sep)));
 				e_icon_visible = !StrToInt(parseCommaSepArg(next_sep));
 				break;
 			
 			// Main window columns width
-			case tokColumns:
-				for (int i = 0; i < colCount - 1; i++) {
+			case Token::kColumns:
+				for (int i = 0; i < kColCount - 1; i++) {
 					if (!*next_sep) {
 						break;
 					}
@@ -379,20 +387,20 @@ bool Shortcut::load(LPTSTR* input) {
 				break;
 			
 			// Sorting column
-			case tokSorting:
+			case Token::kSorting:
 				s_sort_column = StrToInt(next_sep);
-				if (s_sort_column < 0 || s_sort_column >= colCount) {
-					s_sort_column = colContents;
+				if (s_sort_column < 0 || s_sort_column >= kColCount) {
+					s_sort_column = kColContents;
 				}
 				break;
 			
 			// Shortcut
-			case tokShortcut:
+			case Token::kShortcut:
 				Keystroke::parseDisplayName(next_sep);
 				break;
 			
 			// Code
-			case tokCode:
+			case Token::kCode:
 				if (!m_vk) {
 					const DWORD dwCode = static_cast<DWORD>(StrToInt(next_sep));
 					if (dwCode) {
@@ -403,71 +411,75 @@ bool Shortcut::load(LPTSTR* input) {
 				break;
 			
 			// Distinguish left/right
-			case tokDistinguishLeftRight:
+			case Token::kDistinguishLeftRight:
 				m_sided = toBool(StrToInt(next_sep));
 				break;
 			
 			// Description
-			case tokDescription:
+			case Token::kDescription:
 				m_description = next_sep;
 				break;
 			
 			// Text
-			case tokText:
-				m_type = Shortcut::Type::Text;
+			case Token::kText:
+				m_type = Type::kText;
 				m_text = next_sep;
 				break;
 
 			// Command
-			case tokCommand:
-				m_type = Shortcut::Type::Command;
+			case Token::kCommand:
+				m_type = Type::kCommand;
 				m_command = next_sep;
 				break;
 			
 			// Directory
-			case tokDirectory:
+			case Token::kDirectory:
 				m_directory = next_sep;
 				break;
 			
 			// Programs
-			case tokPrograms:
-			case tokAllProgramsBut:
+			case Token::kPrograms:
+			case Token::kAllProgramsBut:
 				m_programs = next_sep;
-				m_programs_only = (tokKey == tokPrograms);
+				m_programs_only = (key_tok == Token::kPrograms);
 				cleanPrograms();
 				break;
 			
 			// Window
-			case tokWindow:
+			case Token::kWindow:
 				{
-					const int show_option_index = findToken(next_sep) - tokShowNormal;
-					if (0 <= show_option_index && show_option_index < arrayLength(shortcut::show_options)) {
-						m_show_option = shortcut::show_options[show_option_index];
+					const int show_option_index = findToken(next_sep) - Token::kShowNormal;
+					if (0 <= show_option_index && show_option_index < arrayLength(kShowOptions)) {
+						m_show_option = kShowOptions[show_option_index];
 					}
 				}
 				break;
 			
 			// Folder
-			case tokSupportFileOpen:
+			case Token::kSupportFileOpen:
 				m_support_file_open = toBool(StrToInt(next_sep));
 				break;
 			
 			// Condition
-			case tokConditionCapsLock:
-			case tokConditionNumLock:
-			case tokConditionScrollLock:
+			case Token::kConditionCapsLock:
+			case Token::kConditionNumLock:
+			case Token::kConditionScrollLock:
 				{
-					int cond = findToken(next_sep);
-					if (tokConditionYes <= cond && cond <= tokConditionNo) {
-						m_conditions[tokKey - tokConditionCapsLock] =
-							static_cast<KeystrokeCondition>(cond - tokConditionYes + condYes);
+					Token cond_tok = findToken(next_sep);
+					if (Token::kConditionYes <= cond_tok && cond_tok <= Token::kConditionNo) {
+						m_conditions[key_tok - Token::kConditionCapsLock] =
+							static_cast<Condition>(static_cast<int>(Condition::kYes) + (cond_tok - Token::kConditionYes));
 					}
 				}
 				break;
 			
 			// Usage count
-			case tokUsageCount:
+			case Token::kUsageCount:
 				m_usage_count = std::max(0, StrToInt(next_sep));
+				break;
+			
+			// Ignore the other tokens.
+			default:
 				break;
 		}
 	}
@@ -480,8 +492,8 @@ bool Shortcut::load(LPTSTR* input) {
 	// and any count of shortcuts having different programs conditions
 	String *const programs = getPrograms();
 	bool ok = true;
-	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
-		if (shortcut->testConflict(*this, programs, m_programs_only)) {
+	for (Shortcut* sh = getFirst(); sh; sh = sh->getNext()) {
+		if (sh->testConflict(*this, programs, m_programs_only)) {
 			ok = false;
 			break;
 		}
@@ -515,16 +527,16 @@ void Shortcut::execute(bool from_hotkey) {
 		// because it is one of Windows keyboard layout shortcut:
 		// simulate Ctrl down, release Alt and Shift, then release Ctrl
 		bool release_control = false;
-		if ((context.keyboard_state[VK_MENU] & keyDownMask) &&
-				(context.keyboard_state[VK_SHIFT] & keyDownMask) &&
-				!(context.keyboard_state[VK_CONTROL] & keyDownMask)) {
+		if ((context.keyboard_state[VK_MENU] & kKeyDownMask) &&
+				(context.keyboard_state[VK_SHIFT] & kKeyDownMask) &&
+				!(context.keyboard_state[VK_CONTROL] & kKeyDownMask)) {
 			release_control = true;
 			keybdEvent(VK_CONTROL, /* down= */ true);
-			new_keyboard_state[VK_CONTROL] = keyDownMask;
+			new_keyboard_state[VK_CONTROL] = kKeyDownMask;
 		}
 		
-		for (int i = 0; i < arrayLength(e_special_keys); i++) {
-			const SpecialKey& special_key = e_special_keys[i];
+		for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
+			const SpecialKey& special_key = kSpecialKeys[i];
 			new_keyboard_state[special_key.vk] =
 			new_keyboard_state[special_key.vk_left] =
 			new_keyboard_state[special_key.vk_right] = 0;
@@ -538,7 +550,7 @@ void Shortcut::execute(bool from_hotkey) {
 	}
 	
 	switch (m_type) {
-	case Shortcut::Type::Command:
+	case Type::kCommand:
 		// Required because the launched program
 		// can be a script that simulates keystrokes
 		if (can_release_special_keys) {
@@ -547,13 +559,13 @@ void Shortcut::execute(bool from_hotkey) {
 		
 		if (!m_support_file_open || !setDialogBoxDirectory(context.input_window, m_command)) {
 			clipboardToEnvironment();
-			ShellExecuteThread* const shell_execute_thread = new ShellExecuteThread(
+			ShellExecuteThread *const shell_execute_thread = new ShellExecuteThread(
 				m_command, m_directory, m_show_option);
 			startThread(shell_execute_thread->thread, shell_execute_thread);
 		}
 		break;
 		
-	case Shortcut::Type::Text:
+	case Type::kText:
 		// Special keys to keep down across commands.
 		
 		LastTextExecution lastTextExecution = LastTextExecution::None;
@@ -616,6 +628,7 @@ void Shortcut::execute(bool from_hotkey) {
 	}
 }
 
+namespace {
 
 bool executeSpecialCommand(LPCTSTR shortcut_start, LPCTSTR& shortcut_end, ExecutionContext* context) {
 	String inside(shortcut_start, static_cast<int>(shortcut_end - shortcut_start));
@@ -898,16 +911,18 @@ void commandKeysDown(ExecutionContext* context, LPTSTR arg) {
 	Keystroke::releaseSpecialKeys(context->keyboard_state, /* keep_down_mod_code= */ 0);
 	
 	// Press the new special keys.
-	for (int i = 0; i < arrayLength(e_special_keys); i++) {
-		const SpecialKey& special_key = e_special_keys[i];
+	for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
+		const SpecialKey& special_key = kSpecialKeys[i];
 		if (context->keep_down_mod_code & special_key.mod_code) {
 			// Press the left instance of the special key.
 			BYTE vk_left = special_key.vk_left;
 			Keystroke::keybdEvent(vk_left, /* down= */ true);
-			context->keyboard_state[vk_left] = context->keyboard_state[special_key.vk] = keyDownMask;
+			context->keyboard_state[vk_left] = context->keyboard_state[special_key.vk] = kKeyDownMask;
 		}
 	}
 }
+
+}  // namespace
 
 
 //------------------------------------------------------------------------
@@ -934,10 +949,10 @@ bool Shortcut::testConflict(
 		VERIF(getUnsidedModCode() == other_ks.getUnsidedModCode());
 	}
 	
-	for (int i = 0; i < condTypeCount; i++) {
+	for (int i = 0; i < kCondTypeCount; i++) {
 		VERIF(
-			m_conditions[i] == condIgnore ||
-			other_ks.m_conditions[i] == condIgnore ||
+			m_conditions[i] == Condition::kIgnore ||
+			other_ks.m_conditions[i] == Condition::kIgnore ||
 			m_conditions[i] == other_ks.m_conditions[i]);
 	}
 	
@@ -957,26 +972,27 @@ bool Shortcut::testConflict(
 String* Shortcut::getPrograms() const {
 	VERIFP(m_programs.isSome(), nullptr);
 	
-	const LPCTSTR pszPrograms = m_programs;
-	int nbProgram = 0;
-	for (int i = 0; pszPrograms[i]; i++) {
-		if (pszPrograms[i] == _T(';') && i > 0 && pszPrograms[i - 1] != _T(';')) {
-			nbProgram++;
+	// Count the programs.
+	int program_count = 0;
+	const LPCTSTR programs_chr = m_programs;
+	for (int i = 0; programs_chr[i]; i++) {
+		if (programs_chr[i] == _T(';') && i > 0 && programs_chr[i - 1] != _T(';')) {
+			program_count++;
 		}
 	}
-	String *const asProgram = new String[nbProgram + 2];
-	nbProgram = 0;
-	for (int i = 0; pszPrograms[i]; i++) {
-		if (pszPrograms[i] == _T(';')) {
-			if (i > 0 && pszPrograms[i - 1] != _T(';')) {
-				nbProgram++;
+	String *const programs = new String[program_count + 2];
+	program_count = 0;
+	for (int i = 0; programs_chr[i]; i++) {
+		if (programs_chr[i] == _T(';')) {
+			if (i > 0 && programs_chr[i - 1] != _T(';')) {
+				program_count++;
 			}
 		} else {
-			asProgram[nbProgram] += pszPrograms[i];
+			programs[program_count] += programs_chr[i];
 		}
 	}
 	
-	return asProgram;
+	return programs;
 }
 
 void Shortcut::cleanPrograms() {
@@ -1039,7 +1055,7 @@ void loadShortcuts() {
 void mergeShortcuts(LPCTSTR ini_filepath) {
 	e_icon_visible = true;
 	
-	memcpy(e_column_widths, s_default_column_widths, sizeof(s_default_column_widths));
+	memcpy(e_column_widths, kDefaultColumnWidths, sizeof(kDefaultColumnWidths));
 	
 	const HANDLE file = CreateFile(
 		ini_filepath,
@@ -1113,26 +1129,26 @@ void saveShortcuts() {
 	TCHAR buffer[1024];
 	
 	wsprintf(buffer, _T("%c%s=%s\r\n"),
-		kUtf16LittleEndianBom, getToken(tokLanguage), getToken(tokLanguageName));
+		kUtf16LittleEndianBom, getToken(Token::kLanguage), getToken(Token::kLanguageName));
 	writeFile(file, buffer);
 	
 	wsprintf(buffer, _T("%s=%d,%d,%d,%d\r\n"),
-		getToken(tokSize), e_sizeMainDialog.cx, e_sizeMainDialog.cy,
+		getToken(Token::kSize), e_main_dialog_size.cx, e_main_dialog_size.cy,
 		e_maximize_main_dialog, !e_icon_visible);
 	writeFile(file, buffer);
 	
-	writeFile(file, getToken(tokColumns));
+	writeFile(file, getToken(Token::kColumns));
 	for (int i = 0; i < kSizedColumnCount; i++) {
 		wsprintf(buffer, (i == 0) ? _T("=%d") : _T(",%d"), e_column_widths[i]);
 		writeFile(file, buffer);
 	}
 	
 	wsprintf(buffer, _T("\r\n%s=%d\r\n\r\n"),
-		getToken(tokSorting), Shortcut::s_sort_column);
+		getToken(Token::kSorting), Shortcut::s_sort_column);
 	writeFile(file, buffer);
 	
-	for (Shortcut* shortcut = getFirst(); shortcut; shortcut = shortcut->getNext()) {
-		shortcut->save(file);
+	for (Shortcut* sh = getFirst(); sh; sh = sh->getNext()) {
+		sh->save(file);
 	}
 	
 	CloseHandle(file);
@@ -1148,4 +1164,4 @@ void clearShortcuts() {
 	s_first_shortcut = nullptr;
 }
 
-}  // shortcut namespace
+}  // namespace shortcut

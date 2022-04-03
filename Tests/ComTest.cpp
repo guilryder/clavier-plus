@@ -230,4 +230,4 @@ public:
 	}
 };
 
-}
+}  // namespace ComTest

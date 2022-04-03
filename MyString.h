@@ -174,8 +174,8 @@ public:
 	}
 	
 	CSTR getSafe() const {
-		static constexpr TCHAR empty_string[] = { 0 };
-		return (m_strbuf) ? m_strbuf : empty_string;
+		static constexpr TCHAR kEmptyString[] = { 0 };
+		return (m_strbuf) ? m_strbuf : kEmptyString;
 	}
 	
 	TCHAR& operator [] (int offset) {

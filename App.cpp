@@ -28,50 +28,67 @@
 
 
 namespace app {
+namespace {
 
-static constexpr LPCTSTR kClavierWindowClass = _T("RyderClavierWindow");
+constexpr LPCTSTR kClavierWindowClass = _T("RyderClavierWindow");
 
-static UINT msgTaskbarCreated;
-static UINT msgClavierNotifyIcon;
+UINT s_taskbar_created_message;
+UINT s_notify_icon_message;
 
-static constexpr int kMaxIniFile = 20;
+constexpr int kMaxIniFile = 20;
 
-static TranslatedString s_asToken[tokNotFound];
+TranslatedString s_tokens[static_cast<int>(Token::kNotFound)];
 
 
-enum CMDLINE_OPTION {
-	cmdoptLaunch,
-	cmdoptSettings,
-	cmdoptMenu,
-	cmdoptQuit,
-	cmdoptAddText,
-	cmdoptAddCommand,
+enum class CmdlineOpt {
+	// No arguments.
+	kLaunch,
+	kSettings,
+	kMenu,
+	kQuit,
+	kAddText,
+	kAddCommand,
 	
-	cmdoptWithArg,
-	cmdoptLoad = cmdoptWithArg,
-	cmdoptMerge,
-	cmdoptSendKeys,
+	// Some arguments.
+	kWithArg,
+	kLoad = kWithArg,
+	kMerge,
+	kSendKeys,
 	
-	cmdoptNone
+	kNone
 };
 
-static void entryPoint();
-static void initializeLanguages();
-static void runGui(CMDLINE_OPTION cmdopt);
-static CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch);
-static void processCmdLineAction(CMDLINE_OPTION cmdopt);
+// Name of each CmdlineOpt except kNone.
+constexpr LPCTSTR kCmdlineOptions[] = {
+	_T("launch"),
+	_T("settings"),
+	_T("menu"),
+	_T("quit"),
+	_T("addtext"),
+	_T("addcommand"),
+	_T("load"),
+	_T("merge"),
+	_T("sendkeys"),
+};
 
-static LRESULT CALLBACK prcInvisible(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclass_id, DWORD_PTR ref_data);
+void entryPoint();
+void initializeLanguages();
+void runGui(CmdlineOpt cmdopt);
+CmdlineOpt execCmdLine(LPCTSTR cmdline, bool initial_launch);
+void processCmdLineAction(CmdlineOpt cmdopt);
 
-static void updateTrayIcon(DWORD message);
+LRESULT CALLBACK prcInvisible(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR subclass_id, DWORD_PTR ref_data);
+
+void updateTrayIcon(DWORD message);
 
 // Displays the tray icon menu, as a child of the invisible window.
 //
 // Returns:
 //   The ID of the chosen command, 0 if the user cancelled.
-static UINT displayTrayIconMenu();
+UINT displayTrayIconMenu();
 
-}  // app namespace
+}  // namespace
+}  // namespace app
 
 
 #ifdef _DEBUG
@@ -100,6 +117,7 @@ extern "C" int _purecall() {
 
 
 namespace app {
+namespace {
 
 void entryPoint() {
 	const LPCTSTR cmdline = GetCommandLine();
@@ -128,8 +146,8 @@ void entryPoint() {
 	e_instance = static_cast<HINSTANCE>(GetModuleHandle(/* lpModuleName= */ nullptr));
 	app::initialize();
 	
-	const CMDLINE_OPTION cmdopt = execCmdLine(cmdline, true);
-	if (cmdopt != cmdoptQuit) {
+	const CmdlineOpt cmdopt = execCmdLine(cmdline, /* initial_launch= */ true);
+	if (cmdopt != CmdlineOpt::kQuit) {
 		runGui(cmdopt);
 	}
 	
@@ -139,9 +157,11 @@ void entryPoint() {
 #endif  // _DEBUG
 }
 
+}  // namespace
+
 void initialize() {
-	msgTaskbarCreated = RegisterWindowMessage(_T("TaskbarCreated"));
-	msgClavierNotifyIcon = RegisterWindowMessage(_T("RyderClavierOptions"));
+	s_taskbar_created_message = RegisterWindowMessage(_T("TaskbarCreated"));
+	s_notify_icon_message = RegisterWindowMessage(_T("RyderClavierOptions"));
 	
 	CoInitialize(/* pvReserved= */ nullptr);
 	shortcut::initialize();
@@ -158,17 +178,18 @@ void terminate() {
 	CoUninitialize();
 }
 
+namespace {
 
 void initializeLanguages() {
 	TCHAR tokens[512];
-	for (int lang = 0; lang < i18n::langCount; lang++) {
-		i18n::setLanguage(lang);
+	for (int lang = 0; lang < i18n::kLangCount; lang++) {
+		i18n::setLanguage(static_cast<i18n::Language>(lang));
 		
 		// Load all tokens in the current language.
 		i18n::loadStringAuto(IDS_TOKENS, tokens);
 		TCHAR* next_token = tokens;
-		for (int token_index = 0; *next_token; token_index++) {
-			s_asToken[token_index].set(getSemiColonToken(&next_token));
+		for (int tok = 0; *next_token; tok++) {
+			s_tokens[tok].set(getSemiColonToken(&next_token));
 		}
 		
 		dialogs::initializeCurrentLanguage();
@@ -177,7 +198,7 @@ void initializeLanguages() {
 	i18n::setLanguage(i18n::getDefaultLanguage());
 }
 
-void runGui(CMDLINE_OPTION cmdopt) {
+void runGui(CmdlineOpt cmdopt) {
 	// Create the invisible window
 	e_invisible_window = CreateWindow(
 		_T("STATIC"), kClavierWindowClass,
@@ -213,10 +234,10 @@ void runGui(CMDLINE_OPTION cmdopt) {
 			const HWND input_window = Keystroke::getInputFocus();
 			
 			// Test for right special keys
-			for (int i = 0; i < arrayLength(e_special_keys); i++) {
-				const DWORD mod_code = e_special_keys[i].mod_code;
+			for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
+				const DWORD mod_code = kSpecialKeys[i].mod_code;
 				if (ks.m_sided_mod_code & mod_code) {
-					if (isKeyDown(e_special_keys[i].vk_right)) {
+					if (isKeyDown(kSpecialKeys[i].vk_right)) {
 						ks.m_sided_mod_code &= ~mod_code;
 						ks.m_sided_mod_code |= mod_code << kRightModCodeOffset;
 					}
@@ -224,9 +245,10 @@ void runGui(CMDLINE_OPTION cmdopt) {
 			}
 			
 			// Get the toggle keys state, for conditions checking
-			static constexpr int avkCond[] = { VK_CAPITAL, VK_NUMLOCK, VK_SCROLL };
-			for (int i = 0; i < condTypeCount; i++) {
-				ks.m_conditions[i] = (GetKeyState(avkCond[i]) & 0x01) ? condYes : condNo;
+			for (int i = 0; i < Keystroke::kCondTypeCount; i++) {
+				ks.m_conditions[i] = (GetKeyState(Keystroke::kCondTypeVks[i]) & kKeyToggledMask)
+					? Keystroke::Condition::kYes
+					: Keystroke::Condition::kNo;
 			}
 			
 			// Get the current program, for conditions checking
@@ -235,11 +257,11 @@ void runGui(CMDLINE_OPTION cmdopt) {
 				*process = _T('\0');
 			}
 			
-			Shortcut *const psh = shortcut::find(ks, (*process) ? process : nullptr);
-			
-			if (psh) {
-				psh->execute(/* from_hotkey= */ true);
-				if (psh->m_type == Shortcut::Type::Text) {
+			// Find and execute the shortcut.
+			Shortcut *const sh = shortcut::find(ks, (*process) ? process : nullptr);
+			if (sh) {
+				sh->execute(/* from_hotkey= */ true);
+				if (sh->m_type == Shortcut::Type::kText) {
 					timeMinimum = GetTickCount();
 				}
 			} else {
@@ -268,24 +290,10 @@ void runGui(CMDLINE_OPTION cmdopt) {
 }
 
 
-// Name of the command-line options. The array is indexed by CMDLINE_OPTION.
-static constexpr LPCTSTR cmdline_options[] = {
-	_T("launch"),
-	_T("settings"),
-	_T("menu"),
-	_T("quit"),
-	_T("addtext"),
-	_T("addcommand"),
-	_T("load"),
-	_T("merge"),
-	_T("sendkeys"),
-};
-
-
 
 // Returns the action to execute.
 // initial_launch: true for regular execution, false if the command line is sent by WM_COPYDATA.
-CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
+CmdlineOpt execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 	bool new_ini_file = false;  // True if loading a new INI file is asked
 	
 	bool in_quote;
@@ -303,7 +311,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 	
 	in_quote = false;
 	
-	CMDLINE_OPTION cmdoptAction = cmdoptNone;
+	CmdlineOpt action_cmdopt = CmdlineOpt::kNone;
 	bool can_auto_quit = true;
 	bool try_auto_quit = false;
 	bool default_action = true;
@@ -314,7 +322,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 	if (chr) {
 		// Parse arguments
 		
-		CMDLINE_OPTION cmdopt = cmdoptNone;
+		CmdlineOpt cmdopt = CmdlineOpt::kNone;
 		
 		const LPTSTR strbuf_arg = new TCHAR[lstrlen(cmdline) + 1];
 		
@@ -370,19 +378,19 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 			}
 			*str_arg = _T('\0');
 			
-			if (cmdopt == cmdoptNone) {
+			if (cmdopt == CmdlineOpt::kNone) {
 				// Test for command line option
 				if (*strbuf_arg == _T('/')) {
-					const LPCTSTR pszOption = strbuf_arg + 1;
-					for (cmdopt = static_cast<CMDLINE_OPTION>(0); cmdopt < cmdoptNone;
-							cmdopt = static_cast<CMDLINE_OPTION>(cmdopt + 1)) {
-						if (!lstrcmpi(pszOption, cmdline_options[cmdopt])) {
+					const LPCTSTR options = strbuf_arg + 1;
+					for (cmdopt = static_cast<CmdlineOpt>(0); cmdopt < CmdlineOpt::kNone;
+							cmdopt = static_cast<CmdlineOpt>(static_cast<int>(cmdopt) + 1)) {
+						if (!lstrcmpi(options, kCmdlineOptions[static_cast<int>(cmdopt)])) {
 							break;
 						}
 					}
 				}
 				
-				if (cmdopt >= cmdoptWithArg) {
+				if (cmdopt >= CmdlineOpt::kWithArg) {
 					continue;
 				}
 			}
@@ -391,7 +399,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 			switch (cmdopt) {
 				
 				// Set INI filename
-				case cmdoptLoad:
+				case CmdlineOpt::kLoad:
 					can_auto_quit = false;
 					new_ini_file = true;
 					GetFullPathName(
@@ -401,7 +409,7 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 					break;
 				
 				// Merge an INI file
-				case cmdoptMerge:
+				case CmdlineOpt::kMerge:
 					can_auto_quit = false;
 					if (mergeable_ini_files_count < arrayLength(mergeable_ini_files)) {
 						mergeable_ini_files[mergeable_ini_files_count++] = strbuf_arg;
@@ -409,11 +417,11 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 					break;
 				
 				// Send keys
-				case cmdoptSendKeys:
+				case CmdlineOpt::kSendKeys:
 					try_auto_quit = true;
 					{
 						Shortcut shortcut;
-						shortcut.m_type = Shortcut::Type::Text;
+						shortcut.m_type = Shortcut::Type::kText;
 						shortcut.m_text = strbuf_arg;
 						shortcut.execute(/* from_hotkey= */ false);
 					}
@@ -421,12 +429,12 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 				
 				// Other action
 				default:
-					cmdoptAction = cmdopt;
+					action_cmdopt = cmdopt;
 					can_auto_quit = false;
 					break;
 			}
 			
-			cmdopt = cmdoptNone;
+			cmdopt = CmdlineOpt::kNone;
 		}
 		
 		delete [] strbuf_arg;
@@ -459,44 +467,44 @@ CMDLINE_OPTION execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 		}
 	}
 	
-	if (cmdoptAction == cmdoptNone) {
+	if (action_cmdopt == CmdlineOpt::kNone) {
 		if (initial_launch) {
-			cmdoptAction = auto_quit ? cmdoptQuit : cmdoptLaunch;
+			action_cmdopt = auto_quit ? CmdlineOpt::kQuit : CmdlineOpt::kLaunch;
 		} else {
-			cmdoptAction = default_action ? cmdoptSettings : cmdoptLaunch;
+			action_cmdopt = default_action ? CmdlineOpt::kSettings : CmdlineOpt::kLaunch;
 		}
 	}
 	
-	return cmdoptAction;
+	return action_cmdopt;
 }
 
 
-void processCmdLineAction(CMDLINE_OPTION cmdopt) {
+void processCmdLineAction(CmdlineOpt cmdopt) {
 	LPARAM lParam_to_send;
 	WPARAM wParam_to_send;
 	switch (cmdopt) {
 		
-		case cmdoptSettings:
+		case CmdlineOpt::kSettings:
 			lParam_to_send = WM_LBUTTONUP;
 			wParam_to_send = 0;
 			break;
 		
-		case cmdoptMenu:
+		case CmdlineOpt::kMenu:
 			lParam_to_send = WM_RBUTTONUP;
 			wParam_to_send = 0;
 			break;
 		
-		case cmdoptQuit:
+		case CmdlineOpt::kQuit:
 			lParam_to_send = WM_COMMAND;
 			wParam_to_send = IDCCMD_QUIT;
 			break;
 		
-		case cmdoptAddText:
+		case CmdlineOpt::kAddText:
 			lParam_to_send = WM_COMMAND;
 			wParam_to_send = ID_ADD_TEXT;
 			break;
 		
-		case cmdoptAddCommand:
+		case CmdlineOpt::kAddCommand:
 			lParam_to_send = WM_COMMAND;
 			wParam_to_send = ID_ADD_COMMAND;
 			break;
@@ -504,7 +512,7 @@ void processCmdLineAction(CMDLINE_OPTION cmdopt) {
 		default:
 			return;
 	}
-	PostMessage(e_invisible_window, msgClavierNotifyIcon, wParam_to_send, lParam_to_send);
+	PostMessage(e_invisible_window, s_notify_icon_message, wParam_to_send, lParam_to_send);
 }
 
 
@@ -517,7 +525,7 @@ LRESULT CALLBACK prcInvisible(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 Destroy:
 		PostQuitMessage(0);
 		
-	} else if (message == msgClavierNotifyIcon) {
+	} else if (message == s_notify_icon_message) {
 		if (lParam == WM_COMMAND && wParam == IDCCMD_QUIT) {
 			goto Destroy;
 		}
@@ -569,7 +577,7 @@ Destroy:
 			}
 		}
 		
-	} else if (message == msgTaskbarCreated) {
+	} else if (message == s_taskbar_created_message) {
 		updateTrayIcon(NIM_ADD);
 	
 	} else if (message == WM_COPYDATA) {
@@ -577,7 +585,7 @@ Destroy:
 		
 		const COPYDATASTRUCT& cds = *reinterpret_cast<const COPYDATASTRUCT*>(lParam);
 		if (cds.dwData) {
-			processCmdLineAction(execCmdLine(static_cast<LPCTSTR>(cds.lpData), false));
+			processCmdLineAction(execCmdLine(static_cast<LPCTSTR>(cds.lpData), /* initial_launch= */ false));
 		}
 		return true;
 	}
@@ -596,10 +604,10 @@ void updateTrayIcon(DWORD message) {
 	nid.cbSize = sizeof(nid);
 	nid.hWnd = e_invisible_window;
 	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-	nid.uCallbackMessage = msgClavierNotifyIcon;
+	nid.uCallbackMessage = s_notify_icon_message;
 	if (message != NIM_DELETE) {
 		nid.hIcon = i18n::loadNeutralIcon(IDI_APP, 16,16);
-		lstrcpy(nid.szTip, pszApp);
+		lstrcpy(nid.szTip, kAppName);
 	}
 	Shell_NotifyIcon(message, &nid);
 }
@@ -669,15 +677,14 @@ UINT displayTrayIconMenu() {
 	
 	switch (id) {
 		case ID_TRAY_SETTINGS:
-			PostMessage(hwnd, msgClavierNotifyIcon, 0, WM_COMMAND);
+			PostMessage(hwnd, s_notify_icon_message, 0, WM_COMMAND);
 			break;
 		
 		case ID_TRAY_COPYLIST:
 			{
 				String str;
-				for (const Shortcut* shortcut = shortcut::getFirst(); shortcut;
-						shortcut = shortcut->getNext()) {
-					shortcut->appendCsvLineToString(str);
+				for (const Shortcut* sh = shortcut::getFirst(); sh; sh = sh->getNext()) {
+					sh->appendCsvLineToString(str);
 				}
 				setClipboardText(str);
 			}
@@ -688,7 +695,7 @@ UINT displayTrayIconMenu() {
 		case ID_TRAY_INI_SAVE:
 			{
 				// Load the filters, replace '|' with '\0'
-				TCHAR filters[bufString];
+				TCHAR filters[kStringBufSize];
 				i18n::loadStringAuto(IDS_INI_FILTER, filters);
 				for (UINT chr_index = 0; filters[chr_index]; chr_index++) {
 					if (filters[chr_index] == _T('|')) {
@@ -743,26 +750,26 @@ UINT displayTrayIconMenu() {
 	return id;
 }
 
-}  // app namespace
+}  // namespace
+}  // namespace app
 
 
 
-LPCTSTR getToken(int tok) {
-	return app::s_asToken[tok].get();
+LPCTSTR getToken(Token tok) {
+	return app::s_tokens[static_cast<int>(tok)].get();
 }
 
-LPCTSTR getLanguageName(int lang) {
-	return app::s_asToken[tokLanguageName].get(lang);
+LPCTSTR getLanguageName(i18n::Language lang) {
+	return app::s_tokens[static_cast<int>(Token::kLanguageName)].get(lang);
 }
 
-
-int findToken(LPCTSTR token) {
-	for (int tok = 0; tok < arrayLength(app::s_asToken); tok++) {
-		for (int lang = 0; lang < i18n::langCount; lang++) {
-			if (!lstrcmpi(token, app::s_asToken[tok].get(lang))) {
+Token findToken(LPCTSTR token) {
+	for (Token tok = Token::kFirst; tok < Token::kNotFound; tok++) {
+		for (int lang = 0; lang < i18n::kLangCount; lang++) {
+			if (!lstrcmpi(token, app::s_tokens[static_cast<int>(tok)].get(lang))) {
 				return tok;
 			}
 		}
 	}
-	return tokNotFound;
+	return Token::kNotFound;
 }
