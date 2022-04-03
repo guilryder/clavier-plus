@@ -284,8 +284,7 @@ void runGui(CmdlineOpt cmdopt) {
 	// Delete traybar icon
 	updateTrayIcon(NIM_DELETE);
 	
-	// Save shortcuts, then delete them
-	shortcut::saveShortcuts();
+	// Delete the shortcuts. No saving necessary.
 	shortcut::clearShortcuts();
 }
 
@@ -451,18 +450,15 @@ CmdlineOpt execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 	}
 	
 	if (!e_modal_dialog) {
-		bool config_changed = false;
 		if (new_ini_file) {
 			shortcut::loadShortcuts();
-			config_changed = true;
 		}
 		
 		for (int ini_file = 0; ini_file < mergeable_ini_files_count; ini_file++) {
 			shortcut::mergeShortcuts(mergeable_ini_files[ini_file]);
-			config_changed = true;
 		}
 		
-		if (config_changed) {
+		if (mergeable_ini_files_count > 0) {
 			shortcut::saveShortcuts();
 		}
 	}
@@ -727,8 +723,8 @@ UINT displayTrayIconMenu() {
 							shortcut::loadShortcuts();
 						} else {
 							shortcut::mergeShortcuts(ini_file);
+							shortcut::saveShortcuts();
 						}
-						shortcut::saveShortcuts();
 					}
 				}
 			}

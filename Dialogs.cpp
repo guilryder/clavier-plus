@@ -1612,7 +1612,7 @@ INT_PTR CALLBACK prcLanguage(HWND hdlg, UINT message, WPARAM wParam, LPARAM UNUS
 							static_cast<i18n::Language>(ListBox_GetCurSel(list_hwnd));
 						if (i18n::getLanguage() != lang) {
 							i18n::setLanguage(lang);
-							shortcut::saveShortcuts();
+							// No need to save the configuration: onMainCommand() will do it.
 						} else {
 							wParam = IDCANCEL;
 						}
