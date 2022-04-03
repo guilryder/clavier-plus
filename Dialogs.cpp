@@ -1632,8 +1632,29 @@ INT_PTR CALLBACK prcLanguage(HWND hdlg, UINT message, WPARAM wParam, LPARAM UNUS
 INT_PTR CALLBACK prcAbout(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
 		case WM_INITDIALOG:
+		{
 			e_modal_dialog = hdlg;
 			centerParent(hdlg);
+			
+			// Extract the version and copyright notice from resources,
+			// then populate the full app version: "Clavier+ <version>\n<copyright>".
+			TCHAR exe_filepath[MAX_PATH];
+			GetModuleFileName(e_instance, exe_filepath, arrayLength(exe_filepath));
+			DWORD version_size = GetFileVersionInfoSize(exe_filepath, /* lpdwHandle= */ nullptr);
+			BYTE *const version_buffer = new BYTE[version_size];
+			if (GetFileVersionInfo(exe_filepath, /* dwHandle= */ 0, version_size, version_buffer)) {
+				LPTSTR product_version, legal_copyright;
+				UINT production_version_len, legal_copyright_len;
+				if (VerQueryValue(version_buffer, _T("\\StringFileInfo\\000004b0\\ProductVersion"),
+						reinterpret_cast<LPVOID*>(&product_version), &production_version_len)
+					&& VerQueryValue(version_buffer, _T("\\StringFileInfo\\000004b0\\LegalCopyright"),
+						reinterpret_cast<LPVOID*>(&legal_copyright), &legal_copyright_len)) {
+					TCHAR app_version[100];
+					wsprintf(app_version, _T("%s %s\n%s"), kAppName, product_version, legal_copyright);
+					SetDlgItemText(hdlg, IDCLBL_APP_VERSION, app_version);
+				}
+			}
+			delete [] version_buffer;
 			
 			initializeWebLink(hdlg, IDCLBL_WEBSITE, _T("https://gryder.org/software/clavier-plus/"));
 			initializeWebLink(hdlg, IDCLBL_EMAIL, _T("mailto:guillaume@ryder.fr"));
@@ -1642,6 +1663,7 @@ INT_PTR CALLBACK prcAbout(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam)
 			SendDlgItemMessage(hdlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
 				reinterpret_cast<LPARAM>(i18n::loadBitmap(IDB_DONATE)));
 			return true;
+		}
 		
 		case WM_CTLCOLORSTATIC:
 			{

@@ -25,6 +25,7 @@ LDFLAGS=\
 	-lshlwapi \
 	-luser32 \
 	-luuid \
+	-lversion \
 	-Wl,-dynamicbase,-nxcompat,--no-seh \
 	-Wl,--disable-reloc-section,--disable-runtime-pseudo-reloc \
 	-Wl,--tsaware,-s \

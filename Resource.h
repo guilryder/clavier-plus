@@ -80,6 +80,7 @@
 #define IDCCHK_DISTINGUISH_LEFT_RIGHT   1058
 #define IDCLBL_SHORTCUTSCOUNT           1059
 #define IDCTXT_SHORTCUTSCOUNT           1060
+#define IDCLBL_APP_VERSION              1061
 #define ID_ADD_SPECIALCHAR_FIRST        10000
 #define ID_ADD_ITEM_FIRST               11000
 #define ID_TEXT_SPECIALCHAR_FIRST       12000
@@ -124,7 +125,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        136
 #define _APS_NEXT_COMMAND_VALUE         40067
-#define _APS_NEXT_CONTROL_VALUE         1061
+#define _APS_NEXT_CONTROL_VALUE         1062
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

@@ -24,6 +24,7 @@
 #pragma comment(lib, "propsys.lib")
 #pragma comment(lib, "psapi.lib")
 #pragma comment(lib, "shlwapi.lib")
+#pragma comment(lib, "version.lib")
 
 #ifndef _DEBUG
 
