@@ -679,7 +679,7 @@ void onMainCommand(UINT id, WORD notify, HWND hwnd) {
 				// Create a valid linked list from the list box
 				// and register the hot keys
 				shortcut::clearShortcuts();
-				for (int i = item_count; --i >= 0;) {
+				for (int i = 0; i < item_count; i++) {
 					Shortcut *const shortcut = shortcuts[i];
 					shortcut->clearIcons();
 					shortcut->registerHotKey();

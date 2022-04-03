@@ -20,6 +20,16 @@
 #include "StdAfx.h"
 #include "../Shortcut.h"
 
+
+namespace Microsoft::VisualStudio::CppUnitTestFramework {
+
+template<> inline std::wstring ToString<Shortcut>(const Shortcut& ks) {
+	return std::wstring(StringPrintf(_T("Shortcut{m_vk=0x%02x ('%c')}"), ks.m_vk, ks.m_vk));
+}
+
+}  // Microsoft::VisualStudio::CppUnitTestFramework
+
+
 namespace ShortcutTest {
 
 TEST_CLASS(ShortcutGetProgramsTest) {
@@ -293,6 +303,56 @@ private:
 			testing::normalizeCompareResult(Shortcut::compare(m_shortcut1, m_shortcut2, 0)));
 		Assert::AreEqual(-expected_result,
 			testing::normalizeCompareResult(Shortcut::compare(m_shortcut2, m_shortcut1, 0)));
+	}
+};
+
+
+TEST_CLASS(ShortcutListTest) {
+public:
+	
+	TEST_METHOD_INITIALIZE(setUp) {
+		shortcut::initialize();
+	}
+	
+	TEST_METHOD_CLEANUP(tearDown) {
+		shortcut::clearShortcuts();
+		shortcut::terminate();
+	}
+	
+	TEST_METHOD(InitiallyEmpty) {
+		Assert::IsNull(shortcut::getFirst());
+	}
+	
+	TEST_METHOD(AddToList_one) {
+		Shortcut *const shortcut = createShortcut('A');
+		
+		shortcut->addToList();
+		
+		Assert::AreSame(*shortcut::getFirst(), *shortcut);
+		Assert::IsNull(shortcut->getNext());
+	}
+	
+	TEST_METHOD(AddToList_three) {
+		Shortcut *const shortcut1 = createShortcut('1');
+		Shortcut *const shortcut2 = createShortcut('2');
+		Shortcut *const shortcut3 = createShortcut('3');
+		
+		shortcut1->addToList();
+		shortcut2->addToList();
+		shortcut3->addToList();
+		
+		Assert::AreSame(*shortcut::getFirst(), *shortcut1);
+		Assert::AreSame(*shortcut1->getNext(), *shortcut2);
+		Assert::AreSame(*shortcut2->getNext(), *shortcut3);
+		Assert::IsNull(shortcut3->getNext());
+	}
+	
+private:
+	
+	static Shortcut* createShortcut(BYTE vk) {
+		Keystroke ks;
+		ks.m_vk = vk;
+		return new Shortcut(ks);
 	}
 };
 

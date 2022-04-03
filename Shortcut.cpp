@@ -27,6 +27,7 @@ namespace shortcut {
 namespace {
 
 Shortcut* s_first_shortcut;
+Shortcut* s_last_shortcut;
 
 constexpr WCHAR kUtf16LittleEndianBom = 0xFEFF;
 
@@ -113,7 +114,7 @@ constexpr LPCTSTR kLineSeparator = _T("-\r\n");
 
 
 void initialize() {
-	s_first_shortcut = nullptr;
+	s_first_shortcut = s_last_shortcut = nullptr;
 }
 
 void terminate() {
@@ -172,8 +173,12 @@ Shortcut::Shortcut(const Keystroke& ks)
 
 
 void Shortcut::addToList() {
-	m_next_shortcut = s_first_shortcut;
-	s_first_shortcut = this;
+	if (s_last_shortcut == nullptr) {
+		s_first_shortcut = this;
+	} else {
+		s_last_shortcut->m_next_shortcut = this;
+	}
+	s_last_shortcut = this;
 }
 
 
@@ -1156,12 +1161,14 @@ void saveShortcuts() {
 
 
 void clearShortcuts() {
-	while (s_first_shortcut) {
-		Shortcut *const old_first_shortcut = s_first_shortcut;
-		s_first_shortcut = old_first_shortcut->getNext();
-		delete old_first_shortcut;
+	Shortcut *sh = getFirst();
+	while (sh) {
+		Shortcut *const copy = sh;
+		sh = sh->getNext();
+		delete copy;
 	}
-	s_first_shortcut = nullptr;
+	
+	s_first_shortcut = s_last_shortcut = nullptr;
 }
 
 }  // namespace shortcut
