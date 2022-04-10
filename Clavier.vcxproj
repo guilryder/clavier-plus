@@ -117,6 +117,7 @@
     <None Include="Distrib\Clavier_ru.ini" />
     <None Include="Distrib\Clavier_sk.ini" />
     <None Include="Distrib\Clavier_zh-CN.ini" />
+    <None Include="Makefile" />
     <None Include="Target.cur" />
   </ItemGroup>
   <ItemGroup>

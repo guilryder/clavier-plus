@@ -73,5 +73,8 @@ pre-build:
 $(OUTDIR)\Clavier.exe: *.cpp *.h $(OUTDIR)\Resource.o
 	$(CC) $(filter-out %.h,$^) -o "$@" $(CFLAGS) $(LDFLAGS) $(CLDFLAGS)
 
-$(OUTDIR)\Resource.o: Clavier.rc Resource.h *.bmp *.cur *.ico *.manifest pre-build
-	$(WR) $(WRFLAGS) "$<" -o "$@" -D INCLUDE_RAW_MANIFEST
+$(OUTDIR)\Clavier_utf8.rc: Clavier.rc pre-build
+	iconv -f UTF-16LE -t UTF-8 "$<" > "$@"
+
+$(OUTDIR)\Resource.o: $(OUTDIR)\Clavier_utf8.rc Resource.h *.bmp *.cur *.ico *.manifest
+	$(WR) $(WRFLAGS) "$<" -o "$@" -I . --codepage 65001 -D INCLUDE_RAW_MANIFEST

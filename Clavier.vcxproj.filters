@@ -135,5 +135,6 @@
     <None Include="Target.cur">
       <Filter>Resource</Filter>
     </None>
+    <None Include="Makefile" />
   </ItemGroup>
 </Project>
