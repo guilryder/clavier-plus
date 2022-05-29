@@ -115,6 +115,7 @@
 
 <p><span class="ipt">Attention&nbsp;!</span> Si vous créez plusieurs entrées pour le même raccourci, veillez à leur affecter des conditions mutuellement exclusives. Dans le cas contraire, un message d’erreur s’affichera avant la validation. Par exemple, si vous voulez associer <kbd>Ctrl + X</kbd> au bloc-notes quand le pavé numérique est activé et à la calculatrice dans les autres cas, vous <i>devez</i> donner la condition «&nbsp;Verr. Num.&nbsp;: doit être désactivé&nbsp;» au second raccourci. En effet, «&nbsp;Verr. Num.&nbsp;: pas de condition&nbsp;» peut créer une ambigüité avec d’autres raccourcis, comme <kbd>Ctrl + X</kbd> avec la condition «&nbsp;Verr. Maj.&nbsp;: doit être activé&nbsp;».
 
+<p><span class="ipt">Important&nbsp;:</span> les raccourcis avec conditions souffrent de <a href="#limits-conditions">certaines limitations</a>.
 
 
 <h3 id="conditions-active">Programme actif</h3>
@@ -443,8 +444,16 @@ F12
 <ul>
 <li>Certains programmes multiplateformes, qui ne respectent pas les standards de Windows en matière de gestion du clavier. On peut citer les programmes <b>Java</b> comme <b>OpenOffice</b>, les logiciels Mozilla (<b>Firefox</b>, <b>Thunderbird</b>), <b>Opera</b>, etc. En cas de souci, utilisez la syntaxe <kbd>[|<i>texte</i>|]</kbd> pour forcer Clavier+ à écrire le texte en bas niveau (meilleure compatibilité mais plus lent et plus limité).
 <li>Les <b>jeux</b>, car ils gèrent le clavier sans se soucier de Windows, et donc de Clavier+.
+<li>Les autres utilitaires de gestion du clavier, car ils peuvent détecter certains raccourcis avant Clavier+.
 <li>Les programmes système, car là aussi ils gèrent le clavier de manière spéciale. On peut citer par exemple <kbd>command.com</kbd>, les émulateurs et machines virtuelles (Cygwin, VirtualPC), les logiciels de virtualisation (VNC).
 </ul>
+
+
+<h3 id="limits-conditions">Raccourcis avec conditions</h3>
+
+<p>Clavier+ ne peut pas intercepter de raccourcis clavier de manière conditionnelle. Quand un raccourci a des <a href="#conditions">conditions</a>, Clavier+ l’intercepte de manière inconditionnelle. Lorsque vous effectuez le raccourci, Clavier+ exécute l’action du raccourci si les conditions sont remplies, ou bien simule une frappe de touches pour le raccourci de manière à annuler l’interception.
+
+<p>Ce comportement introduit un délai et est incompatible avec certains programmes qui interceptent eux aussi des raccourcis. Par exemple, Phrase Express <a href="https://github.com/guilryder/clavier-plus/issues/30">détecte deux fois</a> les frappes de touches de raccourcis dont la condition n’est pas remplie.
 
 
 <h3 id="limits-repetition">Répétition</h3>

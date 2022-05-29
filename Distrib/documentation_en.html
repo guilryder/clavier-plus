@@ -123,6 +123,8 @@
 
 <p><span class="ipt">Warning!</span> If you associate multiple actions to the same shortcut, make sure to avoid ambiguities by giving the shortcuts mutually exclusive conditions. Otherwise, an error message will appear when you close the window. For example, if you want to associate <kbd>Ctrl + X</kbd> to Notepad when <kbd>Num Lock</kbd> is off and to the Calculator otherwise, you <i>must</i> give the condition “Num Lock: must be on” to the second shortcut. This is because “Num Lock: no condition” can be ambiguous with other shortcuts, such as <kbd>Ctrl + X</kbd> with the condition “Caps Lock: must be on”.
 
+<p><span class="ipt">Important:</span> shortcuts with conditions have <a href="#limits-conditions">some known issues</a>.
+
 
 <h3 id="conditions-active">Active program</h3>
 
@@ -450,8 +452,16 @@ F12
 <ul>
 <li>Some cross-platform programs, which do not follow the Windows keyboard handling standards. Applies to <b>Java</b> programs, <b>OpenOffice</b>, Mozilla software (<b>Firefox</b>, <b>Thunderbird</b>), <b>Opera</b>, etc. If a problem occurs in one of those programs, use the <kbd>[|<i>text</i>|]</kbd> syntax to make Clavier+ using low-level techniques when typing text (better compatibility, but slower and more limited).
 <li><b>Games</b>, because they bypass Windows, therefore Clavier+, when handling the keyboard.
+<li>Other keyboard utilities, because they may detect keystrokes before Clavier+ intercepts them.
 <li>System programs, because they bypass Windows too. For example: <kbd>command.com</kbd>, emulators and virtual machines (Cygwin, VirtualPC), virtualizers (VNC).
 </ul>
+
+
+<h3 id="limits-conditions">Shortcuts with conditions</h3>
+
+<p>Clavier+ cannot intercept keystrokes conditionally. When a shortcut has a <a href="#conditions">condition</a>, Clavier+ intercepts the corresponding keystroke unconditionally, even when the condition is not met. When you press the keystroke, Clavier+ executes the shortcut action if the condition is met, else simulates the keystroke in an attempt to cancel the intercept.
+
+<p>This behavior introduces delays and is incompatible with certain programs that intercept keystrokes in a low-level manner. For instance, Phrase Express seems to <a href="https://github.com/guilryder/clavier-plus/issues/30">detect twice</a> the keystrokes of shortcuts that have a non-matching condition.
 
 
 <h3 id="limits-repetition">Repetition</h3>
