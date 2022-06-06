@@ -98,7 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Distrib\Clavier.ini" />
-    <None Include="Distrib\Clavier.iss" />
+    <None Include="Distrib\Clavier.nsi" />
     <None Include="Distrib\documentation_de.html" />
     <None Include="Distrib\documentation_en.html" />
     <None Include="Distrib\documentation_fr.html" />

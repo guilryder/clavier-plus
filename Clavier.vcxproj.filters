@@ -75,7 +75,7 @@
     <None Include="Distrib\Clavier.ini">
       <Filter>Distrib</Filter>
     </None>
-    <None Include="Distrib\Clavier.iss">
+    <None Include="Distrib\Clavier.nsi">
       <Filter>Distrib</Filter>
     </None>
     <None Include="Distrib\Clavier_de.ini">

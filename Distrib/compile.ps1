@@ -7,4 +7,4 @@ rm -ErrorAction Ignore Clavier.zip
 
 echo "Generating ClavierSetup.exe..."
 pause
-start -Verb Compile Clavier.iss
+start -Verb compile Clavier.nsi
