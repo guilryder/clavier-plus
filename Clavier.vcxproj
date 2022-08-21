@@ -97,18 +97,13 @@
     <Manifest Include="Clavier.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Distrib\Clavier.ini" />
     <None Include="Distrib\Clavier.nsi" />
-    <None Include="Distrib\documentation_de.html" />
-    <None Include="Distrib\documentation_en.html" />
-    <None Include="Distrib\documentation_fr.html" />
-    <None Include="Distrib\documentation_nl.html" />
-    <None Include="Distrib\documentation_pt-BR.html" />
-    <None Include="Distrib\documentation_ru.html" />
+    <None Include="Distrib\Clavier.ini" />
     <None Include="Distrib\Clavier_de.ini" />
     <None Include="Distrib\Clavier_el.ini" />
     <None Include="Distrib\Clavier_en.ini" />
     <None Include="Distrib\Clavier_es.ini" />
+    <None Include="Distrib\Clavier_fi.ini" />
     <None Include="Distrib\Clavier_fr.ini" />
     <None Include="Distrib\Clavier_it.ini" />
     <None Include="Distrib\Clavier_nl.ini" />
@@ -117,8 +112,14 @@
     <None Include="Distrib\Clavier_ru.ini" />
     <None Include="Distrib\Clavier_sk.ini" />
     <None Include="Distrib\Clavier_zh-CN.ini" />
-    <None Include="Makefile" />
+    <None Include="Distrib\documentation_de.html" />
+    <None Include="Distrib\documentation_en.html" />
+    <None Include="Distrib\documentation_fr.html" />
+    <None Include="Distrib\documentation_nl.html" />
+    <None Include="Distrib\documentation_pt-BR.html" />
+    <None Include="Distrib\documentation_ru.html" />
     <None Include="Target.cur" />
+    <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />

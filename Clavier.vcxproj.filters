@@ -72,10 +72,10 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Distrib\Clavier.ini">
+    <None Include="Distrib\Clavier.nsi">
       <Filter>Distrib</Filter>
     </None>
-    <None Include="Distrib\Clavier.nsi">
+    <None Include="Distrib\Clavier.ini">
       <Filter>Distrib</Filter>
     </None>
     <None Include="Distrib\Clavier_de.ini">
@@ -88,6 +88,9 @@
       <Filter>Distrib</Filter>
     </None>
     <None Include="Distrib\Clavier_es.ini">
+      <Filter>Distrib</Filter>
+    </None>
+    <None Include="Distrib\Clavier_fi.ini">
       <Filter>Distrib</Filter>
     </None>
     <None Include="Distrib\Clavier_fr.ini">

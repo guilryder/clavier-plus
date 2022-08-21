@@ -33,6 +33,7 @@ enum Language {
 	kLangDE,
 	kLangEN,
 	kLangES,
+	kLangFI,
 	kLangFR,
 	kLangIT,
 	kLangNL,
