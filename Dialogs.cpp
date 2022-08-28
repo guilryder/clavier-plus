@@ -1030,6 +1030,8 @@ INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) 
 				
 				s_process_gui_events = false;
 				
+				SetWindowText(hdlg, kAppName);
+				
 				subclassWindow(GetDlgItem(hdlg, IDCIMG_PROGRAMS), prcProgramsTarget);
 				
 				s_hwnd_list = GetDlgItem(hdlg, IDCLST);
