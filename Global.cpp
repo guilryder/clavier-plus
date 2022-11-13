@@ -891,15 +891,21 @@ constexpr LPCTSTR kAutostartRegValue = kAppName;
 
 // Open the Registry key for the auto-start setting.
 //
-// Also stores in autostart_path_buf the string to store under the key for the value named
-// autostart_value to enable auto-start, that is the path of the Clavier+ executable.
+// Also stores in cmdline_buf the string to store under the key for the value named
+// kAutostartRegValue to enable auto-start: the path of the Clavier+ executable,
+// quoted and with the /launch argument. Must be kept in such 
 // Expected to have a capacity >= MAX_PATH, set to empty string on error.
 //
 // Returns the opened key, NULL on error.
 // The caller is responsible for closing the key with RegCloseKey().
-HKEY openAutoStartKey(LPTSTR autostart_path_buf) {
-	if (!GetModuleFileName(/* hInstance= */ NULL, autostart_path_buf, MAX_PATH)) {
-		*autostart_path_buf = _T('\0');
+HKEY openAutoStartKey(LPTSTR cmdline_buf) {
+	// Format the command-line the same way as the installation script:
+	// no PathQuoteSpaces().
+	if (GetModuleFileName(/* hInstance= */ NULL, cmdline_buf + 1, MAX_PATH - 1)) {
+		cmdline_buf[0] = _T('"');
+		StringCchCat(cmdline_buf, MAX_PATH, _T("\" /launch"));
+	} else {
+		*cmdline_buf = _T('\0');
 	}
 	HKEY key;
 	if (ERROR_SUCCESS != RegOpenKey(HKEY_CURRENT_USER, kAutostartRegKey, &key)) {
@@ -911,48 +917,47 @@ HKEY openAutoStartKey(LPTSTR autostart_path_buf) {
 }  // namespace
 
 bool isAutoStartEnabled() {
-	bool enabled = false;
-	
-	TCHAR autostart_path_buf[MAX_PATH];
-	const HKEY autostart_hKey = openAutoStartKey(autostart_path_buf);
-	if (!autostart_hKey) {
-		return enabled;
+	TCHAR cmdline_buf[MAX_PATH];
+	const HKEY hkey = openAutoStartKey(cmdline_buf);
+	if (!hkey) {
+		return false;
 	}
 	
 	DWORD type, size;
-	TCHAR current_path[MAX_PATH];
+	TCHAR cmdline_current[MAX_PATH];
 	
+	bool enabled = false;
 	if (ERROR_SUCCESS == RegQueryValueEx(
-				autostart_hKey, kAutostartRegValue, /* lpReserved= */ nullptr, &type,
+				hkey, kAutostartRegValue, /* lpReserved= */ nullptr, &type,
 				/* lpData= */ nullptr, &size)
 			&& type == REG_SZ
-			&& size < sizeof(current_path)) {
+			&& size < sizeof(cmdline_current)) {
 		if (ERROR_SUCCESS == RegQueryValueEx(
-					autostart_hKey, kAutostartRegValue, /* lpReserved= */ nullptr, /* lpType= */ nullptr,
-					/* lpData= */ reinterpret_cast<BYTE*>(current_path), &size) &&
-				!lstrcmpi(current_path, autostart_path_buf)) {
+					hkey, kAutostartRegValue, /* lpReserved= */ nullptr, /* lpType= */ nullptr,
+					/* lpData= */ reinterpret_cast<BYTE*>(cmdline_current), &size) &&
+				!lstrcmpi(cmdline_current, cmdline_buf)) {
 			enabled = true;
 		}
 	}
 	
-	RegCloseKey(autostart_hKey);
+	RegCloseKey(hkey);
 	return enabled;
 }
 
 void setAutoStartEnabled(bool enabled) {
-	TCHAR autostart_path_buf[MAX_PATH];
-	const HKEY autostart_hKey = openAutoStartKey(autostart_path_buf);
-	if (!autostart_hKey) {
+	TCHAR cmdline_buf[MAX_PATH];
+	const HKEY hkey = openAutoStartKey(cmdline_buf);
+	if (!hkey) {
 		return;
 	}
 	
 	if (enabled) {
 		RegSetValueEx(
-			autostart_hKey, kAutostartRegValue, /* Reserved= */ 0, REG_SZ,
-			reinterpret_cast<const BYTE*>(autostart_path_buf),
-			(lstrlen(autostart_path_buf) + 1) * sizeof(*autostart_path_buf));
+			hkey, kAutostartRegValue, /* Reserved= */ 0, REG_SZ,
+			reinterpret_cast<const BYTE*>(cmdline_buf),
+			(lstrlen(cmdline_buf) + 1) * sizeof(*cmdline_buf));
 	} else {
-		RegDeleteValue(autostart_hKey, kAutostartRegValue);
+		RegDeleteValue(hkey, kAutostartRegValue);
 	}
-	RegCloseKey(autostart_hKey);
+	RegCloseKey(hkey);
 }

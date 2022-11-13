@@ -186,7 +186,7 @@ Section "Install"
   SetOverwrite on
 
   # Registry
-  WriteRegStr ${AUTORUN_REG_ROOT} "${AUTORUN_REG_KEY}" "${APP_NAME}" "${APP_EXE_PATH}"
+  WriteRegStr ${AUTORUN_REG_ROOT} "${AUTORUN_REG_KEY}" "${APP_NAME}" '"${APP_EXE_PATH}" /launch'
 
   # Uninstall information
   WriteRegStr ${UNINSTALL_REG_ROOT} "${UNINSTALL_REG_KEY}" "DisplayIcon" "${APP_EXE_PATH},0"
