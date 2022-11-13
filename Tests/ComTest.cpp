@@ -189,7 +189,7 @@ public:
 	
 	TEST_METHOD(constructorTakeOwnership) {
 		char* raw_buffer = static_cast<char*>(CoTaskMemAlloc(10));
-		lstrcpyA(raw_buffer, "test");
+		StringCchCopyA(raw_buffer, 10, "test");
 		
 		CoBuffer<char*> buffer(raw_buffer);
 		Assert::IsNotNull(static_cast<char*>(buffer));

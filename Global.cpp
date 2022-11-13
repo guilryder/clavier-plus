@@ -210,13 +210,13 @@ bool getFileInfo(LPCTSTR path, DWORD file_attributes, SHFILEINFO& shfi, UINT fla
 		// If normal file, strip the path: extension-based icon
 		
 		flags |= SHGFI_USEFILEATTRIBUTES;
-		lstrcpy(transformed_path, path);
+		StringCchCopy(transformed_path, arrayLength(transformed_path), path);
 		PathRemoveBackslash(transformed_path);
 		const LPCTSTR path_name = PathFindFileName(path);
 		if (PathIsUNCServer(transformed_path) || PathIsUNCServerShare(transformed_path)) {
 			path = transformed_path;
 		} else if (path_name) {
-			lstrcpy(transformed_path, path_name);
+			StringCchCopy(transformed_path, arrayLength(transformed_path), path_name);
 			path = transformed_path;
 		}
 	}
@@ -346,9 +346,10 @@ void setClipboardText(LPCTSTR text) {
 	EmptyClipboard();
 	
 	// Allocate and fill a global buffer.
-	const HGLOBAL buffer = GlobalAlloc(GMEM_MOVEABLE, (lstrlen(text) + 1) * sizeof(*text));
+	const int text_buf_size = lstrlen(text) + 1;
+	const HGLOBAL buffer = GlobalAlloc(GMEM_MOVEABLE, text_buf_size * sizeof(*text));
 	const LPTSTR locked_buffer = reinterpret_cast<LPTSTR>(GlobalLock(buffer));
-	lstrcpy(locked_buffer, text);
+	StringCchCopy(locked_buffer, text_buf_size, text);
 	GlobalUnlock(buffer);
 	
 	// Pass the buffer to the clipboard.
@@ -433,7 +434,7 @@ bool SetDialogBoxDirectory::execute(HWND hwnd, LPCTSTR directory) {
 	}
 	m_hwnd = hwnd;
 	
-	lstrcpyn(m_directory_no_quotes, directory, arrayLength(m_directory_no_quotes));
+	StringCchCopy(m_directory_no_quotes, arrayLength(m_directory_no_quotes), directory);
 	PathUnquoteSpaces(m_directory_no_quotes);
 	
 	m_unlock_window_update_needed = false;
@@ -831,7 +832,7 @@ void findFullPath(LPTSTR path, LPTSTR full_path) {
 		}
 	}
 	
-	lstrcpy(full_path, path);
+	StringCchCopy(full_path, MAX_PATH, path);
 }
 
 
@@ -842,7 +843,7 @@ void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 	
 	// Split the command line: get the file and the arguments
 	TCHAR path[MAX_PATH];
-	lstrcpyn(path, command_exp, arrayLength(path));
+	StringCchCopy(path, arrayLength(path), command_exp);
 	PathRemoveArgs(path);
 	
 	// If the directory is empty, get it from the file

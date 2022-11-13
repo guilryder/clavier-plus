@@ -78,7 +78,7 @@ public:
 		} else {
 			length++;
 			alloc(length);
-			lstrcpyn(m_strbuf, strbuf, length);
+			StringCchCopy(m_strbuf, length, strbuf);
 		}
 	}
 	
@@ -117,7 +117,7 @@ public:
 			const int buf_length = lstrlen(strbuf) + 1;
 			if (m_buf_length < buf_length) {
 				const STR strbuf_new = allocNew(buf_length);
-				lstrcpy(strbuf_new, strbuf);
+				StringCchCopy(strbuf_new, buf_length, strbuf);
 				destroy();
 				m_strbuf = strbuf_new;
 			} else {
@@ -133,30 +133,26 @@ public:
 	// Appending
 	//----------------------------------------------------------------------
 	
-	String& operator += (const String& str) {
-		if (this == &str) {
-			if (isSome()) {
+	String& operator += (CSTR input_strbuf) {
+		if (isEmpty()) {
+			*this = input_strbuf;
+		} else if (!strIsEmpty(input_strbuf)) {
+			if (isOverlapping(input_strbuf)) {
 				const int old_length = getLength();
-				const int new_length = old_length + old_length;
-				if (new_length >= m_buf_length) {
-					const STR strbuf_new = allocNew(new_length + 1);
-					lstrcpy(strbuf_new, m_strbuf);
-					lstrcpy(strbuf_new + old_length, m_strbuf);
-				} else {
-					for (int i = 0; i < old_length; i++) {
-						m_strbuf[old_length + i] = m_strbuf[i];
-					}
-					m_strbuf[new_length] = 0;
+				const int input_self_index = static_cast<int>(input_strbuf - m_strbuf);
+				const int input_length = old_length - input_self_index;
+				reallocIfNeeded(old_length + input_length + 1);
+				for (int i = 0; i < input_length; i++) {
+					m_strbuf[old_length + i] = m_strbuf[input_self_index + i];
 				}
+				m_strbuf[old_length + input_length] = 0;
+			} else {
+				const int length = getLength();
+				const int input_buf_length = lstrlen(input_strbuf) + 1;
+				reallocIfNeeded(length + input_buf_length);
+				StringCchCopy(m_strbuf + length, input_buf_length, input_strbuf);
 			}
-		} else {
-			append(static_cast<CSTR>(str));
 		}
-		return *this;
-	}
-	
-	String& operator += (CSTR strbuf) {
-		append(strbuf);
 		return *this;
 	}
 	
@@ -264,18 +260,7 @@ private:
 				destroy();
 				alloc(buf_length);
 			}
-			lstrcpyn(m_strbuf, strbuf, m_buf_length);
-		}
-	}
-	
-	void append(CSTR strbuf) {
-		if (isEmpty()) {
-			*this = strbuf;
-		} else if (!strIsEmpty(strbuf)) {
-			const int length = getLength();
-			const int appended_buf_length = lstrlen(strbuf) + 1;
-			reallocIfNeeded(length + appended_buf_length);
-			lstrcpyn(m_strbuf + length, strbuf, appended_buf_length);
+			StringCchCopy(m_strbuf, m_buf_length, strbuf);
 		}
 	}
 	

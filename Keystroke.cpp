@@ -83,18 +83,19 @@ void Keystroke::getDisplayName(LPTSTR output) const {
 		const int mod_code_left = kSpecialKeys[i].mod_code;
 		const int mod_code_right = mod_code_left << kRightModCodeOffset;
 		if (m_sided_mod_code & (mod_code_left | mod_code_right)) {
-			StrNCat(output, getToken(kSpecialKeys[i].tok), kHotKeyBufSize);
+			StringCchCat(output, kHotKeyBufSize, getToken(kSpecialKeys[i].tok));
 			if (m_sided) {
-				StrNCat(output, _T(" "), kHotKeyBufSize);
-				StrNCat(output, getToken((m_sided_mod_code & mod_code_left) ? Token::kLeft : Token::kRight),
-						kHotKeyBufSize);
+				StringCchCat(output, kHotKeyBufSize, _T(" "));
+				StringCchCat(
+					output, kHotKeyBufSize,
+					getToken((m_sided_mod_code & mod_code_left) ? Token::kLeft : Token::kRight));
 			}
-			StrNCat(output, _T(" + "), kHotKeyBufSize);
+			StringCchCat(output, kHotKeyBufSize, _T(" + "));
 		}
 	}
 	
 	// Main key
-	lstrcat(output, getKeyName(m_vk));
+	StringCchCat(output, kHotKeyBufSize, getKeyName(m_vk));
 }
 
 void Keystroke::parseDisplayName(LPTSTR input) {

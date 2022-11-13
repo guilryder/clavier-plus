@@ -603,7 +603,7 @@ void updateTrayIcon(DWORD message) {
 	nid.uCallbackMessage = s_notify_icon_message;
 	if (message != NIM_DELETE) {
 		nid.hIcon = i18n::loadNeutralIcon(IDI_APP, 16,16);
-		lstrcpy(nid.szTip, kAppName);
+		StringCchCopy(nid.szTip, arrayLength(nid.szTip), kAppName);
 	}
 	Shell_NotifyIcon(message, &nid);
 }
@@ -700,7 +700,7 @@ UINT displayTrayIconMenu() {
 				}
 				
 				TCHAR ini_file[arrayLength(e_ini_filepath)];
-				lstrcpy(ini_file, e_ini_filepath);
+				StringCchCopy(ini_file, arrayLength(ini_file), e_ini_filepath);
 				
 				OPENFILENAME ofn;
 				ZeroMemory(&ofn, OPENFILENAME_SIZE_VERSION_400);
@@ -712,14 +712,14 @@ UINT displayTrayIconMenu() {
 				if (id == ID_TRAY_INI_SAVE) {
 					ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
 					if (GetSaveFileName(&ofn)) {
-						lstrcpy(e_ini_filepath, ini_file);
+						StringCchCopy(e_ini_filepath, arrayLength(e_ini_filepath), ini_file);
 						shortcut::saveShortcuts();
 					}
 				} else {
 					ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 					if (GetOpenFileName(&ofn)) {
 						if (id == ID_TRAY_INI_LOAD) {
-							lstrcpy(e_ini_filepath, ini_file);
+							StringCchCopy(e_ini_filepath, arrayLength(e_ini_filepath), ini_file);
 							shortcut::loadShortcuts();
 						} else {
 							shortcut::mergeShortcuts(ini_file);
@@ -733,7 +733,9 @@ UINT displayTrayIconMenu() {
 		default:
 			if (id > ID_TRAY_INI_FIRSTFILE) {
 				// INI file different than the current one
-				lstrcpy(e_ini_filepath, ini_files[id - ID_TRAY_INI_FIRSTFILE]);
+				StringCchCopy(
+					e_ini_filepath, arrayLength(e_ini_filepath),
+					ini_files[id - ID_TRAY_INI_FIRSTFILE]);
 				shortcut::loadShortcuts();
 			}
 			break;

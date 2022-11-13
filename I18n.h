@@ -58,7 +58,7 @@ struct STRING_RESOURCE {
 	WCHAR strbuf[] SUPPRESS_WARNING(4200);
 	
 	void copy(LPTSTR dest_strbuf, int buf_length) const {
-		lstrcpyn(dest_strbuf, strbuf, buf_length);
+		StringCchCopy(dest_strbuf, buf_length, strbuf);
 	}
 };
 

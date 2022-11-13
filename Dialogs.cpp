@@ -436,7 +436,7 @@ void FileMenuItem::populate(HMENU menu) {
 					continue;
 				}
 				
-				lstrcpyn(relative_folder, m_path, arrayLength(relative_folder));
+				StringCchCopy(relative_folder, arrayLength(relative_folder), m_path);
 				PathAppend(relative_folder, wfd.cFileName);
 				item_path = relative_folder;
 				
@@ -1266,7 +1266,7 @@ INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) 
 							if (lvi.mask & LVIF_TEXT) {
 								String column_text;
 								sh->getColumnText(lvi.iSubItem, column_text);
-								lstrcpyn(lvi.pszText, column_text, lvi.cchTextMax);
+								StringCchCopy(lvi.pszText, lvi.cchTextMax, column_text);
 							}
 						}
 						break;
@@ -1820,7 +1820,7 @@ namespace {
 DWORD WINAPI threadGetFileIcon(dialogs::GETFILEICON& gfi) {
 	// Use HTML files icon for URLs
 	if (PathIsURL(gfi.executable)) {
-		lstrcpy(gfi.executable, _T("a.url"));
+		StringCchCopy(gfi.executable, arrayLength(gfi.executable), _T("a.url"));
 		gfi.flags |= SHGFI_USEFILEATTRIBUTES;
 	}
 	
@@ -1846,7 +1846,7 @@ namespace shortcut {
 
 void Shortcut::findExecutable(LPTSTR executable) {
 	TCHAR file[MAX_PATH];
-	lstrcpyn(file, m_command, arrayLength(file));
+	StringCchCopy(file, arrayLength(file), m_command);
 	PathRemoveArgs(file);
 	findFullPath(file, executable);
 }

@@ -331,9 +331,19 @@ public:
 		Assert::AreSame(m_test, resultRef);
 	}
 	
-	TEST_METHOD(Append_selfNotEmpty) {
+	TEST_METHOD(Append_selfNotEmpty_bufferLargeEnough) {
+		int old_buffer_size = m_test.getBufferSize();
 		m_test += static_cast<LPCTSTR>(m_test);
 		Assert::AreEqual(_T("testtest"), m_test);
+		Assert::AreEqual(old_buffer_size, m_test.getBufferSize());
+	}
+	
+	TEST_METHOD(Append_selfNotEmpty_bufferTooSmall) {
+		m_test = _T("0123456789");
+		int old_buffer_size = m_test.getBufferSize();
+		m_test += static_cast<LPCTSTR>(m_test);
+		Assert::AreEqual(_T("01234567890123456789"), m_test);
+		Assert::AreNotEqual(old_buffer_size, m_test.getBufferSize());
 	}
 	
 	TEST_METHOD(Append_selfEmpty) {
@@ -346,35 +356,20 @@ public:
 		Assert::AreEqual(_T(""), m_null);
 	}
 	
-	TEST_METHOD(Append_selfSuffix) {
+	TEST_METHOD(Append_selfSuffix_bufferLargeEnough) {
+		
+		int old_buffer_size = m_test.getBufferSize();
 		m_test += static_cast<LPCTSTR>(m_test) + 2;
 		Assert::AreEqual(_T("testst"), m_test);
+		Assert::AreEqual(old_buffer_size, m_test.getBufferSize());
 	}
 	
-	
-	TEST_METHOD(AppendObject_notEmptyToNotEmpty) {
-		m_test += String(_T(" more"));
-		Assert::AreEqual(_T("test more"), m_test);
-	}
-	
-	TEST_METHOD(AppendObject_empty) {
-		m_test += m_empty;
-		Assert::AreEqual(m_test_buf, m_test);
-	}
-	
-	TEST_METHOD(AppendObject_selfEmpty) {
-		m_empty += m_empty;
-		Assert::AreEqual(_T(""), m_empty);
-	}
-	
-	TEST_METHOD(AppendObject_selfNotEmpty) {
-		m_test += m_test;
-		Assert::AreEqual(_T("testtest"), m_test);
-	}
-	
-	TEST_METHOD(AppendObject_returnsSelf) {
-		String& resultRef = (m_test += m_test);
-		Assert::AreSame(m_test, resultRef);
+	TEST_METHOD(Append_selfSuffix_bufferTooSmall) {
+		m_test = _T("0123456789");
+		int old_buffer_size = m_test.getBufferSize();
+		m_test += static_cast<LPCTSTR>(m_test) + 2;
+		Assert::AreEqual(_T("012345678923456789"), m_test);
+		Assert::AreNotEqual(old_buffer_size, m_test.getBufferSize());
 	}
 	
 	
@@ -418,13 +413,13 @@ public:
 	
 	TEST_METHOD(BufferAllocFree) {
 		const LPTSTR strbuf = String::bufferAlloc(11);
-		lstrcpy(strbuf, _T("0123456789"));
+		Assert::AreEqual(S_OK, StringCchCopy(strbuf, 11, _T("0123456789")));
 		String::bufferFree(strbuf);
 	}
 	
 	TEST_METHOD(BufferReallocFree) {
 		LPTSTR strbuf = String::bufferAlloc(11);
-		lstrcpy(strbuf, _T("0123456789"));
+		Assert::AreEqual(S_OK, StringCchCopy(strbuf, 11, _T("0123456789")));
 		strbuf = String::bufferRealloc(strbuf, 20);
 		Assert::AreEqual(_T("0123456789"), strbuf);
 		strbuf = String::bufferRealloc(strbuf, 5);

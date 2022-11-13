@@ -66,7 +66,100 @@
 #include <commctrl.h>
 #include <commdlg.h>
 
+#include <cstring>
+#include <cwchar>
 #include <tchar.h>
+
+#define STRSAFE_NO_DEPRECATE
+#define STRSAFE_NO_CB_FUNCTIONS
+#include <strsafe.h>
+
+// Deprecate most functions that strsafe.h replaces.
+// Allow wsprintf() and friends to avoid linking issues with StringCchPrint().
+
+#undef strcpy
+#define strcpy strcpy_instead_use_StringCbCopyA_or_StringCchCopyA;
+
+#undef wcscpy
+#define wcscpy wcscpy_instead_use_StringCbCopyW_or_StringCchCopyW;
+
+#undef strcat
+#define strcat strcat_instead_use_StringCbCatA_or_StringCchCatA;
+
+#undef wcscat
+#define wcscat wcscat_instead_use_StringCbCatW_or_StringCchCatW;
+
+#undef strcpyA
+#define strcpyA strcpyA_instead_use_StringCbCopyA_or_StringCchCopyA;
+
+#undef strcpyW
+#define strcpyW strcpyW_instead_use_StringCbCopyW_or_StringCchCopyW;
+
+#undef lstrcpy
+#define lstrcpy lstrcpy_instead_use_StringCbCopy_or_StringCchCopy;
+
+#undef lstrcpyA
+#define lstrcpyA lstrcpyA_instead_use_StringCbCopyA_or_StringCchCopyA;
+
+#undef lstrcpyW
+#define lstrcpyW lstrcpyW_instead_use_StringCbCopyW_or_StringCchCopyW;
+
+#undef StrCpy
+#define StrCpy StrCpy_instead_use_StringCbCopy_or_StringCchCopy;
+
+#undef StrCpyA
+#define StrCpyA StrCpyA_instead_use_StringCbCopyA_or_StringCchCopyA;
+
+#undef StrCpyW
+#define StrCpyW StrCpyW_instead_use_StringCbCopyW_or_StringCchCopyW;
+
+#undef _tcscpy
+#define _tcscpy _tcscpy_instead_use_StringCbCopy_or_StringCchCopy;
+
+#undef _ftcscpy
+#define _ftcscpy _ftcscpy_instead_use_StringCbCopy_or_StringCchCopy;
+
+#undef lstrcat
+#define lstrcat lstrcat_instead_use_StringCbCat_or_StringCchCat;
+
+#undef lstrcatA
+#define lstrcatA lstrcatA_instead_use_StringCbCatA_or_StringCchCatA;
+
+#undef lstrcatW
+#define lstrcatW lstrcatW_instead_use_StringCbCatW_or_StringCchCatW;
+
+#undef StrCat
+#define StrCat StrCat_instead_use_StringCbCat_or_StringCchCat;
+
+#undef StrCatA
+#define StrCatA StrCatA_instead_use_StringCbCatA_or_StringCchCatA;
+
+#undef StrCatW
+#define StrCatW StrCatW_instead_use_StringCbCatW_or_StringCchCatW;
+
+#undef StrNCat
+#define StrNCat StrNCat_instead_use_StringCbCatN_or_StringCchCatN;
+
+#undef StrNCatA
+#define StrNCatA StrNCatA_instead_use_StringCbCatNA_or_StringCchCatNA;
+
+#undef StrNCatW
+#define StrNCatW StrNCatW_instead_use_StringCbCatNW_or_StringCchCatNW;
+
+#undef StrCatN
+#define StrCatN StrCatN_instead_use_StringCbCatN_or_StringCchCatN;
+
+#undef StrCatNA
+#define StrCatNA StrCatNA_instead_use_StringCbCatNA_or_StringCchCatNA;
+
+#undef StrCatNW
+#define StrCatNW StrCatNW_instead_use_StringCbCatNW_or_StringCchCatNW;
+
+#undef _tcscat
+#define _tcscat _tcscat_instead_use_StringCbCat_or_StringCchCat;
+
+#undef _ftcscat
+#define _ftcscat _ftcscat_instead_use_StringCbCat_or_StringCchCat;
 
 #ifdef __GNUC__
 #define __noop  ((void)0)
