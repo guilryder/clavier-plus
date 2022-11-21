@@ -19,6 +19,7 @@
 
 #pragma once
 
+// Ignore inline expansion warnings.
 #pragma warning (disable: 4710 4711)
 
 #define STRICT  1

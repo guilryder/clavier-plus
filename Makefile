@@ -40,7 +40,7 @@ CLDFLAGS=-flto  # link-time-optimization
 WARNINGS=-Wall -Wno-unknown-pragmas -Wno-multichar -Wno-strict-aliasing
 
 CFLAGS+=\
-	-std=c++17 -Os \
+	-std=c++20 -Os \
 	-fno-access-control \
 	-fno-asynchronous-unwind-tables \
 	-fno-dwarf2-cfi-asm \

@@ -313,7 +313,7 @@ void BaseMenuItem::initializeRoot(HMENU menu, int item_index) {
 	mii_phantom.cbSize = sizeof(mii_phantom);
 	mii_phantom.fMask = MIIM_TYPE | MIIM_DATA;
 	mii_phantom.fType = MFT_SEPARATOR;
-	mii_phantom.dwTypeData = _T("");
+	mii_phantom.dwTypeData = const_cast<LPTSTR>(_T(""));
 	mii_phantom.dwItemData = asItemData();
 	SetMenuItemInfo(GetSubMenu(menu, item_index), 0, /* byPosition= */ true, &mii_phantom);
 }
@@ -394,7 +394,7 @@ void FileMenuItem::populate(HMENU menu) {
 	mii_phantom.cbSize = sizeof(mii_phantom);
 	mii_phantom.fMask = MIIM_TYPE | MIIM_DATA;
 	mii_phantom.fType = MFT_SEPARATOR;
-	mii_phantom.dwTypeData = _T("");
+	mii_phantom.dwTypeData = const_cast<LPTSTR>(_T(""));
 	
 	UINT pos_folder = 0;
 	

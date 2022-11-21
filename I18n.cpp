@@ -161,7 +161,7 @@ void formatInteger(int number, String* output) {
 		
 		format.NumDigits = 0;
 		format.LeadingZero = true;
-		format.lpDecimalSep = _T(".");  // unused
+		format.lpDecimalSep = const_cast<LPTSTR>(_T("."));  // unused
 		
 		// Number groups. Convert the LOCALE_SGROUPING string ("3;2;0") into a number (320).
 		TCHAR grouping_buf[10];
