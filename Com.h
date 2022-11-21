@@ -86,6 +86,10 @@ public:
 		return &m_ptr;
 	}
 	
+	void** outPtrVoid() {
+		return reinterpret_cast<void**>(outPtr());
+	}
+	
 private:
 	template<class U> friend class CoPtr;
 	

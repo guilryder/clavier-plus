@@ -358,27 +358,38 @@ void setClipboardText(LPCTSTR text) {
 }
 
 
-namespace {
-
-int CALLBACK prcBrowseForFolderCallback(HWND hwnd, UINT message, LPARAM UNUSED(lParam), LPARAM lpData) {
-	if (message == BFFM_INITIALIZED) {
-		SendMessage(hwnd, BFFM_SETSELECTION, true, lpData);
-	}
-	return 0;
-}
-
-}  // namespace
-
 bool browseForFolder(HWND hwnd_parent, LPCTSTR title, LPTSTR directory) {
-	BROWSEINFO bi;
-	ZeroMemory(&bi, sizeof(bi));
-	bi.hwndOwner = hwnd_parent;
-	bi.lpszTitle = title;
-	bi.ulFlags = BIF_RETURNONLYFSDIRS;
-	bi.lpfn = prcBrowseForFolderCallback;
-	bi.lParam = reinterpret_cast<LPARAM>(directory);
-	CoBuffer<LPITEMIDLIST> pidl(SHBrowseForFolder(&bi));
-	return pidl && SHGetPathFromIDList(pidl, directory);
+	CoPtr<IFileDialog> dialog(CLSID_FileOpenDialog);
+	VERIF(dialog);
+	
+	// Set options: real folders only.
+	FILEOPENDIALOGOPTIONS options;
+	VERIF(SUCCEEDED(dialog->GetOptions(&options)));
+	VERIF(SUCCEEDED(dialog->SetOptions(
+		options | FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM | FOS_NOVALIDATE | FOS_DONTADDTORECENT)));
+	
+	// Set the initial folder.
+	bool in_directory_set = false;
+	CoPtr<IShellItem> in_shell_item;
+	if (SUCCEEDED(SHCreateItemFromParsingName(
+			directory, /* IBindCtx*= */ nullptr, IID_IShellItem, in_shell_item.outPtrVoid()))) {
+		in_directory_set = SUCCEEDED(dialog->SetFolder(in_shell_item.get()));
+	}
+	if (!in_directory_set) {
+		dialog->SetFileName(directory);
+	}
+	
+	// Show the dialog.
+	dialog->SetTitle(title);
+	VERIF(SUCCEEDED(dialog->Show(hwnd_parent)));
+	
+	// Extract the result folder path.
+	CoPtr<IShellItem> out_shell_item;
+	VERIF(SUCCEEDED(dialog->GetResult(out_shell_item.outPtr())));
+	CoBuffer<LPTSTR> out_path;
+	VERIF(SUCCEEDED(out_shell_item->GetDisplayName(SIGDN_FILESYSPATH, out_path.outPtr())));
+	StringCchCopy(directory, MAX_PATH, out_path);
+	return true;
 }
 
 

@@ -165,6 +165,31 @@ public:
 		});
 	}
 	
+	TEST_METHOD(outPtrVoid_nullSucceeds) {
+		IShellItem* raw_ptr;
+		{
+			CoPtr<IShellItem> ptr;
+			void** address = ptr.outPtrVoid();
+			Assert::IsNotNull(address);
+			Assert::IsNull(*address);
+			
+			Assert::IsTrue(SUCCEEDED(SHCreateItemFromParsingName(
+				_T(""), /* IBindCtx*= */ nullptr, IID_IShellItem, address)));
+			raw_ptr = static_cast<IShellItem*>(*address);
+			
+			Assert::AreEqual(raw_ptr, ptr.get());
+			raw_ptr->AddRef();
+		}
+		assertOneReference(raw_ptr);
+	}
+	
+	TEST_METHOD(outPtrVoid_validPtrFails) {
+		CoPtr<IShellLink> ptr(CLSID_ShellLink);
+		Assert::ExpectException<std::runtime_error>([&] {
+			ptr.outPtrVoid();
+		});
+	}
+	
 private:
 	
 	void assertOneReference(IUnknown* object) {

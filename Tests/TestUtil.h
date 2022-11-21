@@ -44,4 +44,8 @@ template<> inline std::wstring ToString<IShellLink>(IShellLink* t) {
 	RETURN_WIDE_STRING(static_cast<const void*>(t));
 }
 
+template<> inline std::wstring ToString<IShellItem>(IShellItem* t) {
+	RETURN_WIDE_STRING(static_cast<const void*>(t));
+}
+
 }  // Microsoft::VisualStudio::CppUnitTestFramework
