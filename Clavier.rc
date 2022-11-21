@@ -42,7 +42,7 @@ BEGIN
     DEFPUSHBUTTON   "确定",IDOK,101,124,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "要执行的程序"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -55,10 +55,8 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "窗口(&W):",IDC_STATIC,6,44,32,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "在文件/打开对话框中更改目录(命令行应为一个文件夹)(&H)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,153,18
-    PUSHBUTTON      "取消",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "确定",IDOK,140,93,57,14
+    PUSHBUTTON      "取消",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "确定",IDOK,140,69,57,14
 END
 
 IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
@@ -279,7 +277,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Program do uruchomienia"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -292,10 +290,8 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Okno:",IDC_STATIC,6,44,43,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&Zmień katalog w oknach dialogowych Plik->Otwórz\n(wiersz polecenia powinien być katalogiem)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,180,18
-    PUSHBUTTON      "Anuluj",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+    PUSHBUTTON      "Anuluj",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
 END
 
 IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
@@ -512,7 +508,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Program na spustenie"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -525,10 +521,8 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Okno:",IDC_STATIC,6,44,20,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&Zmeniť priečinok v dialógoch na výber súboru („príkazový riadok“ by mal byť priečinkom)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,181,18
-    PUSHBUTTON      "Zrušiť",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+    PUSHBUTTON      "Zrušiť",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
 END
 
 IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
@@ -801,7 +795,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Программа для запуска"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -814,10 +808,8 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Вид окна:",IDC_STATIC,6,44,34,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "С&мена папки в окне диалога Файл/Открыть (строка команды должна быть в папке)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,167,18
-    PUSHBUTTON      "Отмена",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+    PUSHBUTTON      "Отмена",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
 END
 
 IDD_ABOUT DIALOGEX 0, 0, 157, 144
@@ -932,7 +924,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Русский;Ярлык;Код;РазличатьЛеваяПравая;Описание;Команда;Текст;Директория;Окно;ПоддержкаОткрытияФайла;Программы;ВсехПрограммКроме;Язык;Размер;Столбцы;Сортировка;Нормально;Свернуто;Развернуто;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Да;Нет;Использований"
+    IDS_TOKENS              "Русский;Ярлык;Код;РазличатьЛеваяПравая;Описание;Команда;Текст;Директория;Окно;Программы;ВсехПрограммКроме;Язык;Размер;Столбцы;Сортировка;Нормально;Свернуто;Развернуто;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Да;Нет;Использований"
     IDS_COLUMNS             "Содержимое;Ярлык;Условия;Использований;Описание"
     IDS_LANGUAGE_CODE       "ru"
     IDS_CONDITIONS          "нет условий;должно быть вкл.;должно быть выкл."
@@ -1076,7 +1068,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Suoritettava ohjelma"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1089,10 +1081,8 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Ikkuna:",IDC_STATIC,6,44,25,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&Vaihda hakemistoa dialogi-ikkunoissa Tiedosto/Avaa (komentorivin tulisi olla kansio)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,180,18
-    PUSHBUTTON      "Peruuta",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+    PUSHBUTTON      "Peruuta",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
 END
 
 IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
@@ -1372,7 +1362,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Programm starten"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1385,10 +1375,8 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Ausführen:",IDC_STATIC,6,44,37,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&Verzeichnis in den Datei/Öffnen Dialogfeld ändern (Kommandozeile sollte ein Ordner sein)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,174,18
-    PUSHBUTTON      "Abbrechen",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
 END
 
 IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
@@ -1496,7 +1484,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Deutsch;Verknüpfung;Code;LinksRechtsUnterscheiden;Beschreibung;Befehl;Text;Ordner;Fenster;DateiÖffnenStützen;Programme;AlleProgrammeAber;Sprache;Grösse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Links;Rechts;Feststell;Num;Rollen;Ja;Nein;Verwendungszählung"
+    IDS_TOKENS              "Deutsch;Verknüpfung;Code;LinksRechtsUnterscheiden;Beschreibung;Befehl;Text;Ordner;Fenster;Programme;AlleProgrammeAber;Sprache;Grösse;Spalte;Sortieren;Normal;Minimiert;Maximiert;Win;Strg;Umschalt;Alt;Links;Rechts;Feststell;Num;Rollen;Ja;Nein;Verwendungszählung"
     IDS_COLUMNS             "Inhalt;Hotkey;Bedingung;Verwendungszählung;Beschreibung"
     IDS_LANGUAGE_CODE       "de"
     IDS_CONDITIONS          "ohne Bedingung;eingeschaltet;ausgeschaltet"
@@ -1603,7 +1591,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,104,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Program to execute"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1614,12 +1602,10 @@ BEGIN
     LTEXT           "&Directory:",IDC_STATIC,6,26,33,8
     EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
-    LTEXT           "&Window:",IDC_STATIC,6,44,43,8
+    LTEXT           "&Window:",IDC_STATIC,6,44,29,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "C&hange directory in File/Open dialog boxes (the command line should be a folder)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,153,18
-    PUSHBUTTON      "Cancel",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+    PUSHBUTTON      "Cancel",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
 END
 
 IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
@@ -1727,7 +1713,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "English;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;SupportFileOpen;Programs;AllProgramsBut;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages"
+    IDS_TOKENS              "English;Shortcut;Code;DistinguishLeftRight;Description;Command;Text;Directory;Window;Programs;AllProgramsBut;Language;Size;Columns;Sorting;Normal;Minimized;Maximized;Win;Ctrl;Shift;Alt;Left;Right;CapsLock;NumLock;ScrollLock;Yes;No;Usages"
     IDS_COLUMNS             "Contents;Shortcut;Conditions;Usages;Description"
     IDS_LANGUAGE_CODE       "en"
     IDS_CONDITIONS          "no condition;must be on;must be off"
@@ -1834,7 +1820,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,104,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Programme à exécuter"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1845,12 +1831,10 @@ BEGIN
     LTEXT           "&Répertoire :",IDC_STATIC,6,26,40,8
     EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
-    LTEXT           "&Fenêtre :",IDC_STATIC,6,44,33,8
+    LTEXT           "&Fenêtre :",IDC_STATIC,6,44,31,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&Changer de répertoire dans les boîtes de dialogue Fichier/Ouvrir (la ligne de commande est un dossier)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,181,18
-    PUSHBUTTON      "Annuler",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+    PUSHBUTTON      "Annuler",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
 END
 
 IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
@@ -1985,7 +1969,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Français;Raccourci;Code;DistinguerGaucheDroite;Description;Commande;Texte;Répertoire;Fenêtre;GérerFichierOuvrir;Programmes;TousProgrammesSauf;Langue;Taille;Colonnes;Tri;Normale;Réduite;Agrandie;Win;Ctrl;Maj;Alt;Gauche;Droite;VerrMaj;VerrNum;ArrêtDéfil;Oui;Non;Utilisations"
+    IDS_TOKENS              "Français;Raccourci;Code;DistinguerGaucheDroite;Description;Commande;Texte;Répertoire;Fenêtre;Programmes;TousProgrammesSauf;Langue;Taille;Colonnes;Tri;Normale;Réduite;Agrandie;Win;Ctrl;Maj;Alt;Gauche;Droite;VerrMaj;VerrNum;ArrêtDéfil;Oui;Non;Utilisations"
     IDS_COLUMNS             "Contenu;Raccourci;Conditions;Utilisations;Description"
     IDS_LANGUAGE_CODE       "fr"
     IDS_CONDITIONS          "pas de condition;doit être activé;doit être désactivé"
@@ -2012,7 +1996,7 @@ LANGUAGE LANG_ITALIAN, SUBLANG_ITALIAN
 // Dialog
 //
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Programma da eseguire"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -2025,10 +2009,8 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Finestra :",IDC_STATIC,6,44,32,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "C&ambia cartella nella casella di dialogo File/apri (la linea di comando può essere una cartella)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,168,18
-    PUSHBUTTON      "Annulla",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+    PUSHBUTTON      "Annulla",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
 END
 
 IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
@@ -2217,7 +2199,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Italiano;Scorciatoia;Codice;DistinguiSinistraDestra;Descrizione;Comando;Testo;Cartella;Finestra;SupportaAperturaFile;Programmi;TuttiprogrammiEccetto;Lingua;Grandezza;Colonne;Ordinamento;Normale;Ridotta;Ingrandita;Win;Ctrl;Shift;Alt;Sinistra;Destra;CapsLock;NumLock;ScrollLock;Si;No;Usi"
+    IDS_TOKENS              "Italiano;Scorciatoia;Codice;DistinguiSinistraDestra;Descrizione;Comando;Testo;Cartella;Finestra;Programmi;TuttiprogrammiEccetto;Lingua;Grandezza;Colonne;Ordinamento;Normale;Ridotta;Ingrandita;Win;Ctrl;Shift;Alt;Sinistra;Destra;CapsLock;NumLock;ScrollLock;Si;No;Usi"
     IDS_COLUMNS             "Contenuto;Scorciatoia;Condizioni;Usi;Descrizione"
     IDS_LANGUAGE_CODE       "it"
     IDS_CONDITIONS          "nessuna condizione;deve essere attivato;deve essere disattivato"
@@ -2262,7 +2244,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Programa a executar"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -2275,10 +2257,8 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Janela:",IDC_STATIC,6,44,24,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&Mudar para a pasta do caminho acima nas janelas de Abrir (o atalho deve ser uma pasta)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,164,18
-    PUSHBUTTON      "Cancelar",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
 END
 
 IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
@@ -2448,7 +2428,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Português brasileiro;Atalho;Código;DistinguirEsquerdaDireita;Descrição;Comando;Texto;Pasta;Janela;SuportaAberturaArquivo;Programas;TodosProgramasExceto;Idioma;Tamanho;Colunas;Ordenação;Normal;Minimizada;Maximizada;Win;Ctrl;Shift;Alt;Esquerda;Direita;CapsLock;NumLock;ScrollLock;Sim;Não;Usos"
+    IDS_TOKENS              "Português brasileiro;Atalho;Código;DistinguirEsquerdaDireita;Descrição;Comando;Texto;Pasta;Janela;Programas;TodosProgramasExceto;Idioma;Tamanho;Colunas;Ordenação;Normal;Minimizada;Maximizada;Win;Ctrl;Shift;Alt;Esquerda;Direita;CapsLock;NumLock;ScrollLock;Sim;Não;Usos"
     IDS_COLUMNS             "Conteúdo;Atalho;Condições;Usos;Descrição"
     IDS_LANGUAGE_CODE       "pt-BR"
     IDS_CONDITIONS          "nenhuma condição;deve estar ativada;deve estar desativada"
@@ -2493,7 +2473,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,101,124,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Uit te voeren programma"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -2506,10 +2486,8 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Venster:",IDC_STATIC,6,44,28,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&Wijzigen van directory in de dialoog boxen Bestand/Openen (de commandolijn is een dossier)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,181,18
-    PUSHBUTTON      "Annuleren",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,93,57,14
+    PUSHBUTTON      "Annuleren",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
 END
 
 IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
@@ -2789,7 +2767,7 @@ BEGIN
     DEFPUSHBUTTON   "Aceptar",IDOK,101,124,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Programa a ejecutar"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -2802,10 +2780,8 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Ventana:",IDC_STATIC,6,44,30,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&Cambiar directorio en recuadros Archivo/Abrir (línea de comandos debería ser una carpeta)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,168,18
-    PUSHBUTTON      "Cancelar",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "Aceptar",IDOK,140,93,57,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "Aceptar",IDOK,140,69,57,14
 END
 
 IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
@@ -2959,7 +2935,7 @@ BEGIN
     DEFPUSHBUTTON   "Εντάξει",IDOK,101,124,50,14,WS_GROUP
 END
 
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 113
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Πρόγραμμα για εκτέλεση"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -2972,10 +2948,8 @@ BEGIN
     PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
     LTEXT           "&Παράθυρο:",IDC_STATIC,6,44,43,8
     COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Α&λλαγή καταλόγου στο παράθυρο Αρχείο/Άνοιγμα\n(η γραμμή εντολών πρέπει να είναι ένας φάκελος)",IDCCHK_SUPPORTFILEOPEN,
-                    "Button",BS_AUTOCHECKBOX | BS_TOP | BS_MULTILINE | WS_TABSTOP,78,60,175,18
-    PUSHBUTTON      "Άκυρο",IDCANCEL,78,93,56,14
-    DEFPUSHBUTTON   "Εντάξει",IDOK,140,93,57,14
+    PUSHBUTTON      "Άκυρο",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "Εντάξει",IDOK,140,69,57,14
 END
 
 IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
@@ -3162,7 +3136,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_TOKENS              "Ελληνικά;Συντόμευση;Κώδικας;ΔιάκρισηΑριστερούΔεξιού;Περιγραφή;Εντολή;Κείμενο;Κατάλογος;Παράθυρο;ΥποστήριξηΑνοίγματοςΑρχείου;Προγράμματα;ΌλαΤαΠρογράμματαΕκτός;Γλώσσα;Μέγεθος;Στήλες;Ταξινόμηση;Κανονικό παράθυρο;Ελαχιστοποιημένο;Μεγιστοποιημένο;Win;Ctrl;Shift;Alt;Αριστερό;Δεξί;CapsLock;NumLock;ScrollLock;Ναι;Όχι;Χρήσεις"
+    IDS_TOKENS              "Ελληνικά;Συντόμευση;Κώδικας;ΔιάκρισηΑριστερούΔεξιού;Περιγραφή;Εντολή;Κείμενο;Κατάλογος;Παράθυρο;Προγράμματα;ΌλαΤαΠρογράμματαΕκτός;Γλώσσα;Μέγεθος;Στήλες;Ταξινόμηση;Κανονικό παράθυρο;Ελαχιστοποιημένο;Μεγιστοποιημένο;Win;Ctrl;Shift;Alt;Αριστερό;Δεξί;CapsLock;NumLock;ScrollLock;Ναι;Όχι;Χρήσεις"
     IDS_COLUMNS             "Περιεχόμενα;Συντόμευση;Συνθήκες;Χρήσεις;Περιγραφή"
     IDS_LANGUAGE_CODE       "el"
     IDS_CONDITIONS          "χωρίς όρους;πρέπει να είναι ανοιχτό;πρέπει να είναι κλειστό"

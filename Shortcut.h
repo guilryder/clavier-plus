@@ -126,9 +126,6 @@ public:
 	// match none of the conditions to be executed.
 	bool m_programs_only;
 	
-	// Indicates whether the shortcut can change the current directory in File/Open
-	bool m_support_file_open;
-	
 	String m_description;
 	String m_text; // Type::kText only
 	String m_command; // Type::kCommand only

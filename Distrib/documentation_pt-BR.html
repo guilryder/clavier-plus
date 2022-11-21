@@ -113,8 +113,6 @@ Endereço eletrônico: <a href="mailto:mchal@ig.com.br"><kbd>mchal@ig.com.br</kb
 
 <p>Se a função do atalho for abrir um programa ou uma página da web, escolha a opção correspondente. Digite (ou clique em “...”) o caminho do programa ou endereço da página da web no campo inferior. É possível saber se o atalho é válido clicando no botão <i>Testar</i>. Se necessário, clique no botão <i>Configuração avançada</i> para especificar a pasta inicial ou o tamanho inicial da janela do programa (maximizada, normal, minimizada).
 
-<p>Se a função do atalho for a de abrir uma pasta, é possível fazer que ele altere o caminho da pasta atual nas janelas de <i>Abrir/Salvar</i> arquivos. Para fazer isto, clique no botão <i>Configuração avançada</i> e marque o quadrículo <i>Mudar para a pasta nas janelas de Abrir/Salvar arquivos</i>. Quando você aciona o atalho, o Clavier+ verifica se você está ou não numa janela de Abrir/Salvar arquivos. Se estiver, ele exibe a pasta indicada pelo atalho, em vez de abri-la no Windows Explorer. Esse recurso do Clavier+ funciona com vários tipos de caixas de diálogo: Abrir/Salvar arquivos, Salvar como e de escolha de pastas.
-
 <p><span class="ipt">Importante:</span> É necessário fechar a janela de configuração do Clavier+ <i>antes</i> de testar seus atalhos. Enquanto esta janela estiver aberta, os atalhos ficarão desativados.
 
 
@@ -297,7 +295,6 @@ Texto=<i>texto que deve ser digitado quando o atalho é acionado</i>
 Comando=<i>programa a abrir quando o atalho é acionado</i>
 Pasta=<i>pasta inicial</i>
 Janela=<i>status inicial da janela do programa após ser aberto</i>
-SuportaAberturaArquivo=<i>0 ou 1</i>
 Programas=<i>lista de programas</i>
 TodosProgramasExceto=<i>lista de programas</i>
 CapsLock=<i>status</i>
@@ -324,9 +321,6 @@ ScrollLock=<i>status</i>
 
 <dt><kbd>Janela</kbd> (apenas modo de comando)
 <dd>O tamanho inicial da janela principal do programa aberto por atalho, ou seja: <kbd>Normal</kbd>, <kbd>Minimizada</kbd>, <kbd>Maximizada</kbd>.
-
-<dt><kbd>SuportaAberturaArquivo</kbd> (apenas modo de comando)
-<dd>Se o comando visar ao caminho de uma pasta, indique se o Clavier+ deve identificar a presença de janelas de abertura de programas (Abrir), de modo que ele faça a mudança de pasta automaticamente (valor 1). Se a identificação falhar, ou se o valor da opção for 0 (o valor padrão), a pasta é aberta com o Windows Explorer.
 
 <dt><kbd>Programas</kbd>, <kbd>TodosProgramasExceto</kbd>
 <dd>Condição de ativação: lista dos únicos programas diante dos quais o atalho é acionado (<kbd>Programas</kbd>) ou desativado (<kbd>TodosProgramasExceto</kbd>). Os programas devem figurar separados por ponto-e-vírgula. Não há necessidade do caminho completo: basta o nome do arquivo, com a extensão.

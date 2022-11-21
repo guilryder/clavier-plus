@@ -143,7 +143,6 @@ Shortcut::Shortcut(const Shortcut& sh)
 	m_type(sh.m_type),
 	m_show_option(sh.m_show_option),
 	m_programs_only(sh.m_programs_only),
-	m_support_file_open(sh.m_support_file_open),
 	
 	m_description(sh.m_description),
 	m_text(sh.m_text),
@@ -163,7 +162,6 @@ Shortcut::Shortcut(const Keystroke& ks)
 	m_type(Type::kText),
 	m_show_option(SW_NORMAL),
 	m_programs_only(false),
-	m_support_file_open(false),
 	
 	m_usage_count(0),
 	
@@ -239,12 +237,6 @@ void Shortcut::save(HANDLE file) {
 				}
 			}
 			line_count++;
-		
-			if (m_support_file_open) {
-				lines[line_count].key_token = Token::kSupportFileOpen;
-				lines[line_count].value = _T("1");
-				line_count++;
-			}
 			break;
 		
 		case Type::kText:
@@ -461,11 +453,6 @@ bool Shortcut::load(LPTSTR* input) {
 				}
 				break;
 			
-			// Folder
-			case Token::kSupportFileOpen:
-				m_support_file_open = toBool(StrToInt(next_sep));
-				break;
-			
 			// Condition
 			case Token::kConditionCapsLock:
 			case Token::kConditionNumLock:
@@ -556,21 +543,20 @@ void Shortcut::execute(bool from_hotkey) {
 	}
 	
 	switch (m_type) {
-	case Type::kCommand:
+	case Type::kCommand: {
 		// Required because the launched program
 		// can be a script that simulates keystrokes
 		if (can_release_special_keys) {
 			releaseSpecialKeys(context.keyboard_state, /* keep_down_mod_code= */ 0);
 		}
 		
-		if (!m_support_file_open || !setDialogBoxDirectory(context.input_window, m_command)) {
-			clipboardToEnvironment();
-			ShellExecuteThread *const shell_execute_thread = new ShellExecuteThread(
-				m_command, m_directory, m_show_option);
-			startThread(shell_execute_thread->thread, shell_execute_thread);
-		}
+		clipboardToEnvironment();
+		ShellExecuteThread *const shell_execute_thread =
+		    new ShellExecuteThread(m_command, m_directory, m_show_option);
+		startThread(shell_execute_thread->thread, shell_execute_thread);
 		break;
-		
+	}
+	
 	case Type::kText:
 		// Special keys to keep down across commands.
 		

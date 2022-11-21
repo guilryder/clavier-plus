@@ -118,9 +118,6 @@ voegen of het drukken van bepaalde toetsen te simuleren.
 
 <p>Als de sneltoets een programma moet opstarten of een website openen, vink dan die optie aan. Noteer het pad voor het programma of het webadres in de zone. Je kan op de kleine rechtersknop drukken om het het juiste pad te vinden. Met de knop <i>Testen</i> kan je nazien of het programma of de website correct zijn. Indien nodig druk op de knop <i>Geavanceerde instellingen</i> om het startrepertorium van het programma of de weergavemodus (vol scherm, venster, kleiner) te regelen.
 
-<p>Indien de sneltoets een directory opent kan je ook de huidige directory wijzigen in de dialoogboxen van het type <i>Bestand/Openen</i>. Om dit te doen klik op de knop <i>Geavanceerde instellingen</i> en vink <i>Wijzigen van directory in de dialoog boxen Bestand/Openen (de commandolijn is een dossier)</i>. Als je de sneltoets gebruikt kijkt Clavier+ of je al of niet in een
-dialoog box Bestand/Openen zit. Zo ja, wordt de huidige directory van de dialoog box gewijzigd, en de directory wordt niet in verkenner geopend. Clavier+ werkt met verschillende dialoog boxen: Bestand/Openen, Bestand/Opslaan als, en directory keuze.
-
 <p><span class="ipt">Belangrijk:</span> Vooraleer de sneltoetsen te testen moet je het venster Clavier+sluiten. Zolang het dialoogvenster open is zijn de sneltoetsen gedeactiveerd.
 
 
@@ -337,7 +334,6 @@ Text=<i>de tekst die getypt moet worden bij gebruik van de sneltoets</i>
 Command=<i>programma dat gestart wordt als de sneltoets gedrukt wordt</i>
 Directory=<i>opstartmap</i>
 Window=<i>venster modus van het te starten programma</i>
-SupportFileOpen=<i>0 of 1</i>
 Programs=<i>lijst van de programma’s</i>
 AllProgramsBut=<i>lijst van de programma’s</i>
 CapsLock=<i>voorwaarde</i>
@@ -365,9 +361,6 @@ UsageCount=<i>aantal</i>
 
 <dt><kbd>Window</kbd> (enkel in commando mode)
 <dd>Grootte van het venster van het gestarte programma, kan zijn: <kbd>Normal</kbd>, <kbd>Minimized</kbd>, <kbd>Maximized</kbd>.
-
-<dt><kbd>SupportFileOpen</kbd> (enkel in commando mode)
-<dd>Als het commando de weg is voor een directory duidt dit aan of Clavier+ de dialoogboxen File/Open moet detecteren om hun directory te wijzigen (waarde 1). Als dit niet lukt of de parameter is 0 (bij verstek waarde) dan wordt de directory in verkenner geopend.
 
 <dt><kbd>Programs</kbd>, <kbd>AllProgramsBut</kbd> (het één of het ander)
 <dd>Voorwaarde voor het activeren van de sneltoets: lijst van de programma’s waarin de sneltoets actief is (<kbd>Programs</kbd>) of niet actief (<kbd>AllProgramsBut</kbd>). De programma’s worden door een puntkomma gescheiden en hebben geen pad: enkel naam, met extensie.

@@ -75,7 +75,6 @@
 #define IDCIMG_PROGRAMS                 1050
 #define IDCCMD_TEST                     1051
 #define IDCCMD_TEXT_MENU                1054
-#define IDCCHK_SUPPORTFILEOPEN          1055
 #define IDCCBO_PROGRAMS                 1056
 #define IDCCHK_DISTINGUISH_LEFT_RIGHT   1058
 #define IDCLBL_SHORTCUTSCOUNT           1059

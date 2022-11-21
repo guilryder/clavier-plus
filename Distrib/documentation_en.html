@@ -112,8 +112,6 @@
 
 <p>If the shortcut should launch a program or display a website, check the corresponding option. Write the path of your program or the URL of your website in the area below. You can use the small button on the right to look for the program to launch. You can check what your shortcut does by clicking the <i>Test</i> button. If necessary, click the <i>Advanced settings</i> button to specify the initial directory or the initial window size of the program (maximized, windowed, minimized).
 
-<p>If the shortcut opens a directory, you can allow it to change the current directory in <i>File/Open</i> dialog boxes. To do this, click the <i>Advanced settings</i> button and check <i>Change directory in File/Open dialog boxes</i>. When you execute the shortcut keystroke, Clavier+ detects whether you are in a File/Open dialog box or not. If yes, the current directory of the dialog box is changed, and the directory is not opened in Windows Explorer. Clavier+ supports several dialog boxes: File/Open, File/Save as, and directory choosing.
-
 <p><span class="ipt">Important:</span> you need to close the Clavier+ configuration window <i>before</i> testing your shortcuts. The shortcuts remain disabled while the window is visible.
 
 
@@ -346,7 +344,6 @@ Text=<i>text to type when the shortcut is done</i>
 Command=<i>program to launch when the shortcut is done</i>
 Directory=<i>startup directory</i>
 Window=<i>window mode of the program to launch</i>
-SupportFileOpen=<i>0 or 1</i>
 Programs=<i>programs list</i>
 AllProgramsBut=<i>programs list</i>
 CapsLock=<i>condition</i>
@@ -374,9 +371,6 @@ UsageCount=<i>count</i>
 
 <dt><kbd>Window</kbd> (command mode only)
 <dd>The initial size of the main window of the launched program, among: <kbd>Normal</kbd>, <kbd>Minimized</kbd>, <kbd>Maximized</kbd>.
-
-<dt><kbd>SupportFileOpen</kbd> (command mode only)
-<dd>If the command is the path of a directory, specifies whether Clavier+ should detect File/Open dialog boxes to change their current directory (value 1). If the detection fails, or if this settings is 0 (default value), the directory is opened in Windows Explorer.
 
 <dt><kbd>Programs</kbd>, <kbd>AllProgramsBut</kbd> (mutually exclusive)
 <dd>Activation condition: the list of the only programs for which the shortcut is activated (<kbd>Programs</kbd>) or disabled (<kbd>AllProgramsBut</kbd>). The programs are semi-colon-separated. They do not have a full path: file name only, with extension.

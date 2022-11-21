@@ -253,11 +253,10 @@ void addPathShortcut(LPCTSTR path) {
 
 // Create a new command shortcut for the given command-line.
 // Ask the user to enter a keystroke before adding the shortcut.
-void addCommandShortcut(LPCTSTR command, bool support_file_open = false) {
+void addCommandShortcut(LPCTSTR command) {
 	Shortcut *const shortcut = new Shortcut;
 	shortcut->m_type = Shortcut::Type::kCommand;
 	shortcut->m_command = command;
-	shortcut->m_support_file_open = support_file_open;
 	addShortcut(shortcut);
 }
 
@@ -742,7 +741,7 @@ void onMainCommand(UINT id, WORD notify, HWND hwnd) {
 				TCHAR folder[MAX_PATH] = _T("");
 				if (browseForFolder(e_hdlgMain, /* title= */ nullptr, folder)) {
 					PathQuoteSpaces(folder);
-					addCommandShortcut(folder, /* support_file_open= */ true);
+					addCommandShortcut(folder);
 				}
 			}
 			break;
@@ -1532,8 +1531,6 @@ INT_PTR CALLBACK prcCmdSettings(HWND hdlg, UINT message, WPARAM wParam, LPARAM U
 					}
 				}
 				SendDlgItemMessage(hdlg, IDCCBO_SHOW, CB_SETCURSEL, static_cast<WPARAM>(show_option_index), 0);
-				
-				CheckDlgButton(hdlg, IDCCHK_SUPPORTFILEOPEN, s_shortcut->m_support_file_open);
 			}
 			return true;
 		
@@ -1570,7 +1567,6 @@ INT_PTR CALLBACK prcCmdSettings(HWND hdlg, UINT message, WPARAM wParam, LPARAM U
 					getDlgItemText(hdlg, IDCTXT_DIRECTORY, &s_shortcut->m_directory);
 					s_shortcut->m_show_option = Shortcut::kShowOptions[
 						SendDlgItemMessage(hdlg, IDCCBO_SHOW, CB_GETCURSEL, 0,0)];
-					s_shortcut->m_support_file_open = toBool(IsDlgButtonChecked(hdlg, IDCCHK_SUPPORTFILEOPEN));
 					s_shortcut->clearIcons();
 					// Fall-through
 					
