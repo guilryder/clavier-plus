@@ -81,7 +81,7 @@ public:
 	
 	// Returns a pointer to this pointer suitable for IID_PPV_ARGS.
 	// Available only if the pointer is null.
-	T** operator &() {
+	T** outPtr() {
 		assert(m_ptr == nullptr);
 		return &m_ptr;
 	}
@@ -114,7 +114,7 @@ public:
 	
 	// Returns a pointer to this pointer suitable for passing to an allocation function.
 	// Available only if the pointer is null.
-	P* operator &() {
+	P* outPtr() {
 		assert(m_ptr == nullptr);
 		return &m_ptr;
 	}

@@ -413,7 +413,7 @@ void resolveLinkFile(LPCTSTR link_file, Shortcut* shortcut) {
 		if (persist_file) {
 			CoBuffer<LPTSTR> url;
 			if (SUCCEEDED(persist_file->Load(link_file, STGM_READ)) &&
-					SUCCEEDED(url_locator->GetURL(&url)) &&
+					SUCCEEDED(url_locator->GetURL(url.outPtr())) &&
 					url && *url) {
 				cmdline = url;
 				return;
@@ -464,8 +464,8 @@ void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST p
 	// Retrieve the apps folder.
 	CoPtr<IKnownFolder> known_folder;
 	CoPtr<IShellItem> folder_item;
-	VERIFV(SUCCEEDED(manager->GetFolder(FOLDERID_AppsFolder, &known_folder)) &&
-		SUCCEEDED(known_folder->GetShellItem(KF_FLAG_DEFAULT, IID_PPV_ARGS(&folder_item))));
+	VERIFV(SUCCEEDED(manager->GetFolder(FOLDERID_AppsFolder, known_folder.outPtr())) &&
+		SUCCEEDED(known_folder->GetShellItem(KF_FLAG_DEFAULT, IID_PPV_ARGS(folder_item.outPtr()))));
 	
 	// Property set only on non-UWP apps.
 	PROPERTYKEY non_uwp_prop_key;
@@ -477,7 +477,7 @@ void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST p
 	
 	// Enumerate the apps folder children, UWP and non-UWP apps alike.
 	CoPtr<IEnumShellItems> enum_apps;
-	VERIFV(SUCCEEDED(folder_item->BindToHandler(nullptr, BHID_StorageEnum, IID_PPV_ARGS(&enum_apps))));
+	VERIFV(SUCCEEDED(folder_item->BindToHandler(nullptr, BHID_StorageEnum, IID_PPV_ARGS(enum_apps.outPtr()))));
 	
 	// Collect the first kMaxAppItemCount UWP apps.
 	struct UwpApp {
@@ -489,13 +489,13 @@ void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST p
 	while (uwp_app_count < kMaxAppItemCount) {
 		// Retrieve the item.
 		CoPtr<IShellItem> app_item;
-		if (FAILED(enum_apps->Next(1, &app_item, nullptr)) || !app_item) {
+		if (FAILED(enum_apps->Next(1, app_item.outPtr(), nullptr)) || !app_item) {
 			break;
 		}
 		
 		// Retrieve the properties of the app.
 		CoPtr<IPropertyStore> app_props;
-		if (FAILED(app_item->BindToHandler(nullptr, BHID_PropertyStore, IID_PPV_ARGS(&app_props)))) {
+		if (FAILED(app_item->BindToHandler(nullptr, BHID_PropertyStore, IID_PPV_ARGS(app_props.outPtr())))) {
 			continue;
 		}
 		
@@ -528,7 +528,7 @@ void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST p
 		// Retrieve the name of the app.
 		String output;
 		CoBuffer<LPTSTR> app_name;
-		if (FAILED(uwp_app.item->GetDisplayName(SIGDN_NORMALDISPLAY, &app_name))) {
+		if (FAILED(uwp_app.item->GetDisplayName(SIGDN_NORMALDISPLAY, app_name.outPtr()))) {
 			continue;
 		}
 		
@@ -542,7 +542,7 @@ void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST p
 		
 		// Retrieve the PIDL of the app.
 		CoBuffer<PIDLIST_ABSOLUTE> app_pidl;
-		if (FAILED(SHGetIDListFromObject(uwp_app.item.get(), &app_pidl))) {
+		if (FAILED(SHGetIDListFromObject(uwp_app.item.get(), app_pidl.outPtr()))) {
 			continue;
 		}
 		

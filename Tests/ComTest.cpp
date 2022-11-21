@@ -141,11 +141,11 @@ public:
 		});
 	}
 	
-	TEST_METHOD(addressOperator_nullSucceeds) {
+	TEST_METHOD(outPtr_nullSucceeds) {
 		IShellLink* raw_ptr;
 		{
 			CoPtr<IShellLink> ptr;
-			IShellLink** address = &ptr;
+			IShellLink** address = ptr.outPtr();
 			Assert::IsNotNull(address);
 			Assert::IsNull(*address);
 			
@@ -158,10 +158,10 @@ public:
 		assertOneReference(raw_ptr);
 	}
 	
-	TEST_METHOD(addressOperator_validPtrFails) {
+	TEST_METHOD(outPtr_validPtrFails) {
 		CoPtr<IShellLink> ptr(CLSID_ShellLink);
 		Assert::ExpectException<std::runtime_error>([&] {
-			&ptr;
+			ptr.outPtr();
 		});
 	}
 	
@@ -200,7 +200,7 @@ public:
 		char* raw_buffer = static_cast<char*>(CoTaskMemAlloc(10));
 		
 		CoPtr<IMalloc> malloc;
-		Assert::IsTrue(SUCCEEDED(CoGetMalloc(1, &malloc)));
+		Assert::IsTrue(SUCCEEDED(CoGetMalloc(1, malloc.outPtr())));
 		Assert::AreEqual(1, malloc->DidAlloc(raw_buffer));
 		
 		{
@@ -210,11 +210,11 @@ public:
 		Assert::AreEqual(0, malloc->DidAlloc(raw_buffer));
 	}
 	
-	TEST_METHOD(addressOperator_nullSucceeds) {
+	TEST_METHOD(outPtr_nullSucceeds) {
 		char* raw_buffer = static_cast<char*>(CoTaskMemAlloc(10));
 		
 		CoBuffer<char*> buffer;
-		char **address = &buffer;
+		char **address = buffer.outPtr();
 		Assert::IsNotNull(address);
 		Assert::IsNull(*address);
 		
@@ -222,10 +222,10 @@ public:
 		Assert::AreEqual(raw_buffer, buffer);
 	}
 	
-	TEST_METHOD(addressOperator_validPtrFails) {
+	TEST_METHOD(outPtr_validPtrFails) {
 		CoBuffer<char*> buffer(static_cast<char*>(CoTaskMemAlloc(10)));
 		Assert::ExpectException<std::runtime_error>([&] {
-			&buffer;
+			buffer.outPtr();
 		});
 	}
 };
