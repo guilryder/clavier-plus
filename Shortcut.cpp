@@ -128,7 +128,8 @@ Shortcut* find(const Keystroke& ks, LPCTSTR program) {
 	Shortcut *best_shortcut = nullptr;
 	for (Shortcut* sh = getFirst(); sh; sh = sh->getNext()) {
 		if (sh->isSubset(ks, program)) {
-			if (!best_shortcut || !best_shortcut->m_programs_only) {
+			// Pick the first matching shortcut, but give precedence to m_programs_only = true.
+			if (!best_shortcut || (!best_shortcut->m_programs_only && sh->m_programs_only)) {
 				best_shortcut = sh;
 			}
 		}
@@ -938,7 +939,7 @@ void commandKeysDown(ExecutionContext* context, LPTSTR arg) {
 bool Shortcut::isSubset(const Keystroke& other_ks, LPCTSTR other_program) const {
 	VERIF(Keystroke::isSubset(other_ks));
 	
-	return (other_program && m_programs.isSome() && containsProgram(other_program)) ^ (!m_programs_only);
+	return (other_program && containsProgram(other_program)) == m_programs_only;
 }
 
 // Test for intersection

@@ -29,6 +29,10 @@ namespace testing {
 // Normalizes a <0 / =0 / >0 comparison result into -1 / 0 /+1.
 int normalizeCompareResult(int result);
 
+// Retrieves the path of the test project directory.
+// Buffer size: MAX_PATH.
+void getProjectDir(LPTSTR path);
+
 }  // namespace testing
 
 

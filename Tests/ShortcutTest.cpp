@@ -18,13 +18,22 @@
 
 
 #include "StdAfx.h"
+#include "../i18n.h"
 #include "../Shortcut.h"
 
 
 namespace Microsoft::VisualStudio::CppUnitTestFramework {
 
-template<> inline std::wstring ToString<Shortcut>(const Shortcut& ks) {
-	return std::wstring(StringPrintf(_T("Shortcut{m_vk=0x%02x ('%c')}"), ks.m_vk, ks.m_vk));
+template<> inline std::wstring ToString<i18n::Language>(const i18n::Language& lang) {
+	RETURN_WIDE_STRING(lang);
+}
+
+template<> inline std::wstring ToString<Shortcut>(const Shortcut& sh) {
+	return std::wstring(StringPrintf(
+		_T("Shortcut{m_vk=0x%02x ('%c') m_programs=\"%s\" m_programs_only=%s}"),
+		sh.m_vk, sh.m_vk,
+		sh.m_programs.getSafe(),
+		sh.m_programs_only ? _T("true") : _T("false")));
 }
 
 }  // Microsoft::VisualStudio::CppUnitTestFramework
@@ -311,12 +320,17 @@ TEST_CLASS(ShortcutListTest) {
 public:
 	
 	TEST_METHOD_INITIALIZE(setUp) {
+		i18n::setLanguage(i18n::kLangEN);
 		shortcut::initialize();
 	}
 	
 	TEST_METHOD_CLEANUP(tearDown) {
+		for (Shortcut* sh = shortcut::getFirst(); sh; sh = sh->getNext()) {
+			sh->unregisterHotKey();
+		}
 		shortcut::clearShortcuts();
 		shortcut::terminate();
+		*e_ini_filepath = _T('\0');
 	}
 	
 	TEST_METHOD(InitiallyEmpty) {
@@ -328,7 +342,7 @@ public:
 		
 		shortcut->addToList();
 		
-		Assert::AreSame(*shortcut::getFirst(), *shortcut);
+		Assert::AreSame(*shortcut, *shortcut::getFirst());
 		Assert::IsNull(shortcut->getNext());
 	}
 	
@@ -341,10 +355,137 @@ public:
 		shortcut2->addToList();
 		shortcut3->addToList();
 		
-		Assert::AreSame(*shortcut::getFirst(), *shortcut1);
-		Assert::AreSame(*shortcut1->getNext(), *shortcut2);
-		Assert::AreSame(*shortcut2->getNext(), *shortcut3);
+		Assert::AreSame(*shortcut1, *shortcut::getFirst());
+		Assert::AreSame(*shortcut2, *shortcut1->getNext());
+		Assert::AreSame(*shortcut3, *shortcut2->getNext());
 		Assert::IsNull(shortcut3->getNext());
+	}
+	
+	TEST_METHOD(Find) {
+		Keystroke ks_ctrlA;
+		ks_ctrlA.m_vk = 'A';
+		ks_ctrlA.m_sided_mod_code = MOD_CONTROL;
+		
+		Keystroke ks_ctrlB;
+		ks_ctrlB.m_vk = 'B';
+		ks_ctrlB.m_sided_mod_code = MOD_CONTROL;
+		
+		Shortcut *const shortcut_ctrlA_notProg1 = new Shortcut(ks_ctrlA);
+		shortcut_ctrlA_notProg1->m_programs = _T("prog1");
+		shortcut_ctrlA_notProg1->addToList();
+		
+		Shortcut *const shortcut_ctrlB_prog123 = new Shortcut(ks_ctrlB);
+		shortcut_ctrlB_prog123->m_programs = _T("prog1;prog2;prog3");
+		shortcut_ctrlB_prog123->m_programs_only = true;
+		shortcut_ctrlB_prog123->addToList();
+		
+		Shortcut *const shortcut_ctrlA_notProg2 = new Shortcut(ks_ctrlA);
+		shortcut_ctrlA_notProg2->m_programs = _T("prog2");
+		shortcut_ctrlA_notProg2->addToList();
+		
+		Shortcut *const shortcut_ctrlA_prog1 = new Shortcut(ks_ctrlA);
+		shortcut_ctrlA_prog1->m_programs = _T("prog1");
+		shortcut_ctrlA_prog1->m_programs_only = true;
+		shortcut_ctrlA_prog1->addToList();
+		
+		Shortcut *const shortcut_ctrlA_prog23 = new Shortcut(ks_ctrlA);
+		shortcut_ctrlA_prog23->m_programs = _T("prog2;prog3");
+		shortcut_ctrlA_prog23->m_programs_only = true;
+		shortcut_ctrlA_prog23->addToList();
+		
+		Shortcut *const shortcut_ctrlA_prog2 = new Shortcut(ks_ctrlA);
+		shortcut_ctrlA_prog2->m_programs = _T("prog2");
+		shortcut_ctrlA_prog2->m_programs_only = true;
+		shortcut_ctrlA_prog2->addToList();
+		
+		// No match.
+		Assert::IsNull(shortcut::find(ks_ctrlB, /* program= */ _T("other")));
+		
+		// Subset match.
+		Assert::AreSame(*shortcut_ctrlB_prog123, *shortcut::find(ks_ctrlB, /* program= */ _T("prog2")));
+		
+		// Precedence:
+		// 1) first programs_only = true match
+		Assert::AreSame(*shortcut_ctrlA_notProg1, *shortcut::find(ks_ctrlA, /* program= */ nullptr));
+		Assert::AreSame(*shortcut_ctrlA_notProg1, *shortcut::find(ks_ctrlA, /* program= */ _T("other")));
+		Assert::AreSame(*shortcut_ctrlA_prog1, *shortcut::find(ks_ctrlA, /* program= */ _T("prog1")));
+		Assert::AreSame(*shortcut_ctrlA_prog23, *shortcut::find(ks_ctrlA, /* program= */ _T("prog3")));
+		Assert::AreSame(*shortcut_ctrlA_prog23, *shortcut::find(ks_ctrlA, /* program= */ _T("prog2")));
+		
+		// 2) first programs_only = false match
+		Assert::AreSame(*shortcut_ctrlA_notProg1, *shortcut::find(ks_ctrlA, /* program= */ _T("other")));
+	}
+	
+	TEST_METHOD(LoadShortcuts_overwritesSettings) {
+		setNonDefaultGlobalValues();
+		
+		createShortcut('1')->addToList();
+		createShortcut('2')->addToList();
+		
+		// Load the test config.
+		testing::getProjectDir(e_ini_filepath);
+		PathAppend(e_ini_filepath, _T("test_config.ini"));
+		shortcut::loadShortcuts();
+		
+		assertTestGlobalValues(i18n::kLangEN);
+		Assert::AreEqual(4, getShortcutCount());
+	}
+	
+	TEST_METHOD(LoadShortcuts_overwritesGlobalSettingsAppendsShortcuts) {
+		setNonDefaultGlobalValues();
+		
+		createShortcut('1')->addToList();
+		createShortcut('2')->addToList();
+		
+		// Merge the test config.
+		TCHAR merged_ini_filepath[MAX_PATH];
+		testing::getProjectDir(merged_ini_filepath);
+		PathAppend(merged_ini_filepath, _T("test_config.ini"));
+		shortcut::mergeShortcuts(merged_ini_filepath);
+		
+		assertTestGlobalValues(i18n::kLangEN);
+		Assert::AreEqual(6, getShortcutCount());
+	}
+	
+	TEST_METHOD(ClearShortcuts) {
+		createShortcut('1')->addToList();
+		createShortcut('2')->addToList();
+		
+		shortcut::clearShortcuts();
+		
+		Assert::IsNull(shortcut::getFirst());
+	}
+	
+	TEST_METHOD(SaveShortcuts_allLanguages) {
+		// Load the test config.
+		testing::getProjectDir(e_ini_filepath);
+		PathAppend(e_ini_filepath, _T("test_config.ini"));
+		shortcut::loadShortcuts();
+		
+		// Save the config to a golden file for each language.
+		for (int langi = 0; langi < i18n::kLangCount; langi++) {
+			i18n::Language lang = static_cast<i18n::Language>(langi);
+			i18n::setLanguage(lang);
+			
+			testing::getProjectDir(e_ini_filepath);
+			PathAppend(e_ini_filepath, StringPrintf(_T("Goldens\\test_config_%s.ini"), getLanguageName(lang)));
+			shortcut::saveShortcuts();
+		}
+		
+		// Load the config of each language. Save it again to verify idempotency.
+		for (int langi = 0; langi < i18n::kLangCount; langi++) {
+			i18n::Language lang = static_cast<i18n::Language>(langi);
+			setNonDefaultGlobalValues();
+			
+			testing::getProjectDir(e_ini_filepath);
+			PathAppend(e_ini_filepath, StringPrintf(_T("Goldens\\test_config_%s.ini"), getLanguageName(lang)));
+			shortcut::loadShortcuts();
+			
+			assertTestGlobalValues(lang);
+			Assert::AreEqual(4, getShortcutCount());
+			
+			shortcut::saveShortcuts();
+		}
 	}
 	
 private:
@@ -353,6 +494,39 @@ private:
 		Keystroke ks;
 		ks.m_vk = vk;
 		return new Shortcut(ks);
+	}
+	
+	static int getShortcutCount() {
+		int shortcut_count = 0;
+		for (Shortcut* sh = shortcut::getFirst(); sh; sh = sh->getNext()) {
+			shortcut_count++;
+		}
+		return shortcut_count;
+	}
+	
+	static void setNonDefaultGlobalValues() {
+		i18n::setLanguage(i18n::kLangFR);
+		e_main_dialog_size.cx = -1;
+		e_main_dialog_size.cy = -2;
+		e_maximize_main_dialog = true;
+		e_icon_visible = false;
+		for (int col = 0; col < arrayLength(e_column_widths); col++) {
+			e_column_widths[col] = -1;
+		}
+	}
+	
+	// Verifies that the global values match test_config.ini.
+	static void assertTestGlobalValues(i18n::Language expected_lang) {
+		Assert::AreEqual(expected_lang, i18n::getLanguage());
+		Assert::AreEqual(863L, e_main_dialog_size.cx);
+		Assert::AreEqual(490L, e_main_dialog_size.cy);
+		Assert::AreEqual(false, e_maximize_main_dialog);
+		Assert::AreEqual(true, e_icon_visible);
+		constexpr int expected_column_widths[] = { 35, 20, 15, 10, -1 };
+		Assert::AreEqual(arrayLength(e_column_widths), arrayLength(expected_column_widths));
+		for (int col = 0; col < arrayLength(e_column_widths); col++) {
+			Assert::AreEqual(expected_column_widths[col], e_column_widths[col]);
+		}
 	}
 };
 

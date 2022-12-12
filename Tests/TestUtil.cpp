@@ -22,6 +22,9 @@
 
 #include <signal.h>
 
+#define STRINGIFY_MACRO_INTERNAL(name)  #name
+#define STRINGIFY_MACRO(name)  STRINGIFY_MACRO_INTERNAL(name)
+
 namespace testing {
 
 TEST_MODULE_INITIALIZE(clavierSetUp) {
@@ -63,6 +66,13 @@ int normalizeCompareResult(int result) {
 	} else {
 		return 0;
 	}
+}
+
+
+void getProjectDir(LPTSTR path) {
+	TCHAR raw_path[MAX_PATH] = _T(STRINGIFY_MACRO(PROJECT_DIR_DOTTED_QUOTED));
+	PathUnquoteSpaces(raw_path);
+	PathCanonicalize(path, raw_path);
 }
 
 }  // namespace testing
