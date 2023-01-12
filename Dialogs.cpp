@@ -491,19 +491,6 @@ void FileMenuItem::populate(HMENU menu) {
 		} while (FindNextFile(hff, &wfd));
 		FindClose(hff);
 	}
-	
-	// Insert menu bar breaks every N items where N = screen height / item height.
-	const int nb_item_per_column =
-		(GetSystemMetrics(SM_CYSCREEN) - 10) / GetSystemMetrics(SM_CYMENU);
-	MENUITEMINFO mii_menu_bar_break;
-	mii_menu_bar_break.cbSize = sizeof(mii_get_data);
-	mii_menu_bar_break.fMask = MIIM_TYPE;
-	int item_count = GetMenuItemCount(menu);
-	for (int i = nb_item_per_column; i < item_count; i += nb_item_per_column) {
-		GetMenuItemInfo(menu, i, /* fByPosition= */ true, &mii_menu_bar_break);
-		mii_menu_bar_break.fType |= MFT_MENUBARBREAK;
-		SetMenuItemInfo(menu, i, /* fByPosition= */ true, &mii_menu_bar_break);
-	}
 }
 
 void FileMenuItem::execute() {
