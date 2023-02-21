@@ -29,19 +29,19 @@ class String;
 namespace i18n {
 
 enum Language {
-	kLangZH_CN,
-	kLangDE,
-	kLangEN,
-	kLangES,
-	kLangFI,
-	kLangFR,
-	kLangIT,
-	kLangNL,
-	kLangPL,
-	kLangPT,
-	kLangSK,
-	kLangGR,
-	kLangRU,
+	kLangDE,     // German - Deutsch
+	kLangEN,     // English
+	kLangES,     // Spanish - Español (Venezuela)
+	kLangFR,     // French - Français
+	kLangIT,     // Italian - Italiano
+	kLangNL,     // Dutch - Nederlands (België)
+	kLangPL,     // Polish - Polski
+	kLangPT,     // Portuguese - Português brasileiro
+	kLangSK,     // Slovak - Slovenčina
+	kLangFI,     // Finnish - Suomi
+	kLangEL,     // Greek - Ελληνικά
+	kLangRU,     // Russian - Русский
+	kLangZH_CN,  // Simplified Chinese - 简体中文
 	kLangCount,
 	kLangDefault = kLangEN,
 };

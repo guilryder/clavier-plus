@@ -50,18 +50,18 @@ SetCompressor /FINAL /SOLID lzma
 # Calls a macro for each language with arguments: ISO code, LCID.
 !macro ITER_LANGUAGES_FULL macro
   !insertmacro ${macro} "en" "English" # default
-  !insertmacro ${macro} "zh-CN" "SimpChinese"
   !insertmacro ${macro} "de" "German"
   !insertmacro ${macro} "es" "Spanish"
-  !insertmacro ${macro} "fi" "Finnish"
   !insertmacro ${macro} "fr" "French"
   !insertmacro ${macro} "it" "Italian"
   !insertmacro ${macro} "nl" "Dutch"
   !insertmacro ${macro} "pl" "Polish"
   !insertmacro ${macro} "pt-BR" "PortugueseBR"
   !insertmacro ${macro} "sk" "Slovak"
+  !insertmacro ${macro} "fi" "Finnish"
   !insertmacro ${macro} "el" "Greek"
   !insertmacro ${macro} "ru" "Russian"
+  !insertmacro ${macro} "zh-CN" "SimpChinese"
 !macroend
 !macro DECLARE_LANGUAGE iso lcid
   !echo "Declaring language: ${iso} ${lcid}"

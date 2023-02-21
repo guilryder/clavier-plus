@@ -1040,237 +1040,6 @@ IDC_TARGET              CURSOR                  "Target.cur"
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Finnish resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FIN)
-LANGUAGE LANG_FINNISH, SUBLANG_NEUTRAL
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_ABOUT DIALOGEX 0, 0, 167, 144
-STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_NOPARENTNOTIFY
-CAPTION "Tietoja Clavier+:sta"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    ICON            IDI_APP,IDC_STATIC,6,6,20,20
-    LTEXT           "",IDCLBL_APP_VERSION,42,6,116,24,SS_NOPREFIX
-    LTEXT           "GPLv3-lisenssin alainen ohjelmisto",IDC_STATIC,42,32,116,8,SS_NOPREFIX
-    GROUPBOX        "Tekijä",IDC_STATIC,6,48,155,44
-    LTEXT           "Guillaume Ryder",IDC_STATIC,12,59,144,8,SS_NOPREFIX
-    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,144,8,SS_NOPREFIX
-    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,144,8,SS_NOPREFIX
-    LTEXT           "Käännös: Antti Saarinen",IDC_STATIC,6,102,152,8,SS_NOPREFIX
-    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
-    DEFPUSHBUTTON   "OK",IDOK,111,124,50,14,WS_GROUP
-END
-
-IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
-STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Suoritettava ohjelma"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "&Komento:",IDC_STATIC,6,8,68,8
-    EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
-    LTEXT           "&Hakemisto:",IDC_STATIC,6,26,68,8
-    EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
-    LTEXT           "&Ikkuna:",IDC_STATIC,6,44,68,8
-    COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Peruuta",IDCANCEL,78,69,56,14
-    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
-END
-
-IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
-STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Oikotie"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "&Oikotie:",IDC_STATIC,7,8,26,8
-    EDITTEXT        IDCTXT,42,6,178,12,ES_AUTOHSCROLL
-    CONTROL         "&Erota vasemman- ja oikeanpuoleiset erikoisnäppäimet",IDCCHK_DISTINGUISH_LEFT_RIGHT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,216,10
-    LTEXT           "Huomioita:\n– voit käyttää Windows-näppäintä\n– jotkin erikoisoikotiet eivät ole saatavilla",IDC_STATIC,6,42,216,35,SS_NOPREFIX
-    GROUPBOX        "Aktivointiehdot",IDC_STATIC,6,84,214,66
-    LTEXT           "&Caps Lock:",IDC_STATIC,12,98,90,8
-    COMBOBOX        IDCCBO_CAPSLOCK,108,96,106,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "&Num Lock:",IDC_STATIC,12,116,90,8
-    COMBOBOX        IDCCBO_NUMLOCK,108,114,106,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "&Scroll Lock:",IDC_STATIC,12,134,90,8
-    COMBOBOX        IDCCBO_SCROLLLOCK,108,132,106,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Peruuta",IDCANCEL,101,159,56,14
-    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
-END
-
-IDD_MAIN DIALOGEX 0, 0, 414, 246
-STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-EXSTYLE WS_EX_APPWINDOW
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,6,401,102
-    PUSHBUTTON      "Lisää",IDCCMD_ADD,6,114,20,18,BS_ICON
-    PUSHBUTTON      "Poista",IDCCMD_DELETE,30,114,20,18,BS_ICON
-    PUSHBUTTON      "Muokkaa",IDCCMD_EDIT,54,114,20,18,BS_ICON
-    LTEXT           "Kaikki oikotiet ovat poissa käytöstä tämän ikkunan ollessa näkyvissä.",IDCLBL_HELP,78,114,126,19,0,WS_EX_STATICEDGE
-    LTEXT           "Oikoteitä yhteensä:",IDCLBL_SHORTCUTSCOUNT,210,114,69,8,SS_NOPREFIX
-    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,283,114,30,8,SS_NOPREFIX
-    CONTROL         "Kä&ynnistä Clavier+ Windowsin käynnistyessä",IDCCHK_AUTOSTART,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,210,124,198,10
-    GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
-    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
-    CONTROL         "&Kirjoita tekstiä",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,62,10
-    CONTROL         "Käy&nnistä ohjelma tai näytä verkkosivusto",IDCOPT_COMMAND,
-                    "Button",BS_AUTORADIOBUTTON,216,138,151,10
-    EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
-    PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
-    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
-    ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
-    PUSHBUTTON      "&Lisäasetukset...",IDCCMD_CMDSETTINGS,246,168,102,14
-    PUSHBUTTON      "Kok&eile",IDCCMD_TEST,354,168,48,14
-    LTEXT           "&Ota käyttöön:",IDCLBL_PROGRAMS,6,194,46,8
-    COMBOBOX        IDCCBO_PROGRAMS,54,192,108,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDCTXT_PROGRAMS,164,192,226,12,ES_AUTOHSCROLL
-    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
-    LTEXT           "Ku&vaus:",IDCLBL_DESCRIPTION,6,210,46,8
-    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
-    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
-    PUSHBUTTON      "&Apua",IDCCMD_HELP,60,227,40,14
-    PUSHBUTTON      "Kopioi l&uettelo",IDCCMD_COPYLIST,102,227,56,14
-    PUSHBUTTON      "K&ieli...",IDCCMD_LANGUAGE,160,227,48,14
-    PUSHBUTTON      "&Tietoja...",IDCCMD_ABOUT,210,227,48,14
-    PUSHBUTTON      "&Poistu",IDCCMD_QUIT,260,227,48,14
-    PUSHBUTTON      "Peruuta",IDCANCEL,310,227,48,14
-    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
-END
-
-IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
-STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Simuloi näppäinpainallusta"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "&Näppäinpainallus:",IDC_STATIC,7,8,67,8
-    EDITTEXT        IDCTXT,78,6,155,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "Peruuta",IDCANCEL,114,30,56,14
-    DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDM_CONTEXT MENU
-BEGIN
-    POPUP " "
-    BEGIN
-        POPUP "&Ohjelma"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        POPUP "&Sovellus"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        POPUP "&Erikoismerkki"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        MENUITEM SEPARATOR
-        MENUITEM "&Avaa kansio...",             ID_ADD_FOLDER
-        MENUITEM "&Kirjoita tekstiä...",        ID_ADD_TEXT
-        MENUITEM "Käy&nnistä ohjelma...",       ID_ADD_COMMAND
-        MENUITEM "Nä&ytä verkkosivusto...",     ID_ADD_WEBSITE
-    END
-    POPUP " "
-    BEGIN
-        MENUITEM "&Simuloi näppäinpainallusta: [...]", ID_TEXT_SENDKEYS
-        MENUITEM "Käynnistä &ohjelma: [[...]]", ID_TEXT_COMMAND
-        MENUITEM "O&dota 100 ms ja tunnista fokus: []", ID_TEXT_WAIT
-        MENUITEM "Kirjoita tekstiä &matalan tason tilassa: [|...|]", ID_TEXT_LOWLEVEL
-        MENUITEM SEPARATOR
-        POPUP "Kirjoita m&erkki"
-        BEGIN
-            MENUITEM SEPARATOR
-        END
-        POPUP "Ki&rjoita erikoismerkki"
-        BEGIN
-            MENUITEM "Kirjoita &kenoviiva: \\\\",   ID_TEXT_BACKSLASH
-            MENUITEM "Kirjoita avaava &hakasulje: \\[", ID_TEXT_BRACKET_OPEN
-            MENUITEM "Kirjoita sulkeva h&akasulje: \\]", ID_TEXT_BRACKET_CLOSE
-            MENUITEM "Kirjoita avaava aa&ltosulje: \\{", ID_TEXT_BRACE_OPEN
-            MENUITEM "Kirjoita sulkeva aal&tosulje: \\}", ID_TEXT_BRACE_CLOSE
-            MENUITEM "Kirjoita &putkimerkki: \\|",  ID_TEXT_PIPE
-        END
-        POPUP "Suorita erityiskomento"
-        BEGIN
-            MENUITEM "&Odota: [{Wait,<kesto>}]",    ID_TEXT_CMD_WAIT
-            MENUITEM "&Tunnista fokusoitu ikkuna: [{Focus,<viive>,<ikkunanimi>}]", ID_TEXT_CMD_FOCUS
-            MENUITEM "Akti&voi ikkuna tai käynnistä: [{FocusOrLaunch,<ikkunanimi>,<komento>,<viive>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
-            MENUITEM "&Kopioi leikepöydälle: [{Copy,<teksti>}]", ID_TEXT_CMD_COPY
-            MENUITEM "&Hiiren painike: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
-            MENUITEM "Siirrä hiiri kohtaan (&abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
-            MENUITEM "Siirrä hiiri kohtaan (&suht.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
-            MENUITEM "Siirrä h&iirtä: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
-            MENUITEM "Hiiren vi&erityspainike: [{MouseWheel,<(-) naksausten lukumäärä>}]", ID_TEXT_CMD_MOUSE_WHEEL
-            MENUITEM "&Pidä erikoisnäppäimet pohjassa: [{KeysDown,<näppäimet>}]", ID_TEXT_CMD_KEYS_DOWN
-        END
-    END
-    POPUP " "
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Asetukset...",               ID_TRAY_SETTINGS
-        MENUITEM "&Kopioi luettelo",            ID_TRAY_COPYLIST
-        MENUITEM "&Lataa konfiguraatio...",     ID_TRAY_INI_LOAD
-        MENUITEM "&Sulauta konfiguraatio...",   ID_TRAY_INI_MERGE
-        MENUITEM "&Tallenna konfiguraatio...",  ID_TRAY_INI_SAVE
-        MENUITEM "&Poistu",                     ID_TRAY_QUIT
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE
-BEGIN
-    ERR_INVALID_SHORTCUT    "Käypä oikotie vaaditaan."
-    ERR_SHORTCUT_DUPLICATE  "Näppäinoikotie esiintyy kahdesti: %s.\nMuokkaa tai poista toinen esiintymistä."
-    ERR_SAVING_INI          "Asetuksia ei voitu tallentaa."
-    ERR_LOADING_INI         "Asetuksia ei voitu ladata."
-    ERR_TARGET              "Ohjelmaa ei ole valittu.\nPidä hiiren painike pohjassa ja raahaa kursori\nvalittavan ohjelman ikkunaan."
-    ASK_QUIT                "Haluatko todella poistua Clavier+:sta?\nTämä poistaa käytöstä kaikki oikotiesi.\n\n(Paina Shift-näppäintä napsauttaessasi painiketta\nohittaaksesi tämän viestin.)"
-    ASK_DELETE              "Haluatko todella poistaa tämän oikotien?\n\n(Paina Shift-näppäintä napsauttaessasi painiketta\nohittaaksesi tämän viestin.)"
-    MSG_COPYLIST            "Oikotieluettelo on kopioitu leikepöydälle.\n\nVoit liittää sen Ctrl+V:llä tekstinkäsittely- tai taulukkolaskentaohjelmaan."
-END
-
-STRINGTABLE
-BEGIN
-    IDS_TOKENS              "Suomi"
-    IDS_COLUMNS             "Sisältö;Oikotie;Ehdot;Käyttökerrat;Kuvaus"
-    IDS_LANGUAGE_CODE       "fi"
-    IDS_CONDITIONS          "ei ehtoa;oltava käytössä;oltava poissa käytöstä"
-    IDS_CONDITION_KEYS      "CNS"
-    IDS_INI_FILTER          "INI-tiedostot|*.ini|"
-    IDS_BROWSEDIR           "Valitse komennon käynnistyshakemisto."
-    IDS_PROGRAMS            "kaikille ohjelmille paitsi;ainoastaan näille ohjelmille"
-    IDS_TOOLTIPS            "Lisää uusi oikotie;Poista valittu oikotie;Muokkaa valittua oikotietä;Paina painike pohjaan ja raahaa kursori valittavan ohjelman ikkunaan"
-    IDS_DONATEURL           "https://www.paypal.com/donate/?business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
-    IDS_SHOW_OPTIONS        "Normaali;Pienennetty;Suurennettu"
-END
-
-#endif    // Finnish resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
 // German (Germany) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
@@ -1726,6 +1495,237 @@ BEGIN
 END
 
 #endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Finnish (Finland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FIN)
+LANGUAGE LANG_FINNISH, SUBLANG_DEFAULT
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 167, 144
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "Tietoja Clavier+:sta"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    LTEXT           "",IDCLBL_APP_VERSION,42,6,116,24,SS_NOPREFIX
+    LTEXT           "GPLv3-lisenssin alainen ohjelmisto",IDC_STATIC,42,32,116,8,SS_NOPREFIX
+    GROUPBOX        "Tekijä",IDC_STATIC,6,48,155,44
+    LTEXT           "Guillaume Ryder",IDC_STATIC,12,59,144,8,SS_NOPREFIX
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,144,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,144,8,SS_NOPREFIX
+    LTEXT           "Käännös: Antti Saarinen",IDC_STATIC,6,102,152,8,SS_NOPREFIX
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    DEFPUSHBUTTON   "OK",IDOK,111,124,50,14,WS_GROUP
+END
+
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Suoritettava ohjelma"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Komento:",IDC_STATIC,6,8,68,8
+    EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
+    LTEXT           "&Hakemisto:",IDC_STATIC,6,26,68,8
+    EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
+    LTEXT           "&Ikkuna:",IDC_STATIC,6,44,68,8
+    COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Peruuta",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
+END
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 226, 178
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Oikotie"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Oikotie:",IDC_STATIC,7,8,26,8
+    EDITTEXT        IDCTXT,42,6,178,12,ES_AUTOHSCROLL
+    CONTROL         "&Erota vasemman- ja oikeanpuoleiset erikoisnäppäimet",IDCCHK_DISTINGUISH_LEFT_RIGHT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,216,10
+    LTEXT           "Huomioita:\n– voit käyttää Windows-näppäintä\n– jotkin erikoisoikotiet eivät ole saatavilla",IDC_STATIC,6,42,216,35,SS_NOPREFIX
+    GROUPBOX        "Aktivointiehdot",IDC_STATIC,6,84,214,66
+    LTEXT           "&Caps Lock:",IDC_STATIC,12,98,90,8
+    COMBOBOX        IDCCBO_CAPSLOCK,108,96,106,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Num Lock:",IDC_STATIC,12,116,90,8
+    COMBOBOX        IDCCBO_NUMLOCK,108,114,106,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Scroll Lock:",IDC_STATIC,12,134,90,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,108,132,106,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Peruuta",IDCANCEL,101,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,163,159,57,14
+END
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "Lisää",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "Poista",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "Muokkaa",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "Kaikki oikotiet ovat poissa käytöstä tämän ikkunan ollessa näkyvissä.",IDCLBL_HELP,78,114,126,19,0,WS_EX_STATICEDGE
+    LTEXT           "Oikoteitä yhteensä:",IDCLBL_SHORTCUTSCOUNT,210,114,69,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,283,114,30,8,SS_NOPREFIX
+    CONTROL         "Kä&ynnistä Clavier+ Windowsin käynnistyessä",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,210,124,198,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
+    CONTROL         "&Kirjoita tekstiä",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,62,10
+    CONTROL         "Käy&nnistä ohjelma tai näytä verkkosivusto",IDCOPT_COMMAND,
+                    "Button",BS_AUTORADIOBUTTON,216,138,151,10
+    EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
+    ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
+    PUSHBUTTON      "&Lisäasetukset...",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "Kok&eile",IDCCMD_TEST,354,168,48,14
+    LTEXT           "&Ota käyttöön:",IDCLBL_PROGRAMS,6,194,46,8
+    COMBOBOX        IDCCBO_PROGRAMS,54,192,108,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,164,192,226,12,ES_AUTOHSCROLL
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    LTEXT           "Ku&vaus:",IDCLBL_DESCRIPTION,6,210,46,8
+    EDITTEXT        IDCTXT_DESCRIPTION,54,208,354,12,ES_AUTOHSCROLL
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "&Apua",IDCCMD_HELP,60,227,40,14
+    PUSHBUTTON      "Kopioi l&uettelo",IDCCMD_COPYLIST,102,227,56,14
+    PUSHBUTTON      "K&ieli...",IDCCMD_LANGUAGE,160,227,48,14
+    PUSHBUTTON      "&Tietoja...",IDCCMD_ABOUT,210,227,48,14
+    PUSHBUTTON      "&Poistu",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "Peruuta",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
+END
+
+IDD_SENDKEYS DIALOGEX 0, 0, 238, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Simuloi näppäinpainallusta"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Näppäinpainallus:",IDC_STATIC,7,8,67,8
+    EDITTEXT        IDCTXT,78,6,155,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Peruuta",IDCANCEL,114,30,56,14
+    DEFPUSHBUTTON   "OK",IDOK,176,30,57,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_CONTEXT MENU
+BEGIN
+    POPUP " "
+    BEGIN
+        POPUP "&Ohjelma"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Sovellus"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Erikoismerkki"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Avaa kansio...",             ID_ADD_FOLDER
+        MENUITEM "&Kirjoita tekstiä...",        ID_ADD_TEXT
+        MENUITEM "Käy&nnistä ohjelma...",       ID_ADD_COMMAND
+        MENUITEM "Nä&ytä verkkosivusto...",     ID_ADD_WEBSITE
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM "&Simuloi näppäinpainallusta: [...]", ID_TEXT_SENDKEYS
+        MENUITEM "Käynnistä &ohjelma: [[...]]", ID_TEXT_COMMAND
+        MENUITEM "O&dota 100 ms ja tunnista fokus: []", ID_TEXT_WAIT
+        MENUITEM "Kirjoita tekstiä &matalan tason tilassa: [|...|]", ID_TEXT_LOWLEVEL
+        MENUITEM SEPARATOR
+        POPUP "Kirjoita m&erkki"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Ki&rjoita erikoismerkki"
+        BEGIN
+            MENUITEM "Kirjoita &kenoviiva: \\\\",   ID_TEXT_BACKSLASH
+            MENUITEM "Kirjoita avaava &hakasulje: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "Kirjoita sulkeva h&akasulje: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "Kirjoita avaava aa&ltosulje: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Kirjoita sulkeva aal&tosulje: \\}", ID_TEXT_BRACE_CLOSE
+            MENUITEM "Kirjoita &putkimerkki: \\|",  ID_TEXT_PIPE
+        END
+        POPUP "Suorita erityiskomento"
+        BEGIN
+            MENUITEM "&Odota: [{Wait,<kesto>}]",    ID_TEXT_CMD_WAIT
+            MENUITEM "&Tunnista fokusoitu ikkuna: [{Focus,<viive>,<ikkunanimi>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "Akti&voi ikkuna tai käynnistä: [{FocusOrLaunch,<ikkunanimi>,<komento>,<viive>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
+            MENUITEM "&Kopioi leikepöydälle: [{Copy,<teksti>}]", ID_TEXT_CMD_COPY
+            MENUITEM "&Hiiren painike: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "Siirrä hiiri kohtaan (&abs.): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "Siirrä hiiri kohtaan (&suht.): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Siirrä h&iirtä: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "Hiiren vi&erityspainike: [{MouseWheel,<(-) naksausten lukumäärä>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "&Pidä erikoisnäppäimet pohjassa: [{KeysDown,<näppäimet>}]", ID_TEXT_CMD_KEYS_DOWN
+        END
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Asetukset...",               ID_TRAY_SETTINGS
+        MENUITEM "&Kopioi luettelo",            ID_TRAY_COPYLIST
+        MENUITEM "&Lataa konfiguraatio...",     ID_TRAY_INI_LOAD
+        MENUITEM "&Sulauta konfiguraatio...",   ID_TRAY_INI_MERGE
+        MENUITEM "&Tallenna konfiguraatio...",  ID_TRAY_INI_SAVE
+        MENUITEM "&Poistu",                     ID_TRAY_QUIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    ERR_INVALID_SHORTCUT    "Käypä oikotie vaaditaan."
+    ERR_SHORTCUT_DUPLICATE  "Näppäinoikotie esiintyy kahdesti: %s.\nMuokkaa tai poista toinen esiintymistä."
+    ERR_SAVING_INI          "Asetuksia ei voitu tallentaa."
+    ERR_LOADING_INI         "Asetuksia ei voitu ladata."
+    ERR_TARGET              "Ohjelmaa ei ole valittu.\nPidä hiiren painike pohjassa ja raahaa kursori\nvalittavan ohjelman ikkunaan."
+    ASK_QUIT                "Haluatko todella poistua Clavier+:sta?\nTämä poistaa käytöstä kaikki oikotiesi.\n\n(Paina Shift-näppäintä napsauttaessasi painiketta\nohittaaksesi tämän viestin.)"
+    ASK_DELETE              "Haluatko todella poistaa tämän oikotien?\n\n(Paina Shift-näppäintä napsauttaessasi painiketta\nohittaaksesi tämän viestin.)"
+    MSG_COPYLIST            "Oikotieluettelo on kopioitu leikepöydälle.\n\nVoit liittää sen Ctrl+V:llä tekstinkäsittely- tai taulukkolaskentaohjelmaan."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_TOKENS              "Suomi"
+    IDS_COLUMNS             "Sisältö;Oikotie;Ehdot;Käyttökerrat;Kuvaus"
+    IDS_LANGUAGE_CODE       "fi"
+    IDS_CONDITIONS          "ei ehtoa;oltava käytössä;oltava poissa käytöstä"
+    IDS_CONDITION_KEYS      "CNS"
+    IDS_INI_FILTER          "INI-tiedostot|*.ini|"
+    IDS_BROWSEDIR           "Valitse komennon käynnistyshakemisto."
+    IDS_PROGRAMS            "kaikille ohjelmille paitsi;ainoastaan näille ohjelmille"
+    IDS_TOOLTIPS            "Lisää uusi oikotie;Poista valittu oikotie;Muokkaa valittua oikotietä;Paina painike pohjaan ja raahaa kursori valittavan ohjelman ikkunaan"
+    IDS_DONATEURL           "https://www.paypal.com/donate/?business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
+    IDS_SHOW_OPTIONS        "Normaali;Pienennetty;Suurennettu"
+END
+
+#endif    // Finnish (Finland) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -2652,7 +2652,7 @@ BEGIN
     ERR_LOADING_INI         "De parameters kunnen niet gelezen worden."
     ERR_TARGET              "Er is geen programma gekozen.\n\nHoudt de muisknop ingedrukt en de cursor glijden\nom het venster van het gewenste programma te kiezen."
     ASK_QUIT                "Wil je werkelijk Clavier+ verlaten?\nDit zal de sneltoetsen deactiveren.\n\n(Druk op de hoofdlettertoets terwijl je op de knop drukt\nom dit bericht niet te laten verschijnen.)"
-    ASK_DELETE              "Wil je werkelijk deze sneltoets verwijderen?\n\n(Druk op de hoofdlettertoets terwijl je op de knop drukt\n om dit bericht niet te laten verschijnen.)"
+    ASK_DELETE              "Wil je werkelijk deze sneltoets verwijderen?\n\n(Druk op de hoofdlettertoets terwijl je op de knop drukt\nom dit bericht niet te laten verschijnen.)"
     MSG_COPYLIST            "De lijst met sneltoetsen is naar het klembord gekopieerd.\n\nJe kan het met Ctrl+V plakken in een tekstverwerkings-programma of tabulator."
 END
 
@@ -2881,7 +2881,7 @@ BEGIN
     ERR_SHORTCUT_DUPLICATE  "Acceso directo por tecla duplicado: %s.\nEs necesario modificarlo o borrar uno de los duplicados."
     ERR_SAVING_INI          "Imposible guardar configuración."
     ERR_LOADING_INI         "Imposible cargar configuración."
-    ERR_TARGET              "No se ha elegido programa alguno.\nEs necesario usar ratón para arrastrar cursor\n a ventana de programa a elegir."
+    ERR_TARGET              "No se ha elegido programa alguno.\nEs necesario usar ratón para arrastrar cursor\na ventana de programa a elegir."
     ASK_QUIT                "¿Salir de Clavier+?\nEso inhabilita todo acceso directo personalizado.\n\n(Pulsar tecla Shift junto con botón\npara ignorar este mensaje)."
     ASK_DELETE              "¿Borrar este acceso directo?\n\n(Pulsar tecla Shift junto con botón\npara ignorar este mensaje)."
     MSG_COPYLIST            "Se ha copiado lista de accesos directos.\n\nPuede pegarse con Ctrl+V en un procesador/editor de textos u hoja de cálculo."
