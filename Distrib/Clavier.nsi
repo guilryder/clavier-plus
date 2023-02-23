@@ -54,6 +54,7 @@ SetCompressor /FINAL /SOLID lzma
   !insertmacro ${macro} "es" "Spanish"
   !insertmacro ${macro} "fr" "French"
   !insertmacro ${macro} "it" "Italian"
+  !insertmacro ${macro} "hu" "Hungarian"
   !insertmacro ${macro} "nl" "Dutch"
   !insertmacro ${macro} "pl" "Polish"
   !insertmacro ${macro} "pt-BR" "PortugueseBR"

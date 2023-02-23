@@ -249,6 +249,237 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
+// Hungarian (Hungary) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_HUN)
+LANGUAGE LANG_HUNGARIAN, SUBLANG_DEFAULT
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 167, 144
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "Clavier+ névjegye"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    LTEXT           "",IDCLBL_APP_VERSION,42,6,116,24,SS_NOPREFIX
+    LTEXT           "GNU GPLv3 licenc",IDC_STATIC,42,32,116,8,SS_NOPREFIX
+    GROUPBOX        "Szerző",IDC_STATIC,6,48,155,44
+    LTEXT           "Guillaume Ryder",IDC_STATIC,12,59,144,8,SS_NOPREFIX
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,144,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,144,8,SS_NOPREFIX
+    LTEXT           "Fordítás: Radics Péter",IDC_STATIC,6,102,152,8,SS_NOPREFIX
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    DEFPUSHBUTTON   "OK",IDOK,111,124,50,14,WS_GROUP
+END
+
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Futtatandó program"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Parancssor:",IDC_STATIC,6,8,68,8
+    EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
+    LTEXT           "&Mappa:",IDC_STATIC,6,26,68,8
+    EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
+    LTEXT           "&Ablak:",IDC_STATIC,6,44,68,8
+    COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Mégse",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
+END
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 270, 179
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Gyorsbillentyű"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Gyorsbillentyű:",IDC_STATIC,7,8,67,8
+    EDITTEXT        IDCTXT,78,6,185,12,ES_AUTOHSCROLL
+    CONTROL         "&Legyen a bal és jobb oldali speciális gomb megkülönböztetve",IDCCHK_DISTINGUISH_LEFT_RIGHT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,259,10
+    LTEXT           "Megjegyzés:\n– használható a Windows billentyű\n– néhány speciális gyorsbillentyű nem választható",IDC_STATIC,6,42,229,35,SS_NOPREFIX
+    GROUPBOX        "Aktiválási feltétel",IDC_STATIC,6,84,257,66
+    LTEXT           "&Caps Lock állapot:",IDC_STATIC,12,98,103,8
+    COMBOBOX        IDCCBO_CAPSLOCK,121,96,136,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Num Lock állapot:",IDC_STATIC,12,116,103,8
+    COMBOBOX        IDCCBO_NUMLOCK,121,114,136,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Scroll Lock állapot:",IDC_STATIC,12,134,103,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,121,132,136,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Mégse",IDCANCEL,144,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,206,159,57,14
+END
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "Hozzáad",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "Töröl",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "Szerkeszt",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "Minden gyorsbillentyű le van tiltva, amíg ez az ablak látható.",IDCLBL_HELP,78,114,126,19,0,WS_EX_STATICEDGE
+    LTEXT           "Gyorsbillentyűk száma:",IDCLBL_SHORTCUTSCOUNT,210,114,59,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,273,114,30,8,SS_NOPREFIX
+    CONTROL         "Clavier+ futtatása &Windows indításakor",IDCCHK_AUTOSTART,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,210,124,198,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
+    CONTROL         "&Szöveg megadása",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,75,10
+    CONTROL         "&Program indítása vagy weboldal megjelenítése",IDCOPT_COMMAND,
+                    "Button",BS_AUTORADIOBUTTON,216,138,168,10
+    EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
+    ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
+    PUSHBUTTON      "&Haladó beállítások...",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "&Teszt",IDCCMD_TEST,354,168,48,14
+    LTEXT           "&Legyen érvényes:",IDCLBL_PROGRAMS,6,194,58,8
+    COMBOBOX        IDCCBO_PROGRAMS,66,192,110,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,178,192,212,12,ES_AUTOHSCROLL
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    LTEXT           "L&eírás:",IDCLBL_DESCRIPTION,6,210,58,8
+    EDITTEXT        IDCTXT_DESCRIPTION,66,208,342,12,ES_AUTOHSCROLL
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "Sú&gó",IDCCMD_HELP,60,227,40,14
+    PUSHBUTTON      "Lista más&olása",IDCCMD_COPYLIST,102,227,56,14
+    PUSHBUTTON      "N&yelv...",IDCCMD_LANGUAGE,160,227,40,14
+    PUSHBUTTON      "&A programról...",IDCCMD_ABOUT,202,227,56,14
+    PUSHBUTTON      "&Kilépés",IDCCMD_QUIT,260,227,48,14
+    PUSHBUTTON      "&Mégse",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
+END
+
+IDD_SENDKEYS DIALOGEX 0, 0, 270, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Billentyűleütés szimulálása"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Billentyűleütés:",IDC_STATIC,7,8,67,8
+    EDITTEXT        IDCTXT,78,6,185,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Mégse",IDCANCEL,144,30,56,14
+    DEFPUSHBUTTON   "OK",IDOK,206,30,57,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_CONTEXT MENU
+BEGIN
+    POPUP " "
+    BEGIN
+        POPUP "&Program"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Alkalmazás"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "&Speciális karakter"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Mappa megnyitása...",        ID_ADD_FOLDER
+        MENUITEM "S&zöveg megadása...",         ID_ADD_TEXT
+        MENUITEM "Pro&gram elindítása...",      ID_ADD_COMMAND
+        MENUITEM "&Weboldal megnyitása...",     ID_ADD_WEBSITE
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM "&Billentyűleütés szimulálása: [...]", ID_TEXT_SENDKEYS
+        MENUITEM "&Program indítása: [[...]]",  ID_TEXT_COMMAND
+        MENUITEM "&Várjon 100 ms-t, aztán az aktív ablak detektálása: []", ID_TEXT_WAIT
+        MENUITEM "&Szöveg beírása rendszerközeli módszerrel: [|...|]", ID_TEXT_LOWLEVEL
+        MENUITEM SEPARATOR
+        POPUP "&Karakter beírása"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "Sp&eciális karakter beírása"
+        BEGIN
+            MENUITEM "&Fordított törtvonal (backslash): \\\\", ID_TEXT_BACKSLASH
+            MENUITEM "&Nyitó szögletes zárójel: \\[", ID_TEXT_BRACKET_OPEN
+            MENUITEM "&Záró szögletes zárójel: \\]", ID_TEXT_BRACKET_CLOSE
+            MENUITEM "N&yitó kapcsos zárójel: \\{", ID_TEXT_BRACE_OPEN
+            MENUITEM "Záró &kapcsos zárójel: \\}",  ID_TEXT_BRACE_CLOSE
+            MENUITEM "Fü&ggőleges sáv (cső): \\|",  ID_TEXT_PIPE
+        END
+        POPUP "Spe&ciális parancs végrehajtása"
+        BEGIN
+            MENUITEM "&Várakozzon (ms): [{Wait,<hossz (ms)>}]", ID_TEXT_CMD_WAIT
+            MENUITEM "Aktív ablak &detektálása: [{Focus,<késleltetés>,<ablak neve>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "A&blak aktiválása vagy indítása: [{FocusOrLaunch,<ablak neve>,<parancs>,<késleltetés>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
+            MENUITEM "&Megadott szöveg másolása a vágólapra: [{Copy,<szöveg>}]", ID_TEXT_CMD_COPY
+            MENUITEM "&Egérgomb lenyomása: [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "Egérkurzor &abszolút pozícióra mozgatása: [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "Egérkurzor &relatív pozícióra mozgatása: [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "Egérkurzor m&ozgatása: [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "Egér&görgetés: [{MouseWheel,<(-) fel/le görgetés>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "&Speciális gomb(ok) maradj-on/anak lenyomva: [{KeysDown,<gomb(ok)>}]", ID_TEXT_CMD_KEYS_DOWN
+        END
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Beállítások...",             ID_TRAY_SETTINGS
+        MENUITEM "&Lista másolása",             ID_TRAY_COPYLIST
+        MENUITEM "Konfiguráció be&töltése...",  ID_TRAY_INI_LOAD
+        MENUITEM "Konfigurációk össze&fésülése...", ID_TRAY_INI_MERGE
+        MENUITEM "Konfiguráció &mentése...",    ID_TRAY_INI_SAVE
+        MENUITEM "&Kilépés",                    ID_TRAY_QUIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    ERR_INVALID_SHORTCUT    "Érvényes gyorsbillentyű szükséges."
+    ERR_SHORTCUT_DUPLICATE  "A gyorsbillentyű ismétlődik: %s.\nMódosítsa vagy törölje az egyiket."
+    ERR_SAVING_INI          "Nem tudom a beállításokat elmenteni."
+    ERR_LOADING_INI         "Nem tudom a beállításokat betölteni."
+    ERR_TARGET              "Nincs program választva.\nBal egérgombot nyomva tartva húzza az egeret\n a program fölé, hogy kiválassza."
+    ASK_QUIT                "Tényleg ki akar lépni?\nAz összes (saját) gyorsbillentyű inaktív lesz.\n\n(Tartsa nyomva a Shift bilentyűt,\nhogy ne jelenjen meg ez az üzenet.)"
+    ASK_DELETE              "Tényleg törölni akarja ezt a gyorsbillentyűt?\n\n(Tartsa nyomva a Shift bilentyűt,\nhogy ne jelenjen meg ez az üzenet.)"
+    MSG_COPYLIST            "A gyorsbillentyűk listája a vágólapra másolva.\n\nCtrl+V-vel beilleszthető szövegszerkesztőbe vagy táblázatkezelőbe."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_TOKENS              "Magyar"
+    IDS_COLUMNS             "Végrehajtandó feladat;Gyorsbillentyű;Feltételek;Használat;Leírás"
+    IDS_LANGUAGE_CODE       "hu"
+    IDS_CONDITIONS          "nincs feltétel;legyen bekapcsolva;legyen kikapcsolva"
+    IDS_CONDITION_KEYS      "CNS"
+    IDS_INI_FILTER          "INI fájlok|*.ini|"
+    IDS_BROWSEDIR           "Válassza ki a parancs indítási könyvtárát."
+    IDS_PROGRAMS            "minden programra, kivéve;csak ezekre a programokra"
+    IDS_TOOLTIPS            "Új gyorsbillentyű;Kiválasztott gyorsbillentyű törlése;Kiválasztott gyorsbillentyű szerkesztése;Bal egérgombot nyomva tartva húzza az egeret a program fölé"
+    IDS_DONATEURL           "https://www.paypal.com/donate/?business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR"
+    IDS_SHOW_OPTIONS        "Normál ablak;Kis méretű;Teljes méretű"
+END
+
+#endif    // Hungarian (Hungary) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // Polish (Poland) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PLK)
@@ -951,13 +1182,13 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // Dialog
 //
 
-IDD_LANGUAGE DIALOGEX 0, 0, 115, 147
+IDD_LANGUAGE DIALOGEX 0, 0, 115, 177
 STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Language"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LISTBOX         IDCLST_LANGUAGE,6,6,102,114,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,32,127,50,14
+    LISTBOX         IDCLST_LANGUAGE,6,6,102,144,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,32,157,50,14
 END
 
 

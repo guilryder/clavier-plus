@@ -34,6 +34,7 @@ enum Language {
 	kLangES,     // Spanish - Español (Venezuela)
 	kLangFR,     // French - Français
 	kLangIT,     // Italian - Italiano
+	kLangHU,     // Hungarian - Magyar
 	kLangNL,     // Dutch - Nederlands (België)
 	kLangPL,     // Polish - Polski
 	kLangPT,     // Portuguese - Português brasileiro

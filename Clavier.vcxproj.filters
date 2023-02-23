@@ -96,6 +96,9 @@
     <None Include="Distrib\Clavier_fr.ini">
       <Filter>Distrib</Filter>
     </None>
+    <None Include="Distrib\Clavier_hu.ini">
+      <Filter>Distrib</Filter>
+    </None>
     <None Include="Distrib\Clavier_it.ini">
       <Filter>Distrib</Filter>
     </None>
