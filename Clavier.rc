@@ -1226,8 +1226,8 @@ IDI_COMBO               ICON                    "Combo.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 11,3,0,0
- PRODUCTVERSION 11,3,0,0
+ FILEVERSION 11,3,1,0
+ PRODUCTVERSION 11,3,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -1244,12 +1244,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Guillaume Ryder (https://gryder.org)"
             VALUE "FileDescription", "Clavier+"
-            VALUE "FileVersion", "11.3.0"
+            VALUE "FileVersion", "11.3.1"
             VALUE "InternalName", "Clavier"
-            VALUE "LegalCopyright", "Copyright © 2000-2022\nGuillaume Ryder"
+            VALUE "LegalCopyright", "Copyright © 2000-2023\nGuillaume Ryder"
             VALUE "OriginalFilename", "Clavier.exe"
             VALUE "ProductName", "Clavier+"
-            VALUE "ProductVersion", "11.3.0"
+            VALUE "ProductVersion", "11.3.1"
         END
     END
     BLOCK "VarFileInfo"
