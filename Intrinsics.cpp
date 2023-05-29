@@ -35,7 +35,7 @@ void* memset(void* dst, int value, size_t size) {
 	BYTE *pdst = static_cast<BYTE*>(dst);
 	while (size > 0) {
 		size--;
-		*pdst++ = static_cast<BYTE>(value);
+		*pdst++ = BYTE(value);
 	}
 	
 	return dst;

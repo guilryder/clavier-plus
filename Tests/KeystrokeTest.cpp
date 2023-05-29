@@ -21,17 +21,55 @@
 #include "../Keystroke.h"
 
 namespace KeystrokeTest {
+namespace {
+
+constexpr bool kUnsided = false;
+constexpr bool kSided = true;
 
 void useEnglishKeyNames() {
 	i18n::setLanguage(i18n::kLangEN);
 }
 
-void setKeystroke(Keystroke* keystroke, BYTE vk, bool sided = false, DWORD sided_mod_code = 0) {
-	keystroke->clear();
-	keystroke->m_vk = vk;
-	keystroke->m_sided = sided;
-	keystroke->m_sided_mod_code = sided_mod_code;
+Keystroke::Condition parseCondition(LPCTSTR condition, TCHAR expected_name) {
+	Assert::AreEqual(expected_name, condition[0], _T("Malformed condition"));
+	switch (condition[1]) {
+		case '/':
+			return Keystroke::Condition::kIgnore;
+		case '+':
+			return Keystroke::Condition::kYes;
+		case '-':
+			return Keystroke::Condition::kNo;
+		default:
+			Assert::Fail(StringPrintf(_T("Invalid condition character: %c"), condition[1]));
+	}
 }
+
+Keystroke buildKeystroke(
+		BYTE vk, bool sided = kUnsided, DWORD sided_mod_code = 0,
+		LPCTSTR conditions = _T("C/N/S/")) {
+	Keystroke keystroke;
+	keystroke.m_vk = vk;
+	keystroke.m_sided = sided;
+	keystroke.m_sided_mod_code = sided_mod_code;
+	Assert::AreEqual(6, lstrlen(conditions));
+	keystroke.m_conditions[Keystroke::kCondTypeCapsLock] = parseCondition(conditions, 'C');
+	keystroke.m_conditions[Keystroke::kCondTypeNumLock] = parseCondition(conditions + 2, 'N');
+	keystroke.m_conditions[Keystroke::kCondTypeScrollLock] = parseCondition(conditions + 4, 'S');
+	return keystroke;
+}
+
+}  // namespace
+
+
+TEST_CLASS(SpecialKeysTest) {
+public:
+	
+	TEST_METHOD(VkRight) {
+		for (const auto& special_key : kSpecialKeys) {
+			Assert::AreEqual(BYTE(special_key.vk_left + 1), special_key.vk_right);
+		}
+	}
+};
 
 
 // GetDisplayName and ParseDisplayName
@@ -42,68 +80,78 @@ public:
 		useEnglishKeyNames();
 	}
 	
+	TEST_METHOD(Empty) {
+		checkParseDisplayName(_T(""), buildKeystroke(0));
+	}
+	
 	TEST_METHOD(Letter) {
-		checkDisplayName(_T("X"), 'X');
+		checkDisplayName(_T("X"), buildKeystroke('X'));
 	}
 	
 	TEST_METHOD(NonCharacter) {
-		checkDisplayName(_T("Page Up"), VK_PRIOR);
+		checkDisplayName(_T("Page Up"), buildKeystroke(VK_PRIOR));
 	}
 	
 	TEST_METHOD(NumericCode) {
-		checkDisplayName(_T("#166"), VK_BROWSER_BACK);
+		checkDisplayName(_T("#166"), buildKeystroke(VK_BROWSER_BACK));
 	}
 	
 	TEST_METHOD(SpecialKeys_unsided) {
-		checkDisplayName(_T("Win + X"), 'X', /* sided= */ false, MOD_WIN);
-		checkDisplayName(_T("Ctrl + X"), 'X', /* sided= */ false, MOD_CONTROL);
-		checkDisplayName(_T("Shift + X"), 'X', /* sided= */ false, MOD_SHIFT);
-		checkDisplayName(_T("Alt + X"), 'X', /* sided= */ false, MOD_ALT);
+		checkDisplayName(_T("Win + X"), buildKeystroke('X', kUnsided, MOD_WIN));
+		checkDisplayName(_T("Ctrl + X"), buildKeystroke('X', kUnsided, MOD_CONTROL));
+		checkDisplayName(_T("Shift + X"), buildKeystroke('X', kUnsided, MOD_SHIFT));
+		checkDisplayName(_T("Alt + X"), buildKeystroke('X', kUnsided, MOD_ALT));
 		checkDisplayName(
-			_T("Win + Ctrl + Shift + Alt + X"), 'X',
-			/* sided= */ false,
-			MOD_WIN | MOD_CONTROL | MOD_SHIFT | MOD_ALT);
+			_T("Win + Ctrl + Shift + Alt + X"),
+			buildKeystroke('X', kUnsided, MOD_WIN | MOD_CONTROL | MOD_SHIFT | MOD_ALT));
 	}
 	
 	TEST_METHOD(SpecialKeys_sided) {
-		checkDisplayName(_T("Win Left + X"), 'X', /* sided= */ true, MOD_WIN);
-		checkDisplayName(_T("Ctrl Right + X"), 'X', /* sided= */ true, MOD_CONTROL << kRightModCodeOffset);
-		checkDisplayName(_T("Shift Left + X"), 'X', /* sided= */ true, MOD_SHIFT);
-		checkDisplayName(_T("Alt Right + X"), 'X', /* sided= */ true, MOD_ALT << kRightModCodeOffset);
+		checkDisplayName(_T("X"), buildKeystroke('X', kSided), /* check_parse= */ false);
+		checkDisplayName(_T("Win Left + X"), buildKeystroke('X', kSided, MOD_WIN));
+		checkDisplayName(_T("Ctrl Right + X"), buildKeystroke('X', kSided, MOD_CONTROL << kRightModCodeOffset));
+		checkDisplayName(_T("Shift Left + X"), buildKeystroke('X', kSided, MOD_SHIFT));
+		checkDisplayName(_T("Alt Right + X"), buildKeystroke('X', kSided, MOD_ALT << kRightModCodeOffset));
 		checkDisplayName(
-			_T("Win Right + Ctrl Left + Shift Right + Alt Left + X"), 'X',
-			/* sided= */ true,
-			MOD_CONTROL | MOD_ALT | ((MOD_WIN | MOD_SHIFT) << kRightModCodeOffset));
+			_T("Win Right + Ctrl Left + Shift Right + Alt Left + X"),
+			buildKeystroke('X', kSided, MOD_CONTROL | MOD_ALT | ((MOD_WIN | MOD_SHIFT) << kRightModCodeOffset)));
 	}
 	
 	TEST_METHOD(SpecialKeys_only) {
-		checkDisplayName(_T("Ctrl + "), 0, /* sided= */ false, MOD_CONTROL);
+		checkDisplayName(_T("Ctrl + "), buildKeystroke(0, kUnsided, MOD_CONTROL));
 		checkDisplayName(
-			_T("Win Right + Ctrl Left + Shift Right + Alt Left + "), 0,
-			/* sided= */ true,
-			MOD_CONTROL | MOD_ALT | ((MOD_WIN | MOD_SHIFT) << kRightModCodeOffset));
+			_T("Win Right + Ctrl Left + Shift Right + Alt Left + "),
+			buildKeystroke(0, kSided, MOD_CONTROL | MOD_ALT | ((MOD_WIN | MOD_SHIFT) << kRightModCodeOffset)));
+	}
+	
+	TEST_METHOD(GetIgnoresConditions) {
+		checkDisplayName(_T("Win + X"), buildKeystroke('X', kUnsided, MOD_WIN, _T("C+N-S+")), /* check_parse= */ false);
 	}
 	
 private:
 	
-	void checkDisplayName(LPCTSTR display_name, BYTE vk, bool sided = false, DWORD sided_mod_code = 0) {
-		Keystroke keystroke;
-		setKeystroke(&keystroke, vk, sided, sided_mod_code);
-		String keystroke_debug_string = keystroke.debugString();
-		
+	void checkDisplayName(LPCTSTR display_name, const Keystroke& keystroke, bool check_parse = true) {
 		// Verify getDisplayName().
 		TCHAR generated_display_name[kHotKeyBufSize];
 		keystroke.getDisplayName(generated_display_name);
 		Assert::AreEqual(
 			display_name, generated_display_name,
-			StringPrintf(_T("getDisplayName mismatch for %s"), keystroke_debug_string.getSafe()));
+			StringPrintf(_T("getDisplayName mismatch for %s"), keystroke.rawDebugString().getSafe()));
 		
 		// Verify parseDisplayName().
+		if (check_parse) {
+			checkParseDisplayName(display_name, keystroke);
+		}
+	}
+	
+	void checkParseDisplayName(LPCTSTR display_name, const Keystroke& expected) {
 		Keystroke parsed_keystroke;
-		parsed_keystroke.parseDisplayName(String(display_name).get());
+		parsed_keystroke.parseDisplayName(String(display_name).getBuffer(1));
+		
 		Assert::AreEqual(
-			keystroke_debug_string.getSafe(), parsed_keystroke.debugString().getSafe(),
-			StringPrintf(_T("parseDisplayName mismatch for %s"), display_name));
+			expected.rawDebugString().getSafe(),
+			parsed_keystroke.rawDebugString().getSafe(),
+			StringPrintf(_T("parseDisplayName mismatch for: %s"), display_name));
 	}
 };
 
@@ -115,41 +163,44 @@ public:
 		useEnglishKeyNames();
 	}
 	
+	TEST_METHOD(Whitespace_only) {
+		checkParseDisplayName(_T(" "), buildKeystroke(0));
+		checkParseDisplayName(_T("    "), buildKeystroke(0));
+	}
+	
 	TEST_METHOD(KeySeparators_ignoresWhitespace) {
-		checkParseDisplayName(_T("Win+Ctrl+X"), 'X', /* sided= */ false, MOD_WIN | MOD_CONTROL);
-		checkParseDisplayName(_T("Win  Right  +   Ctrl  Left  +   X"), 'X', /* sided= */ true, (MOD_WIN << kRightModCodeOffset) | MOD_CONTROL);
+		checkParseDisplayName(_T("Win+Ctrl+X"),
+			buildKeystroke('X', kUnsided, MOD_WIN | MOD_CONTROL));
+		checkParseDisplayName(_T("Win  Right  +   Ctrl  Left  +   X"),
+			buildKeystroke('X', kSided, (MOD_WIN << kRightModCodeOffset) | MOD_CONTROL));
 	}
 	
 	TEST_METHOD(KeySeparators_plusOptional) {
-		checkParseDisplayName(_T("Win X"), 'X', /* sided= */ false, MOD_WIN);
-		checkParseDisplayName(_T("Win Right Ctrl Left X"), 'X', /* sided= */ true, (MOD_WIN << kRightModCodeOffset) | MOD_CONTROL);
+		checkParseDisplayName(_T("Win X"),
+			buildKeystroke('X', kUnsided, MOD_WIN));
+		checkParseDisplayName(_T("Win Right Ctrl Left X"),
+			buildKeystroke('X', kSided, (MOD_WIN << kRightModCodeOffset) | MOD_CONTROL));
 	}
 	
 	TEST_METHOD(KeySeparators_atMostOnePlus) {
-		checkParseDisplayName(_T("Win ++ X"), 0, /* sided= */ false, MOD_WIN);
-		checkParseDisplayName(_T("Win + + X"), 0, /* sided= */ false, MOD_WIN);
+		checkParseDisplayName(_T("Win ++ X"), buildKeystroke(0, kUnsided, MOD_WIN));
+		checkParseDisplayName(_T("Win + + X"), buildKeystroke(0, kUnsided, MOD_WIN));
 	}
 	
 	TEST_METHOD(SpecialKeys_only) {
-		checkParseDisplayName(_T("Ctrl"), 0, /* sided= */ false, MOD_CONTROL);
+		checkParseDisplayName(_T("Ctrl"), buildKeystroke(0, kUnsided, MOD_CONTROL));
 		checkParseDisplayName(
-			_T("Win Right + Ctrl Left + Shift Right + Alt Left"), 0,
-			/* sided= */ true,
-			MOD_CONTROL | MOD_ALT | ((MOD_WIN | MOD_SHIFT) << kRightModCodeOffset));
+			_T("Win Right + Ctrl Left + Shift Right + Alt Left"),
+			buildKeystroke(0, kSided, MOD_CONTROL | MOD_ALT | ((MOD_WIN | MOD_SHIFT) << kRightModCodeOffset)));
 	}
 	
 private:
 	
-	void checkParseDisplayName(LPCTSTR input, BYTE vk, bool sided = false, DWORD sided_mod_code = 0) {
-		Keystroke expected;
-		expected.m_vk = vk;
-		expected.m_sided = sided;
-		expected.m_sided_mod_code = sided_mod_code;
-		
+	void checkParseDisplayName(LPCTSTR input, const Keystroke& expected) {
 		Keystroke actual;
-		actual.parseDisplayName(String(input).get());
+		actual.parseDisplayName(String(input).getBuffer(1));
 		Assert::AreEqual(
-			expected.debugString().getSafe(), actual.debugString().getSafe(),
+			expected.rawDebugString().getSafe(), actual.rawDebugString().getSafe(),
 			StringPrintf(_T("parseDisplayName mismatch for %s"), input));
 	}
 };
@@ -186,14 +237,14 @@ public:
 	}
 	
 	TEST_METHOD(Letters) {
-		for (BYTE c = 'A'; c <= 'Z'; c++) {
-			checkGetKeyName(StringPrintf(_T("%c"), TCHAR(c)), c);
+		for (char c = 'A'; c <= 'Z'; c++) {
+			checkGetKeyName(StringPrintf(_T("%c"), c), c);
 		}
 	}
 	
 	TEST_METHOD(Digits) {
-		for (BYTE c = '0'; c <= '9'; c++) {
-			checkGetKeyName(StringPrintf(_T("%c"), TCHAR(c)), c);
+		for (char c = '0'; c <= '9'; c++) {
+			checkGetKeyName(StringPrintf(_T("%c"), c), c);
 		}
 	}
 	
@@ -273,160 +324,210 @@ private:
 	}
 };
 
-TEST_CLASS(CompareTest) {
+
+TEST_CLASS(IsSubsetTest) {
 public:
 	
-	TEST_METHOD_INITIALIZE(setUp) {
-		m_keystroke1 = new Keystroke();
-		m_keystroke2 = new Keystroke();
+	TEST_METHOD(Same) {
+		const Keystroke keystrokes[] = {
+			buildKeystroke('A', kUnsided, 0),
+			buildKeystroke('A', kSided, 0),
+			buildKeystroke('A', kUnsided, MOD_WIN),
+			buildKeystroke('A', kSided, MOD_WIN),
+			buildKeystroke('A', kUnsided, MOD_WIN, _T("C/N+S-")),
+			buildKeystroke('A', kSided, MOD_WIN | (MOD_SHIFT << kRightModCodeOffset)),
+			buildKeystroke('A', kSided, MOD_WIN | MOD_SHIFT | (MOD_SHIFT << kRightModCodeOffset)),
+		};
+		for (const auto& keystroke : keystrokes) {
+			checkIsSubset(true, keystroke, keystroke);
+		}
 	}
 	
-	TEST_METHOD_CLEANUP(tearDown) {
-		delete m_keystroke1;
-		delete m_keystroke2;
+	TEST_METHOD(Incompatible) {
+		const std::vector<std::vector<Keystroke>> silos = {
+			{
+				buildKeystroke('A', kUnsided, 0),
+				buildKeystroke('B', kUnsided, 0),
+				buildKeystroke('A', kUnsided, MOD_WIN),
+				buildKeystroke('A', kUnsided, MOD_SHIFT),
+			}, {
+				buildKeystroke('A', kUnsided, 0, _T("C+N/S/")),
+				buildKeystroke('A', kUnsided, 0, _T("C-N/S/")),
+				buildKeystroke('A', kUnsided, 0, _T("C/N+S/")),
+				buildKeystroke('A', kUnsided, 0, _T("C/N/S-")),
+			}, {
+				buildKeystroke('A', kSided, MOD_SHIFT),
+				buildKeystroke('A', kSided, MOD_SHIFT << kRightModCodeOffset),
+			},
+		};
+		for (const auto& silo : silos) {
+			for (int i = 0; i < silo.size(); i++) {
+				for (int j = 0; j < silo.size(); j++) {
+					checkIsSubset(i == j, silo[i], silo[j]);
+				}
+			}
+		}
 	}
 	
-	TEST_METHOD(Equal) {
-		setKeystroke(m_keystroke1, 'A', false, 0);
-		setKeystroke(m_keystroke2, 'A', false, 0);
-		checkCompare(0);
-	}
-	
-	TEST_METHOD(NoModCode) {
-		setKeystroke(m_keystroke1, 'A', false, 0);
-		setKeystroke(m_keystroke2, 'B', false, 0);
-		checkCompare(-1);
-	}
-	
-	TEST_METHOD(SameModCode) {
-		setKeystroke(m_keystroke1, 'A', false, MOD_CONTROL | MOD_SHIFT);
-		setKeystroke(m_keystroke2, 'B', false, MOD_CONTROL | MOD_SHIFT);
-		checkCompare(-1);
-	}
-	
-	TEST_METHOD(WinBeforeControl) {
-		setKeystroke(m_keystroke1, 'A', false, MOD_WIN);
-		setKeystroke(m_keystroke2, 'A', false, MOD_CONTROL);
-		checkCompare(-1);
-	}
-	
-	TEST_METHOD(ControlBeforeShift) {
-		setKeystroke(m_keystroke1, 'A', false, MOD_CONTROL);
-		setKeystroke(m_keystroke2, 'A', false, MOD_SHIFT);
-		checkCompare(-1);
-	}
-	
-	TEST_METHOD(ShiftBeforeAlt) {
-		setKeystroke(m_keystroke1, 'A', false, MOD_SHIFT);
-		setKeystroke(m_keystroke2, 'A', false, MOD_ALT);
-		checkCompare(-1);
-	}
-	
-	TEST_METHOD(WinControlBeforeWinControlShift) {
-		setKeystroke(m_keystroke1, 'A', false, MOD_WIN | MOD_CONTROL);
-		setKeystroke(m_keystroke2, 'A', false, MOD_WIN | MOD_CONTROL | MOD_SHIFT);
-		checkCompare(-1);
-	}
-	
-	TEST_METHOD(WinControlShiftBeforeWinControlAlt) {
-		setKeystroke(m_keystroke1, 'A', false, MOD_WIN | MOD_CONTROL | MOD_SHIFT);
-		setKeystroke(m_keystroke2, 'A', false, MOD_WIN | MOD_CONTROL | MOD_ALT);
-		checkCompare(-1);
-	}
-	
-	TEST_METHOD(NoneBeforeUnsided) {
-		setKeystroke(m_keystroke1, 'A', false, 0);
-		setKeystroke(m_keystroke2, 'A', false, MOD_ALT);
-		checkCompare(-1);
-	}
-	
-	TEST_METHOD(UnsidedBeforeLeft) {
-		setKeystroke(m_keystroke1, 'A', false, MOD_ALT);
-		setKeystroke(m_keystroke2, 'A', true, MOD_ALT);
-		checkCompare(-1);
-	}
-	
-	TEST_METHOD(LeftBeforeRight) {
-		setKeystroke(m_keystroke1, 'A', true, MOD_ALT);
-		setKeystroke(m_keystroke2, 'A', true, MOD_ALT << kRightModCodeOffset);
-		checkCompare(-1);
-	}
-	
-	TEST_METHOD(SortedList) {
-		Keystroke keystrokes[21];
-		Keystroke* keystroke = keystrokes;
-		
-		setKeystroke(keystroke++, 'W', false, 0);
-		setKeystroke(keystroke++, 'W', false, MOD_WIN);
-		
-		setKeystroke(keystroke++, 'X', false, 0);
-		
-		setKeystroke(keystroke++, 'X', false, MOD_WIN);
-		setKeystroke(keystroke++, 'X', false, MOD_WIN | MOD_CONTROL);
-		setKeystroke(keystroke++, 'X', false, MOD_WIN | MOD_CONTROL | MOD_SHIFT);
-		setKeystroke(keystroke++, 'X', false, MOD_WIN | MOD_SHIFT);
-		setKeystroke(keystroke++, 'X', true, MOD_WIN | MOD_SHIFT);
-		setKeystroke(keystroke++, 'X', true, MOD_WIN | (MOD_SHIFT << kRightModCodeOffset));
-		
-		setKeystroke(keystroke++, 'X', false, MOD_CONTROL);
-		setKeystroke(keystroke++, 'X', false, MOD_CONTROL | MOD_SHIFT);
-		setKeystroke(keystroke++, 'X', false, MOD_CONTROL | MOD_SHIFT | MOD_ALT);
-		setKeystroke(keystroke++, 'X', false, MOD_CONTROL | MOD_ALT);
-		setKeystroke(keystroke++, 'X', true, MOD_CONTROL);
-		
-		setKeystroke(keystroke++, 'X', false, MOD_SHIFT);
-		setKeystroke(keystroke++, 'X', true, MOD_SHIFT);
-		setKeystroke(keystroke++, 'X', true, MOD_SHIFT << kRightModCodeOffset);
-		
-		setKeystroke(keystroke++, 'X', false, MOD_ALT);
-		setKeystroke(keystroke++, 'X', true, MOD_ALT);
-		setKeystroke(keystroke++, 'X', true, MOD_ALT << kRightModCodeOffset);
-		
-		setKeystroke(keystroke++, 'Y', false, 0);
-		
-		Assert::AreEqual(keystroke - keystrokes, static_cast<ptrdiff_t>(arrayLength(keystrokes)));
-		
-		for (int i = 0; i < arrayLength(keystrokes); i++) {
-			for (int j = 0; j < arrayLength(keystrokes); j++) {
-				checkCompare(i - j, keystrokes[i], keystrokes[j]);
+	TEST_METHOD(Nested) {
+		const std::vector<std::vector<Keystroke>> nested_chains = {
+			{
+				buildKeystroke('A', kUnsided, MOD_SHIFT),
+				buildKeystroke('A', kSided, MOD_SHIFT),
+			}, {
+				buildKeystroke('A', kUnsided, MOD_SHIFT),
+				buildKeystroke('A', kSided, MOD_SHIFT << kRightModCodeOffset),
+			}, {
+				buildKeystroke('A', kUnsided, 0, _T("C/N/S/")),
+				buildKeystroke('A', kUnsided, 0, _T("C-N/S/")),
+				buildKeystroke('A', kUnsided, 0, _T("C-N+S/")),
+				buildKeystroke('A', kUnsided, 0, _T("C-N+S-")),
+			}, {
+				buildKeystroke('A', kUnsided, MOD_SHIFT),
+				buildKeystroke('A', kSided, MOD_SHIFT << kRightModCodeOffset),
+				buildKeystroke('A', kSided, MOD_SHIFT << kRightModCodeOffset, _T("C-N/S/")),
+			},
+		};
+		for (const auto& chain : nested_chains) {
+			for (int i = 0; i < chain.size(); i++) {
+				for (int j = 0; j < chain.size(); j++) {
+					checkIsSubset(i <= j, chain[i], chain[j]);
+				}
 			}
 		}
 	}
 	
 private:
 	
-	Keystroke* m_keystroke1;
-	Keystroke* m_keystroke2;
-	
-	void checkCompare(int expected_result) {
-		checkCompare(+expected_result, *m_keystroke1, *m_keystroke2);
-		checkCompare(-expected_result, *m_keystroke2, *m_keystroke1);
-	}
-	
-	void checkCompare(int expected_result, const Keystroke& keystroke1, const Keystroke& keystroke2) {
-		expected_result = testing::normalizeCompareResult(expected_result);
-		int actual_result = testing::normalizeCompareResult(Keystroke::compare(keystroke1, keystroke2));
-		
-		// Generate a nice test failure message.
-		TCHAR message[50 + kHotKeyBufSize * 2];
-		TCHAR name1[kHotKeyBufSize], name2[kHotKeyBufSize];
-		keystroke1.getDisplayName(name1);
-		keystroke2.getDisplayName(name2);
-		wsprintf(message, _T("Comparing %ws and %ws -- expected %d"),
-			name1, name2, expected_result);
-		
-		Assert::AreEqual(expected_result, actual_result, message);
+	void checkIsSubset(bool expected_result, const Keystroke& keystroke, const Keystroke& other) {
+		Assert::AreEqual(
+			expected_result, keystroke.isSubset(other),
+			StringPrintf(_T("<%s> isSubset <%s>"), keystroke.debugString().getSafe(), other.debugString().getSafe()));
 	}
 };
 
-TEST_CLASS(SpecialKeysTest) {
+
+TEST_CLASS(CompareTest) {
 public:
 	
-	TEST_METHOD(VkRight) {
-		for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
-			const SpecialKey& special_key = kSpecialKeys[i];
-			Assert::AreEqual(static_cast<BYTE>(special_key.vk_left + 1), special_key.vk_right);
+	TEST_METHOD(Equal) {
+		checkCompareOneWay(
+			0,
+			buildKeystroke('A', kUnsided, 0),
+			buildKeystroke('A', kSided, 0));
+	}
+	
+	TEST_METHOD(NoModCode) {
+		checkCompareLess(
+			buildKeystroke('A', kUnsided, 0),
+			buildKeystroke('B', kUnsided, 0));
+	}
+	
+	TEST_METHOD(SameModCode) {
+		checkCompareLess(
+			buildKeystroke('A', kUnsided, MOD_CONTROL | MOD_SHIFT),
+			buildKeystroke('B', kUnsided, MOD_CONTROL | MOD_SHIFT));
+	}
+	
+	TEST_METHOD(WinBeforeControl) {
+		checkCompareLess(
+			buildKeystroke('A', kUnsided, MOD_WIN),
+			buildKeystroke('A', kUnsided, MOD_CONTROL));
+	}
+	
+	TEST_METHOD(ControlBeforeShift) {
+		checkCompareLess(
+			buildKeystroke('A', kUnsided, MOD_CONTROL),
+			buildKeystroke('A', kUnsided, MOD_SHIFT));
+	}
+	
+	TEST_METHOD(ShiftBeforeAlt) {
+		checkCompareLess(
+			buildKeystroke('A', kUnsided, MOD_SHIFT),
+			buildKeystroke('A', kUnsided, MOD_ALT));
+	}
+	
+	TEST_METHOD(WinControlBeforeWinControlShift) {
+		checkCompareLess(
+			buildKeystroke('A', kUnsided, MOD_WIN | MOD_CONTROL),
+			buildKeystroke('A', kUnsided, MOD_WIN | MOD_CONTROL | MOD_SHIFT));
+	}
+	
+	TEST_METHOD(WinControlShiftBeforeWinControlAlt) {
+		checkCompareLess(
+			buildKeystroke('A', kUnsided, MOD_WIN | MOD_CONTROL | MOD_SHIFT),
+			buildKeystroke('A', kUnsided, MOD_WIN | MOD_CONTROL | MOD_ALT));
+	}
+	
+	TEST_METHOD(NoneBeforeUnsided) {
+		checkCompareLess(
+			buildKeystroke('A', kUnsided, 0),
+			buildKeystroke('A', kUnsided, MOD_ALT));
+	}
+	
+	TEST_METHOD(UnsidedBeforeLeft) {
+		checkCompareLess(
+			buildKeystroke('A', kUnsided, MOD_ALT),
+			buildKeystroke('A', kSided, MOD_ALT));
+	}
+	
+	TEST_METHOD(LeftBeforeRight) {
+		checkCompareLess(
+			buildKeystroke('A', kSided, MOD_ALT),
+			buildKeystroke('A', kSided, MOD_ALT << kRightModCodeOffset));
+	}
+	
+	TEST_METHOD(SortedList) {
+		const Keystroke keystrokes[] = {
+			buildKeystroke('W', kUnsided, 0),
+			buildKeystroke('W', kUnsided, MOD_WIN),
+			
+			buildKeystroke('X', kUnsided, 0),
+			
+			buildKeystroke('X', kUnsided, MOD_WIN),
+			buildKeystroke('X', kUnsided, MOD_WIN | MOD_CONTROL),
+			buildKeystroke('X', kUnsided, MOD_WIN | MOD_CONTROL | MOD_SHIFT),
+			buildKeystroke('X', kUnsided, MOD_WIN | MOD_SHIFT),
+			buildKeystroke('X', kSided, MOD_WIN | MOD_SHIFT),
+			buildKeystroke('X', kSided, MOD_WIN | (MOD_SHIFT << kRightModCodeOffset)),
+			
+			buildKeystroke('X', kUnsided, MOD_CONTROL),
+			buildKeystroke('X', kUnsided, MOD_CONTROL | MOD_SHIFT),
+			buildKeystroke('X', kUnsided, MOD_CONTROL | MOD_SHIFT | MOD_ALT),
+			buildKeystroke('X', kUnsided, MOD_CONTROL | MOD_ALT),
+			buildKeystroke('X', kSided, MOD_CONTROL),
+			
+			buildKeystroke('X', kUnsided, MOD_SHIFT),
+			buildKeystroke('X', kSided, MOD_SHIFT),
+			buildKeystroke('X', kSided, MOD_SHIFT << kRightModCodeOffset),
+			
+			buildKeystroke('X', kUnsided, MOD_ALT),
+			buildKeystroke('X', kSided, MOD_ALT),
+			buildKeystroke('X', kSided, MOD_ALT << kRightModCodeOffset),
+			
+			buildKeystroke('Y', kUnsided, 0),
+		};
+		
+		for (int i = 0; i < arrayLength(keystrokes); i++) {
+			for (int j = 0; j < arrayLength(keystrokes); j++) {
+				checkCompareOneWay(i - j, keystrokes[i], keystrokes[j]);
+			}
 		}
+	}
+	
+private:
+	
+	void checkCompareLess(const Keystroke& keystroke1, const Keystroke& keystroke2) {
+		checkCompareOneWay(-1, keystroke1, keystroke2);
+		checkCompareOneWay(+1, keystroke2, keystroke1);
+	}
+	
+	void checkCompareOneWay(int expected_result, const Keystroke& keystroke1, const Keystroke& keystroke2) {
+		Assert::AreEqual(
+			testing::normalizeCompareResult(expected_result),
+			testing::normalizeCompareResult(Keystroke::compare(keystroke1, keystroke2)),
+			StringPrintf(_T("Comparing <%s> and <%s>"),
+				keystroke1.debugString().getSafe(), keystroke2.debugString().getSafe()));
 	}
 };
 

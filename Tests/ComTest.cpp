@@ -208,38 +208,38 @@ TEST_CLASS(CoBufferTest) {
 public:
 	
 	TEST_METHOD(constructorEmpty) {
-		CoBuffer<char*> buffer;
-		Assert::IsNull(static_cast<const char*>(buffer));
+		CoBuffer<LPSTR> buffer;
+		Assert::IsNull(LPSTR(buffer));
 	}
 	
 	TEST_METHOD(constructorTakeOwnership) {
-		char* raw_buffer = static_cast<char*>(CoTaskMemAlloc(10));
+		LPSTR raw_buffer = LPSTR(CoTaskMemAlloc(10));
 		StringCchCopyA(raw_buffer, 10, "test");
 		
-		CoBuffer<char*> buffer(raw_buffer);
-		Assert::IsNotNull(static_cast<char*>(buffer));
-		Assert::AreSame(*raw_buffer, *static_cast<char*>(buffer));
+		CoBuffer<LPSTR> buffer(raw_buffer);
+		Assert::IsNotNull(LPSTR(buffer));
+		Assert::AreSame(*raw_buffer, *LPSTR(buffer));
 	}
 	
 	TEST_METHOD(destructor_freesValid) {
-		char* raw_buffer = static_cast<char*>(CoTaskMemAlloc(10));
+		LPSTR raw_buffer = LPSTR(CoTaskMemAlloc(10));
 		
 		CoPtr<IMalloc> malloc;
 		Assert::IsTrue(SUCCEEDED(CoGetMalloc(1, malloc.outPtr())));
 		Assert::AreEqual(1, malloc->DidAlloc(raw_buffer));
 		
 		{
-			CoBuffer<char*> buffer(raw_buffer);
+			CoBuffer<LPSTR> buffer(raw_buffer);
 		}
 		
 		Assert::AreEqual(0, malloc->DidAlloc(raw_buffer));
 	}
 	
 	TEST_METHOD(outPtr_nullSucceeds) {
-		char* raw_buffer = static_cast<char*>(CoTaskMemAlloc(10));
+		LPSTR raw_buffer = LPSTR(CoTaskMemAlloc(10));
 		
-		CoBuffer<char*> buffer;
-		char **address = buffer.outPtr();
+		CoBuffer<LPSTR> buffer;
+		LPSTR *address = buffer.outPtr();
 		Assert::IsNotNull(address);
 		Assert::IsNull(*address);
 		
@@ -248,7 +248,7 @@ public:
 	}
 	
 	TEST_METHOD(outPtr_validPtrFails) {
-		CoBuffer<char*> buffer(static_cast<char*>(CoTaskMemAlloc(10)));
+		CoBuffer<LPSTR> buffer(LPSTR(CoTaskMemAlloc(10)));
 		Assert::ExpectException<std::runtime_error>([&] {
 			buffer.outPtr();
 		});

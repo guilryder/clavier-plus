@@ -210,7 +210,7 @@ inline bool reportFailedAssert(const char* message) {
 #define UNUSED(name)  SUPPRESS_WARNING(4100) name
 
 template <class T, int size>
-constexpr int arrayLength(const T(&)[size]) {
+inline constexpr int arrayLength(const T(&)[size]) {
   return size;
 }
 

@@ -37,7 +37,7 @@ UINT s_notify_icon_message;
 
 constexpr int kMaxIniFile = 20;
 
-TranslatedString s_tokens[static_cast<int>(Token::kNotFound)];
+TranslatedString s_tokens[int(Token::kNotFound)];
 
 
 enum class CmdlineOpt {
@@ -128,10 +128,11 @@ void entryPoint() {
 	{
 		const HWND hwnd = FindWindow(_T("STATIC"), kClavierWindowClass);
 		if (hwnd) {
-			COPYDATASTRUCT cds;
-			cds.dwData = true;
-			cds.cbData = (lstrlen(cmdline) + 1) * sizeof(*cmdline);
-			cds.lpData = const_cast<LPTSTR>(cmdline);
+			COPYDATASTRUCT cds = {
+				.dwData = true,
+				.cbData = static_cast<DWORD>((lstrlen(cmdline) + 1) * sizeof(*cmdline)),
+				.lpData = const_cast<LPTSTR>(cmdline),
+			};
 			SendMessage(hwnd, WM_COPYDATA, 0, reinterpret_cast<LPARAM>(&cds));
 			
 #ifdef _DEBUG
@@ -143,7 +144,7 @@ void entryPoint() {
 	}
 #endif  // ALLOW_MULTIPLE_INSTANCES
 	
-	e_instance = static_cast<HINSTANCE>(GetModuleHandle(/* lpModuleName= */ nullptr));
+	e_instance = HINSTANCE(GetModuleHandle(/* lpModuleName= */ nullptr));
 	app::initialize();
 	
 	const CmdlineOpt cmdopt = execCmdLine(cmdline, /* initial_launch= */ true);
@@ -183,7 +184,7 @@ namespace {
 void initializeLanguages() {
 	TCHAR tokens[512];
 	for (int lang = 0; lang < i18n::kLangCount; lang++) {
-		i18n::setLanguage(static_cast<i18n::Language>(lang));
+		i18n::setLanguage(i18n::Language(lang));
 		
 		// Load all tokens in the current language.
 		i18n::loadStringAuto(IDS_TOKENS, tokens);
@@ -228,16 +229,16 @@ void runGui(CmdlineOpt cmdopt) {
 			}
 			
 			Keystroke ks;
-			ks.m_vk = Keystroke::canonicalizeKey(static_cast<BYTE>(HIWORD(msg.lParam)));
+			ks.m_vk = Keystroke::canonicalizeKey(BYTE(HIWORD(msg.lParam)));
 			ks.m_sided_mod_code = LOWORD(msg.lParam);
 			ks.m_sided = true;
 			const HWND input_window = Keystroke::getInputFocus();
 			
 			// Test for right special keys
-			for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
-				const DWORD mod_code = kSpecialKeys[i].mod_code;
+			for (const auto& special_key : kSpecialKeys) {
+				const DWORD mod_code = special_key.mod_code;
 				if (ks.m_sided_mod_code & mod_code) {
-					if (isKeyDown(kSpecialKeys[i].vk_right)) {
+					if (isKeyDown(special_key.vk_right)) {
 						ks.m_sided_mod_code &= ~mod_code;
 						ks.m_sided_mod_code |= mod_code << kRightModCodeOffset;
 					}
@@ -381,9 +382,8 @@ CmdlineOpt execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 				// Test for command line option
 				if (*strbuf_arg == _T('/')) {
 					const LPCTSTR options = strbuf_arg + 1;
-					for (cmdopt = static_cast<CmdlineOpt>(0); cmdopt < CmdlineOpt::kNone;
-							cmdopt = static_cast<CmdlineOpt>(static_cast<int>(cmdopt) + 1)) {
-						if (!lstrcmpi(options, kCmdlineOptions[static_cast<int>(cmdopt)])) {
+					for (cmdopt = CmdlineOpt(0); cmdopt < CmdlineOpt::kNone; cmdopt = CmdlineOpt(int(cmdopt) + 1)) {
+						if (!lstrcmpi(options, kCmdlineOptions[int(cmdopt)])) {
 							break;
 						}
 					}
@@ -416,15 +416,14 @@ CmdlineOpt execCmdLine(LPCTSTR cmdline, bool initial_launch) {
 					break;
 				
 				// Send keys
-				case CmdlineOpt::kSendKeys:
+				case CmdlineOpt::kSendKeys: {
 					try_auto_quit = true;
-					{
-						Shortcut shortcut;
-						shortcut.m_type = Shortcut::Type::kText;
-						shortcut.m_text = strbuf_arg;
-						shortcut.execute(/* from_hotkey= */ false);
-					}
+					Shortcut shortcut;
+					shortcut.m_type = Shortcut::Type::kText;
+					shortcut.m_text = strbuf_arg;
+					shortcut.execute(/* from_hotkey= */ false);
 					break;
+				}
 				
 				// Other action
 				default:
@@ -554,7 +553,7 @@ Destroy:
 			
 			for (;;) {
 				HeapCompact(e_heap, 0);
-				switch (dialogs::showMainDialogModal(static_cast<UINT>(wParam))) {
+				switch (dialogs::showMainDialogModal(UINT(wParam))) {
 					case IDCCMD_LANGUAGE:
 						break;
 					case IDCCMD_QUIT:
@@ -579,9 +578,9 @@ Destroy:
 	} else if (message == WM_COPYDATA) {
 		// Execute command line
 		
-		const COPYDATASTRUCT& cds = *reinterpret_cast<const COPYDATASTRUCT*>(lParam);
+		const auto& cds = *reinterpret_cast<const COPYDATASTRUCT*>(lParam);
 		if (cds.dwData) {
-			processCmdLineAction(execCmdLine(static_cast<LPCTSTR>(cds.lpData), /* initial_launch= */ false));
+			processCmdLineAction(execCmdLine(LPCTSTR(cds.lpData), /* initial_launch= */ false));
 		}
 		return true;
 	}
@@ -676,59 +675,57 @@ UINT displayTrayIconMenu() {
 			PostMessage(hwnd, s_notify_icon_message, 0, WM_COMMAND);
 			break;
 		
-		case ID_TRAY_COPYLIST:
-			{
-				String str;
-				for (const Shortcut* sh = shortcut::getFirst(); sh; sh = sh->getNext()) {
-					sh->appendCsvLineToString(str);
-				}
-				setClipboardText(str);
+		case ID_TRAY_COPYLIST: {
+			String str;
+			for (const Shortcut* sh = shortcut::getFirst(); sh; sh = sh->getNext()) {
+				sh->appendCsvLineToString(str);
 			}
-			break;
+			setClipboardText(str);
+		}
+		break;
 		
 		case ID_TRAY_INI_LOAD:
 		case ID_TRAY_INI_MERGE:
-		case ID_TRAY_INI_SAVE:
-			{
-				// Load the filters, replace '|' with '\0'
-				TCHAR filters[kStringBufSize];
-				i18n::loadStringAuto(IDS_INI_FILTER, filters);
-				for (UINT chr_index = 0; filters[chr_index]; chr_index++) {
-					if (filters[chr_index] == _T('|')) {
-						filters[chr_index] = _T('\0');
-					}
+		case ID_TRAY_INI_SAVE: {
+			// Load the filters, replace '|' with '\0'
+			TCHAR filters[kStringBufSize];
+			i18n::loadStringAuto(IDS_INI_FILTER, filters);
+			for (UINT chr_index = 0; filters[chr_index]; chr_index++) {
+				if (filters[chr_index] == _T('|')) {
+					filters[chr_index] = _T('\0');
 				}
-				
-				TCHAR ini_file[arrayLength(e_ini_filepath)];
-				StringCchCopy(ini_file, arrayLength(ini_file), e_ini_filepath);
-				
-				OPENFILENAME ofn;
-				ZeroMemory(&ofn, OPENFILENAME_SIZE_VERSION_400);
-				ofn.lStructSize = OPENFILENAME_SIZE_VERSION_400;
-				ofn.hwndOwner = hwnd;
-				ofn.lpstrFile = ini_file;
-				ofn.nMaxFile = arrayLength(ini_file);
-				ofn.lpstrFilter = filters;
-				if (id == ID_TRAY_INI_SAVE) {
-					ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
-					if (GetSaveFileName(&ofn)) {
+			}
+			
+			TCHAR ini_file[arrayLength(e_ini_filepath)];
+			StringCchCopy(ini_file, arrayLength(ini_file), e_ini_filepath);
+			
+			OPENFILENAME ofn;
+			ZeroMemory(&ofn, OPENFILENAME_SIZE_VERSION_400);
+			ofn.lStructSize = OPENFILENAME_SIZE_VERSION_400;
+			ofn.hwndOwner = hwnd;
+			ofn.lpstrFile = ini_file;
+			ofn.nMaxFile = arrayLength(ini_file);
+			ofn.lpstrFilter = filters;
+			if (id == ID_TRAY_INI_SAVE) {
+				ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
+				if (GetSaveFileName(&ofn)) {
+					StringCchCopy(e_ini_filepath, arrayLength(e_ini_filepath), ini_file);
+					shortcut::saveShortcuts();
+				}
+			} else {
+				ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+				if (GetOpenFileName(&ofn)) {
+					if (id == ID_TRAY_INI_LOAD) {
 						StringCchCopy(e_ini_filepath, arrayLength(e_ini_filepath), ini_file);
+						shortcut::loadShortcuts();
+					} else {
+						shortcut::mergeShortcuts(ini_file);
 						shortcut::saveShortcuts();
-					}
-				} else {
-					ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-					if (GetOpenFileName(&ofn)) {
-						if (id == ID_TRAY_INI_LOAD) {
-							StringCchCopy(e_ini_filepath, arrayLength(e_ini_filepath), ini_file);
-							shortcut::loadShortcuts();
-						} else {
-							shortcut::mergeShortcuts(ini_file);
-							shortcut::saveShortcuts();
-						}
 					}
 				}
 			}
 			break;
+		}
 		
 		default:
 			if (id > ID_TRAY_INI_FIRSTFILE) {
@@ -754,17 +751,17 @@ UINT displayTrayIconMenu() {
 
 
 LPCTSTR getToken(Token tok) {
-	return app::s_tokens[static_cast<int>(tok)].get();
+	return app::s_tokens[int(tok)].get();
 }
 
 LPCTSTR getLanguageName(i18n::Language lang) {
-	return app::s_tokens[static_cast<int>(Token::kLanguageName)].get(lang);
+	return app::s_tokens[int(Token::kLanguageName)].get(lang);
 }
 
 Token findToken(LPCTSTR token) {
 	for (Token tok = Token::kFirst; tok < Token::kNotFound; tok++) {
 		for (int lang = 0; lang < i18n::kLangCount; lang++) {
-			if (!lstrcmpi(token, app::s_tokens[static_cast<int>(tok)].get(lang))) {
+			if (!lstrcmpi(token, app::s_tokens[int(tok)].get(lang))) {
 				return tok;
 			}
 		}

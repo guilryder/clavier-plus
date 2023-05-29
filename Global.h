@@ -33,18 +33,18 @@ class Shortcut;
 }  // namespace shortcut
 
 
-constexpr size_t kStringBufSize = 128;
-constexpr size_t kHotKeyBufSize = 128;
-constexpr size_t kCodeBufSize = 32;
-constexpr size_t kWindowTitleBufSize = 256;
+inline constexpr size_t kStringBufSize = 128;
+inline constexpr size_t kHotKeyBufSize = 128;
+inline constexpr size_t kCodeBufSize = 32;
+inline constexpr size_t kWindowTitleBufSize = 256;
 
-constexpr int kClipboardStringBugSize = MAX_PATH * 10;
+inline constexpr int kClipboardStringBugSize = MAX_PATH * 10;
 
 // Name of the environment variable set by clipboardToEnvironment().
-constexpr LPCTSTR kClipboardEnvVariableName = _T("CLIPBOARD");
+inline constexpr LPCTSTR kClipboardEnvVariableName = _T("CLIPBOARD");
 
 
-constexpr LPCTSTR kAppName = _T("Clavier+");
+inline constexpr LPCTSTR kAppName = _T("Clavier+");
 
 
 extern HANDLE e_heap;
@@ -227,11 +227,11 @@ enum class Token {
 };
 
 inline Token operator +(Token tok, int delta) {
-	return static_cast<Token>(static_cast<int>(tok) + delta);
+	return Token(int(tok) + delta);
 }
 
 inline int operator -(Token tok1, Token tok2) {
-	return static_cast<int>(tok1) - static_cast<int>(tok2);
+	return int(tok1) - int(tok2);
 }
 
 inline Token operator ++(Token& tok, int) {
@@ -369,7 +369,7 @@ enum {
 };
 
 // In dialog units, indexed by the column enum.
-constexpr int kDefaultColumnWidths[] = {
+inline constexpr int kDefaultColumnWidths[] = {
 	35,  // kColContents
 	20,  // kColKeystroke
 	15,  // kColCond
@@ -379,7 +379,7 @@ constexpr int kDefaultColumnWidths[] = {
 
 
 // Number of columns with an explicit size. The last column takes all the remaining space.
-constexpr int kSizedColumnCount = kColCount - 1;
+inline constexpr int kSizedColumnCount = kColCount - 1;
 
 extern int e_column_widths[kColCount];
 

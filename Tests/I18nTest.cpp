@@ -65,18 +65,19 @@ public:
 	
 private:
 	
-	void check(LPCTSTR input, int expected_grouping, LPCTSTR expected_formatted_number) {
+	void check(LPCTSTR input, UINT expected_grouping, LPCTSTR expected_formatted_number) {
 		// Check parseNumberGroupingString().
 		Assert::AreEqual(expected_grouping, i18n::parseNumberGroupingString(input));
 		
 		// Check the result of GetNumberFormat() with the grouping.
-		NUMBERFMT format;
-		format.NumDigits = 0;
-		format.LeadingZero = true;
-		format.lpDecimalSep = _T(".");  // unused
-		format.Grouping = expected_grouping;
-		format.lpThousandSep = _T(",");
-		format.NegativeOrder = 1;
+		NUMBERFMT format = {
+			.NumDigits = 0,
+			.LeadingZero = true,
+			.Grouping = expected_grouping,
+			.lpDecimalSep = const_cast<LPTSTR>(_T(".")),  // unused
+			.lpThousandSep = const_cast<LPTSTR>(_T(",")),
+			.NegativeOrder = 1,
+		};
 		
 		TCHAR formatted_number[30];
 		GetNumberFormat(

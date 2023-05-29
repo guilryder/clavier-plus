@@ -82,7 +82,7 @@ public:
 		}
 	}
 	
-	String(const String& str) : String(static_cast<CSTR>(str)) {}
+	String(const String& str) : String(CSTR(str)) {}
 	
 	String(String&& str) {
 		m_strbuf = str.m_strbuf;
@@ -105,7 +105,7 @@ public:
 	
 	String& operator = (const String& str) {
 		if (&str != this) {
-			affect(static_cast<CSTR>(str));
+			affect(CSTR(str));
 		}
 		return *this;
 	}
@@ -139,7 +139,7 @@ public:
 		} else if (!strIsEmpty(input_strbuf)) {
 			if (isOverlapping(input_strbuf)) {
 				const int old_length = getLength();
-				const int input_self_index = static_cast<int>(input_strbuf - m_strbuf);
+				const int input_self_index = int(input_strbuf - m_strbuf);
 				const int input_length = old_length - input_self_index;
 				reallocIfNeeded(old_length + input_length + 1);
 				for (int i = 0; i < input_length; i++) {
@@ -278,8 +278,7 @@ private:
 private:
 	
 	static STR bufferAlloc(int buf_length) {
-		return static_cast<STR>(
-			HeapAlloc(e_heap, /* dwFlags= */ 0, buf_length * sizeof(TCHAR)));
+		return STR(HeapAlloc(e_heap, /* dwFlags= */ 0, buf_length * sizeof(TCHAR)));
 	}
 	
 	static void bufferFree(STR strbuf) {
@@ -288,8 +287,7 @@ private:
 	
 	static STR bufferRealloc(STR strbuf, int buf_length) {
 		return strbuf
-			? static_cast<STR>(
-				HeapReAlloc(e_heap, /* dwFlags= */ 0, strbuf, buf_length * sizeof(TCHAR)))
+			? STR(HeapReAlloc(e_heap, /* dwFlags= */ 0, strbuf, buf_length * sizeof(TCHAR)))
 			: bufferAlloc(buf_length);
 	}
 };

@@ -29,10 +29,10 @@ void Keystroke::loadVkKeyNames() {
 	BYTE last_named_vk = 0xFF;
 	for (int vk = last_named_vk - 1; vk >= 0; vk--) {
 		String* key_name = &s_vk_key_names[vk];
-		loadVkKeyName(static_cast<BYTE>(vk), key_name);
+		loadVkKeyName(BYTE(vk), key_name);
 		s_next_named_vk[vk] = last_named_vk;
 		if (key_name->isSome()) {
-			last_named_vk = static_cast<BYTE>(vk);
+			last_named_vk = BYTE(vk);
 		}
 	}
 }
@@ -79,11 +79,11 @@ void Keystroke::getDisplayName(LPTSTR output) const {
 	*output = _T('\0');
 	
 	// Special keys
-	for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
-		const int mod_code_left = kSpecialKeys[i].mod_code;
+	for (const auto& special_key : kSpecialKeys) {
+		const int mod_code_left = special_key.mod_code;
 		const int mod_code_right = mod_code_left << kRightModCodeOffset;
 		if (m_sided_mod_code & (mod_code_left | mod_code_right)) {
-			StringCchCat(output, kHotKeyBufSize, getToken(kSpecialKeys[i].tok));
+			StringCchCat(output, kHotKeyBufSize, getToken(special_key.tok));
 			if (m_sided) {
 				StringCchCat(output, kHotKeyBufSize, _T(" "));
 				StringCchCat(
@@ -131,9 +131,9 @@ void Keystroke::parseDisplayName(LPTSTR input) {
 			// Special key token
 			
 			mod_code_last = 0;
-			for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
-				if (kSpecialKeys[i].tok == tok) {
-					mod_code_last = kSpecialKeys[i].mod_code;
+			for (const auto& special_key : kSpecialKeys) {
+				if (special_key.tok == tok) {
+					mod_code_last = special_key.mod_code;
 					m_sided_mod_code |= mod_code_last;
 					break;
 				}
@@ -179,9 +179,9 @@ void Keystroke::simulateTyping(DWORD already_down_mod_code) const {
 	const DWORD to_press_mod_code = getUnsidedModCode() & ~already_down_mod_code;
 	
 	// Press the special keys that are not already kept down.
-	for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
-		if (to_press_mod_code & kSpecialKeys[i].mod_code) {
-			keybdEvent(kSpecialKeys[i].vk, /* down= */ true);
+	for (const auto& special_key : kSpecialKeys) {
+		if (to_press_mod_code & special_key.mod_code) {
+			keybdEvent(special_key.vk, /* down= */ true);
 		}
 	}
 	
@@ -191,9 +191,9 @@ void Keystroke::simulateTyping(DWORD already_down_mod_code) const {
 	keybdEvent(m_vk, /* down= */ false);
 	
 	// Release the special keys that should not be kept down.
-	for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
-		if (to_press_mod_code & kSpecialKeys[i].mod_code) {
-			keybdEvent(kSpecialKeys[i].vk, /* down= */ false);
+	for (const auto& special_key : kSpecialKeys) {
+		if (to_press_mod_code & special_key.mod_code) {
+			keybdEvent(special_key.vk, /* down= */ false);
 		}
 	}
 	
@@ -207,7 +207,7 @@ void Keystroke::keybdEvent(UINT vk, bool down) {
 	if (isKeyExtended(vk)) {
 		dwFlags |= KEYEVENTF_EXTENDEDKEY;
 	}
-	keybd_event(static_cast<BYTE>(vk), static_cast<BYTE>(MapVirtualKey(vk, 0)), dwFlags, 0);
+	keybd_event(BYTE(vk), BYTE(MapVirtualKey(vk, 0)), dwFlags, 0);
 }
 
 
@@ -279,8 +279,7 @@ void Keystroke::resetKeyboardFocus(HWND* new_input_window, DWORD* input_thread) 
 }
 
 void Keystroke::releaseSpecialKeys(BYTE keyboard_state[], DWORD keep_down_mod_code) {
-	for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
-		const SpecialKey& special_key = kSpecialKeys[i];
+	for (const auto& special_key : kSpecialKeys) {
 		if (keep_down_mod_code & special_key.mod_code) {
 			continue;
 		}
@@ -300,8 +299,8 @@ void Keystroke::releaseKey(BYTE vk, BYTE keyboard_state[]) {
 
 int Keystroke::compare(const Keystroke& keystroke1, const Keystroke& keystroke2) {
 	// Compare virtual key codes
-	const int vk1 = static_cast<int>(keystroke1.m_vk);
-	const int vk2 = static_cast<int>(keystroke2.m_vk);
+	const int vk1 = int(keystroke1.m_vk);
+	const int vk2 = int(keystroke2.m_vk);
 	if (vk1 != vk2) {
 		return vk1 - vk2;
 	}
@@ -324,8 +323,8 @@ int Keystroke::compare(const Keystroke& keystroke1, const Keystroke& keystroke2)
 	// Shift + X
 	// Alt + X
 	DWORD remaining_mod_codes_mask = kModCodeAll;
-	for (int special_key = 0; special_key < arrayLength(kSpecialKeys); special_key++) {
-		const int mod_code = kSpecialKeys[special_key].mod_code;
+	for (const auto& special_key : kSpecialKeys) {
+		const int mod_code = special_key.mod_code;
 		remaining_mod_codes_mask &= ~(mod_code | (mod_code << kRightModCodeOffset));
 		
 		const int sort_key1 = keystroke1.getModCodeSortKey(mod_code, remaining_mod_codes_mask);
@@ -391,59 +390,56 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			// Fall-through
 		
 		case WM_KEYUP:
-		case WM_SYSKEYUP:
-			{
-				BYTE vk_typed = static_cast<BYTE>(wParam);
-				// Flags
-				DWORD sided_mod_code = s_keystroke.m_sided_mod_code;
-				bool is_special = false;
-				for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
-					const SpecialKey& special_key = kSpecialKeys[i];
-					if ((vk_typed == special_key.vk) ||
-					    (vk_typed == special_key.vk_left) ||
-					    (vk_typed == special_key.vk_right)) {
-						vk_typed = special_key.vk;
-						is_special = true;
-					}
-					
-					if (isKeyDown(special_key.vk_left)) {
-						sided_mod_code |= special_key.mod_code;
-					} else if (isKeyDown(special_key.vk_right)) {
-						sided_mod_code |= special_key.mod_code << kRightModCodeOffset;
-					} else {
-						sided_mod_code &= ~special_key.mod_code;
-					}
+		case WM_SYSKEYUP: {
+			BYTE vk_typed = BYTE(wParam);
+			// Flags
+			DWORD sided_mod_code = s_keystroke.m_sided_mod_code;
+			bool is_special = false;
+			for (const auto& special_key : kSpecialKeys) {
+				if ((vk_typed == special_key.vk) ||
+				    (vk_typed == special_key.vk_left) ||
+				    (vk_typed == special_key.vk_right)) {
+					vk_typed = special_key.vk;
+					is_special = true;
 				}
 				
-				// Key
-				// If key is pressed, update the flags
-				// If key is released, update the flags only if no key has been set
-				bool update_mode_code = true;
-				if (down) {
-					s_reset_keystroke = false;
-					if (!is_special) {
-						s_keystroke.m_vk = Keystroke::canonicalizeKey(vk_typed);
-					}
+				if (isKeyDown(special_key.vk_left)) {
+					sided_mod_code |= special_key.mod_code;
+				} else if (isKeyDown(special_key.vk_right)) {
+					sided_mod_code |= special_key.mod_code << kRightModCodeOffset;
 				} else {
-					s_reset_keystroke |= !is_special;
-					update_mode_code &= !s_keystroke.m_vk;
-				}
-				if (update_mode_code) {
-					s_keystroke.m_sided_mod_code = sided_mod_code;
+					sided_mod_code &= ~special_key.mod_code;
 				}
 			}
-			// Fall-through
+			
+			// Key
+			// If key is pressed, update the flags
+			// If key is released, update the flags only if no key has been set
+			bool update_mode_code = true;
+			if (down) {
+				s_reset_keystroke = false;
+				if (!is_special) {
+					s_keystroke.m_vk = Keystroke::canonicalizeKey(vk_typed);
+				}
+			} else {
+				s_reset_keystroke |= !is_special;
+				update_mode_code &= !s_keystroke.m_vk;
+			}
+			if (update_mode_code) {
+				s_keystroke.m_sided_mod_code = sided_mod_code;
+			}
+		}
+		// Fall-through
 		
 		// Display keystroke name
-		case WM_KEYSTROKE:
-			{
-				TCHAR keystroke_display_name[kHotKeyBufSize];
-				s_keystroke.getDisplayName(keystroke_display_name);
-				SetWindowText(hwnd, keystroke_display_name);
-				const int len = lstrlen(keystroke_display_name);
-				Edit_SetSel(hwnd, len,len);
-			}
+		case WM_KEYSTROKE: {
+			TCHAR keystroke_display_name[kHotKeyBufSize];
+			s_keystroke.getDisplayName(keystroke_display_name);
+			SetWindowText(hwnd, keystroke_display_name);
+			const int len = lstrlen(keystroke_display_name);
+			Edit_SetSel(hwnd, len,len);
 			return 0;
+		}
 	}
 	
 	// Ignore mouse and keyboard events
@@ -459,38 +455,37 @@ INT_PTR CALLBACK prcEditDialog(HWND hdlg, UINT message, WPARAM wParam, LPARAM UN
 	switch (message) {
 		
 		// Initialization
-		case WM_INITDIALOG:
-			{
-				e_modal_dialog = hdlg;
-				centerParent(hdlg);
+		case WM_INITDIALOG: {
+			e_modal_dialog = hdlg;
+			centerParent(hdlg);
 				
-				// Subclass the keystroke control. Display the initial keystroke name.
-				const HWND hwnd_keystroke = GetDlgItem(hdlg, IDCTXT);
-				subclassWindow(hwnd_keystroke, prcKeystrokeCtl);
-				PostMessage(hwnd_keystroke, WM_KEYSTROKE, 0,0);
+			// Subclass the keystroke control. Display the initial keystroke name.
+			const HWND hwnd_keystroke = GetDlgItem(hdlg, IDCTXT);
+			subclassWindow(hwnd_keystroke, prcKeystrokeCtl);
+			PostMessage(hwnd_keystroke, WM_KEYSTROKE, 0,0);
 				
-				CheckDlgButton(hdlg, IDCCHK_DISTINGUISH_LEFT_RIGHT, s_keystroke.m_sided);
+			CheckDlgButton(hdlg, IDCCHK_DISTINGUISH_LEFT_RIGHT, s_keystroke.m_sided);
 				
-				// Load ';'-separated condition names. Make them null-terminated strings.
-				TCHAR conditions[kStringBufSize];
-				i18n::loadStringAuto(IDS_CONDITIONS, conditions);
-				TCHAR* current_condition = conditions;
+			// Load ';'-separated condition names. Make them null-terminated strings.
+			TCHAR conditions[kStringBufSize];
+			i18n::loadStringAuto(IDS_CONDITIONS, conditions);
+			TCHAR* current_condition = conditions;
+			for (int cond = 0; cond < Keystroke::kConditionCount; cond++) {
+				getSemiColonToken(&current_condition);
+			}
+				
+			// Initialize the condition combo-boxes
+			for (int cond_type = 0; cond_type < Keystroke::kCondTypeCount; cond_type++) {
+				const HWND hwnd_cond_type = GetDlgItem(hdlg, IDCCBO_CAPSLOCK + cond_type);
+				current_condition = conditions;
 				for (int cond = 0; cond < Keystroke::kConditionCount; cond++) {
-					getSemiColonToken(&current_condition);
+					ComboBox_AddString(hwnd_cond_type, current_condition);
+					current_condition += lstrlen(current_condition) + 1;
 				}
-				
-				// Initialize the condition combo-boxes
-				for (int cond_type = 0; cond_type < Keystroke::kCondTypeCount; cond_type++) {
-					const HWND hwnd_cond_type = GetDlgItem(hdlg, IDCCBO_CAPSLOCK + cond_type);
-					current_condition = conditions;
-					for (int cond = 0; cond < Keystroke::kConditionCount; cond++) {
-						ComboBox_AddString(hwnd_cond_type, current_condition);
-						current_condition += lstrlen(current_condition) + 1;
-					}
-					ComboBox_SetCurSel(hwnd_cond_type, s_keystroke.m_conditions[cond_type]);
-				}
+				ComboBox_SetCurSel(hwnd_cond_type, s_keystroke.m_conditions[cond_type]);
 			}
 			return true;
+		}
 		
 		// Command
 		case WM_COMMAND:
@@ -501,23 +496,19 @@ INT_PTR CALLBACK prcEditDialog(HWND hdlg, UINT message, WPARAM wParam, LPARAM UN
 					PostMessage(GetDlgItem(hdlg, IDCTXT), WM_KEYSTROKE, 0,0);
 					break;
 				
-				case IDOK:
-					{
-						UINT idErrorString;
-						
-						if (!s_keystroke.m_vk) {
-							idErrorString = ERR_INVALID_SHORTCUT;
-							messageBox(hdlg, idErrorString, MB_ICONEXCLAMATION);
-							SetFocus(GetDlgItem(hdlg, IDCTXT));
-							break;
-						}
-						
-						for (int i = 0; i < Keystroke::kCondTypeCount; i++) {
-							s_keystroke.m_conditions[i] =
-								static_cast<Keystroke::Condition>(ComboBox_GetCurSel(GetDlgItem(hdlg, IDCCBO_CAPSLOCK + i)));
-						}
+				case IDOK: {
+					if (!s_keystroke.m_vk) {
+						messageBox(hdlg, ERR_INVALID_SHORTCUT, MB_ICONEXCLAMATION);
+						SetFocus(GetDlgItem(hdlg, IDCTXT));
+						break;
 					}
-					// Fall-through
+					
+					for (int i = 0; i < Keystroke::kCondTypeCount; i++) {
+						s_keystroke.m_conditions[i] =
+							Keystroke::Condition(ComboBox_GetCurSel(GetDlgItem(hdlg, IDCCBO_CAPSLOCK + i)));
+					}
+				}
+				// Fall-through
 				
 				case IDCANCEL:
 					EndDialog(hdlg, LOWORD(wParam));
@@ -548,16 +539,15 @@ INT_PTR CALLBACK prcSendKeysDialog(HWND hdlg, UINT message, WPARAM wParam, LPARA
 	switch (message) {
 		
 		// Initialization
-		case WM_INITDIALOG:
-			{
-				e_modal_dialog = hdlg;
-				centerParent(hdlg);
+		case WM_INITDIALOG: {
+			e_modal_dialog = hdlg;
+			centerParent(hdlg);
 				
-				const HWND hctl = GetDlgItem(hdlg, IDCTXT);
-				subclassWindow(hctl, prcKeystrokeCtl);
-				PostMessage(hctl, WM_KEYSTROKE, 0,0);
-			}
+			const HWND hctl = GetDlgItem(hdlg, IDCTXT);
+			subclassWindow(hctl, prcKeystrokeCtl);
+			PostMessage(hctl, WM_KEYSTROKE, 0,0);
 			return true;
+		}
 		
 		// Command
 		case WM_COMMAND:

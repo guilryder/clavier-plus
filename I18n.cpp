@@ -77,7 +77,7 @@ Language getDefaultLanguage() {
 	const LANGID lang_id = PRIMARYLANGID(LANGIDFROMLCID(GetUserDefaultLCID()));
 	for (int lang = 0; lang < arrayLength(kLangIds); lang++) {
 		if (PRIMARYLANGID(kLangIds[lang]) == lang_id) {
-			return static_cast<Language>(lang);
+			return Language(lang);
 		}
 	}
 	return kLangDefault;
@@ -85,8 +85,7 @@ Language getDefaultLanguage() {
 
 
 const STRING_RESOURCE* loadStringResource(UINT id) {
-	const STRING_RESOURCE* resource =
-		reinterpret_cast<const STRING_RESOURCE*>(loadResource(id / 16 + 1, RT_STRING));
+	const auto* resource = reinterpret_cast<const STRING_RESOURCE*>(loadResource(id / 16 + 1, RT_STRING));
 	VERIFP(resource, nullptr);
 	
 	for (id &= 15; id > 0; id--) {
@@ -130,7 +129,7 @@ HMENU loadMenu(UINT id) {
 
 
 HBITMAP loadBitmap(UINT id) {
-	BITMAPINFO *const bitmap_info = reinterpret_cast<BITMAPINFO*>(loadResource(id, RT_BITMAP));
+	auto *bitmap_info = reinterpret_cast<BITMAPINFO*>(loadResource(id, RT_BITMAP));
 	VERIFP(bitmap_info, NULL);
 	
 	const HDC hdc = GetDC(/* hWnd= */ NULL);
@@ -160,9 +159,11 @@ void formatInteger(int number, String* output) {
 	if (!format_initialized) {
 		format_initialized = true;
 		
-		format.NumDigits = 0;
-		format.LeadingZero = true;
-		format.lpDecimalSep = const_cast<LPTSTR>(_T("."));  // unused
+		format = {
+			.NumDigits = 0,
+			.LeadingZero = true,
+			.lpDecimalSep = const_cast<LPTSTR>(_T(".")),  // unused
+		};
 		
 		// Number groups. Convert the LOCALE_SGROUPING string ("3;2;0") into a number (320).
 		TCHAR grouping_buf[10];
@@ -185,8 +186,8 @@ void formatInteger(int number, String* output) {
 }
 
 
-int parseNumberGroupingString(LPCTSTR input) {
-	int result = 0;
+UINT parseNumberGroupingString(LPCTSTR input) {
+	UINT result = 0;
 	LPCTSTR current_char;
 	for (current_char = input; *current_char; current_char++) {
 		if (_T('0') <= *current_char && *current_char <= _T('9')) {

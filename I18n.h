@@ -95,6 +95,6 @@ const size_t kIntegerBufSize = 40;
 void formatInteger(int number, String* output);
 
 // Converts a LOCALE_SGROUPING string into its NUMBERFMT.Grouping equivalent.
-int parseNumberGroupingString(LPCTSTR input);
+UINT parseNumberGroupingString(LPCTSTR input);
 
 }  // namespace i18n

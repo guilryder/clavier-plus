@@ -109,6 +109,7 @@ void focusWindow(HWND hwnd);
 
 
 constexpr LPCTSTR kLineSeparator = _T("-\r\n");
+constexpr int kConfigCodeModCodeOffset = 8;
 
 }  // namespace
 
@@ -186,31 +187,27 @@ void Shortcut::save(HANDLE file) {
 	
 	TCHAR display_name[kHotKeyBufSize], code_text[kCodeBufSize];
 	getDisplayName(display_name);
-	wsprintf(code_text, _T("%lu"), static_cast<DWORD>(m_vk) | (m_sided_mod_code << 8));
+	wsprintf(code_text, _T("%lu"), DWORD(m_vk) | (m_sided_mod_code << kConfigCodeModCodeOffset));
 	
 	struct Line {
 		Token key_token;
 		LPCTSTR value;
 	};
 	Line lines[3 + 4 + 2 + kCondTypeCount + 1];
-	lines[0].key_token = Token::kShortcut;
-	lines[0].value = display_name;
-	lines[1].key_token = Token::kCode;
-	lines[1].value = code_text;
+	lines[0] = { .key_token = Token::kShortcut, .value = display_name };
+	lines[1] = { .key_token = Token::kCode, .value = code_text };
 	int line_count = 2;
 	
 	if (m_sided) {
-		lines[line_count].key_token = Token::kDistinguishLeftRight;
-		lines[line_count].value = _T("1");
-		line_count++;
+		lines[line_count++] = { .key_token = Token::kDistinguishLeftRight, .value = _T("1") };
 	}
 	
 	for (int i = 0; i < kCondTypeCount; i++) {
 		if (m_conditions[i] != Condition::kIgnore) {
-			lines[line_count].key_token = Token::kConditionCapsLock + i;
-			lines[line_count].value = getToken(
-				Token::kConditionYes + (static_cast<int>(m_conditions[i]) - static_cast<int>(Condition::kYes)));
-			line_count++;
+			lines[line_count++] = {
+				.key_token = Token::kConditionCapsLock + i,
+				.value = getToken(Token::kConditionYes + (int(m_conditions[i]) - int(Condition::kYes))),
+			};
 		}
 	}
 	
@@ -218,18 +215,13 @@ void Shortcut::save(HANDLE file) {
 	
 	switch (m_type) {
 		case Type::kCommand:
-			lines[line_count].key_token = Token::kCommand;
-			lines[line_count].value = m_command;
-			line_count++;
-		
+			lines[line_count++] = { .key_token = Token::kCommand, .value = m_command };
+			
 			if (m_directory.isSome()) {
-				lines[line_count].key_token = Token::kDirectory;
-				lines[line_count].value = m_directory;
-				line_count++;
+				lines[line_count++] = { .key_token = Token::kDirectory, .value = m_directory };
 			}
-		
-			lines[line_count].key_token = Token::kWindow;
-			lines[line_count].value = _T("");
+			
+			lines[line_count] = { .key_token = Token::kWindow, .value = _T("") };
 			for (int i = 0; i < arrayLength(kShowOptions); i++) {
 				if (m_show_option == kShowOptions[i]) {
 					lines[line_count].value = getToken(Token::kShowNormal + i);
@@ -249,30 +241,25 @@ void Shortcut::save(HANDLE file) {
 					from++;
 				}
 			}
-		
-			lines[line_count].key_token = Token::kText;
-			lines[line_count].value = text;
-			line_count++;
+			
+			lines[line_count++] = { .key_token = Token::kText, .value = text };
 			break;
 	}
 	
 	if (m_programs.isSome()) {
-		lines[line_count].key_token = (m_programs_only) ? Token::kPrograms : Token::kAllProgramsBut;
-		lines[line_count].value = m_programs;
-		line_count++;
+		lines[line_count++] = {
+			.key_token = (m_programs_only) ? Token::kPrograms : Token::kAllProgramsBut,
+			.value = m_programs,
+		};
 	}
 	
 	if (m_description.isSome()) {
-		lines[line_count].key_token = Token::kDescription;
-		lines[line_count].value = m_description;
-		line_count++;
+		lines[line_count++] = { .key_token = Token::kDescription, .value = m_description };
 	}
 	
 	TCHAR strbuf_usage_count[i18n::kIntegerBufSize];
 	wsprintf(strbuf_usage_count, _T("%d"), m_usage_count);
-	lines[line_count].key_token = Token::kUsageCount;
-	lines[line_count].value = strbuf_usage_count;
-	line_count++;
+	lines[line_count++] = { .key_token = Token::kUsageCount, .value = strbuf_usage_count };
 	
 	// Write all
 	for (int i = 0; i < line_count; i++) {
@@ -353,7 +340,7 @@ bool Shortcut::load(LPTSTR* input) {
 			// Language
 			case Token::kLanguage:
 				for (int lang_index = 0; lang_index < i18n::kLangCount; lang_index++) {
-					i18n::Language lang = static_cast<i18n::Language>(lang_index);
+					i18n::Language lang = i18n::Language(lang_index);
 					if (!lstrcmpi(next_sep, getLanguageName(lang))) {
 						i18n::setLanguage(lang);
 					}
@@ -365,8 +352,10 @@ bool Shortcut::load(LPTSTR* input) {
 				while (*next_sep == _T(' ')) {
 					next_sep++;
 				}
-				e_main_dialog_size.cx = StrToInt(parseCommaSepArg(next_sep));
-				e_main_dialog_size.cy = StrToInt(parseCommaSepArg(next_sep));
+				e_main_dialog_size = {
+					.cx = StrToInt(parseCommaSepArg(next_sep)),
+					.cy = StrToInt(parseCommaSepArg(next_sep)),
+				};
 				e_maximize_main_dialog = toBool(StrToInt(parseCommaSepArg(next_sep)));
 				e_icon_visible = !StrToInt(parseCommaSepArg(next_sep));
 				break;
@@ -400,10 +389,10 @@ bool Shortcut::load(LPTSTR* input) {
 			// Code
 			case Token::kCode:
 				if (!m_vk) {
-					const DWORD dwCode = static_cast<DWORD>(StrToInt(next_sep));
+					const DWORD dwCode = DWORD(StrToInt(next_sep));
 					if (dwCode) {
 						m_vk = canonicalizeKey(LOBYTE(dwCode));
-						m_sided_mod_code = dwCode >> 8;
+						m_sided_mod_code = dwCode >> kConfigCodeModCodeOffset;
 					}
 				}
 				break;
@@ -444,27 +433,25 @@ bool Shortcut::load(LPTSTR* input) {
 				break;
 			
 			// Window
-			case Token::kWindow:
-				{
-					const int show_option_index = findToken(next_sep) - Token::kShowNormal;
-					if (0 <= show_option_index && show_option_index < arrayLength(kShowOptions)) {
-						m_show_option = kShowOptions[show_option_index];
-					}
+			case Token::kWindow: {
+				const int show_option_index = findToken(next_sep) - Token::kShowNormal;
+				if (0 <= show_option_index && show_option_index < arrayLength(kShowOptions)) {
+					m_show_option = kShowOptions[show_option_index];
 				}
 				break;
+			}
 			
 			// Condition
 			case Token::kConditionCapsLock:
 			case Token::kConditionNumLock:
-			case Token::kConditionScrollLock:
-				{
-					Token cond_tok = findToken(next_sep);
-					if (Token::kConditionYes <= cond_tok && cond_tok <= Token::kConditionNo) {
-						m_conditions[key_tok - Token::kConditionCapsLock] =
-							static_cast<Condition>(static_cast<int>(Condition::kYes) + (cond_tok - Token::kConditionYes));
-					}
+			case Token::kConditionScrollLock: {
+				Token cond_tok = findToken(next_sep);
+				if (Token::kConditionYes <= cond_tok && cond_tok <= Token::kConditionNo) {
+					m_conditions[key_tok - Token::kConditionCapsLock] =
+						Condition(int(Condition::kYes) + (cond_tok - Token::kConditionYes));
 				}
 				break;
+			}
 			
 			// Usage count
 			case Token::kUsageCount:
@@ -528,8 +515,7 @@ void Shortcut::execute(bool from_hotkey) {
 			new_keyboard_state[VK_CONTROL] = kKeyDownMask;
 		}
 		
-		for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
-			const SpecialKey& special_key = kSpecialKeys[i];
+		for (const auto& special_key : kSpecialKeys) {
 			new_keyboard_state[special_key.vk] =
 			new_keyboard_state[special_key.vk_left] =
 			new_keyboard_state[special_key.vk_right] = 0;
@@ -543,87 +529,87 @@ void Shortcut::execute(bool from_hotkey) {
 	}
 	
 	switch (m_type) {
-	case Type::kCommand: {
-		// Required because the launched program
-		// can be a script that simulates keystrokes
-		if (can_release_special_keys) {
-			releaseSpecialKeys(context.keyboard_state, /* keep_down_mod_code= */ 0);
-		}
-		
-		clipboardToEnvironment();
-		ShellExecuteThread *const shell_execute_thread =
-		    new ShellExecuteThread(m_command, m_directory, m_show_option);
-		startThread(shell_execute_thread->thread, shell_execute_thread);
-		break;
-	}
-	
-	case Type::kText:
-		// Special keys to keep down across commands.
-		
-		LastTextExecution lastTextExecution = LastTextExecution::None;
-		
-		// Send the text to the window
-		bool escaping = false;  // whether the next character is '\'-escaped
-		LPCTSTR text = m_text;
-		for (size_t i = 0; text[i]; i++) {
-			const WORD c = static_cast<WORD>(text[i]);
-			if (c == _T('\n')) {
-				// Skip '\n': redundant with the expected '\r'.
-				continue;
+		case Type::kCommand: {
+			// Required because the launched program
+			// can be a script that simulates keystrokes
+			if (can_release_special_keys) {
+				releaseSpecialKeys(context.keyboard_state, /* keep_down_mod_code= */ 0);
 			}
 			
-			if (!escaping && c == _T('\\')) {
-				escaping = true;
-				continue;
-			}
-			
-			if (escaping || c != _T('[')) {
-				// Regular character: send WM_CHAR.
-				if (lastTextExecution != LastTextExecution::Text) {
-					lastTextExecution = LastTextExecution::Text;
-					sleepBackground(0);
-				}
-				
-				escaping = false;
-				const WORD vkMask = VkKeyScan(c);
-				PostMessage(context.input_window, WM_CHAR, c,
-					MAKELPARAM(1, MapVirtualKey(LOBYTE(vkMask), 0)));
-				
-			} else {
-				// '[': inline shortcut, or inline command line execution
-				
-				// Extract the inside of the shortcut.
-				// Take into account '\' escaping to detect the end of the shortcut, but do not unescape.
-				const LPCTSTR shortcut_start = text + i + 1;
-				const TCHAR *shortcut_end = shortcut_start;
-				bool escaping2 = false;
-				while (*shortcut_end && !(*shortcut_end == _T(']') && !escaping2)) {
-					escaping2 = !escaping2 && (*shortcut_end == _T('\\'));
-					shortcut_end++;
-				}
-				if (!*shortcut_end) {
-					// Non-terminated command.
-					break;
-				}
-				
-				if (!executeSpecialCommand(shortcut_start, shortcut_end, &context)) {
-					break;
-				}
-				
-				i = shortcut_end - text;
-			}
+			clipboardToEnvironment();
+			ShellExecuteThread *const shell_execute_thread =
+				new ShellExecuteThread(m_command, m_directory, m_show_option);
+			startThread(shell_execute_thread->thread, shell_execute_thread);
+			break;
 		}
 		
-		// Release all special keys kept down in case the shortcut doesn't end with [{KeysDown}].
-		releaseSpecialKeys(context.keyboard_state, /* keep_down_mode_code= */ ~context.keep_down_mod_code);
-		break;
+		case Type::kText:
+			// Special keys to keep down across commands.
+			
+			LastTextExecution lastTextExecution = LastTextExecution::None;
+			
+			// Send the text to the window
+			bool escaping = false;  // whether the next character is '\'-escaped
+			LPCTSTR text = m_text;
+			for (size_t i = 0; text[i]; i++) {
+				const WORD c = WORD(text[i]);
+				if (c == _T('\n')) {
+					// Skip '\n': redundant with the expected '\r'.
+					continue;
+				}
+				
+				if (!escaping && c == _T('\\')) {
+					escaping = true;
+					continue;
+				}
+				
+				if (escaping || c != _T('[')) {
+					// Regular character: send WM_CHAR.
+					if (lastTextExecution != LastTextExecution::Text) {
+						lastTextExecution = LastTextExecution::Text;
+						sleepBackground(0);
+					}
+					
+					escaping = false;
+					const WORD vkMask = VkKeyScan(c);
+					PostMessage(context.input_window, WM_CHAR, c,
+						MAKELPARAM(1, MapVirtualKey(LOBYTE(vkMask), 0)));
+					
+				} else {
+					// '[': inline shortcut, or inline command line execution
+					
+					// Extract the inside of the shortcut.
+					// Take into account '\' escaping to detect the end of the shortcut, but do not unescape.
+					const LPCTSTR shortcut_start = text + i + 1;
+					const TCHAR *shortcut_end = shortcut_start;
+					bool escaping2 = false;
+					while (*shortcut_end && !(*shortcut_end == _T(']') && !escaping2)) {
+						escaping2 = !escaping2 && (*shortcut_end == _T('\\'));
+						shortcut_end++;
+					}
+					if (!*shortcut_end) {
+						// Non-terminated command.
+						break;
+					}
+					
+					if (!executeSpecialCommand(shortcut_start, shortcut_end, &context)) {
+						break;
+					}
+					
+					i = shortcut_end - text;
+				}
+			}
+			
+			// Release all special keys kept down in case the shortcut doesn't end with [{KeysDown}].
+			releaseSpecialKeys(context.keyboard_state, /* keep_down_mode_code= */ ~context.keep_down_mod_code);
+			break;
 	}
 }
 
 namespace {
 
 bool executeSpecialCommand(LPCTSTR shortcut_start, LPCTSTR& shortcut_end, ExecutionContext* context) {
-	String inside(shortcut_start, static_cast<int>(shortcut_end - shortcut_start));
+	String inside(shortcut_start, int(shortcut_end - shortcut_start));
 	
 	if (inside.isEmpty()) {
 		// []
@@ -729,15 +715,15 @@ void simulateCharacter(TCHAR c, DWORD keep_down_mod_code) {
 		ks.m_vk = VK_MENU;
 		ks.m_sided_mod_code = 0;
 		const bool alt_is_hotkey = ks.unregisterHotKey();
-		const BYTE scan_code_alt = static_cast<BYTE>(MapVirtualKey(VK_MENU, MAPVK_VK_TO_VSC));
+		const BYTE scan_code_alt = BYTE(MapVirtualKey(VK_MENU, MAPVK_VK_TO_VSC));
 		keybd_event(VK_MENU, scan_code_alt, 0, 0);
 		
 		// Press the digits.
 		TCHAR digits[5];
-		wsprintf(digits, _T("0%u"), static_cast<WORD>(c));
+		wsprintf(digits, _T("0%u"), WORD(c));
 		ks.m_sided_mod_code = MOD_ALT;
 		for (size_t digit_index = 0; digits[digit_index]; digit_index++) {
-			ks.m_vk = VK_NUMPAD0 + static_cast<BYTE>(digits[digit_index] - _T('0'));
+			ks.m_vk = VK_NUMPAD0 + BYTE(digits[digit_index] - _T('0'));
 			ks.simulateTyping(/* already_down_mod_code= */ keep_down_mod_code | MOD_ALT);
 		}
 		
@@ -888,7 +874,7 @@ void commandMouseMove(POINT origin_point, LPTSTR arg) {
 void commandMouseWheel(LPTSTR arg) {
 	const int offset = -StrToInt(arg) * WHEEL_DELTA;
 	if (offset) {
-		mouse_event(MOUSEEVENTF_WHEEL, 0, 0, static_cast<DWORD>(offset), 0);
+		mouse_event(MOUSEEVENTF_WHEEL, 0, 0, DWORD(offset), 0);
 		sleepBackground(0);
 	}
 }
@@ -903,8 +889,7 @@ void commandKeysDown(ExecutionContext* context, LPTSTR arg) {
 	Keystroke::releaseSpecialKeys(context->keyboard_state, /* keep_down_mod_code= */ 0);
 	
 	// Press the new special keys.
-	for (int i = 0; i < arrayLength(kSpecialKeys); i++) {
-		const SpecialKey& special_key = kSpecialKeys[i];
+	for (const auto& special_key : kSpecialKeys) {
 		if (context->keep_down_mod_code & special_key.mod_code) {
 			// Press the left instance of the special key.
 			BYTE vk_left = special_key.vk_left;
@@ -1022,8 +1007,7 @@ bool Shortcut::containsProgram(LPCTSTR program) const {
 		}
 		
 		if (CSTR_EQUAL == CompareString(LOCALE_USER_DEFAULT, NORM_IGNORECASE,
-				current_program_begin,
-				static_cast<int>(current_process_end - current_program_begin), program, -1)) {
+				current_program_begin, int(current_process_end - current_program_begin), program, -1)) {
 			return true;
 		}
 		

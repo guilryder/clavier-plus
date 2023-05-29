@@ -70,8 +70,7 @@ void centerParent(HWND hwnd) {
 	RECT parent_rect, child_rect;
 	
 	const HWND hwnd_parent = GetParent(hwnd);
-	MONITORINFO mi;
-	mi.cbSize = sizeof(mi);
+	MONITORINFO mi = { .cbSize = sizeof(mi) };
 	if (hwnd_parent) {
 		const HMONITOR monitor = MonitorFromWindow(hwnd_parent, MONITOR_DEFAULTTONULL);
 		VERIFV(monitor);
@@ -235,9 +234,9 @@ void clipboardToEnvironment() {
 	bool ok = false;
 	
 	if (IsClipboardFormatAvailable(CF_UNICODETEXT) && OpenClipboard(/* hWndNewOwner= */ NULL)) {
-		const HGLOBAL clipboard_mem = static_cast<HGLOBAL>(GetClipboardData(CF_UNICODETEXT));
+		const HGLOBAL clipboard_mem = HGLOBAL(GetClipboardData(CF_UNICODETEXT));
 		if (clipboard_mem) {
-			const LPTSTR clipboard_text = static_cast<LPTSTR>(GlobalLock(clipboard_mem));
+			const LPTSTR clipboard_text = LPTSTR(GlobalLock(clipboard_mem));
 			if (clipboard_text) {
 				if (lstrlen(clipboard_text) < kClipboardStringBugSize) {
 					ok = true;
@@ -286,7 +285,7 @@ struct FIND_WINDOW_BY_NAME {
 };
 
 BOOL CALLBACK prcEnumFindWindowByName(HWND hwnd, LPARAM lParam) {
-	FIND_WINDOW_BY_NAME *fwbn = reinterpret_cast<FIND_WINDOW_BY_NAME*>(lParam);
+	auto *fwbn = reinterpret_cast<FIND_WINDOW_BY_NAME*>(lParam);
 	TCHAR title[1024];
 	if (GetWindowText(hwnd, title, arrayLength(title))) {
 		if (matchWildcards(fwbn->title_regexp, title)) {
@@ -300,9 +299,10 @@ BOOL CALLBACK prcEnumFindWindowByName(HWND hwnd, LPARAM lParam) {
 }  // namespace
 
 HWND findWindowByName(LPCTSTR title_regexp) {
-	FIND_WINDOW_BY_NAME fwbn;
-	fwbn.title_regexp = title_regexp;
-	fwbn.hwnd_found = NULL;
+	FIND_WINDOW_BY_NAME fwbn = {
+		.title_regexp = title_regexp,
+		.hwnd_found = NULL,
+	};
 	EnumWindows(prcEnumFindWindowByName, reinterpret_cast<LPARAM>(&fwbn));
 	return fwbn.hwnd_found;
 }
@@ -348,7 +348,7 @@ void setClipboardText(LPCTSTR text) {
 	// Allocate and fill a global buffer.
 	const int text_buf_size = lstrlen(text) + 1;
 	const HGLOBAL buffer = GlobalAlloc(GMEM_MOVEABLE, text_buf_size * sizeof(*text));
-	const LPTSTR locked_buffer = reinterpret_cast<LPTSTR>(GlobalLock(buffer));
+	const LPTSTR locked_buffer = LPTSTR(GlobalLock(buffer));
 	StringCchCopy(locked_buffer, text_buf_size, text);
 	GlobalUnlock(buffer);
 	
@@ -518,9 +518,10 @@ void listUwpApps(std::function<void(LPCTSTR name, LPCTSTR app_id, LPITEMIDLIST p
 		}
 		
 		// UWP app found.
-		UwpApp& uwp_app = uwp_apps[uwp_app_count++];
-		uwp_app.item = std::move(app_item);
-		uwp_app.props = std::move(app_props);
+		uwp_apps[uwp_app_count++] = {
+			.item = std::move(app_item),
+			.props = std::move(app_props),
+		};
 	}
 	
 	// Sort the apps by display name.
@@ -671,21 +672,22 @@ void shellExecuteCmdLine(LPCTSTR command, LPCTSTR directory, int show_mode) {
 	}
 	
 	// Run the command line
-	SHELLEXECUTEINFO sei;
-	sei.cbSize = sizeof(sei);
-	sei.fMask = SEE_MASK_FLAG_DDEWAIT;
-	sei.hwnd = e_invisible_window;
-	sei.lpFile = path;
-	sei.lpVerb = nullptr;
-	sei.lpParameters = PathGetArgs(command_exp);
-	sei.lpDirectory = real_directory;
-	sei.nShow = show_mode;
+	SHELLEXECUTEINFO sei = {
+		.cbSize = sizeof(sei),
+		.fMask = SEE_MASK_FLAG_DDEWAIT,
+		.hwnd = e_invisible_window,
+		.lpVerb = nullptr,
+		.lpFile = path,
+		.lpParameters = PathGetArgs(command_exp),
+		.lpDirectory = real_directory,
+		.nShow = show_mode,
+	};
 	ShellExecuteEx(&sei);
 }
 
 
 DWORD WINAPI ShellExecuteThread::thread(void* params) {
-	ShellExecuteThread *const params_ptr = reinterpret_cast<ShellExecuteThread*>(params);
+	auto *params_ptr = reinterpret_cast<ShellExecuteThread*>(params);
 	shellExecuteCmdLine(params_ptr->m_command, params_ptr->m_directory, params_ptr->m_show_mode);
 	delete params_ptr;
 	return 0;

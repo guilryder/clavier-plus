@@ -85,7 +85,8 @@ public:
 	}
 	
 	bool executeVERIFP_complexExpression() {
-		VERIFP(1 + (2 * 3) == 7, false);
+		int non_constexpr_value = 1 + (2 * 3);
+		VERIFP(non_constexpr_value == 7, false);
 		return true;
 	}
 	
@@ -190,7 +191,7 @@ public:
 	
 	TEST_METHOD(AllTokensSet) {
 		for (int lang = 0; lang < i18n::kLangCount; lang++) {
-			i18n::setLanguage(static_cast<i18n::Language>(lang));
+			i18n::setLanguage(i18n::Language(lang));
 			for (Token tok = Token::kFirst; tok < Token::kNotFound; tok++) {
 				Assert::AreNotEqual(_T(""), getToken(tok));
 			}
@@ -432,13 +433,13 @@ public:
 	TEST_METHOD(Unescape_empty) {
 		TCHAR buffer[] = _T("");
 		unescape(buffer);
-		Assert::AreEqual(_T(""), buffer);
+		Assert::AreEqual(_T(""), LPCTSTR(buffer));
 	}
 	
 	TEST_METHOD(Unescape_noBackslash) {
 		TCHAR buffer[] = _T("Regular");
 		unescape(buffer);
-		Assert::AreEqual(_T("Regular"), buffer);
+		Assert::AreEqual(_T("Regular"), LPCTSTR(buffer));
 	}
 	
 	TEST_METHOD(Unescape_someBackslashes) {
@@ -452,7 +453,7 @@ public:
 		LPTSTR chr_ptr = buffer;
 		Assert::AreSame(*buffer, *parseCommaSepArg(chr_ptr));
 		Assert::AreSame(buffer[0], *chr_ptr);
-		Assert::AreEqual(_T(""), buffer);
+		Assert::AreEqual(_T(""), LPCTSTR(buffer));
 	}
 	
 	TEST_METHOD(ParseCommaSepArgUnescape_empty) {
@@ -460,7 +461,7 @@ public:
 		LPTSTR chr_ptr = buffer;
 		Assert::AreSame(*buffer, *parseCommaSepArgUnescape(chr_ptr));
 		Assert::AreSame(buffer[0], *chr_ptr);
-		Assert::AreEqual(_T(""), buffer);
+		Assert::AreEqual(_T(""), LPCTSTR(buffer));
 	}
 	
 	TEST_METHOD(ParseCommaSepArg_noComma) {
@@ -468,7 +469,7 @@ public:
 		LPTSTR chr_ptr = buffer;
 		Assert::AreSame(*buffer, *parseCommaSepArg(chr_ptr));
 		Assert::AreSame(buffer[12], *chr_ptr);
-		Assert::AreEqual(_T("N\\o \\\\ comma"), buffer);
+		Assert::AreEqual(_T("N\\o \\\\ comma"), LPCTSTR(buffer));
 	}
 	
 	TEST_METHOD(ParseCommaSepArgUnescape_noComma) {
@@ -476,7 +477,7 @@ public:
 		LPTSTR chr_ptr = buffer;
 		Assert::AreSame(*buffer, *parseCommaSepArgUnescape(chr_ptr));
 		Assert::AreSame(buffer[14], *chr_ptr);
-		Assert::AreEqual(_T("No ,\\ comma"), buffer);
+		Assert::AreEqual(_T("No ,\\ comma"), LPCTSTR(buffer));
 	}
 	
 	TEST_METHOD(ParseCommaSepArg_someCommas) {
@@ -484,8 +485,8 @@ public:
 		LPTSTR chr_ptr = buffer;
 		Assert::AreSame(*buffer, *parseCommaSepArg(chr_ptr));
 		Assert::AreSame(buffer[12], *chr_ptr);
-		Assert::AreEqual(_T("Wi\\th \\\\ a"), buffer);
-		Assert::AreEqual(_T("comma, end"), buffer + 12);
+		Assert::AreEqual(_T("Wi\\th \\\\ a"), LPCTSTR(buffer));
+		Assert::AreEqual(_T("comma, end"), LPCTSTR(buffer + 12));
 	}
 	
 	TEST_METHOD(ParseCommaSepArgUnescape_someCommas) {
@@ -493,8 +494,8 @@ public:
 		LPTSTR chr_ptr = buffer;
 		Assert::AreSame(*buffer, *parseCommaSepArgUnescape(chr_ptr));
 		Assert::AreSame(buffer[14], *chr_ptr);
-		Assert::AreEqual(_T("With ,\\ a"), buffer);
-		Assert::AreEqual(_T("comma, \\,\\\\ end"), buffer + 14);
+		Assert::AreEqual(_T("With ,\\ a"), LPCTSTR(buffer));
+		Assert::AreEqual(_T("comma, \\,\\\\ end"), LPCTSTR(buffer + 14));
 	}
 };
 
@@ -574,7 +575,7 @@ public:
 		Assert::AreNotEqual(DWORD(0), GetModuleFileName(/* hModule= */ NULL, current_process_name, MAX_PATH));
 		PathStripPath(current_process_name);
 		
-		Assert::AreEqual(current_process_name, actual_process_name);
+		Assert::AreEqual(LPCTSTR(current_process_name), LPCTSTR(actual_process_name));
 	}
 	
 private:

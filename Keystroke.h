@@ -31,11 +31,51 @@ inline bool isAsyncKeyDown(UINT vk) {
 	return toBool(GetAsyncKeyState(vk) & 0x8000);
 }
 
-constexpr BYTE kKeyDownMask = 0x80;
-constexpr short kKeyToggledMask = 0x01;
+inline constexpr BYTE kKeyDownMask = 0x80;
+inline constexpr short kKeyToggledMask = 0x01;
 
-constexpr int kRightModCodeOffset = 16;
-constexpr DWORD kModCodeAll = ~0U;
+inline constexpr int kRightModCodeOffset = 16;
+inline constexpr DWORD kModCodeAll = ~0U;
+
+
+struct SpecialKey {
+	BYTE vk;  // Virtual key code, undistinguishable from left and right if possible
+	BYTE vk_left;  // Virtual code of the left key
+	BYTE vk_right;  // Virtual code of the right key
+	DWORD mod_code;  // MOD_* code of the key (e.g. MOD_CONTROL), not sided
+	Token tok;  // Token index of the name of the key
+};
+
+inline constexpr SpecialKey kSpecialKeys[] = {
+	{
+		.vk = VK_LWIN,
+		.vk_left = VK_LWIN,
+		.vk_right = VK_RWIN,
+		.mod_code = MOD_WIN,
+		.tok = Token::kWin,
+	},
+	{
+		.vk = VK_CONTROL,
+		.vk_left = VK_LCONTROL,
+		.vk_right = VK_RCONTROL,
+		.mod_code = MOD_CONTROL,
+		.tok = Token::kCtrl,
+	},
+	{
+		.vk = VK_SHIFT,
+		.vk_left = VK_LSHIFT,
+		.vk_right = VK_RSHIFT,
+		.mod_code = MOD_SHIFT,
+		.tok = Token::kShift,
+	},
+	{
+		.vk = VK_MENU,
+		.vk_left = VK_LMENU,
+		.vk_right = VK_RMENU,
+		.mod_code = MOD_ALT,
+		.tok = Token::kAlt,
+	},
+};
 
 
 class Keystroke {
@@ -95,9 +135,24 @@ public:
 	
 #ifdef _DEBUG
 	String debugString() const {
+		String display_name;
+		getDisplayName(display_name.getBuffer(kHotKeyBufSize));
+		return StringPrintf(_T("<%s> %s"), display_name.getSafe(), conditionsDebugString().getSafe());
+	}
+	
+	String rawDebugString() const {
 		return StringPrintf(
-			_T("vk=0x%02X (%d) sided=%d sided_mod_code=%d"),
-			m_vk, m_vk, m_sided, m_sided_mod_code);
+			_T("vk=0x%02X (%d) sided=%d sided_mod_code=%d conditions=%s"),
+			m_vk, m_vk, m_sided, m_sided_mod_code, conditionsDebugString().getSafe());
+	}
+	
+	String conditionsDebugString() const {
+		static constexpr LPCTSTR kDebugConditionChars = _T("/+-");
+		return StringPrintf(
+			_T("C%cN%cS%c"),
+			kDebugConditionChars[int(m_conditions[kCondTypeCapsLock])],
+			kDebugConditionChars[int(m_conditions[kCondTypeNumLock])],
+			kDebugConditionChars[int(m_conditions[kCondTypeScrollLock])]);
 	}
 #endif // _DEBUG
 	
@@ -105,8 +160,8 @@ public:
 	void clear() {
 		clearKeys();
 		m_sided = false;
-		for (int i = 0; i < kCondTypeCount; i++) {
-			m_conditions[i] = Condition::kIgnore;
+		for (auto& condition : m_conditions) {
+			condition = Condition::kIgnore;
 		}
 	}
 	
@@ -118,8 +173,7 @@ public:
 	
 	
 	WORD getUnsidedModCode() const {
-		return static_cast<WORD>(m_sided_mod_code) |
-		       static_cast<WORD>(m_sided_mod_code >> kRightModCodeOffset);
+		return WORD(m_sided_mod_code) | WORD(m_sided_mod_code >> kRightModCodeOffset);
 	}
 	
 	// Initializes the global data that the display name functions need.
@@ -250,20 +304,4 @@ private:
 	// such that s_next_named_vk[vk_next] is not empty.
 	// s_next_named_vk[vk] = 0xFF if no such vk_next exists.
 	static BYTE s_next_named_vk[256];
-};
-
-
-struct SpecialKey {
-	BYTE vk;  // Virtual key code, undistinguishable from left and right if possible
-	BYTE vk_left;  // Virtual code of the left key
-	BYTE vk_right;  // Virtual code of the right key
-	DWORD mod_code;  // MOD_* code of the key (e.g. MOD_CONTROL), not sided
-	Token tok;  // Token index of the name of the key
-};
-
-constexpr SpecialKey kSpecialKeys[4] = {
-	{ VK_LWIN, VK_LWIN, VK_RWIN, MOD_WIN, Token::kWin },
-	{ VK_CONTROL, VK_LCONTROL, VK_RCONTROL, MOD_CONTROL, Token::kCtrl },
-	{ VK_SHIFT, VK_LSHIFT, VK_RSHIFT, MOD_SHIFT, Token::kShift },
-	{ VK_MENU, VK_LMENU, VK_RMENU, MOD_ALT, Token::kAlt },
 };

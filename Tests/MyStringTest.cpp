@@ -68,7 +68,7 @@ public:
 	}
 	
 	TEST_METHOD(ConstructorBuffer_null) {
-		String str = static_cast<LPCTSTR>(nullptr);  // Use implicit constructor
+		String str = LPCTSTR(nullptr);  // Use implicit constructor
 		Assert::AreEqual(_T(""), str);
 	}
 	
@@ -96,7 +96,7 @@ public:
 	}
 	
 	TEST_METHOD(ConstructorBufferLength_null) {
-		String str(static_cast<LPCTSTR>(nullptr), 0);
+		String str(LPCTSTR(nullptr), 0);
 		Assert::AreEqual(_T(""), str);
 	}
 	
@@ -145,16 +145,16 @@ public:
 	//--------------------------------------------------------------------------------------------------
 	
 	TEST_METHOD(GetCstr_sameString) {
-		Assert::AreEqual(m_test.get(), static_cast<LPCTSTR>(m_test));
+		Assert::AreEqual(m_test.get(), LPCTSTR(m_test));
 	}
 	
 	TEST_METHOD(GetCstr_neverNull) {
 		Assert::IsNull(m_null.get());
-		Assert::IsNotNull(static_cast<LPCTSTR>(m_null));
+		Assert::IsNotNull(LPCTSTR(m_null));
 	}
 	
 	TEST_METHOD(GetCstr_emptyStringIfNull) {
-		Assert::AreEqual(_T('\0'), *static_cast<LPCTSTR>(m_null));
+		Assert::AreEqual(_T('\0'), *LPCTSTR(m_null));
 	}
 	
 	
@@ -251,12 +251,12 @@ public:
 	}
 	
 	TEST_METHOD(Affect_self) {
-		m_test = static_cast<LPCTSTR>(m_test);
+		m_test = LPCTSTR(m_test);
 		Assert::AreEqual(m_test_buf, m_test);
 	}
 	
 	TEST_METHOD(Affect_selfSuffix) {
-		m_test = static_cast<LPCTSTR>(m_test) + 2;
+		m_test = LPCTSTR(m_test) + 2;
 		Assert::AreEqual(_T("st"), m_test);
 	}
 	
@@ -266,7 +266,7 @@ public:
 	}
 	
 	TEST_METHOD(Affect_null) {
-		m_test = static_cast<LPCTSTR>(nullptr);
+		m_test = LPCTSTR(nullptr);
 		Assert::AreEqual(_T(""), m_test);
 	}
 	
@@ -322,7 +322,7 @@ public:
 	}
 	
 	TEST_METHOD(Append_null) {
-		m_test += static_cast<LPCTSTR>(nullptr);
+		m_test += LPCTSTR(nullptr);
 		Assert::AreEqual(m_test_buf, m_test);
 	}
 	
@@ -333,7 +333,7 @@ public:
 	
 	TEST_METHOD(Append_selfNotEmpty_bufferLargeEnough) {
 		int old_buffer_size = m_test.getBufferSize();
-		m_test += static_cast<LPCTSTR>(m_test);
+		m_test += LPCTSTR(m_test);
 		Assert::AreEqual(_T("testtest"), m_test);
 		Assert::AreEqual(old_buffer_size, m_test.getBufferSize());
 	}
@@ -341,25 +341,25 @@ public:
 	TEST_METHOD(Append_selfNotEmpty_bufferTooSmall) {
 		m_test = _T("0123456789");
 		int old_buffer_size = m_test.getBufferSize();
-		m_test += static_cast<LPCTSTR>(m_test);
+		m_test += LPCTSTR(m_test);
 		Assert::AreEqual(_T("01234567890123456789"), m_test);
 		Assert::AreNotEqual(old_buffer_size, m_test.getBufferSize());
 	}
 	
 	TEST_METHOD(Append_selfEmpty) {
-		m_empty += static_cast<LPCTSTR>(m_empty);
+		m_empty += LPCTSTR(m_empty);
 		Assert::AreEqual(_T(""), m_empty);
 	}
 	
 	TEST_METHOD(Append_selfNull) {
-		m_null += static_cast<LPCTSTR>(m_null);
+		m_null += LPCTSTR(m_null);
 		Assert::AreEqual(_T(""), m_null);
 	}
 	
 	TEST_METHOD(Append_selfSuffix_bufferLargeEnough) {
 		
 		int old_buffer_size = m_test.getBufferSize();
-		m_test += static_cast<LPCTSTR>(m_test) + 2;
+		m_test += LPCTSTR(m_test) + 2;
 		Assert::AreEqual(_T("testst"), m_test);
 		Assert::AreEqual(old_buffer_size, m_test.getBufferSize());
 	}
@@ -367,7 +367,7 @@ public:
 	TEST_METHOD(Append_selfSuffix_bufferTooSmall) {
 		m_test = _T("0123456789");
 		int old_buffer_size = m_test.getBufferSize();
-		m_test += static_cast<LPCTSTR>(m_test) + 2;
+		m_test += LPCTSTR(m_test) + 2;
 		Assert::AreEqual(_T("012345678923456789"), m_test);
 		Assert::AreNotEqual(old_buffer_size, m_test.getBufferSize());
 	}

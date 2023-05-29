@@ -338,7 +338,7 @@ public:
 	}
 	
 	TEST_METHOD(AddToList_one) {
-		Shortcut *const shortcut = createShortcut('A');
+		auto *shortcut = createShortcut('A');
 		
 		shortcut->addToList();
 		
@@ -347,9 +347,9 @@ public:
 	}
 	
 	TEST_METHOD(AddToList_three) {
-		Shortcut *const shortcut1 = createShortcut('1');
-		Shortcut *const shortcut2 = createShortcut('2');
-		Shortcut *const shortcut3 = createShortcut('3');
+		auto *shortcut1 = createShortcut('1');
+		auto *shortcut2 = createShortcut('2');
+		auto *shortcut3 = createShortcut('3');
 		
 		shortcut1->addToList();
 		shortcut2->addToList();
@@ -370,30 +370,30 @@ public:
 		ks_ctrlB.m_vk = 'B';
 		ks_ctrlB.m_sided_mod_code = MOD_CONTROL;
 		
-		Shortcut *const shortcut_ctrlA_notProg1 = new Shortcut(ks_ctrlA);
+		auto *shortcut_ctrlA_notProg1 = new Shortcut(ks_ctrlA);
 		shortcut_ctrlA_notProg1->m_programs = _T("prog1");
 		shortcut_ctrlA_notProg1->addToList();
 		
-		Shortcut *const shortcut_ctrlB_prog123 = new Shortcut(ks_ctrlB);
+		auto *shortcut_ctrlB_prog123 = new Shortcut(ks_ctrlB);
 		shortcut_ctrlB_prog123->m_programs = _T("prog1;prog2;prog3");
 		shortcut_ctrlB_prog123->m_programs_only = true;
 		shortcut_ctrlB_prog123->addToList();
 		
-		Shortcut *const shortcut_ctrlA_notProg2 = new Shortcut(ks_ctrlA);
+		auto *shortcut_ctrlA_notProg2 = new Shortcut(ks_ctrlA);
 		shortcut_ctrlA_notProg2->m_programs = _T("prog2");
 		shortcut_ctrlA_notProg2->addToList();
 		
-		Shortcut *const shortcut_ctrlA_prog1 = new Shortcut(ks_ctrlA);
+		auto *shortcut_ctrlA_prog1 = new Shortcut(ks_ctrlA);
 		shortcut_ctrlA_prog1->m_programs = _T("prog1");
 		shortcut_ctrlA_prog1->m_programs_only = true;
 		shortcut_ctrlA_prog1->addToList();
 		
-		Shortcut *const shortcut_ctrlA_prog23 = new Shortcut(ks_ctrlA);
+		auto *shortcut_ctrlA_prog23 = new Shortcut(ks_ctrlA);
 		shortcut_ctrlA_prog23->m_programs = _T("prog2;prog3");
 		shortcut_ctrlA_prog23->m_programs_only = true;
 		shortcut_ctrlA_prog23->addToList();
 		
-		Shortcut *const shortcut_ctrlA_prog2 = new Shortcut(ks_ctrlA);
+		auto *shortcut_ctrlA_prog2 = new Shortcut(ks_ctrlA);
 		shortcut_ctrlA_prog2->m_programs = _T("prog2");
 		shortcut_ctrlA_prog2->m_programs_only = true;
 		shortcut_ctrlA_prog2->addToList();
@@ -464,7 +464,7 @@ public:
 		
 		// Save the config to a golden file for each language.
 		for (int langi = 0; langi < i18n::kLangCount; langi++) {
-			i18n::Language lang = static_cast<i18n::Language>(langi);
+			i18n::Language lang = i18n::Language(langi);
 			i18n::setLanguage(lang);
 			
 			testing::getProjectDir(e_ini_filepath);
@@ -474,7 +474,7 @@ public:
 		
 		// Load the config of each language. Save it again to verify idempotency.
 		for (int langi = 0; langi < i18n::kLangCount; langi++) {
-			i18n::Language lang = static_cast<i18n::Language>(langi);
+			i18n::Language lang = i18n::Language(langi);
 			setNonDefaultGlobalValues();
 			
 			testing::getProjectDir(e_ini_filepath);
@@ -506,12 +506,11 @@ private:
 	
 	static void setNonDefaultGlobalValues() {
 		i18n::setLanguage(i18n::kLangFR);
-		e_main_dialog_size.cx = -1;
-		e_main_dialog_size.cy = -2;
+		e_main_dialog_size = { .cx = -1, .cy = -2 };
 		e_maximize_main_dialog = true;
 		e_icon_visible = false;
-		for (int col = 0; col < arrayLength(e_column_widths); col++) {
-			e_column_widths[col] = -1;
+		for (auto& width : e_column_widths) {
+			width = -1;
 		}
 	}
 	
@@ -522,7 +521,7 @@ private:
 		Assert::AreEqual(490L, e_main_dialog_size.cy);
 		Assert::AreEqual(false, e_maximize_main_dialog);
 		Assert::AreEqual(true, e_icon_visible);
-		constexpr int expected_column_widths[] = { 35, 20, 15, 10, -1 };
+		static constexpr int expected_column_widths[] = { 35, 20, 15, 10, -1 };
 		Assert::AreEqual(arrayLength(e_column_widths), arrayLength(expected_column_widths));
 		for (int col = 0; col < arrayLength(e_column_widths); col++) {
 			Assert::AreEqual(expected_column_widths[col], e_column_widths[col]);
