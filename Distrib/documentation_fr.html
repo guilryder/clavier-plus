@@ -447,6 +447,16 @@ F12
 </ul>
 
 
+<h3 id="limits-unicode">Unicode</h3>
+
+<p>Clavier+ supporte Unicode de manière générale&nbsp;: les fichiers de configuration peuvent contenir des caractères Unicode (encodage UTF-16), Clavier+ peut simuler la frappe de caractères Unicode. Limitations&nbsp;:
+<ul>
+<li>La fenêtre de configuration n’affiche pas les Emojis en couleur.
+<li>Certains programmes ne gèrent pas les paires de substitution correctement. Certains caractères comme les Emojis en ont besoin.
+<li>La syntaxe <kbd>[|<i>texte</i>|]</kbd> peut écrire des caractères Unicode seulement si l’option <a href="https://fr.wikipedia.org/wiki/Combinaisons_de_touche_Alt#Utilisation_sous_Windows"><code>EnableHexNumpad</code></a> du registre est activée. L’option est désactivée par défaut. Clavier+ n’utilise que ce méchanisme standard de Windows, pas le raccourci <kbd>Alt + X</kbd> de certaines applications.
+</ul>
+
+
 <h3 id="limits-conditions">Raccourcis avec conditions</h3>
 
 <p>Clavier+ ne peut pas intercepter de raccourcis clavier de manière conditionnelle. Quand un raccourci a des <a href="#conditions">conditions</a>, Clavier+ l’intercepte de manière inconditionnelle. Lorsque vous effectuez le raccourci, Clavier+ exécute l’action du raccourci si les conditions sont remplies, ou bien simule une frappe de touches pour le raccourci de manière à annuler l’interception.

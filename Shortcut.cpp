@@ -708,8 +708,7 @@ void simulateCharacter(TCHAR c, DWORD keep_down_mod_code) {
 	Keystroke ks;
 	const WORD key = VkKeyScan(c);
 	if (key == WORD(-1)) {
-		// The character has no keystroke:
-		// simulate Alt + Numpad 0 + Numpad ASCII code digits.
+		// The character has no keystroke: simulate Alt + code.
 		
 		// Press Alt.
 		ks.m_vk = VK_MENU;
@@ -717,13 +716,26 @@ void simulateCharacter(TCHAR c, DWORD keep_down_mod_code) {
 		const bool alt_is_hotkey = ks.unregisterHotKey();
 		const BYTE scan_code_alt = BYTE(MapVirtualKey(VK_MENU, MAPVK_VK_TO_VSC));
 		keybd_event(VK_MENU, scan_code_alt, 0, 0);
-		
-		// Press the digits.
-		TCHAR digits[5];
-		wsprintf(digits, _T("0%u"), WORD(c));
 		ks.m_sided_mod_code = MOD_ALT;
-		for (size_t digit_index = 0; digits[digit_index]; digit_index++) {
-			ks.m_vk = VK_NUMPAD0 + BYTE(digits[digit_index] - _T('0'));
+		
+		WORD uc = WORD(c);
+		char digits[5];
+		if (uc < 256) {
+			// ASCII: press '0' then the decimal digits.
+			wsprintfA(digits, "0%u", uc);
+		} else {
+			// Unicode: press '+' then the hexadecimal digits.
+			// Works only if HKEY_CURRENT_USER\Control Panel\Input Method
+			// contains EnableHexNumpad = 1.
+			ks.m_vk = VK_ADD;
+			ks.simulateTyping(/* already_down_mod_code= */ keep_down_mod_code | MOD_ALT);
+			wsprintfA(digits, "%04X", uc);
+		}
+		
+		// Press the (hexa)decimal digits. Use the numpad for decimal digits with the numpad.
+		for (size_t i = 0; digits[i]; i++) {
+			char digit = digits[i];
+			ks.m_vk = ('0' <= digit && digit <= '9') ? (VK_NUMPAD0 + (digit - '0')) : digit;
 			ks.simulateTyping(/* already_down_mod_code= */ keep_down_mod_code | MOD_ALT);
 		}
 		

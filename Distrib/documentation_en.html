@@ -455,6 +455,16 @@ F12
 </ul>
 
 
+<h3 id="limits-unicode">Unicode</h3>
+
+<p>Clavier+ generally supports Unicode: configuration files can contain Unicode characters (UTF-16 encoding), Clavier+ can simulate typing Unicode characters. However a few limitations apply:
+<ul>
+<li>The Clavier+ configuration dialog box does not render Emojis in color.
+<li>Some programs do not support surrogate pairs, that some Unicode characters like Emojis use.
+<li>The <kbd>[|<i>text</i>|]</kbd> syntax type Unicode characters correctly only if the <a href="https://en.wikipedia.org/wiki/Unicode_input#In_Microsoft_Windows"><code>EnableHexNumpad</code></a> registry setting is enabled. The setting is disabled by default. Clavier+ uses only this standard Windows mechanism, not the custom <kbd>Alt + X</kbd> shortcut of some applications.
+</ul>
+
+
 <h3 id="limits-conditions">Shortcuts with conditions</h3>
 
 <p>Clavier+ cannot intercept keystrokes conditionally. When a shortcut has a <a href="#conditions">condition</a>, Clavier+ intercepts the corresponding keystroke unconditionally, even when the condition is not met. When you press the keystroke, Clavier+ executes the shortcut action if the condition is met, else simulates the keystroke in an attempt to cancel the intercept.
