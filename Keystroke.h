@@ -44,6 +44,10 @@ struct SpecialKey {
 	BYTE vk_right;  // Virtual code of the right key
 	DWORD mod_code;  // MOD_* code of the key (e.g. MOD_CONTROL), not sided
 	Token tok;  // Token index of the name of the key
+
+	DWORD left_mod_code() const { return mod_code; }
+	DWORD right_mod_code() const { return mod_code << kRightModCodeOffset; }
+	DWORD all_mod_codes() const { return left_mod_code() | right_mod_code(); }
 };
 
 inline constexpr SpecialKey kSpecialKeys[] = {
@@ -257,21 +261,13 @@ public:
 	//   0 if the keystrokes are equal.
 	static int compare(const Keystroke& keystroke1, const Keystroke& keystroke2);
 	
-	// Returns an integer between 0 and 3 inclusive to be used for comparing the mod codes of two
-	// keystrokes for a given special key. Mod codes order: none < unsided < left < right.
+	// Returns a >= 0 integer to be used for comparing the mod codes of two keystrokes
+	// for a given special key. Mod codes order: none < unsided < left < right < left + right.
 	//
 	// Args:
-	//   mod_code: Unsided MOD_* constant identifying the special key.
-	//
-	// Returns:
-	//   - 0 if the keystroke does not use the special key
-	//       and has none of the mod codes in remaining_mod_codes_mask.
-	//   - 1 if the keystroke is unsided and uses the given special key.
-	//   - 2 if the keystroke is sided and uses the given special key as left.
-	//   - 3 if the keystroke is sided and uses the given special key as right.
-	//   - 0 if the keystroke does not use the special key
-	//       and has some of the mod codes in remaining_mod_codes_mask.
-	int getModCodeSortKey(int mod_code, DWORD remaining_mod_codes_mask) const;
+	//   special_key: the compared special key
+	//   remaining_mod_codes_mask: the mod codes mask of the special keys that follow special_key.
+	int getModCodeSortKey(const SpecialKey& special_key, DWORD remaining_mod_codes_mask) const;
 	
 	// Asks the user to supply a keystroke. Blocks.
 	// Shows this keystroke as initial value in the dialog box.

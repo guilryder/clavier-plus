@@ -115,13 +115,16 @@ public:
 		checkDisplayName(
 			_T("Win Right + Ctrl Left + Shift Right + Alt Left + X"),
 			buildKeystroke('X', kSided, MOD_CONTROL | MOD_ALT | ((MOD_WIN | MOD_SHIFT) << kRightModCodeOffset)));
+		checkDisplayName(
+			_T("Win Right + Ctrl Left + Ctrl Right + Shift Right + Alt Left + Alt Right + X"),
+			buildKeystroke('X', kSided, MOD_CONTROL | MOD_ALT | ((MOD_WIN | MOD_CONTROL | MOD_SHIFT | MOD_ALT) << kRightModCodeOffset)));
 	}
 	
 	TEST_METHOD(SpecialKeys_only) {
 		checkDisplayName(_T("Ctrl + "), buildKeystroke(0, kUnsided, MOD_CONTROL));
 		checkDisplayName(
-			_T("Win Right + Ctrl Left + Shift Right + Alt Left + "),
-			buildKeystroke(0, kSided, MOD_CONTROL | MOD_ALT | ((MOD_WIN | MOD_SHIFT) << kRightModCodeOffset)));
+			_T("Win Right + Ctrl Left + Ctrl Right + Shift Right + Alt Left + Alt Right + "),
+			buildKeystroke(0, kSided, MOD_CONTROL | MOD_ALT | ((MOD_WIN | MOD_CONTROL | MOD_SHIFT | MOD_ALT) << kRightModCodeOffset)));
 	}
 	
 	TEST_METHOD(GetIgnoresConditions) {
@@ -192,6 +195,18 @@ public:
 		checkParseDisplayName(
 			_T("Win Right + Ctrl Left + Shift Right + Alt Left"),
 			buildKeystroke(0, kSided, MOD_CONTROL | MOD_ALT | ((MOD_WIN | MOD_SHIFT) << kRightModCodeOffset)));
+	}
+	
+	TEST_METHOD(SpecialKeys_sidedAndUnsided) {
+		checkParseDisplayName(_T("Ctrl + Shift Right + X"),
+			buildKeystroke('X', kSided, MOD_CONTROL | (MOD_SHIFT << kRightModCodeOffset)));
+	}
+	
+	TEST_METHOD(SpecialKeys_sidedMixedOrder) {
+		checkParseDisplayName(_T("Ctrl Right + Shift Left + Ctrl Left + X"),
+			buildKeystroke('X', kSided, MOD_CONTROL | MOD_SHIFT | (MOD_CONTROL << kRightModCodeOffset)));
+		checkParseDisplayName(_T("Ctrl Right + Shift + Ctrl + X"),
+			buildKeystroke('X', kSided, MOD_CONTROL << kRightModCodeOffset));
 	}
 	
 private:
@@ -358,6 +373,7 @@ public:
 			}, {
 				buildKeystroke('A', kSided, MOD_SHIFT),
 				buildKeystroke('A', kSided, MOD_SHIFT << kRightModCodeOffset),
+				buildKeystroke('A', kSided, MOD_SHIFT | (MOD_SHIFT << kRightModCodeOffset)),
 			},
 		};
 		for (const auto& silo : silos) {
@@ -377,6 +393,9 @@ public:
 			}, {
 				buildKeystroke('A', kUnsided, MOD_SHIFT),
 				buildKeystroke('A', kSided, MOD_SHIFT << kRightModCodeOffset),
+			}, {
+				buildKeystroke('A', kUnsided, MOD_SHIFT),
+				buildKeystroke('A', kSided, MOD_SHIFT | (MOD_SHIFT << kRightModCodeOffset)),
 			}, {
 				buildKeystroke('A', kUnsided, 0, _T("C/N/S/")),
 				buildKeystroke('A', kUnsided, 0, _T("C-N/S/")),
@@ -490,6 +509,7 @@ public:
 			buildKeystroke('X', kUnsided, MOD_WIN | MOD_SHIFT),
 			buildKeystroke('X', kSided, MOD_WIN | MOD_SHIFT),
 			buildKeystroke('X', kSided, MOD_WIN | (MOD_SHIFT << kRightModCodeOffset)),
+			buildKeystroke('X', kSided, MOD_WIN | MOD_SHIFT | (MOD_SHIFT << kRightModCodeOffset)),
 			
 			buildKeystroke('X', kUnsided, MOD_CONTROL),
 			buildKeystroke('X', kUnsided, MOD_CONTROL | MOD_SHIFT),
@@ -500,10 +520,12 @@ public:
 			buildKeystroke('X', kUnsided, MOD_SHIFT),
 			buildKeystroke('X', kSided, MOD_SHIFT),
 			buildKeystroke('X', kSided, MOD_SHIFT << kRightModCodeOffset),
+			buildKeystroke('X', kSided, MOD_SHIFT | (MOD_SHIFT << kRightModCodeOffset)),
 			
 			buildKeystroke('X', kUnsided, MOD_ALT),
 			buildKeystroke('X', kSided, MOD_ALT),
 			buildKeystroke('X', kSided, MOD_ALT << kRightModCodeOffset),
+			buildKeystroke('X', kSided, MOD_ALT | (MOD_ALT << kRightModCodeOffset)),
 			
 			buildKeystroke('Y', kUnsided, 0),
 		};

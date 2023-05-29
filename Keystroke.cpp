@@ -80,16 +80,25 @@ void Keystroke::getDisplayName(LPTSTR output) const {
 	
 	// Special keys
 	for (const auto& special_key : kSpecialKeys) {
-		const int mod_code_left = special_key.mod_code;
-		const int mod_code_right = mod_code_left << kRightModCodeOffset;
-		if (m_sided_mod_code & (mod_code_left | mod_code_right)) {
-			StringCchCat(output, kHotKeyBufSize, getToken(special_key.tok));
-			if (m_sided) {
+		if (!(m_sided_mod_code & special_key.all_mod_codes())) {
+			continue;
+		}
+		const LPCTSTR special_key_name = getToken(special_key.tok);
+		if (m_sided) {
+			if (m_sided_mod_code & special_key.left_mod_code()) {
+				StringCchCat(output, kHotKeyBufSize, special_key_name);
 				StringCchCat(output, kHotKeyBufSize, _T(" "));
-				StringCchCat(
-					output, kHotKeyBufSize,
-					getToken((m_sided_mod_code & mod_code_left) ? Token::kLeft : Token::kRight));
+				StringCchCat(output, kHotKeyBufSize, getToken(Token::kLeft));
+				StringCchCat(output, kHotKeyBufSize, _T(" + "));
 			}
+			if (m_sided_mod_code & special_key.right_mod_code()) {
+				StringCchCat(output, kHotKeyBufSize, special_key_name);
+				StringCchCat(output, kHotKeyBufSize, _T(" "));
+				StringCchCat(output, kHotKeyBufSize, getToken(Token::kRight));
+				StringCchCat(output, kHotKeyBufSize, _T(" + "));
+			}
+		} else {
+			StringCchCat(output, kHotKeyBufSize, special_key_name);
 			StringCchCat(output, kHotKeyBufSize, _T(" + "));
 		}
 	}
@@ -100,14 +109,14 @@ void Keystroke::getDisplayName(LPTSTR output) const {
 
 void Keystroke::parseDisplayName(LPTSTR input) {
 	bool skip_plus = false;
-	int mod_code_last = 0;
+	const SpecialKey *current_special_key = nullptr;
 	
 	for (;;) {
 		
 		// Skip spaces and '+'
 		while (*input == _T(' ') || (*input == _T('+') && skip_plus)) {
 			if (*input == _T('+')) {
-				mod_code_last = 0;
+				current_special_key = nullptr;
 				skip_plus = false;
 			}
 			input++;
@@ -130,28 +139,33 @@ void Keystroke::parseDisplayName(LPTSTR input) {
 		if (Token::kWin <= tok && tok <= Token::kAlt) {
 			// Special key token
 			
-			mod_code_last = 0;
+			current_special_key = nullptr;
 			for (const auto& special_key : kSpecialKeys) {
 				if (special_key.tok == tok) {
-					mod_code_last = special_key.mod_code;
-					m_sided_mod_code |= mod_code_last;
+					current_special_key = &special_key;
+					if (!m_sided) {
+						m_sided_mod_code |= current_special_key->mod_code;
+					}
 					break;
 				}
 			}
 			
-		} else if (mod_code_last && (tok == Token::kLeft || tok == Token::kRight)) {
+		} else if (current_special_key && (tok == Token::kLeft || tok == Token::kRight)) {
 			// Key side
 			
-			m_sided = true;
-			if (tok == Token::kRight) {
-				m_sided_mod_code &= ~mod_code_last;
-				m_sided_mod_code |= mod_code_last << kRightModCodeOffset;
-				mod_code_last = 0;
+			if (!m_sided) {
+				m_sided = true;
+				m_sided_mod_code &= ~current_special_key->all_mod_codes();
 			}
+			m_sided_mod_code |= (tok == Token::kLeft)
+				? current_special_key->left_mod_code()
+				: current_special_key->right_mod_code();
+			current_special_key = nullptr;
 			
 		} else {
 			// Normal key token
 			
+			current_special_key = nullptr;
 			*next_word = next_word_copy;
 			
 			if (!*input) {
@@ -315,6 +329,7 @@ int Keystroke::compare(const Keystroke& keystroke1, const Keystroke& keystroke2)
 	// Win Left + Shift Right + X
 	// Win Right + Shift Left + X
 	// Win Right + Shift Right + X
+	// Win Left + Win Right + Sift Left + X
 	// Ctrl + X
 	// Ctrl + Shift + X
 	// Ctrl + Shift + Alt + X
@@ -324,11 +339,10 @@ int Keystroke::compare(const Keystroke& keystroke1, const Keystroke& keystroke2)
 	// Alt + X
 	DWORD remaining_mod_codes_mask = kModCodeAll;
 	for (const auto& special_key : kSpecialKeys) {
-		const int mod_code = special_key.mod_code;
-		remaining_mod_codes_mask &= ~(mod_code | (mod_code << kRightModCodeOffset));
+		remaining_mod_codes_mask &= ~special_key.all_mod_codes();
 		
-		const int sort_key1 = keystroke1.getModCodeSortKey(mod_code, remaining_mod_codes_mask);
-		const int sort_key2 = keystroke2.getModCodeSortKey(mod_code, remaining_mod_codes_mask);
+		const int sort_key1 = keystroke1.getModCodeSortKey(special_key, remaining_mod_codes_mask);
+		const int sort_key2 = keystroke2.getModCodeSortKey(special_key, remaining_mod_codes_mask);
 		if (sort_key1 != sort_key2) {
 			return sort_key1 - sort_key2;
 		}
@@ -337,22 +351,35 @@ int Keystroke::compare(const Keystroke& keystroke1, const Keystroke& keystroke2)
 	return 0;
 }
 
-int Keystroke::getModCodeSortKey(int mod_code, DWORD remaining_mod_codes_mask) const {
+// Return values:
+// 0: the keystroke does not use the special key
+//    and has none of the mod codes in remaining_mod_codes_mask.
+// 1: the keystroke uses the given special key unsided.
+// 2: the keystroke uses the given special key left-sided only.
+// 4: the keystroke uses the given special key right-sided only.
+// 6: the keystroke uses the given special key both left- and right-sided.
+// 8: the keystroke does not use the special key
+//    and has some of the mod codes in remaining_mod_codes_mask.
+int Keystroke::getModCodeSortKey(const SpecialKey& special_key, DWORD remaining_mod_codes_mask) const {
 	if (m_sided) {
-		if (m_sided_mod_code & mod_code) {
+		int result = 0;
+		if (m_sided_mod_code & special_key.left_mod_code()) {
 			// Left
-			return 2;
-		} else if (m_sided_mod_code & (mod_code << kRightModCodeOffset)) {
-			// Right
-			return 3;
+			result |= 2;
 		}
-	} else if (m_sided_mod_code & mod_code) {
+		if (m_sided_mod_code & special_key.right_mod_code()) {
+			// Right
+			result |= 4;
+		}
+		if (result) {
+			return result;
+		}
+	} else if (m_sided_mod_code & special_key.all_mod_codes()) {
 		// Unsided
 		return 1;
 	}
-	
 	// None
-	return (m_sided_mod_code & remaining_mod_codes_mask) ? 4 : 0;
+	return (m_sided_mod_code & remaining_mod_codes_mask) ? 8 : 0;
 }
 
 
@@ -404,11 +431,14 @@ LRESULT CALLBACK prcKeystrokeCtl(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				}
 				
 				if (isKeyDown(special_key.vk_left)) {
-					sided_mod_code |= special_key.mod_code;
-				} else if (isKeyDown(special_key.vk_right)) {
-					sided_mod_code |= special_key.mod_code << kRightModCodeOffset;
+					sided_mod_code |= special_key.left_mod_code();
 				} else {
-					sided_mod_code &= ~special_key.mod_code;
+					sided_mod_code &= ~special_key.left_mod_code();
+				}
+				if (isKeyDown(special_key.vk_right)) {
+					sided_mod_code |= special_key.right_mod_code();
+				} else {
+					sided_mod_code &= ~special_key.right_mod_code();
 				}
 			}
 			

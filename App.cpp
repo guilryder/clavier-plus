@@ -234,13 +234,14 @@ void runGui(CmdlineOpt cmdopt) {
 			ks.m_sided = true;
 			const HWND input_window = Keystroke::getInputFocus();
 			
-			// Test for right special keys
+			// Make ks.m_sided_mod_code sided according to the state of sided special keys.
 			for (const auto& special_key : kSpecialKeys) {
-				const DWORD mod_code = special_key.mod_code;
-				if (ks.m_sided_mod_code & mod_code) {
+				if (ks.m_sided_mod_code & special_key.all_mod_codes()) {
+					if (!isKeyDown(special_key.vk_left)) {
+						ks.m_sided_mod_code &= ~special_key.left_mod_code();
+					}
 					if (isKeyDown(special_key.vk_right)) {
-						ks.m_sided_mod_code &= ~mod_code;
-						ks.m_sided_mod_code |= mod_code << kRightModCodeOffset;
+						ks.m_sided_mod_code |= special_key.right_mod_code();
 					}
 				}
 			}
