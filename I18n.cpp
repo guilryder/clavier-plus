@@ -47,6 +47,7 @@ constexpr LANGID kLangIds[kLangCount] = {
 	MAKELANGID(LANG_GREEK, SUBLANG_DEFAULT),
 	MAKELANGID(LANG_RUSSIAN, SUBLANG_DEFAULT),
 	MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED),
+	MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL),
 };
 
 
@@ -91,6 +92,7 @@ LPCTSTR getLanguageDonateUrl() {
 		case kLangPT:
 		case kLangRU:
 		case kLangZH_CN:
+		case kLangZH_TW:
 			return _T("https://www.paypal.com/donate/?business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD");
 		default:
 			return _T("https://www.paypal.com/donate/?business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR");

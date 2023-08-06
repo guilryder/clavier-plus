@@ -120,6 +120,9 @@
     <None Include="Distrib\Clavier_zh-CN.ini">
       <Filter>Distrib</Filter>
     </None>
+    <None Include="Distrib\Clavier_zh-TW.ini">
+      <Filter>Distrib</Filter>
+    </None>
     <None Include="Distrib\documentation_de.html">
       <Filter>Distrib</Filter>
     </None>

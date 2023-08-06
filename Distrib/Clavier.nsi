@@ -62,6 +62,7 @@ SetCompressor /FINAL /SOLID lzma
   !insertmacro ${macro} "fi" "Finnish"
   !insertmacro ${macro} "el" "Greek"
   !insertmacro ${macro} "ru" "Russian"
+  !insertmacro ${macro} "zh-TW" "TradChinese"
   !insertmacro ${macro} "zh-CN" "SimpChinese"
 !macroend
 !macro DECLARE_LANGUAGE iso lcid

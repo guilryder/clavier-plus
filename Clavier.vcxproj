@@ -116,6 +116,7 @@
     <None Include="Distrib\Clavier_ru.ini" />
     <None Include="Distrib\Clavier_sk.ini" />
     <None Include="Distrib\Clavier_zh-CN.ini" />
+    <None Include="Distrib\Clavier_zh-TW.ini" />
     <None Include="Distrib\documentation_de.html" />
     <None Include="Distrib\documentation_en.html" />
     <None Include="Distrib\documentation_fr.html" />

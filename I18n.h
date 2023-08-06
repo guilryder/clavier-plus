@@ -43,6 +43,7 @@ enum Language {
 	kLangEL,     // Greek - Ελληνικά
 	kLangRU,     // Russian - Русский
 	kLangZH_CN,  // Simplified Chinese - 简体中文
+	kLangZH_TW,  // Traditional Chinese - 繁體中文
 	kLangCount,
 	kLangDefault = kLangEN,
 };
