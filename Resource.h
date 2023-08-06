@@ -38,7 +38,6 @@
 #define IDS_BROWSEDIR                   262
 #define IDS_PROGRAMS                    263
 #define IDS_TOOLTIPS                    264
-#define IDS_DONATEURL                   265
 #define IDS_SHOW_OPTIONS                266
 #define IDCLST                          1001
 #define IDCOPT_TEXT                     1006

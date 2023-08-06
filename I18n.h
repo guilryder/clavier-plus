@@ -52,6 +52,8 @@ Language getLanguage();
 void setLanguage(Language lang);
 Language getDefaultLanguage();
 
+LPCTSTR getLanguageDonateUrl();
+
 
 // Memory representation of a string resource. Should only be used for low-level string resource
 // loading, when callers need to know the string length.

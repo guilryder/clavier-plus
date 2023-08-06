@@ -50,7 +50,6 @@ HWND s_hwnd_list = NULL;  // Shortcuts list
 bool s_process_gui_events;
 
 constexpr LPCTSTR kHelpUrlFormat = _T("https://gryder.org/software/clavier-plus/documentation?lang=%s");
-TCHAR s_donate_url[256];
 
 // Main dialog box.
 INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam);
@@ -1036,8 +1035,7 @@ INT_PTR CALLBACK prcMain(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) 
 				placement.point = reinterpret_cast<POINT&>(ctl_rect);
 			}
 			
-			i18n::loadStringAuto(IDS_DONATEURL, s_donate_url);
-			initializeWebLink(hdlg, IDCLBL_DONATE, s_donate_url);
+			initializeWebLink(hdlg, IDCLBL_DONATE, i18n::getLanguageDonateUrl());
 			SendDlgItemMessage(hdlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
 				reinterpret_cast<LPARAM>(i18n::loadBitmap(IDB_DONATE)));
 				
@@ -1622,8 +1620,7 @@ INT_PTR CALLBACK prcAbout(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam)
 			
 			initializeWebLink(hdlg, IDCLBL_WEBSITE, _T("https://gryder.org/software/clavier-plus/"));
 			initializeWebLink(hdlg, IDCLBL_EMAIL, _T("mailto:guillaume@ryder.fr"));
-			i18n::loadStringAuto(IDS_DONATEURL, s_donate_url);
-			initializeWebLink(hdlg, IDCLBL_DONATE, s_donate_url);
+			initializeWebLink(hdlg, IDCLBL_DONATE, i18n::getLanguageDonateUrl());
 			SendDlgItemMessage(hdlg, IDCLBL_DONATE, STM_SETIMAGE, IMAGE_BITMAP,
 				reinterpret_cast<LPARAM>(i18n::loadBitmap(IDB_DONATE)));
 			return true;

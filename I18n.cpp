@@ -84,6 +84,20 @@ Language getDefaultLanguage() {
 }
 
 
+LPCTSTR getLanguageDonateUrl() {
+	switch (s_lang) {
+		case kLangEN:
+		case kLangES:
+		case kLangPT:
+		case kLangRU:
+		case kLangZH_CN:
+			return _T("https://www.paypal.com/donate/?business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=USD");
+		default:
+			return _T("https://www.paypal.com/donate/?business=guillaume@ryder.fr&item_name=UtilFr+-+Clavier%2b&currency_code=EUR");
+	}
+}
+
+
 const STRING_RESOURCE* loadStringResource(UINT id) {
 	const auto* resource = reinterpret_cast<const STRING_RESOURCE*>(loadResource(id / 16 + 1, RT_STRING));
 	VERIFP(resource, nullptr);
