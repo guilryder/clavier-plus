@@ -14,6 +14,233 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Japanese (Japan) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 167, 144
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_NOPARENTNOTIFY
+CAPTION "Clavier+ について"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDI_APP,IDC_STATIC,6,6,20,20
+    LTEXT           "",IDCLBL_APP_VERSION,42,6,116,24,SS_NOPREFIX
+    LTEXT           "GPLv3 ライセンスに基づくソフトウェア",IDC_STATIC,42,32,116,8,SS_NOPREFIX
+    GROUPBOX        "作成者",IDC_STATIC,6,48,155,44
+    LTEXT           "Guillaume Ryder",IDC_STATIC,12,59,144,8,SS_NOPREFIX
+    LTEXT           "guillaume@ryder.fr",IDCLBL_EMAIL,12,69,144,8,SS_NOPREFIX
+    LTEXT           "https://gryder.org/software/clavier-plus/",IDCLBL_WEBSITE,12,79,144,8,SS_NOPREFIX
+    LTEXT           "翻訳: coolvitto",IDC_STATIC,6,102,152,8,SS_NOPREFIX
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,6,119,53,19
+    DEFPUSHBUTTON   "OK",IDOK,111,124,50,14,WS_GROUP
+END
+
+IDD_CMDSETTINGS DIALOGEX 0, 0, 268, 89
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "実行するプログラム"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "コマンド ライン(&C):",IDC_STATIC,6,8,68,8
+    EDITTEXT        IDCTXT_COMMAND,78,6,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,244,6,18,12
+    LTEXT           "ディレクトリ(&D):",IDC_STATIC,6,26,68,8
+    EDITTEXT        IDCTXT_DIRECTORY,78,24,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_DIRECTORY,244,24,18,12
+    LTEXT           "ウィンドウ サイズ(&W):",IDC_STATIC,6,44,68,8
+    COMBOBOX        IDCCBO_SHOW,78,42,88,50,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "キャンセル",IDCANCEL,78,69,56,14
+    DEFPUSHBUTTON   "OK",IDOK,140,69,57,14
+END
+
+IDD_KEYSTROKE DIALOGEX 0, 0, 270, 179
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "ショートカット"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "ショートカット(&S):",IDC_STATIC,7,8,67,8
+    EDITTEXT        IDCTXT,78,6,185,12,ES_AUTOHSCROLL
+    CONTROL         "左右の特殊キーを区別する(&D)",IDCCHK_DISTINGUISH_LEFT_RIGHT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,24,259,10
+    LTEXT           "備考 :\n– Windowsキーを使用できます\n– 一部の特別なショートカットは使用できません",IDC_STATIC,6,42,229,35,SS_NOPREFIX
+    GROUPBOX        "起動条件",IDC_STATIC,6,84,257,66
+    LTEXT           "&Caps Lock 状態:",IDC_STATIC,12,98,103,8
+    COMBOBOX        IDCCBO_CAPSLOCK,121,96,136,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Num Lock 状態:",IDC_STATIC,12,116,103,8
+    COMBOBOX        IDCCBO_NUMLOCK,121,114,136,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Scr&oll Lock 状態:",IDC_STATIC,12,134,103,8
+    COMBOBOX        IDCCBO_SCROLLLOCK,121,132,136,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "キャンセル",IDCANCEL,144,159,56,14
+    DEFPUSHBUTTON   "OK",IDOK,206,159,57,14
+END
+
+IDD_MAIN DIALOGEX 0, 0, 414, 246
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_APPWINDOW
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDCLST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,6,6,401,102
+    PUSHBUTTON      "追加",IDCCMD_ADD,6,114,20,18,BS_ICON
+    PUSHBUTTON      "削除",IDCCMD_DELETE,30,114,20,18,BS_ICON
+    PUSHBUTTON      "編集",IDCCMD_EDIT,54,114,20,18,BS_ICON
+    LTEXT           "このウィンドウが表示されている間は、すべてのショートカットが無効になることに注意。",IDCLBL_HELP,78,114,145,19,0,WS_EX_STATICEDGE
+    LTEXT           "ショートカット数:",IDCLBL_SHORTCUTSCOUNT,232,114,57,8,SS_NOPREFIX
+    LTEXT           "",IDCTXT_SHORTCUTSCOUNT,292,114,30,8,SS_NOPREFIX
+    CONTROL         "Windows 起動時に Clavier+ を起動(&A)",IDCCHK_AUTOSTART,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,232,124,174,10
+    GROUPBOX        "",IDCFRA_TEXT,6,138,198,49,WS_GROUP
+    GROUPBOX        "",IDCFRA_COMMAND,210,138,198,49,WS_GROUP
+    CONTROL         "テキストの書き込み(&W)",IDCOPT_TEXT,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,12,138,88,10
+    CONTROL         "プログラムの起動またはWebサイトを表示(&L)",IDCOPT_COMMAND,"Button",BS_AUTORADIOBUTTON,216,138,156,10
+    EDITTEXT        IDCTXT_TEXT,12,150,168,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_GROUP
+    PUSHBUTTON      "",IDCCMD_TEXT_MENU,184,150,15,15,BS_BITMAP
+    EDITTEXT        IDCTXT_COMMAND,216,150,164,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDCCMD_COMMAND,383,150,18,12
+    ICON            "",IDCLBL_ICON,218,164,20,20,SS_REALSIZEIMAGE
+    PUSHBUTTON      "その他の設定(&V)...",IDCCMD_CMDSETTINGS,246,168,102,14
+    PUSHBUTTON      "テスト(&T)",IDCCMD_TEST,354,168,48,14
+    LTEXT           "有効にする(&E):",IDCLBL_PROGRAMS,6,194,51,8
+    COMBOBOX        IDCCBO_PROGRAMS,59,192,94,48,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDCTXT_PROGRAMS,156,192,234,12,ES_AUTOHSCROLL
+    CONTROL         IDB_TARGET,IDCIMG_PROGRAMS,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE,394,192,13,12
+    LTEXT           "説明(&D):",IDCLBL_DESCRIPTION,6,210,51,8
+    EDITTEXT        IDCTXT_DESCRIPTION,59,208,348,12,ES_AUTOHSCROLL
+    CONTROL         IDB_DONATE,IDCLBL_DONATE,"Static",SS_BITMAP,2,225,53,19
+    PUSHBUTTON      "ヘルプ(&H)",IDCCMD_HELP,61,227,42,14
+    PUSHBUTTON      "リストをコピー(&O)",IDCCMD_COPYLIST,105,227,61,14
+    PUSHBUTTON      "言語(&G)...",IDCCMD_LANGUAGE,169,227,46,14
+    PUSHBUTTON      "について...",IDCCMD_ABOUT,217,227,49,14
+    PUSHBUTTON      "終了(&Q)",IDCCMD_QUIT,269,227,39,14
+    PUSHBUTTON      "キャンセル",IDCANCEL,310,227,48,14
+    DEFPUSHBUTTON   "OK",IDOK,360,227,48,14
+END
+
+IDD_SENDKEYS DIALOGEX 0, 0, 270, 50
+STYLE DS_SETFONT | DS_MODALFRAME | DS_NOIDLEMSG | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "キーストロークのシミュレート"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "キー ストローク(&K):",IDC_STATIC,7,8,67,8
+    EDITTEXT        IDCTXT,78,6,185,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "キャンセル",IDCANCEL,144,30,56,14
+    DEFPUSHBUTTON   "OK",IDOK,206,30,57,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_CONTEXT MENU
+BEGIN
+    POPUP " "
+    BEGIN
+        POPUP "プログラム(&P)"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "アプリ(&A)"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "特殊文字(&S)"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "フォルダーを開く(&F)...",             ID_ADD_FOLDER
+        MENUITEM "テキストの書き込み(&W)...",            ID_ADD_TEXT
+        MENUITEM "プログラムを起動(&L)...",             ID_ADD_COMMAND
+        MENUITEM "ウェブサイトを表示(&D)...",            ID_ADD_WEBSITE
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM "キーストロークをシミュレート(&S): [...]",   ID_TEXT_SENDKEYS
+        MENUITEM "プログラムを起動(&P): [[...]]",       ID_TEXT_COMMAND
+        MENUITEM "100 ミリ秒待ってからフォーカスを検出(&W): []", ID_TEXT_WAIT
+        MENUITEM "低レベル モードでテキストを書き込む(&L): [|...|]", ID_TEXT_LOWLEVEL
+        MENUITEM SEPARATOR
+        POPUP "文字の書き込み(&C)"
+        BEGIN
+            MENUITEM SEPARATOR
+        END
+        POPUP "特殊文字の書き込み(&E)"
+        BEGIN
+            MENUITEM "バックスラッシュを書き込む(&S): \\\\",     ID_TEXT_BACKSLASH
+            MENUITEM "左鍵括弧を書き込む(&B): \\[",          ID_TEXT_BRACKET_OPEN
+            MENUITEM "右鍵括弧を書き込む(&K): \\]",          ID_TEXT_BRACKET_CLOSE
+            MENUITEM "左中括弧を書き込む(&A): \\{",          ID_TEXT_BRACE_OPEN
+            MENUITEM "右中括弧を書き込む(&C): \\}",          ID_TEXT_BRACE_CLOSE
+            MENUITEM "縦線を書き込む(&P): \\|",            ID_TEXT_PIPE
+        END
+        POPUP "特殊コマンドを実行(&O)"
+        BEGIN
+            MENUITEM "待機(&W): [{Wait,<持続時間>}]",     ID_TEXT_CMD_WAIT
+            MENUITEM "フォーカスされたウィンドウを検出(&D): [{Focus,<遅延>,<ウィンドウ名>}]", ID_TEXT_CMD_FOCUS
+            MENUITEM "ウィンドウをアクティブ化または起動する(&A): [{FocusOrLaunch,<ウィンドウ名>,<コマンド>,<遅延>}]", ID_TEXT_CMD_FOCUS_OR_LAUNCH
+            MENUITEM "クリップボードにコピー(&C): [{Copy,<テキスト>}]", ID_TEXT_CMD_COPY
+            MENUITEM "マウスボタン(&M): [{MouseButton,L/M/R(U/D)}]", ID_TEXT_CMD_MOUSE_BUTTON
+            MENUITEM "マウスの移動先(絶対座標)(&V): [{MouseMoveTo,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO
+            MENUITEM "マウスの移動先(相対座標)(&E): [{MouseMoveToFocus,x,y}]", ID_TEXT_CMD_MOUSE_MOVE_TO_REL
+            MENUITEM "マウスの移動方法(&Y): [{MouseMoveBy,dx,dy}]", ID_TEXT_CMD_MOUSE_MOVE_BY
+            MENUITEM "マウスホイール(&H): [{MouseWheel,<(-) ティック数>}]", ID_TEXT_CMD_MOUSE_WHEEL
+            MENUITEM "特殊キーを押したままにする(&K): [{KeysDown,<キー>}]", ID_TEXT_CMD_KEYS_DOWN
+        END
+    END
+    POPUP " "
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "設定(&S)...",                   ID_TRAY_SETTINGS
+        MENUITEM "リストをコピー(&C)",                 ID_TRAY_COPYLIST
+        MENUITEM "設定の読み込み(&L)...",              ID_TRAY_INI_LOAD
+        MENUITEM "設定を統合(&M)...",                ID_TRAY_INI_MERGE
+        MENUITEM "設定を保存(&V)...",                ID_TRAY_INI_SAVE
+        MENUITEM "終了(&Q)",                      ID_TRAY_QUIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    ERR_INVALID_SHORTCUT    "有効なショートカットが必要です。"
+    ERR_SHORTCUT_DUPLICATE  "キーボード ショートカットが重複しています: %s。\n重複の 1 つを変更または削除してください。"
+    ERR_SAVING_INI          "設定を保存できません。"
+    ERR_LOADING_INI         "設定を読み込めません。"
+    ERR_TARGET              "プログラムが選択されていません。\nマウス ボタンを押したまま、選択するプログラムのウィンドウまで\nカーソルをドラッグしてください。"
+    ASK_QUIT                "本当に Clavier+ を終了しますか?\nこれにより、すべてのショートカットが無効になります。\n\n(このメッセージをスキップするには、Shift キーを押しながら\nボタンをクリックします。)"
+    ASK_DELETE              "本当にこのショートカットを削除してもよろしいですか?\n\n(このメッセージをスキップするには、Shift キーを押しながら\nボタンをクリックします。)"
+    MSG_COPYLIST            "ショートカット リストがクリップボードにコピーされました。\n\nCtrl+V を使用してテキスト プロセッサまたはスプレッドシートに貼り付けることができます。"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_TOKENS              "日本語"
+    IDS_COLUMNS             "内容;ショートカット;条件;使用;説明"
+    IDS_LANGUAGE_CODE       "ja"
+    IDS_CONDITIONS          "条件なし; オンでなければなりません; オフでなければなりません"
+    IDS_CONDITION_KEYS      "CNS"
+    IDS_INI_FILTER          "INI ファイル|*.ini|"
+    IDS_BROWSEDIR           "コマンドの起動ディレクトリを選択してください。"
+    IDS_PROGRAMS            "すべてのプログラムを除く;これらのプログラムのみ"
+    IDS_TOOLTIPS            "新しいショートカットを追加する;選択したショートカットを削除する;選択したショートカットを編集する;クリックしドラッグ&ドロップしてプログラムのウィンドウを選択する"
+    IDS_SHOW_OPTIONS        "通常;最小化;最大化"
+END
+
+#endif    // Japanese (Japan) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // Chinese (Simplified, PRC) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)

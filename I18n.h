@@ -44,6 +44,7 @@ enum Language {
 	kLangRU,     // Russian - Русский
 	kLangZH_CN,  // Simplified Chinese - 简体中文
 	kLangZH_TW,  // Traditional Chinese - 繁體中文
+	kLangJA,     // Japanese - 日本語
 	kLangCount,
 	kLangDefault = kLangEN,
 };

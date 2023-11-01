@@ -64,6 +64,7 @@ SetCompressor /FINAL /SOLID lzma
   !insertmacro ${macro} "ru" "Russian"
   !insertmacro ${macro} "zh-TW" "TradChinese"
   !insertmacro ${macro} "zh-CN" "SimpChinese"
+  !insertmacro ${macro} "ja" "Japanese"
 !macroend
 !macro DECLARE_LANGUAGE iso lcid
   !echo "Declaring language: ${iso} ${lcid}"

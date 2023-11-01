@@ -110,6 +110,7 @@
     <None Include="Distrib\Clavier_fr.ini" />
     <None Include="Distrib\Clavier_hu.ini" />
     <None Include="Distrib\Clavier_it.ini" />
+    <None Include="Distrib\Clavier_ja.ini" />
     <None Include="Distrib\Clavier_nl.ini" />
     <None Include="Distrib\Clavier_pl.ini" />
     <None Include="Distrib\Clavier_pt-BR.ini" />
