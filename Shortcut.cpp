@@ -51,6 +51,8 @@ struct ExecutionContext {
 };
 
 
+// Each command*() must unescape LPTSTR arg when present.
+
 // []
 // Sleep for 100 milliseconds and catch the focus.
 // Convenience alias for [{Focus,100}].
@@ -633,6 +635,8 @@ bool executeSpecialCommand(LPCTSTR shortcut_start, LPCTSTR& shortcut_end, Execut
 		
 		inside[inside.getLength() - 1] = _T('\0');
 		LPTSTR arg = &inside[1];
+		
+		// To support comma escaping, unescape the arguments one-by-one.
 		const LPCTSTR command = parseCommaSepArgUnescape(arg);
 		
 		if (!lstrcmpi(command, _T("Wait"))) {
@@ -675,6 +679,7 @@ bool executeSpecialCommand(LPCTSTR shortcut_start, LPCTSTR& shortcut_end, Execut
 			// Brackets and pipe: [|characters as keystroke|]
 			
 			inside[inside.getLength() - 1] = _T('\0');
+			unescape(inside.get());
 			for (LPCTSTR chr_ptr = inside; *++chr_ptr;) {
 				if (*chr_ptr != _T('\n')) {  // '\n' is redundant with '\r'.
 					simulateCharacter(*chr_ptr, context->keep_down_mod_code);
@@ -684,6 +689,7 @@ bool executeSpecialCommand(LPCTSTR shortcut_start, LPCTSTR& shortcut_end, Execut
 		} else {
 			// Simple brackets: [keystroke]
 			
+			unescape(inside.get());
 			Keystroke keystroke;
 			keystroke.parseDisplayName(inside.get());
 			keystroke.m_sided_mod_code |= context->keep_down_mod_code;
@@ -786,7 +792,7 @@ void commandEmpty(ExecutionContext* context) {
 
 
 void commandWait(LPTSTR arg) {
-	sleepBackground(StrToInt(arg));
+	sleepBackground(StrToInt(parseCommaSepArgUnescape(arg)));
 }
 
 
@@ -835,12 +841,15 @@ void commandFocusOrLaunch(ExecutionContext* context, LPTSTR arg) {
 
 
 void commandCopy(LPTSTR arg) {
+	unescape(arg);
 	setClipboardText(arg);
 }
 
 
 void commandMouseButton(LPTSTR arg) {
+	unescape(arg);
 	CharUpper(arg);
+	
 	DWORD dwFlags = 0;
 	switch (lstrlen(arg)) {
 		case 2:
@@ -884,7 +893,7 @@ void commandMouseMove(POINT origin_point, LPTSTR arg) {
 
 
 void commandMouseWheel(LPTSTR arg) {
-	const int offset = -StrToInt(arg) * WHEEL_DELTA;
+	const int offset = -StrToInt(parseCommaSepArgUnescape(arg)) * WHEEL_DELTA;
 	if (offset) {
 		mouse_event(MOUSEEVENTF_WHEEL, 0, 0, DWORD(offset), 0);
 		sleepBackground(0);
@@ -893,6 +902,8 @@ void commandMouseWheel(LPTSTR arg) {
 
 
 void commandKeysDown(ExecutionContext* context, LPTSTR arg) {
+	unescape(arg);
+	
 	Keystroke keep_down_keystroke;
 	keep_down_keystroke.parseDisplayName(arg);
 	context->keep_down_mod_code = keep_down_keystroke.getUnsidedModCode();
